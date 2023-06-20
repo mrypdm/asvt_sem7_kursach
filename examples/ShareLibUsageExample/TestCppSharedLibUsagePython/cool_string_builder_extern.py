@@ -42,6 +42,3 @@ def to_string(ptr):
     res = ctypes.c_char_p(c_str).value.decode('ansi')
     __FREE(c_str)
     return res
-
-
-
