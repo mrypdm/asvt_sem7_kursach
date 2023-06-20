@@ -1,0 +1,9 @@
+.idea/
+.vs/
+.vscode/
+.venv/
+
+bin/
+obj/
+out/
+publish/
