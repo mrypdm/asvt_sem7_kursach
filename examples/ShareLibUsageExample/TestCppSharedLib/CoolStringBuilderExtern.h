@@ -5,7 +5,7 @@
 extern "C" {
 void *CoolStringBuilder_Create();
 
-void CoolStringBuilder_Dispose(void *ptr);
+int8_t CoolStringBuilder_Dispose(void *ptr);
 
 void *CoolStringBuilder_Append(void *ptr, const char *value);
 

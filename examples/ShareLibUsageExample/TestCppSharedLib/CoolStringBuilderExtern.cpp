@@ -4,13 +4,17 @@
 #include <cstring>
 
 extern "C" {
-void *CreateCoolStringBuilder() {
+void *CoolStringBuilder_Create() {
     return new CoolStringBuilder();
 }
 
-void DisposeCoolStringBuilder(void *ptr) {
+int8_t CoolStringBuilder_Dispose(void *ptr) {
+    if (ptr == nullptr) {
+        return 1;
+    }
     auto castedPtr = static_cast<CoolStringBuilder *>(ptr);
     delete castedPtr;
+    return 0;
 }
 
 void *CoolStringBuilder_Append(void *ptr, const char *value) {

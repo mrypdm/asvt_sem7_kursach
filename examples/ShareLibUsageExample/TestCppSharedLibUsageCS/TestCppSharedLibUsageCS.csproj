@@ -8,7 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="..\TestCppSharedLib\publish\libTestCppSharedLib.dll" CopyToOutputDirectory="Always"/>
+        <Content Include="..\TestCppSharedLib\publish\libTestCppSharedLib.dll" Condition="'$(OS)' == 'Windows_NT'" CopyToOutputDirectory="Always"/>
+        <Content Include="..\TestCppSharedLib\publish\libTestCppSharedLib.so" Condition="'$(OS)' == 'Unix'" CopyToOutputDirectory="Always"/>
     </ItemGroup>
 
 </Project>

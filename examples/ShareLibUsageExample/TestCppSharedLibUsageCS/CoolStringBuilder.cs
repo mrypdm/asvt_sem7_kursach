@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace TestCppSharedLibUsageCS;
+﻿namespace TestCppSharedLibUsageCS;
 
 public class CoolStringBuilder : IDisposable
 {
@@ -26,13 +24,13 @@ public class CoolStringBuilder : IDisposable
 
     public CoolStringBuilder Append(string value)
     {
-        CoolStringBuilderExtern.Append(SafePtr, value);
+        CoolStringBuilderExtern.AppendSafe(SafePtr, value);
         return this;
     }
 
     public CoolStringBuilder AppendLine(string value)
     {
-        CoolStringBuilderExtern.AppendLine(SafePtr, value);
+        CoolStringBuilderExtern.AppendLineSafe(SafePtr, value);
         return this;
     }
 
@@ -45,7 +43,7 @@ public class CoolStringBuilder : IDisposable
     {
         if (_ptr != IntPtr.Zero)
         {
-            CoolStringBuilderExtern.Dispose(_ptr);
+            CoolStringBuilderExtern.DisposeSafe(_ptr);
             _ptr = IntPtr.Zero;
         }
     }

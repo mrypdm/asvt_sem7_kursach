@@ -1,7 +1,13 @@
 import ctypes
+import os
 from typing import Callable
 
-__LIB_PATH = "../TestCppSharedLib/publish/libTestCppSharedLib.dll"
+if os.name == "nt":
+    __LIB_PATH = "../TestCppSharedLib/publish/libTestCppSharedLib.dll"
+elif os.name == "posix":
+    __LIB_PATH = "../TestCppSharedLib/publish/libTestCppSharedLib.so"
+else:
+    raise OSError("Unsupported OS")
 
 __LIB = ctypes.CDLL(__LIB_PATH, winmode=0)
 
@@ -16,29 +22,36 @@ __APPEND_LINE = getattr(__LIB, "CoolStringBuilder_AppendLine")  # type: Callable
 __APPEND_LINE.argtypes = (ctypes.c_void_p, ctypes.c_char_p,)
 __APPEND_LINE.restype = ctypes.c_void_p
 
-__TO_STRING = getattr(__LIB, "CoolStringBuilder_ToString")  # type: Callable[[ctypes.c_void_p], ctypes.c_void_p]
-__TO_STRING.argtypes = (ctypes.c_void_p,)
-__TO_STRING.restype = ctypes.c_void_p
+__GET_STRING = getattr(__LIB, "CoolStringBuilder_ToString")  # type: Callable[[ctypes.c_void_p], ctypes.c_void_p]
+__GET_STRING.argtypes = (ctypes.c_void_p,)
+__GET_STRING.restype = ctypes.c_void_p
 
-create = getattr(__LIB, "CreateCoolStringBuilder")  # type: Callable[[], ctypes.c_void_p]
+__DISPOSE = getattr(__LIB, "CoolStringBuilder_Dispose")  # type: Callable[[ctypes.c_void_p], ctypes.c_int8]
+__DISPOSE.argtypes = (ctypes.c_void_p,)
+__DISPOSE.restype = ctypes.c_int8
+
+create = getattr(__LIB, "CoolStringBuilder_Create")  # type: Callable[[], ctypes.c_void_p]
 create.restype = ctypes.c_void_p
 
-dispose = getattr(__LIB, "DisposeCoolStringBuilder")  # type: Callable[[ctypes.c_void_p], None]
-dispose.argtypes = (ctypes.c_void_p,)
+
+def dispose(ptr):
+    res = __DISPOSE(ptr)
+    if res != 0:
+        raise RuntimeError(f"Error while disposing object. Return code is {res}")
 
 
 def append(ptr: ctypes.c_void_p, value: str):
-    c_str = ctypes.c_char_p(value.encode('ansi'))
+    c_str = ctypes.c_char_p(value.encode('utf-8'))
     __APPEND(ptr, c_str)
 
 
 def append_line(ptr: ctypes.c_void_p, value: str):
-    c_str = ctypes.c_char_p(value.encode('ansi'))
+    c_str = ctypes.c_char_p(value.encode('utf-8'))
     __APPEND_LINE(ptr, c_str)
 
 
-def to_string(ptr):
-    c_str = __TO_STRING(ptr)
-    res = ctypes.c_char_p(c_str).value.decode('ansi')
+def get_string(ptr):
+    c_str = __GET_STRING(ptr)
+    res = ctypes.c_char_p(c_str).value.decode('utf-8')
     __FREE(c_str)
     return res

@@ -2,7 +2,7 @@
 
 var builder = new CoolStringBuilder();
 
-builder.Append("Hello").AppendLine(", world!").AppendLine("Example");
+builder.Append("Hello").AppendLine(", world!").AppendLine("Пример 😀");
 
 var str = builder.GetString();
 
