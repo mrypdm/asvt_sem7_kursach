@@ -15,12 +15,47 @@ internal static class CoolStringBuilderExtern
     internal static extern IntPtr Create();
 
     /// <summary>
+    /// Append string to builder
+    /// </summary>
+    /// <param name="ptr">Pointer to builder</param>
+    /// <param name="str">String to append</param>
+    /// <returns>Pointer to builder</returns>
+    internal static void AppendSafe(IntPtr ptr, string str) => Append(ptr, Encoding.UTF8.GetBytes(str));
+
+    /// <summary>
+    /// Append string with new-line to builder
+    /// </summary>
+    /// <param name="ptr">Pointer to builder</param>
+    /// <param name="str">String to append</param>
+    /// <returns>Pointer to builder</returns>
+    internal static void AppendLineSafe(IntPtr ptr, string str) => AppendLine(ptr, Encoding.UTF8.GetBytes(str));
+
+    /// <summary>
+    /// Get string from builder 
+    /// </summary>
+    /// <param name="ptr">Pointer to builder</param>
+    /// <returns>String from builder</returns>
+    internal static string? GetStringSafe(IntPtr ptr)
+    {
+        var cStr = IntPtr.Zero;
+        try
+        {
+            cStr = GetString(ptr);
+            return Marshal.PtrToStringUTF8(cStr);
+        }
+        finally
+        {
+            Free(cStr);
+        }
+    }
+
+    /// <summary>
     /// Clear builder instance
     /// </summary>
     /// <param name="ptr">Pointer to builder</param>
     /// <returns>Result code</returns>
     [DllImport(LibName, EntryPoint = "CoolStringBuilder_Dispose")]
-    private static extern int Dispose(IntPtr ptr);
+    internal static extern ushort Dispose(IntPtr ptr);
 
     /// <summary>
     /// Append string to builder
@@ -53,54 +88,4 @@ internal static class CoolStringBuilderExtern
     /// </summary>
     [DllImport(LibName, EntryPoint = "FreePtr")]
     private static extern void Free(IntPtr ptr);
-
-    /// <summary>
-    /// Append string to builder
-    /// </summary>
-    /// <param name="ptr">Pointer to builder</param>
-    /// <param name="str">String to append</param>
-    /// <returns>Pointer to builder</returns>
-    internal static IntPtr AppendSafe(IntPtr ptr, string str)
-    {
-        return Append(ptr, Encoding.UTF8.GetBytes(str));
-    }
-
-    /// <summary>
-    /// Append string with new-line to builder
-    /// </summary>
-    /// <param name="ptr">Pointer to builder</param>
-    /// <param name="str">String to append</param>
-    /// <returns>Pointer to builder</returns>
-    internal static IntPtr AppendLineSafe(IntPtr ptr, string str)
-    {
-        return AppendLine(ptr, Encoding.UTF8.GetBytes(str));
-    }
-    
-    /// <summary>
-    /// Get string from builder 
-    /// </summary>
-    /// <param name="ptr">Pointer to builder</param>
-    /// <returns>String from builder</returns>
-    internal static string? GetStringSafe(IntPtr ptr)
-    {
-        var cStr = IntPtr.Zero;
-        try
-        {
-            cStr = GetString(ptr);
-            return Marshal.PtrToStringUTF8(cStr);
-        }
-        finally
-        {
-            Free(cStr);
-        }
-    }
-
-    internal static void DisposeSafe(IntPtr ptr)
-    {
-        var res = Dispose(ptr);
-        if (res != 0)
-        {
-            throw new Exception($"Error while disposing object. Return code is {res}");
-        }
-    }
 }

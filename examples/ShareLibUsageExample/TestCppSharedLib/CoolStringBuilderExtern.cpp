@@ -8,8 +8,8 @@ void *CoolStringBuilder_Create() {
     return new CoolStringBuilder();
 }
 
-int8_t CoolStringBuilder_Dispose(void *ptr) {
-    if (ptr == nullptr) {
+uint16_t CoolStringBuilder_Dispose(void *ptr) {
+    if (!ptr) {
         return 1;
     }
     auto castedPtr = static_cast<CoolStringBuilder *>(ptr);
@@ -34,6 +34,8 @@ char *CoolStringBuilder_ToString(void *ptr) {
 }
 
 void FreePtr(void* ptr) {
-    free(ptr);
+    if (ptr) {
+        free(ptr);
+    }
 }
 }

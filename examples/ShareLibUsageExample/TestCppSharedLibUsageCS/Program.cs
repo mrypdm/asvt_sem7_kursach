@@ -1,6 +1,6 @@
 ﻿using TestCppSharedLibUsageCS;
 
-var builder = new CoolStringBuilder();
+using var builder = new CoolStringBuilder();
 
 builder.Append("Hello").AppendLine(", world!").AppendLine("Пример 😀");
 

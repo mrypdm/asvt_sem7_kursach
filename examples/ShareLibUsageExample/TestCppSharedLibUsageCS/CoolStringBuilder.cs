@@ -43,7 +43,7 @@ public class CoolStringBuilder : IDisposable
     {
         if (_ptr != IntPtr.Zero)
         {
-            CoolStringBuilderExtern.DisposeSafe(_ptr);
+            CoolStringBuilderExtern.Dispose(_ptr);
             _ptr = IntPtr.Zero;
         }
     }

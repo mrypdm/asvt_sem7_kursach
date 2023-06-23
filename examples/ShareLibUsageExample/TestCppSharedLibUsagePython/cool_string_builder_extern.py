@@ -26,18 +26,12 @@ __GET_STRING = getattr(__LIB, "CoolStringBuilder_ToString")  # type: Callable[[c
 __GET_STRING.argtypes = (ctypes.c_void_p,)
 __GET_STRING.restype = ctypes.c_void_p
 
-__DISPOSE = getattr(__LIB, "CoolStringBuilder_Dispose")  # type: Callable[[ctypes.c_void_p], ctypes.c_int8]
-__DISPOSE.argtypes = (ctypes.c_void_p,)
-__DISPOSE.restype = ctypes.c_int8
-
 create = getattr(__LIB, "CoolStringBuilder_Create")  # type: Callable[[], ctypes.c_void_p]
 create.restype = ctypes.c_void_p
 
-
-def dispose(ptr):
-    res = __DISPOSE(ptr)
-    if res != 0:
-        raise RuntimeError(f"Error while disposing object. Return code is {res}")
+dispose = getattr(__LIB, "CoolStringBuilder_Dispose")  # type: Callable[[ctypes.c_void_p], ctypes.c_uint16]
+dispose.argtypes = (ctypes.c_void_p,)
+dispose.restype = ctypes.c_uint16
 
 
 def append(ptr: ctypes.c_void_p, value: str):
