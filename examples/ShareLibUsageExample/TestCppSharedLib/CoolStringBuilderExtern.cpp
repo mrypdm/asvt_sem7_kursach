@@ -1,3 +1,4 @@
+#include "CoolStringBuilder.hpp"
 #include "CoolStringBuilderExtern.h"
 
 #include <iostream>

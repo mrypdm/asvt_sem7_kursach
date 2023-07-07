@@ -1,7 +1,5 @@
 #pragma once
 
-#include "CoolStringBuilder.h"
-
 extern "C" {
 void *CoolStringBuilder_Create();
 
