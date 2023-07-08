@@ -1,0 +1,10 @@
+.idea/
+.vs/
+.vscode/
+.venv/
+__pycache__/
+
+bin/
+obj/
+out/
+publish/
