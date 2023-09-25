@@ -121,8 +121,6 @@ Command:
 
 > Мб вместо классов просто Callable использовать, в целом все команды ведь уже изветсны, их можно статически прописать
 
-
 ### Классовые диаграммы
-![изображение](https://github.com/mrypdm/asvt_sem7_kursach/assets/71212784/450b3963-4ffe-435a-bf25-22403f1d51c9)
-![изображение](https://github.com/mrypdm/asvt_sem7_kursach/assets/71212784/1d2dec8a-9c70-4436-87ae-45533d386265)
-
+![Схема ассемблера](./class-map/Assembler.png)
+![Схема исполнителя](./class-map/Executor.png)
