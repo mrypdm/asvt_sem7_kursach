@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Media;
 using GUI.Controls;
 using GUI.Exceptions;
 using GUI.Managers;
@@ -20,6 +21,7 @@ public class MainWindowViewModel : ReactiveObject
 {
     private readonly FileManager _fileManager;
     private readonly TabManager _tabManager;
+    private readonly SettingsManager _settingsManager;
 
     /// <summary>
     /// Empty constructor for designer
@@ -43,8 +45,13 @@ public class MainWindowViewModel : ReactiveObject
         CloseFileCommand = ReactiveCommand.CreateFromTask(CloseFileAsync);
         SelectTabCommand = ReactiveCommand.CreateFromTask<FileTab>(SelectTabAsync);
 
+        OpenSettingsWindowCommand = ReactiveCommand.Create(OpenSettingsWindow);
+
         _fileManager = new FileManager(window.StorageProvider);
         _tabManager = new TabManager(SelectTabCommand);
+        _settingsManager = SettingsManager.Create();
+
+        _settingsManager.PropertyChanged += (_, args) => this.RaisePropertyChanged(args.PropertyName);
     }
 
     /// <summary>
@@ -82,6 +89,8 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     public ReactiveCommand<Unit, Unit> CloseFileCommand { get; }
 
+    public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
+
     /// <summary>
     /// Command for selecting tab. Sets to tab at runtime
     /// </summary>
@@ -95,12 +104,12 @@ public class MainWindowViewModel : ReactiveObject
     /// <summary>
     /// Current text of <see cref="MainWindow.SourceCodeTextBox"/>
     /// </summary>
-    public string CurrentFileText
+    public string FileContent
     {
-        get => CurrentFile.Text;
+        get => File.Text;
         set
         {
-            CurrentFile.Text = value;
+            File.Text = value;
             this.RaisePropertyChanged();
         }
     }
@@ -108,7 +117,11 @@ public class MainWindowViewModel : ReactiveObject
     /// <summary>
     /// Reference to current file
     /// </summary>
-    private FileModel CurrentFile => _tabManager.CurrentTab.File;
+    private FileModel File => _tabManager.Tab.File;
+
+    public FontFamily FontFamily => _settingsManager.FontFamily;
+
+    public double FontSize => _settingsManager.FontSize;
 
     /// <summary>
     /// Creates new file and tab for it
@@ -165,7 +178,7 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     private async Task SaveFileAsync()
     {
-        await _fileManager.SaveFileAsync(CurrentFile);
+        await _fileManager.SaveFileAsync(File);
     }
 
     /// <summary>
@@ -173,7 +186,7 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     private async Task SaveFileAsAsync()
     {
-        await _fileManager.SaveFileAsAsync(CurrentFile);
+        await _fileManager.SaveFileAsAsync(File);
     }
 
     /// <summary>
@@ -192,14 +205,14 @@ public class MainWindowViewModel : ReactiveObject
     {
         var res = await MessageBoxManager
             .GetMessageBoxStandard("Confirmation",
-                $"Are you sure you want to delete the file '{CurrentFile.FileName}'?",
+                $"Are you sure you want to delete the file '{File.FileName}'?",
                 ButtonEnum.YesNo, Icon.Question)
             .ShowAsync();
 
         if (res == ButtonResult.Yes)
         {
-            _fileManager.Delete(CurrentFile);
-            _tabManager.DeleteTab(_tabManager.CurrentTab);
+            _fileManager.Delete(File);
+            _tabManager.DeleteTab(_tabManager.Tab);
         }
     }
 
@@ -209,7 +222,7 @@ public class MainWindowViewModel : ReactiveObject
     private async Task CloseFileAsync()
     {
         var res = await MessageBoxManager
-            .GetMessageBoxStandard("Confirmation", $"Do you want to save the file '{CurrentFile.FileName}'?",
+            .GetMessageBoxStandard("Confirmation", $"Do you want to save the file '{File.FileName}'?",
                 ButtonEnum.YesNo, Icon.Question)
             .ShowAsync();
 
@@ -218,33 +231,33 @@ public class MainWindowViewModel : ReactiveObject
             await SaveFileAsync();
         }
 
-        _tabManager.DeleteTab(_tabManager.CurrentTab);
+        _tabManager.DeleteTab(_tabManager.Tab);
     }
 
     /// <summary>
     /// Synchronizes a file in memory with a file on disk
     /// </summary>
-    /// <param name="currentFile">Current file info</param>
-    private async Task SyncFile(FileModel currentFile)
+    /// <param name="file">Current file info</param>
+    private async Task SyncFile(FileModel file)
     {
-        if (string.IsNullOrWhiteSpace(currentFile.FilePath))
+        if (string.IsNullOrWhiteSpace(file.FilePath))
         {
             return;
         }
 
-        var fileOnDisk = await _fileManager.OpenFileAsync(currentFile.FilePath);
+        var fileOnDisk = await _fileManager.OpenFileAsync(file.FilePath);
 
-        if (fileOnDisk.Text != currentFile.Text)
+        if (fileOnDisk.Text != file.Text)
         {
             var res = await MessageBoxManager
                 .GetMessageBoxStandard("Confirmation",
-                    $"The file '{currentFile.FileName}' has been modified. Load changes from disk?",
+                    $"The file '{file.FileName}' has been modified. Load changes from disk?",
                     ButtonEnum.YesNo, Icon.Question)
                 .ShowAsync();
 
             if (res == ButtonResult.Yes)
             {
-                currentFile.Text = fileOnDisk.Text;
+                file.Text = fileOnDisk.Text;
             }
         }
     }
@@ -259,6 +272,12 @@ public class MainWindowViewModel : ReactiveObject
 
         _tabManager.SelectTab(tab);
 
-        this.RaisePropertyChanged(nameof(CurrentFileText));
+        this.RaisePropertyChanged(nameof(FileContent));
+    }
+
+    private void OpenSettingsWindow()
+    {
+        var settingsWindow = new SettingsWindow();
+        settingsWindow.Show();
     }
 }

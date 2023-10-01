@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 
 namespace GUI;
@@ -11,7 +12,7 @@ public static class Program
     // yet and stuff might break.
     [STAThread]
     public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+        .StartWithClassicDesktopLifetime(args, ShutdownMode.OnMainWindowClose);
 
     // Avalonia configuration, don't remove; also used by visual designer.
     private static AppBuilder BuildAvaloniaApp()

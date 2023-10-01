@@ -32,7 +32,7 @@ public class TabManager
     /// <summary>
     /// Current selected tab
     /// </summary>
-    public FileTab CurrentTab { get; private set; }
+    public FileTab Tab { get; private set; }
 
     /// <summary>
     /// Collection of all tabs
@@ -90,12 +90,12 @@ public class TabManager
     /// <param name="tab">Tab reference</param>
     public void SelectTab(FileTab tab)
     {
-        if (CurrentTab != null)
+        if (Tab != null)
         {
-            CurrentTab.Background = DefaultBackground;
+            Tab.Background = DefaultBackground;
         }
 
-        CurrentTab = tab;
-        CurrentTab.Background = SelectedBackground;
+        Tab = tab;
+        Tab.Background = SelectedBackground;
     }
 }

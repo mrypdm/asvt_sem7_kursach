@@ -4,8 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:GUI.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="GUI.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
+        FontFamily="Century Gothic" FontSize="14"
+        x:Class="GUI.MainWindow" x:DataType="vm:MainWindowViewModel"
         Title="GUI">
     <Design.DataContext>
         <vm:MainWindowViewModel />
@@ -26,7 +26,8 @@
             </MenuItem>
             <MenuItem Header="Build" Margin="5,0,5,0" HotKey="Ctrl+F5" ToolTip.Tip="Ctrl+F5" />
             <MenuItem Header="Run" Margin="5,0,5,0" HotKey="F5" ToolTip.Tip="F5" />
-            <MenuItem Header="Settings" Margin="5,0,5,0" HotKey="Ctrl+Alt+S" ToolTip.Tip="Ctrl+Alt+S" />
+            <MenuItem Header="Settings" Margin="5,0,5,0" HotKey="Ctrl+Alt+S" ToolTip.Tip="Ctrl+Alt+S"
+                      Command="{Binding OpenSettingsWindowCommand}" />
             <MenuItem Header="Help" Margin="5,0,5,0">
                 <MenuItem Header="Tutorials" />
                 <MenuItem Header="About" />
@@ -39,8 +40,8 @@
 
         <TextBox Name="SourceCodeTextBox"
                  AcceptsReturn="True" AcceptsTab="True"
-                 FontFamily="Courier New" FontSize="24"
+                 FontFamily="{Binding FontFamily}" FontSize="{Binding FontSize}"
                  Margin="5,5,5,5"
-                 Text="{Binding CurrentFileText}" />
+                 Text="{Binding FileContent}" />
     </DockPanel>
 </Window>
