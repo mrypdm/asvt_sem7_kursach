@@ -13,16 +13,25 @@ using ReactiveUI;
 
 namespace GUI.ViewModels;
 
+/// <summary>
+/// View model for <see cref="MainWindow"/>
+/// </summary>
 public class MainWindowViewModel : ReactiveObject
 {
     private readonly FileManager _fileManager;
     private readonly TabManager _tabManager;
 
+    /// <summary>
+    /// Empty constructor for designer
+    /// </summary>
     public MainWindowViewModel()
     {
-        // only for designer
     }
 
+    /// <summary>
+    /// Creates new instance of main window view model
+    /// </summary>
+    /// <param name="window">Reference to <see cref="MainWindow"/></param>
     public MainWindowViewModel(TopLevel window)
     {
         CreateFileCommand = ReactiveCommand.CreateFromTask(CreateFileAsync);
@@ -38,28 +47,54 @@ public class MainWindowViewModel : ReactiveObject
         _tabManager = new TabManager(SelectTabCommand);
     }
 
-    #region Commands
-
+    /// <summary>
+    /// Command for creating file
+    /// </summary>
     public ReactiveCommand<Unit, Unit> CreateFileCommand { get; }
 
+    /// <summary>
+    /// Command for opening file
+    /// </summary>
     public ReactiveCommand<Unit, Unit> OpenFileCommand { get; }
 
+    /// <summary>
+    /// Command for saving file
+    /// </summary>
     public ReactiveCommand<Unit, Unit> SaveFileCommand { get; }
 
+    /// <summary>
+    /// Command for saving file on new path
+    /// </summary>
     public ReactiveCommand<Unit, Unit> SaveFileAsCommand { get; }
 
+    /// <summary>
+    /// Command for saving all files
+    /// </summary>
     public ReactiveCommand<Unit, Unit> SaveAllFilesCommand { get; }
 
+    /// <summary>
+    /// Command for deleting file
+    /// </summary>
     public ReactiveCommand<Unit, Unit> DeleteFileCommand { get; }
 
+    /// <summary>
+    /// Command for closing file
+    /// </summary>
     public ReactiveCommand<Unit, Unit> CloseFileCommand { get; }
 
-    #endregion
-
+    /// <summary>
+    /// Command for selecting tab. Sets to tab at runtime
+    /// </summary>
     private ReactiveCommand<FileTab, Unit> SelectTabCommand { get; }
 
+    /// <summary>
+    /// Collection of tabs
+    /// </summary>
     public ObservableCollection<FileTab> Tabs => _tabManager.Tabs;
 
+    /// <summary>
+    /// Current text of <see cref="MainWindow.SourceCodeTextBox"/>
+    /// </summary>
     public string CurrentFileText
     {
         get => CurrentFile.Text;
@@ -70,8 +105,14 @@ public class MainWindowViewModel : ReactiveObject
         }
     }
 
+    /// <summary>
+    /// Reference to current file
+    /// </summary>
     private FileModel CurrentFile => _tabManager.CurrentTab.File;
 
+    /// <summary>
+    /// Creates new file and tab for it
+    /// </summary>
     private async Task CreateFileAsync()
     {
         try
@@ -94,6 +135,9 @@ public class MainWindowViewModel : ReactiveObject
         }
     }
 
+    /// <summary>
+    /// Opens file and creates tab for it
+    /// </summary>
     private async Task OpenFileAsync()
     {
         try
@@ -116,22 +160,34 @@ public class MainWindowViewModel : ReactiveObject
         }
     }
 
+    /// <summary>
+    /// Saves current file
+    /// </summary>
     private async Task SaveFileAsync()
     {
         await _fileManager.SaveFileAsync(CurrentFile);
     }
 
+    /// <summary>
+    /// Saves current file on new path
+    /// </summary>
     private async Task SaveFileAsAsync()
     {
         await _fileManager.SaveFileAsAsync(CurrentFile);
     }
 
-    private Task SaveAllFilesAsync()
+    /// <summary>
+    /// Saves all files
+    /// </summary>
+    private async Task SaveAllFilesAsync()
     {
         var tasks = Tabs.Select(t => t.File).Select(f => _fileManager.SaveFileAsync(f));
-        return Task.WhenAll(tasks);
+        await Task.WhenAll(tasks);
     }
 
+    /// <summary>
+    /// Deletes current file
+    /// </summary>
     private async Task DeleteFileAsync()
     {
         var res = await MessageBoxManager
@@ -147,6 +203,9 @@ public class MainWindowViewModel : ReactiveObject
         }
     }
 
+    /// <summary>
+    /// Closes current file
+    /// </summary>
     private async Task CloseFileAsync()
     {
         var res = await MessageBoxManager
@@ -162,6 +221,10 @@ public class MainWindowViewModel : ReactiveObject
         _tabManager.DeleteTab(_tabManager.CurrentTab);
     }
 
+    /// <summary>
+    /// Synchronizes a file in memory with a file on disk
+    /// </summary>
+    /// <param name="currentFile">Current file info</param>
     private async Task SyncFile(FileModel currentFile)
     {
         if (string.IsNullOrWhiteSpace(currentFile.FilePath))
@@ -186,6 +249,10 @@ public class MainWindowViewModel : ReactiveObject
         }
     }
 
+    /// <summary>
+    /// Change current tab
+    /// </summary>
+    /// <param name="tab">Tab to switch to</param>
     private async Task SelectTabAsync(FileTab tab)
     {
         await SyncFile(tab.File);
