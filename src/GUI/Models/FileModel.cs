@@ -15,7 +15,7 @@ public record FileModel
     /// <summary>
     /// Path to file
     /// </summary>
-    public string FilePath { get; set; } = null;
+    public string FilePath { get; set; }
 
     /// <summary>
     /// File name
