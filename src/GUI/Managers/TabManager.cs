@@ -3,9 +3,9 @@ using System.Linq;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Media;
-using GUI.Controls;
 using GUI.Exceptions;
 using GUI.Models;
+using GUI.Views;
 
 namespace GUI.Managers;
 

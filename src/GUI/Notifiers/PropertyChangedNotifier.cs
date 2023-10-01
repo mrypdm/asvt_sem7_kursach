@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace GUI.Managers;
+namespace GUI.Notifiers;
 
 public class PropertyChangedNotifier : INotifyPropertyChanged
 {

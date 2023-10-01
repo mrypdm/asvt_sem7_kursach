@@ -6,8 +6,8 @@ using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using DynamicData;
 using DynamicData.Binding;
-using GUI.Controls;
 using GUI.Managers;
+using GUI.Views;
 using ReactiveUI;
 
 namespace GUI.ViewModels;
@@ -38,11 +38,22 @@ public class SettingsViewModel : ReactiveObject
         DeleteExternalDeviceCommand = ReactiveCommand.Create(DeleteExternalDevices);
     }
 
+    /// <summary>
+    /// Command for adding external devices
+    /// </summary>
     public ReactiveCommand<Unit, Unit> AddExternalDeviceCommand { get; }
+    
+    /// <summary>
+    /// Command for deleting external devices
+    /// </summary>
     public ReactiveCommand<Unit, Unit> DeleteExternalDeviceCommand { get; }
 
+    /// <summary>
+    /// Collection with all fonts
+    /// </summary>
     public ObservableCollection<FontFamily> AllFontFamilies { get; }
 
+    /// <inheritdoc cref="SettingsManager.ExternalDevices"/>
     public ObservableCollection<string> ExternalDevices
     {
         get => _settingsManager.ExternalDevices;
@@ -53,18 +64,37 @@ public class SettingsViewModel : ReactiveObject
         }
     }
 
+    /// <summary>
+    /// Collection with selected external devices
+    /// </summary>
     public ObservableCollection<string> SelectedExternalDevices { get; set; } = new();
 
+    /// <inheritdoc cref="SettingsManager.FontFamily"/>
     public FontFamily FontFamily
     {
         get => _settingsManager.FontFamily;
         set => _settingsManager.FontFamily = value;
     }
 
+    /// <inheritdoc cref="SettingsManager.FontSize"/>
     public double FontSize
     {
         get => _settingsManager.FontSize;
         set => _settingsManager.FontSize = value;
+    }
+
+    /// <inheritdoc cref="SettingsManager.ProgramAddress"/>
+    public int ProgramAddress
+    {
+        get => _settingsManager.ProgramAddress;
+        set => _settingsManager.ProgramAddress = value;
+    }
+
+    /// <inheritdoc cref="SettingsManager.StackAddress"/>
+    public int StackAddress
+    {
+        get => _settingsManager.StackAddress;
+        set => _settingsManager.StackAddress = value;
     }
 
     private async Task AddExternalDeviceAsync()

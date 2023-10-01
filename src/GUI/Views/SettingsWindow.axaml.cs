@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using GUI.ViewModels;
 
-namespace GUI.Controls;
+namespace GUI.Views;
 
 public partial class SettingsWindow : Window
 {

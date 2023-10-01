@@ -4,9 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:GUI.ViewModels"
         xmlns:converter="clr-namespace:GUI.Converters"
-        mc:Ignorable="d" SizeToContent="WidthAndHeight" MinWidth="300"
+        mc:Ignorable="d" SizeToContent="WidthAndHeight" MinWidth="500"
         FontFamily="Century Gothic" FontSize="14"
-        x:Class="GUI.Controls.SettingsWindow" x:DataType="vm:SettingsViewModel"
+        x:Class="GUI.Views.SettingsWindow" x:DataType="vm:SettingsViewModel"
         Title="SettingsWindow">
     <Design.DataContext>
         <vm:SettingsViewModel />
@@ -14,6 +14,7 @@
 
     <Window.Resources>
         <converter:StringDoubleConverter x:Key="StringDoubleConverter" />
+        <converter:StringOctalConverter x:Key="StringOctalConverter" />
     </Window.Resources>
 
     <StackPanel>
@@ -22,6 +23,12 @@
 
         <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Font Size</Label>
         <TextBox Margin="5,0,5,0" Text="{Binding FontSize, Converter={StaticResource StringDoubleConverter}}" />
+        
+        <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Program pointer address (octal)</Label>
+        <TextBox Margin="5,0,5,0" Text="{Binding ProgramAddress, Converter={StaticResource StringOctalConverter}}" />
+        
+        <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Stack pointer address (octal)</Label>
+        <TextBox Margin="5,0,5,0" Text="{Binding StackAddress, Converter={StaticResource StringOctalConverter}}" />
 
         <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">External Devices</Label>
         <ListBox Margin="5,0,5,0" MinHeight="150" ItemsSource="{Binding ExternalDevices}"

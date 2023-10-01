@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using GUI.Models;
 
-namespace GUI.Controls;
+namespace GUI.Views;
 
 /// <summary>
 /// Extended menu item containing a reference to a file

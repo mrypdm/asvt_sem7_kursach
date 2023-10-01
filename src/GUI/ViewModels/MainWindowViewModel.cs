@@ -4,10 +4,10 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Media;
-using GUI.Controls;
 using GUI.Exceptions;
 using GUI.Managers;
 using GUI.Models;
+using GUI.Views;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
@@ -89,6 +89,9 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     public ReactiveCommand<Unit, Unit> CloseFileCommand { get; }
 
+    /// <summary>
+    /// Command for opening <see cref="SettingsWindow"/>
+    /// </summary>
     public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
 
     /// <summary>
@@ -119,8 +122,10 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     private FileModel File => _tabManager.Tab.File;
 
+    /// <inheritdoc cref="SettingsManager.FontFamily"/>
     public FontFamily FontFamily => _settingsManager.FontFamily;
 
+    /// <inheritdoc cref="SettingsManager.FontSize"/>
     public double FontSize => _settingsManager.FontSize;
 
     /// <summary>
@@ -275,6 +280,9 @@ public class MainWindowViewModel : ReactiveObject
         this.RaisePropertyChanged(nameof(FileContent));
     }
 
+    /// <summary>
+    /// Opens <see cref="SettingsWindow"/>
+    /// </summary>
     private void OpenSettingsWindow()
     {
         var settingsWindow = new SettingsWindow();

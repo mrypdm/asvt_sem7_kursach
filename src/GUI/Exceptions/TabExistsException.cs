@@ -1,5 +1,5 @@
 ﻿using System;
-using GUI.Controls;
+using GUI.Views;
 
 namespace GUI.Exceptions;
 
