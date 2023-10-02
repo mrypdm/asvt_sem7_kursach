@@ -48,7 +48,7 @@ public class TabManager
     /// <exception cref="TabExistsException">If tab for file already exists</exception>
     public FileTab CreateTab(FileModel file, ICommand command = null)
     {
-        var tab = Tabs.SingleOrDefault(t => t.Tag as FileModel == file);
+        var tab = Tabs.SingleOrDefault(t => t.File == file);
         if (tab != null)
         {
             throw new TabExistsException("Tab for that file already exists")
