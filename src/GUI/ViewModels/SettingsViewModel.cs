@@ -27,13 +27,18 @@ public class SettingsViewModel : ReactiveObject
     /// Creates new instance of settings window view model
     /// </summary>
     /// <param name="window">Reference to <see cref="SettingsWindow"/></param>
-    public SettingsViewModel(TopLevel window)
+    public SettingsViewModel(Window window)
     {
         _storageProvider = window.StorageProvider;
         AllFontFamilies = new ObservableCollectionExtended<FontFamily>(FontManager.Current.SystemFonts);
         
         AddExternalDeviceCommand = ReactiveCommand.CreateFromTask(AddExternalDeviceAsync);
         DeleteExternalDeviceCommand = ReactiveCommand.Create(DeleteExternalDevices);
+
+        window.Closing += async (_, _) =>
+        {
+            await SettingsManager.Instance.SaveGlobalSettings();
+        };
     }
 
     /// <summary>

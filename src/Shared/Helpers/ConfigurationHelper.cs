@@ -1,13 +1,23 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
-namespace Shared;
+namespace Shared.Helpers;
 
-public static class Configuration
+public static class ConfigurationHelper
 {
     public const string DefaultJsonFile = "appsettings.json";
 
     public static IConfigurationRoot BuildFromJson(string filePath = DefaultJsonFile) =>
-        new ConfigurationBuilder().AddJsonFile(filePath).Build();
+        new ConfigurationBuilder().AddJsonFile(filePath, optional: false, reloadOnChange: true).Build();
+
+    public static Task SaveToJson(IDictionary<string, object> values, string filePath = DefaultJsonFile)
+    {
+        return File.WriteAllTextAsync(filePath,
+            JsonSerializer.Serialize(values, new JsonSerializerOptions { WriteIndented = true }));
+    }
 
     public static TOption GetOptions<TOption>(this IConfigurationRoot configuration, string section = null)
         where TOption : new()

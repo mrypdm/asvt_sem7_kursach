@@ -21,7 +21,6 @@ public class MainWindowViewModel : ReactiveObject
 {
     private readonly FileManager _fileManager;
     private readonly TabManager _tabManager;
-    private readonly SettingsManager _settingsManager;
 
     /// <summary>
     /// Empty constructor for designer

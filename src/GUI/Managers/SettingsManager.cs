@@ -1,7 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using Avalonia.Media;
 using GUI.Models;
 using GUI.Notifiers;
+using Microsoft.Extensions.Configuration;
+using Shared.Helpers;
 
 namespace GUI.Managers;
 
@@ -10,8 +14,9 @@ namespace GUI.Managers;
 /// </summary>
 public sealed class SettingsManager : PropertyChangedNotifier
 {
-    private FontFamily _fontFamily = new("Courier New");
-    private double _fontSize = 24;
+    private FontFamily _fontFamily;
+    private double _fontSize;
+
     private int _programAddress = 1024; // 0o2000
     private int _stackAddress = 1024; // 0o2000
 
@@ -68,13 +73,32 @@ public sealed class SettingsManager : PropertyChangedNotifier
     /// <summary>
     /// Creates settings manager
     /// </summary>
-    /// <param name="options"></param>
-    public static void Create(EditorOptions options)
+    /// <param name="globalConfiguration">Global configuration of editor</param>
+    public static void Create(IConfigurationRoot globalConfiguration)
     {
+        var editorOptions = globalConfiguration.GetOptions<EditorOptions>();
+
         Instance ??= new SettingsManager
         {
-            FontFamily = options.FontFamily,
-            FontSize = options.FontSize
+            FontFamily = editorOptions.FontFamily,
+            FontSize = editorOptions.FontSize
         };
+    }
+
+    /// <summary>
+    /// Save editor settings to disk <see cref="FontFamily"/>, <see cref="FontSize"/>
+    /// </summary>
+    public async Task SaveGlobalSettings()
+    {
+        await ConfigurationHelper.SaveToJson(new Dictionary<string, object>
+        {
+            {
+                nameof(EditorOptions), new EditorOptions
+                {
+                    FontFamily = FontFamily.Name,
+                    FontSize = FontSize
+                }
+            }
+        });
     }
 }
