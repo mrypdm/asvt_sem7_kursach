@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using Avalonia.Media;
+using GUI.Models;
 using GUI.Notifiers;
 
 namespace GUI.Managers;
@@ -55,15 +56,25 @@ public sealed class SettingsManager : PropertyChangedNotifier
         set => SetField(ref _stackAddress, value);
     }
 
+    /// <summary>
+    /// Get instance of settings manager
+    /// </summary>
+    public static SettingsManager Instance { get; private set; }
+
     private SettingsManager()
     {
     }
 
-    private static SettingsManager _instance;
-
-    public static SettingsManager Create()
+    /// <summary>
+    /// Creates settings manager
+    /// </summary>
+    /// <param name="options"></param>
+    public static void Create(EditorOptions options)
     {
-        _instance ??= new SettingsManager();
-        return _instance;
+        Instance ??= new SettingsManager
+        {
+            FontFamily = options.FontFamily,
+            FontSize = options.FontSize
+        };
     }
 }

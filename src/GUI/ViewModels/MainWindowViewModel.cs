@@ -49,9 +49,8 @@ public class MainWindowViewModel : ReactiveObject
 
         _fileManager = new FileManager(window.StorageProvider);
         _tabManager = new TabManager(SelectTabCommand);
-        _settingsManager = SettingsManager.Create();
 
-        _settingsManager.PropertyChanged += (_, args) => this.RaisePropertyChanged(args.PropertyName);
+        SettingsManager.Instance.PropertyChanged += (_, args) => this.RaisePropertyChanged(args.PropertyName);
     }
 
     /// <summary>
@@ -123,10 +122,10 @@ public class MainWindowViewModel : ReactiveObject
     private FileModel File => _tabManager.Tab.File;
 
     /// <inheritdoc cref="SettingsManager.FontFamily"/>
-    public FontFamily FontFamily => _settingsManager.FontFamily;
+    public FontFamily FontFamily => SettingsManager.Instance.FontFamily;
 
     /// <inheritdoc cref="SettingsManager.FontSize"/>
-    public double FontSize => _settingsManager.FontSize;
+    public double FontSize => SettingsManager.Instance.FontSize;
 
     /// <summary>
     /// Creates new file and tab for it

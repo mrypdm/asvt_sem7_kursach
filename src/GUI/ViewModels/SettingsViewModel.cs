@@ -14,7 +14,6 @@ namespace GUI.ViewModels;
 
 public class SettingsViewModel : ReactiveObject
 {
-    private readonly SettingsManager _settingsManager;
     private readonly IStorageProvider _storageProvider;
 
     /// <summary>
@@ -30,7 +29,6 @@ public class SettingsViewModel : ReactiveObject
     /// <param name="window">Reference to <see cref="SettingsWindow"/></param>
     public SettingsViewModel(TopLevel window)
     {
-        _settingsManager = SettingsManager.Create();
         _storageProvider = window.StorageProvider;
         AllFontFamilies = new ObservableCollectionExtended<FontFamily>(FontManager.Current.SystemFonts);
         
@@ -56,10 +54,10 @@ public class SettingsViewModel : ReactiveObject
     /// <inheritdoc cref="SettingsManager.ExternalDevices"/>
     public ObservableCollection<string> ExternalDevices
     {
-        get => _settingsManager.ExternalDevices;
+        get => SettingsManager.Instance.ExternalDevices;
         set
         {
-            _settingsManager.ExternalDevices = value;
+            SettingsManager.Instance.ExternalDevices = value;
             this.RaisePropertyChanged();
         }
     }
@@ -72,29 +70,29 @@ public class SettingsViewModel : ReactiveObject
     /// <inheritdoc cref="SettingsManager.FontFamily"/>
     public FontFamily FontFamily
     {
-        get => _settingsManager.FontFamily;
-        set => _settingsManager.FontFamily = value;
+        get => SettingsManager.Instance.FontFamily;
+        set => SettingsManager.Instance.FontFamily = value;
     }
 
     /// <inheritdoc cref="SettingsManager.FontSize"/>
     public double FontSize
     {
-        get => _settingsManager.FontSize;
-        set => _settingsManager.FontSize = value;
+        get => SettingsManager.Instance.FontSize;
+        set => SettingsManager.Instance.FontSize = value;
     }
 
     /// <inheritdoc cref="SettingsManager.ProgramAddress"/>
     public int ProgramAddress
     {
-        get => _settingsManager.ProgramAddress;
-        set => _settingsManager.ProgramAddress = value;
+        get => SettingsManager.Instance.ProgramAddress;
+        set => SettingsManager.Instance.ProgramAddress = value;
     }
 
     /// <inheritdoc cref="SettingsManager.StackAddress"/>
     public int StackAddress
     {
-        get => _settingsManager.StackAddress;
-        set => _settingsManager.StackAddress = value;
+        get => SettingsManager.Instance.StackAddress;
+        set => SettingsManager.Instance.StackAddress = value;
     }
 
     private async Task AddExternalDeviceAsync()
@@ -111,11 +109,11 @@ public class SettingsViewModel : ReactiveObject
             return;
         }
 
-        _settingsManager.ExternalDevices.Add(file[0].Path.AbsolutePath);
+        SettingsManager.Instance.ExternalDevices.Add(file[0].Path.AbsolutePath);
     }
 
     private void DeleteExternalDevices()
     {
-        _settingsManager.ExternalDevices.RemoveMany(SelectedExternalDevices);
+        SettingsManager.Instance.ExternalDevices.RemoveMany(SelectedExternalDevices);
     }
 }
