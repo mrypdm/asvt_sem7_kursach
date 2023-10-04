@@ -7,9 +7,9 @@ namespace GUI.Views;
 /// <summary>
 /// Extended menu item containing a reference to a file
 /// </summary>
-public class FileTab : MenuItem
+public class FileTab : Button
 {
-    protected override Type StyleKeyOverride => typeof(MenuItem);
+    protected override Type StyleKeyOverride => typeof(Button);
 
     /// <summary>
     /// Creates new instance of file tab

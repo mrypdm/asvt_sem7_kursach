@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:vm="clr-namespace:GUI.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         FontFamily="Century Gothic" FontSize="14"
@@ -11,22 +12,41 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Ctrl+N" Command="{Binding CreateFileCommand}" />
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFileCommand}" />
+        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveFileCommand}">
+            <KeyBinding.CommandParameter>
+                <sys:Boolean>False</sys:Boolean>
+            </KeyBinding.CommandParameter>
+        </KeyBinding>
+        <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAllFilesCommand}" />
+        <KeyBinding Gesture="Ctrl+W" Command="{Binding CloseFileCommand}" />
+        <KeyBinding Gesture="Ctrl+Alt+S" Command="{Binding OpenSettingsWindowCommand}" />
+    </Window.KeyBindings>
+
     <DockPanel>
         <Menu DockPanel.Dock="Top" Margin="0,5,0,0">
             <MenuItem Header="File" Margin="5,0,5,0">
-                <MenuItem Header="Create" HotKey="Ctrl+N" InputGesture="Ctrl+N" Command="{Binding CreateFileCommand}" />
-                <MenuItem Header="Open" HotKey="Ctrl+O" InputGesture="Ctrl+O" Command="{Binding OpenFileCommand}" />
-                <MenuItem Header="Save" HotKey="Ctrl+S" InputGesture="Ctrl+S" Command="{Binding SaveFileCommand}" />
-                <MenuItem Header="Save As" HotKey="Ctrl+Alt+S" InputGesture="Ctrl+Alt+S"
-                          Command="{Binding SaveFileAsCommand}" />
-                <MenuItem Header="Save All" HotKey="Ctrl+Shift+S" InputGesture="Ctrl+Shift+S"
-                          Command="{Binding SaveAllFilesCommand}" />
+                <MenuItem Header="Create" InputGesture="Ctrl+N" Command="{Binding CreateFileCommand}"/>
+                <MenuItem Header="Open" InputGesture="Ctrl+O" Command="{Binding OpenFileCommand}"/>
+                <MenuItem Header="Save" InputGesture="Ctrl+S" Command="{Binding SaveFileCommand}">
+                    <MenuItem.CommandParameter>
+                        <sys:Boolean>False</sys:Boolean>
+                    </MenuItem.CommandParameter>
+                </MenuItem>
+                <MenuItem Header="Save As" Command="{Binding SaveFileCommand}">
+                    <MenuItem.CommandParameter>
+                        <sys:Boolean>True</sys:Boolean>
+                    </MenuItem.CommandParameter>
+                </MenuItem>
+                <MenuItem Header="Save All" InputGesture="Ctrl+Shift+S" Command="{Binding SaveAllFilesCommand}"/>
                 <MenuItem Header="Delete" Command="{Binding DeleteFileCommand}" />
-                <MenuItem Header="Close" HotKey="Ctrl+W" InputGesture="Ctrl+W" Command="{Binding CloseFileCommand}" />
+                <MenuItem Header="Close" InputGesture="Ctrl+W" Command="{Binding CloseFileCommand}" />
             </MenuItem>
             <MenuItem Header="Build" Margin="5,0,5,0" HotKey="Ctrl+F5" ToolTip.Tip="Ctrl+F5" />
             <MenuItem Header="Run" Margin="5,0,5,0" HotKey="F5" ToolTip.Tip="F5" />
-            <MenuItem Header="Settings" Margin="5,0,5,0" HotKey="Ctrl+Alt+S" ToolTip.Tip="Ctrl+Alt+S"
+            <MenuItem Header="Settings" Margin="5,0,5,0" ToolTip.Tip="Ctrl+Alt+S"
                       Command="{Binding OpenSettingsWindowCommand}" />
             <MenuItem Header="Help" Margin="5,0,5,0">
                 <MenuItem Header="Tutorials" />
@@ -36,12 +56,13 @@
 
         <Separator DockPanel.Dock="Top" Height="2" />
 
-        <Menu Name="FileTabsMenu" FontSize="16" DockPanel.Dock="Top" ItemsSource="{Binding Tabs}" />
+        <ListBox Name="FileTabsListBox" FontSize="14" Margin="5,0,0,0" DockPanel.Dock="Left"
+                 ItemsSource="{Binding Tabs}" />
 
         <TextBox Name="SourceCodeTextBox"
                  AcceptsReturn="True" AcceptsTab="True"
                  FontFamily="{Binding FontFamily}" FontSize="{Binding FontSize}"
-                 Margin="5,5,5,5"
+                 Margin="5,0,5,0"
                  Text="{Binding FileContent}" />
     </DockPanel>
 </Window>

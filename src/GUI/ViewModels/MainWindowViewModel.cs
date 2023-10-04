@@ -19,6 +19,7 @@ namespace GUI.ViewModels;
 /// </summary>
 public class MainWindowViewModel : ReactiveObject
 {
+    private readonly Window _window;
     private readonly FileManager _fileManager;
     private readonly TabManager _tabManager;
 
@@ -33,23 +34,34 @@ public class MainWindowViewModel : ReactiveObject
     /// Creates new instance of main window view model
     /// </summary>
     /// <param name="window">Reference to <see cref="MainWindow"/></param>
-    public MainWindowViewModel(TopLevel window)
+    public MainWindowViewModel(Window window)
     {
-        CreateFileCommand = ReactiveCommand.CreateFromTask(CreateFileAsync);
+        _window = window;
+        CreateFileCommand = ReactiveCommand.Create(CreateFileAsync);
         OpenFileCommand = ReactiveCommand.CreateFromTask(OpenFileAsync);
-        SaveFileCommand = ReactiveCommand.CreateFromTask(SaveFileAsync);
-        SaveFileAsCommand = ReactiveCommand.CreateFromTask(SaveFileAsAsync);
+        SaveFileCommand = ReactiveCommand.CreateFromTask<bool>(
+            async saveAs => await SaveFileAndUpdateTab(_tabManager!.Tab, saveAs));
         SaveAllFilesCommand = ReactiveCommand.CreateFromTask(SaveAllFilesAsync);
         DeleteFileCommand = ReactiveCommand.CreateFromTask(DeleteFileAsync);
-        CloseFileCommand = ReactiveCommand.CreateFromTask(CloseFileAsync);
-        SelectTabCommand = ReactiveCommand.CreateFromTask<FileTab>(SelectTabAsync);
+        CloseFileCommand = ReactiveCommand.CreateFromTask(async () => await CloseTabAsync(_tabManager!.Tab));
+        SelectTabCommand = ReactiveCommand.Create<FileTab>(tab => _tabManager!.SelectTab(tab));
 
         OpenSettingsWindowCommand = ReactiveCommand.Create(OpenSettingsWindow);
 
         _fileManager = new FileManager(window.StorageProvider);
         _tabManager = new TabManager(SelectTabCommand);
 
+        window.Closing += OnClosingWindow;
+
         SettingsManager.Instance.PropertyChanged += (_, args) => this.RaisePropertyChanged(args.PropertyName);
+
+        _tabManager.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(_tabManager.Tab))
+            {
+                this.RaisePropertyChanged(nameof(FileContent));
+            }
+        };
     }
 
     /// <summary>
@@ -65,12 +77,7 @@ public class MainWindowViewModel : ReactiveObject
     /// <summary>
     /// Command for saving file
     /// </summary>
-    public ReactiveCommand<Unit, Unit> SaveFileCommand { get; }
-
-    /// <summary>
-    /// Command for saving file on new path
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> SaveFileAsCommand { get; }
+    public ReactiveCommand<bool, Unit> SaveFileCommand { get; }
 
     /// <summary>
     /// Command for saving all files
@@ -111,6 +118,8 @@ public class MainWindowViewModel : ReactiveObject
         set
         {
             File.Text = value;
+            File.IsNeedSave = true;
+            _tabManager.ChangeForeground(_tabManager.Tab, TabManager.NeedSaveForeground);
             this.RaisePropertyChanged();
         }
     }
@@ -129,26 +138,10 @@ public class MainWindowViewModel : ReactiveObject
     /// <summary>
     /// Creates new file and tab for it
     /// </summary>
-    private async Task CreateFileAsync()
+    private void CreateFileAsync()
     {
-        try
-        {
-            var file = await _fileManager.CreateFileAsync();
-            if (file == null)
-            {
-                return;
-            }
-
-            var tab = _tabManager.CreateTab(file);
-            await SelectTabAsync(tab);
-        }
-        catch (TabExistsException e)
-        {
-            await MessageBoxManager
-                .GetMessageBoxStandard("Warning", e.Message, ButtonEnum.Ok, Icon.Warning)
-                .ShowAsync();
-            await SelectTabAsync(e.Tab);
-        }
+        var tab = _tabManager.CreateTab();
+        _tabManager.SelectTab(tab);
     }
 
     /// <summary>
@@ -165,31 +158,57 @@ public class MainWindowViewModel : ReactiveObject
             }
 
             var tab = _tabManager.CreateTab(file);
-            await SelectTabAsync(tab);
+
+            if (_tabManager.Tab.File.FilePath == null && string.IsNullOrWhiteSpace(_tabManager.Tab.File.Text))
+            {
+                _tabManager.DeleteTab(_tabManager.Tab);
+            }
+
+            _tabManager.SelectTab(tab);
         }
         catch (TabExistsException e)
         {
             await MessageBoxManager
                 .GetMessageBoxStandard("Warning", e.Message, ButtonEnum.Ok, Icon.Warning)
                 .ShowAsync();
-            await SelectTabAsync(e.Tab);
+            _tabManager.SelectTab(e.Tab);
         }
     }
 
     /// <summary>
-    /// Saves current file
+    /// Saves file
     /// </summary>
-    private async Task SaveFileAsync()
+    /// <param name="file">File tab reference</param>
+    /// <param name="saveAs">Save as new file</param>
+    private async Task<bool> SaveFileAsync(FileModel file, bool saveAs)
     {
-        await _fileManager.SaveFileAsync(File);
-    }
+        if (!saveAs && file.FilePath != null)
+        {
+            await _fileManager.WriteFileAsync(file);
+            return true;
+        }
 
-    /// <summary>
-    /// Saves current file on new path
-    /// </summary>
-    private async Task SaveFileAsAsync()
-    {
-        await _fileManager.SaveFileAsAsync(File);
+        var paths = Tabs
+            .Where(t => t.File.FilePath != null && t.File != file)
+            .Select(t => t.File.FilePath)
+            .ToHashSet();
+
+        do
+        {
+            var filePath = await _fileManager.CreateFile(file.FileName);
+
+            if (filePath == null)
+            {
+                return false;
+            }
+
+            if (!paths.Contains(filePath))
+            {
+                file.FilePath = filePath;
+                await _fileManager.WriteFileAsync(file);
+                return true;
+            }
+        } while (true);
     }
 
     /// <summary>
@@ -197,8 +216,19 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     private async Task SaveAllFilesAsync()
     {
-        var tasks = Tabs.Select(t => t.File).Select(f => _fileManager.SaveFileAsync(f));
-        await Task.WhenAll(tasks);
+        foreach (var tab in Tabs)
+        {
+            await SaveFileAndUpdateTab(tab, false);
+        }
+    }
+
+    private async Task SaveFileAndUpdateTab(FileTab tab, bool saveAs)
+    {
+        if (await SaveFileAsync(tab.File, saveAs))
+        {
+            _tabManager.RenameTab(tab, tab.File.FileName);
+            _tabManager.ChangeForeground(tab, TabManager.DefaultForeground);
+        }
     }
 
     /// <summary>
@@ -222,60 +252,22 @@ public class MainWindowViewModel : ReactiveObject
     /// <summary>
     /// Closes current file
     /// </summary>
-    private async Task CloseFileAsync()
+    private async Task CloseTabAsync(FileTab tab)
     {
-        var res = await MessageBoxManager
-            .GetMessageBoxStandard("Confirmation", $"Do you want to save the file '{File.FileName}'?",
-                ButtonEnum.YesNo, Icon.Question)
-            .ShowAsync();
-
-        if (res == ButtonResult.Yes)
-        {
-            await SaveFileAsync();
-        }
-
-        _tabManager.DeleteTab(_tabManager.Tab);
-    }
-
-    /// <summary>
-    /// Synchronizes a file in memory with a file on disk
-    /// </summary>
-    /// <param name="file">Current file info</param>
-    private async Task SyncFile(FileModel file)
-    {
-        if (string.IsNullOrWhiteSpace(file.FilePath))
-        {
-            return;
-        }
-
-        var fileOnDisk = await _fileManager.OpenFileAsync(file.FilePath);
-
-        if (fileOnDisk.Text != file.Text)
+        if (tab.File.IsNeedSave)
         {
             var res = await MessageBoxManager
-                .GetMessageBoxStandard("Confirmation",
-                    $"The file '{file.FileName}' has been modified. Load changes from disk?",
+                .GetMessageBoxStandard("Confirmation", $"Do you want to save the file '{File.FileName}'?",
                     ButtonEnum.YesNo, Icon.Question)
                 .ShowAsync();
 
             if (res == ButtonResult.Yes)
             {
-                file.Text = fileOnDisk.Text;
+                await SaveFileAsync(tab.File, false);
             }
         }
-    }
 
-    /// <summary>
-    /// Change current tab
-    /// </summary>
-    /// <param name="tab">Tab to switch to</param>
-    private async Task SelectTabAsync(FileTab tab)
-    {
-        await SyncFile(tab.File);
-
-        _tabManager.SelectTab(tab);
-
-        this.RaisePropertyChanged(nameof(FileContent));
+        _tabManager.DeleteTab(tab);
     }
 
     /// <summary>
@@ -285,5 +277,31 @@ public class MainWindowViewModel : ReactiveObject
     {
         var settingsWindow = new SettingsWindow();
         settingsWindow.Show();
+    }
+
+    private async void OnClosingWindow(object sender, WindowClosingEventArgs args)
+    {
+        args.Cancel = true;
+
+        if (Tabs.Any(t => t.File.IsNeedSave))
+        {
+            var res = await MessageBoxManager
+                .GetMessageBoxStandard("Warning", "You have unsaved files. Save all of them?",
+                    ButtonEnum.YesNoCancel, Icon.Warning)
+                .ShowAsync();
+
+            if (res == ButtonResult.Cancel)
+            {
+                return;
+            }
+
+            if (res == ButtonResult.Yes)
+            {
+                await SaveAllFilesAsync();
+            }
+        }
+
+        _window.Closing -= OnClosingWindow;
+        _window.Close();
     }
 }

@@ -20,34 +20,6 @@ public class FileManager
     {
         _storageProvider = storageProvider;
     }
-    
-    /// <summary>
-    /// Creates empty file
-    /// </summary>
-    /// <returns>File info</returns>
-    public async Task<FileModel> CreateFileAsync()
-    {
-        var file = await _storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-        {
-            Title = "Create file...",
-            ShowOverwritePrompt = true
-        });
-
-        if (file == null)
-        {
-            return null;
-        }
-
-        var fileModel = new FileModel
-        {
-            FilePath = file.Path.AbsolutePath,
-            Text = string.Empty
-        };
-
-        await SaveFileAsync(fileModel);
-
-        return fileModel;
-    }
 
     /// <summary>
     /// Opens file
@@ -66,7 +38,7 @@ public class FileManager
             return null;
         }
 
-        return await OpenFileAsync(files[0].Path.AbsolutePath);
+        return await OpenFileAsync(files[0].Path.LocalPath);
     }
 
     /// <summary>
@@ -76,7 +48,7 @@ public class FileManager
     /// <returns>File info</returns>
     public async Task<FileModel> OpenFileAsync(string filePath)
     {
-        return new FileModel
+        return new FileModel(Path.GetFileName(filePath))
         {
             FilePath = filePath,
             Text = await File.ReadAllTextAsync(filePath)
@@ -84,42 +56,31 @@ public class FileManager
     }
 
     /// <summary>
-    /// Saves file
+    /// Creates new file
     /// </summary>
-    /// <param name="file">File info</param>
-    public async Task SaveFileAsync(FileModel file)
+    /// <param name="fileName">Initial file name</param>
+    /// <returns>Path to file</returns>
+    public async Task<string> CreateFile(string fileName)
     {
-        if (file.FilePath != null)
-        {
-            await File.WriteAllTextAsync(file.FilePath, file.Text);
-        }
-        else
-        {
-            await SaveFileAsAsync(file);
-        }
-    }
-
-    /// <summary>
-    /// Saves file on new path and update file info
-    /// </summary>
-    /// <param name="fileModel">File info</param>
-    public async Task SaveFileAsAsync(FileModel fileModel)
-    {
-        var file = await _storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var newFile = await _storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = "Save file as...",
             ShowOverwritePrompt = true,
-            SuggestedFileName = fileModel.FileName
+            SuggestedFileName = fileName,
+            DefaultExtension = "asm"
         });
 
-        if (file == null)
-        {
-            return;
-        }
+        return newFile?.Path.LocalPath;
+    }
 
-        fileModel.FilePath = file.Path.AbsolutePath;
-
-        await SaveFileAsync(fileModel);
+    /// <summary>
+    /// Flushes file to disk
+    /// </summary>
+    /// <param name="file">File info</param>
+    public async Task WriteFileAsync(FileModel file)
+    {
+        await File.WriteAllTextAsync(file.FilePath, file.Text);
+        file.IsNeedSave = false;
     }
 
     /// <summary>

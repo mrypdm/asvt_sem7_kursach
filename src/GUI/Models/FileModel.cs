@@ -5,12 +5,9 @@ namespace GUI.Models;
 /// <summary>
 /// File model
 /// </summary>
-public record FileModel
+public record FileModel(string Label)
 {
-    /// <summary>
-    /// Default file name
-    /// </summary>
-    private const string DefaultFileName = "main.asm";
+    public string Label { get; set; } = Label;
 
     /// <summary>
     /// Path to file
@@ -18,12 +15,17 @@ public record FileModel
     public string FilePath { get; set; }
 
     /// <summary>
-    /// File name
+    /// File name or label, if <see cref="FilePath"/> is null
     /// </summary>
-    public string FileName => FilePath == null ? DefaultFileName : Path.GetFileName(FilePath);
+    public string FileName => FilePath == null ? Label : Path.GetFileName(FilePath);
 
     /// <summary>
     /// File content
     /// </summary>
     public string Text { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Is file in changed state and need to be saved
+    /// </summary>
+    public bool IsNeedSave { get; set; }
 }
