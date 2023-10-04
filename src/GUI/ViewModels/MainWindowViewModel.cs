@@ -8,9 +8,9 @@ using GUI.Exceptions;
 using GUI.Managers;
 using GUI.Models;
 using GUI.Views;
-using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
+using MessageBoxManager = GUI.Managers.MessageBoxManager;
 
 namespace GUI.ViewModels;
 
@@ -169,8 +169,8 @@ public class MainWindowViewModel : ReactiveObject
         catch (TabExistsException e)
         {
             await MessageBoxManager
-                .GetMessageBoxStandard("Warning", e.Message, ButtonEnum.Ok, Icon.Warning)
-                .ShowAsync();
+                .GetMessageBox("Error", "That file already opened", ButtonEnum.Ok, Icon.Error, _window.Icon)
+                .ShowWindowDialogAsync(_window);
             _tabManager.SelectTab(e.Tab);
         }
     }
@@ -208,6 +208,10 @@ public class MainWindowViewModel : ReactiveObject
                 await _fileManager.WriteFileAsync(file);
                 return true;
             }
+
+            await MessageBoxManager
+                .GetMessageBox("Error", "That file already opened", ButtonEnum.Ok, Icon.Error, _window.Icon)
+                .ShowWindowDialogAsync(_window);
         } while (true);
     }
 
@@ -237,10 +241,9 @@ public class MainWindowViewModel : ReactiveObject
     private async Task DeleteFileAsync()
     {
         var res = await MessageBoxManager
-            .GetMessageBoxStandard("Confirmation",
-                $"Are you sure you want to delete the file '{File.FileName}'?",
-                ButtonEnum.YesNo, Icon.Question)
-            .ShowAsync();
+            .GetMessageBox("Confirmation", $"Are you sure you want to delete the file '{File.FileName}'?",
+                ButtonEnum.YesNo, Icon.Question, _window.Icon)
+            .ShowWindowDialogAsync(_window);
 
         if (res == ButtonResult.Yes)
         {
@@ -257,9 +260,9 @@ public class MainWindowViewModel : ReactiveObject
         if (tab.File.IsNeedSave)
         {
             var res = await MessageBoxManager
-                .GetMessageBoxStandard("Confirmation", $"Do you want to save the file '{File.FileName}'?",
-                    ButtonEnum.YesNo, Icon.Question)
-                .ShowAsync();
+                .GetMessageBox("Confirmation", $"Do you want to save the file '{File.FileName}'?",
+                    ButtonEnum.YesNo, Icon.Question, _window.Icon)
+                .ShowWindowDialogAsync(_window);
 
             if (res == ButtonResult.Yes)
             {
@@ -286,9 +289,9 @@ public class MainWindowViewModel : ReactiveObject
         if (Tabs.Any(t => t.File.IsNeedSave))
         {
             var res = await MessageBoxManager
-                .GetMessageBoxStandard("Warning", "You have unsaved files. Save all of them?",
-                    ButtonEnum.YesNoCancel, Icon.Warning)
-                .ShowAsync();
+                .GetMessageBox("Warning", "You have unsaved files. Save all of them?",
+                    ButtonEnum.YesNoCancel, Icon.Warning, _window.Icon)
+                .ShowWindowDialogAsync(_window);
 
             if (res == ButtonResult.Cancel)
             {
