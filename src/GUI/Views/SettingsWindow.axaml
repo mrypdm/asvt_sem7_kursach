@@ -7,7 +7,7 @@
         mc:Ignorable="d" SizeToContent="WidthAndHeight" MinWidth="500"
         FontFamily="Century Gothic" FontSize="14"
         x:Class="GUI.Views.SettingsWindow" x:DataType="vm:SettingsViewModel"
-        Title="SettingsWindow">
+        Title="Settings" Icon="/Assets/icon.ico">
     <Design.DataContext>
         <vm:SettingsViewModel />
     </Design.DataContext>
