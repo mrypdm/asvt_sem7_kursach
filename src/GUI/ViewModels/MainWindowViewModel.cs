@@ -19,9 +19,14 @@ namespace GUI.ViewModels;
 /// </summary>
 public class MainWindowViewModel : ReactiveObject
 {
+    private const string DefaultWindowTitle = "PDP-11 Simulator";
+    
     private readonly Window _window;
     private readonly FileManager _fileManager;
     private readonly TabManager _tabManager;
+    private readonly ProjectManager _projectManager;
+
+    private string _windowTitle = DefaultWindowTitle;
 
     /// <summary>
     /// Empty constructor for designer
@@ -45,11 +50,14 @@ public class MainWindowViewModel : ReactiveObject
         DeleteFileCommand = ReactiveCommand.CreateFromTask(DeleteFileAsync);
         CloseFileCommand = ReactiveCommand.CreateFromTask(async () => await CloseTabAsync(_tabManager!.Tab));
         SelectTabCommand = ReactiveCommand.Create<FileTab>(tab => _tabManager!.SelectTab(tab));
+        CreateProjectCommand = ReactiveCommand.CreateFromTask(CreateProjectAsync);
+        OpenProjectCommand = ReactiveCommand.CreateFromTask(OpenProjectAsync);
 
         OpenSettingsWindowCommand = ReactiveCommand.Create(OpenSettingsWindow);
 
         _fileManager = new FileManager(window.StorageProvider);
         _tabManager = new TabManager(SelectTabCommand);
+        _projectManager = new ProjectManager(window.StorageProvider);
 
         window.Closing += OnClosingWindow;
 
@@ -93,6 +101,16 @@ public class MainWindowViewModel : ReactiveObject
     /// Command for closing file
     /// </summary>
     public ReactiveCommand<Unit, Unit> CloseFileCommand { get; }
+    
+    /// <summary>
+    /// Command for creating project
+    /// </summary>
+    public ReactiveCommand<Unit, Unit> CreateProjectCommand { get; }
+    
+    /// <summary>
+    /// Command for opening project
+    /// </summary>
+    public ReactiveCommand<Unit, Unit> OpenProjectCommand { get; }
 
     /// <summary>
     /// Command for opening <see cref="SettingsWindow"/>
@@ -104,6 +122,12 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     private ReactiveCommand<FileTab, Unit> SelectTabCommand { get; }
 
+    public string WindowTitle
+    {
+        get => _windowTitle;
+        set => this.RaiseAndSetIfChanged(ref _windowTitle, value);
+    }
+    
     /// <summary>
     /// Collection of tabs
     /// </summary>
@@ -174,7 +198,7 @@ public class MainWindowViewModel : ReactiveObject
         catch (TabExistsException e)
         {
             await MessageBoxManager
-                .GetMessageBox("Error", "That file already opened", ButtonEnum.Ok, Icon.Error, _window.Icon)
+                .GetMessageBox("Error", "That file already opened", ButtonEnum.Ok, Icon.Error, _window)
                 .ShowWindowDialogAsync(_window);
             _tabManager.SelectTab(e.Tab);
         }
@@ -215,7 +239,7 @@ public class MainWindowViewModel : ReactiveObject
             }
 
             await MessageBoxManager
-                .GetMessageBox("Error", "That file already opened", ButtonEnum.Ok, Icon.Error, _window.Icon)
+                .GetMessageBox("Error", "That file already opened", ButtonEnum.Ok, Icon.Error, _window)
                 .ShowWindowDialogAsync(_window);
         } while (true);
     }
@@ -247,7 +271,7 @@ public class MainWindowViewModel : ReactiveObject
     {
         var res = await MessageBoxManager
             .GetMessageBox("Confirmation", $"Are you sure you want to delete the file '{File.FileName}'?",
-                ButtonEnum.YesNo, Icon.Question, _window.Icon)
+                ButtonEnum.YesNo, Icon.Question, _window)
             .ShowWindowDialogAsync(_window);
 
         if (res == ButtonResult.Yes)
@@ -266,7 +290,7 @@ public class MainWindowViewModel : ReactiveObject
         {
             var res = await MessageBoxManager
                 .GetMessageBox("Confirmation", $"Do you want to save the file '{File.FileName}'?",
-                    ButtonEnum.YesNo, Icon.Question, _window.Icon)
+                    ButtonEnum.YesNo, Icon.Question, _window)
                 .ShowWindowDialogAsync(_window);
 
             if (res == ButtonResult.Yes)
@@ -276,6 +300,34 @@ public class MainWindowViewModel : ReactiveObject
         }
 
         _tabManager.DeleteTab(tab);
+    }
+
+    private async Task CreateProjectAsync()
+    {
+        var box = MessageBoxManager.GetInputMessageBox("Create project", "Enter project name", ButtonEnum.OkCancel,
+            Icon.Setting, _window, "Project name");
+
+        var res = await box.ShowWindowDialogAsync(_window);
+        if (res == ButtonResult.Cancel)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(box.InputValue))
+        {
+            await MessageBoxManager
+                .GetMessageBox("Error", "Project name cannot be empty", ButtonEnum.Ok, Icon.Error, _window)
+                .ShowWindowDialogAsync(_window);
+            return;
+        }
+
+        await _projectManager.CreateProjectAsync(box.InputValue.Trim());
+        WindowTitle = $"{DefaultWindowTitle} - {_projectManager.Project.Name}";
+    }
+
+    private async Task OpenProjectAsync()
+    {
+        await _projectManager.OpenProjectAsync();
     }
 
     /// <summary>
@@ -295,7 +347,7 @@ public class MainWindowViewModel : ReactiveObject
         {
             var res = await MessageBoxManager
                 .GetMessageBox("Warning", "You have unsaved files. Save all of them?",
-                    ButtonEnum.YesNoCancel, Icon.Warning, _window.Icon)
+                    ButtonEnum.YesNoCancel, Icon.Warning, _window)
                 .ShowWindowDialogAsync(_window);
 
             if (res == ButtonResult.Cancel)
