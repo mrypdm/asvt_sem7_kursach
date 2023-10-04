@@ -27,7 +27,7 @@ public class FileManager
     /// Opens file
     /// </summary>
     /// <returns>File info</returns>
-    public async Task<ICollection<FileModel>> OpenFileAsync()
+    public async Task<ICollection<FileModel>> OpenFilesAsync()
     {
         var files = await _storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
@@ -44,15 +44,17 @@ public class FileManager
 
         foreach (var file in files)
         {
-            filesList.Add(new FileModel(Path.GetFileName(file.Path.LocalPath))
-            {
-                FilePath = file.Path.LocalPath,
-                Text = await File.ReadAllTextAsync(file.Path.LocalPath)
-            });
+            filesList.Add(await OpenFileAsync(file.Path.LocalPath));
         }
 
         return filesList;
     }
+
+    public async Task<FileModel> OpenFileAsync(string filePath) => new(Path.GetFileName(filePath))
+    {
+        FilePath = filePath,
+        Text = await File.ReadAllTextAsync(filePath)
+    };
 
     /// <summary>
     /// Creates new file

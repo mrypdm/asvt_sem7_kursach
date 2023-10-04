@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using GUI.Managers;
 using GUI.Models;
 using GUI.Views;
 using MsBox.Avalonia.Enums;
+using MsBox.Avalonia.Models;
 using ReactiveUI;
 using MessageBoxManager = GUI.Managers.MessageBoxManager;
 
@@ -122,12 +124,10 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     private ReactiveCommand<FileTab, Unit> SelectTabCommand { get; }
 
-    public string WindowTitle
-    {
-        get => _windowTitle;
-        set => this.RaiseAndSetIfChanged(ref _windowTitle, value);
-    }
-    
+    public string WindowTitle => _projectManager.Project == null
+        ? DefaultWindowTitle
+        : $"{DefaultWindowTitle} - {_projectManager.Project.Name}";
+
     /// <summary>
     /// Collection of tabs
     /// </summary>
@@ -159,13 +159,51 @@ public class MainWindowViewModel : ReactiveObject
     /// <inheritdoc cref="SettingsManager.FontSize"/>
     public double FontSize => SettingsManager.Instance.FontSize;
 
+    private async Task CreateTabForFiles(IEnumerable<FileModel> files)
+    {
+        FileTab tab = null;
+
+        foreach (var file in files)
+        {
+            try
+            {
+                tab = _tabManager.CreateTab(file);
+            }
+            catch (TabExistsException e)
+            {
+                tab = e.Tab;
+
+                var res = await MessageBoxManager
+                    .GetCustomMessageBox("Warning", $"File '{file.FileName}' is already open", Icon.Warning, _window,
+                        new ButtonDefinition { IsCancel = true, IsDefault = false, Name = "Skip" },
+                        new ButtonDefinition { IsCancel = false, IsDefault = true, Name = "Reopen" })
+                    .ShowWindowDialogAsync(_window);
+
+                if (res == "Reopen")
+                {
+                    e.Tab.File.Text = file.Text;
+                    if (ReferenceEquals(e.Tab, _tabManager.Tab))
+                    {
+                        this.RaisePropertyChanged(nameof(FileContent));
+                    }
+                }
+            }
+        }
+
+        if (_tabManager.Tab.File.FilePath == null && string.IsNullOrWhiteSpace(_tabManager.Tab.File.Text))
+        {
+            _tabManager.DeleteTab(_tabManager.Tab);
+        }
+
+        _tabManager.SelectTab(tab);
+    }
+
     /// <summary>
     /// Creates new file and tab for it
     /// </summary>
     private void CreateFileAsync()
     {
-        var tab = _tabManager.CreateTab();
-        _tabManager.SelectTab(tab);
+        _tabManager.SelectTab(_tabManager.CreateTab());
     }
 
     /// <summary>
@@ -173,35 +211,14 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     private async Task OpenFileAsync()
     {
-        try
+        var files = await _fileManager.OpenFilesAsync();
+
+        if (files == null)
         {
-            var files = await _fileManager.OpenFileAsync();
-            if (files == null)
-            {
-                return;
-            }
-
-            FileTab tab = null;
-
-            foreach (var file in files)
-            {
-                tab = _tabManager.CreateTab(file);
-            }
-
-            if (_tabManager.Tab.File.FilePath == null && string.IsNullOrWhiteSpace(_tabManager.Tab.File.Text))
-            {
-                _tabManager.DeleteTab(_tabManager.Tab);
-            }
-
-            _tabManager.SelectTab(tab);
+            return;
         }
-        catch (TabExistsException e)
-        {
-            await MessageBoxManager
-                .GetMessageBox("Error", "That file already opened", ButtonEnum.Ok, Icon.Error, _window)
-                .ShowWindowDialogAsync(_window);
-            _tabManager.SelectTab(e.Tab);
-        }
+
+        await CreateTabForFiles(files);
     }
 
     /// <summary>
@@ -302,6 +319,15 @@ public class MainWindowViewModel : ReactiveObject
         _tabManager.DeleteTab(tab);
     }
 
+    private async Task OpenProjectFileAsync()
+    {
+        if (_projectManager.Project != null)
+        {
+            var files = await _fileManager.OpenFileAsync(_projectManager.Project.ProjectFilePath);
+            await CreateTabForFiles(new[] { files });
+        }
+    }
+
     private async Task CreateProjectAsync()
     {
         var box = MessageBoxManager.GetInputMessageBox("Create project", "Enter project name", ButtonEnum.OkCancel,
@@ -322,12 +348,15 @@ public class MainWindowViewModel : ReactiveObject
         }
 
         await _projectManager.CreateProjectAsync(box.InputValue.Trim());
-        WindowTitle = $"{DefaultWindowTitle} - {_projectManager.Project.Name}";
+        await OpenProjectFileAsync();
+        this.RaisePropertyChanged(nameof(WindowTitle));
     }
 
     private async Task OpenProjectAsync()
     {
         await _projectManager.OpenProjectAsync();
+        await OpenProjectFileAsync();
+        this.RaisePropertyChanged(nameof(WindowTitle));
     }
 
     /// <summary>

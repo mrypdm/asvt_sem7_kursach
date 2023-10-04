@@ -60,7 +60,7 @@ public class TabManager : PropertyChangedNotifier
     {
         if (file?.FilePath != null)
         {
-            var existingTab = Tabs.SingleOrDefault(t => t.File == file);
+            var existingTab = Tabs.SingleOrDefault(t => t.File.FilePath == file.FilePath);
             if (existingTab != null)
             {
                 throw new TabExistsException("Tab for that file already exists")
