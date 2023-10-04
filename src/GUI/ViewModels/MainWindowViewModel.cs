@@ -151,13 +151,18 @@ public class MainWindowViewModel : ReactiveObject
     {
         try
         {
-            var file = await _fileManager.OpenFileAsync();
-            if (file == null)
+            var files = await _fileManager.OpenFileAsync();
+            if (files == null)
             {
                 return;
             }
 
-            var tab = _tabManager.CreateTab(file);
+            FileTab tab = null;
+
+            foreach (var file in files)
+            {
+                tab = _tabManager.CreateTab(file);
+            }
 
             if (_tabManager.Tab.File.FilePath == null && string.IsNullOrWhiteSpace(_tabManager.Tab.File.Text))
             {

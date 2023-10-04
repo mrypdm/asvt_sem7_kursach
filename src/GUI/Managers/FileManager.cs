@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using GUI.Models;
@@ -25,34 +27,31 @@ public class FileManager
     /// Opens file
     /// </summary>
     /// <returns>File info</returns>
-    public async Task<FileModel> OpenFileAsync()
+    public async Task<ICollection<FileModel>> OpenFileAsync()
     {
         var files = await _storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Open file...",
-            AllowMultiple = false
+            Title = "Open files...",
+            AllowMultiple = true
         });
 
-        if (files.Count != 1)
+        if (!files.Any())
         {
             return null;
         }
 
-        return await OpenFileAsync(files[0].Path.LocalPath);
-    }
+        var filesList = new List<FileModel>();
 
-    /// <summary>
-    /// Open file on path
-    /// </summary>
-    /// <param name="filePath">Path ot file</param>
-    /// <returns>File info</returns>
-    public async Task<FileModel> OpenFileAsync(string filePath)
-    {
-        return new FileModel(Path.GetFileName(filePath))
+        foreach (var file in files)
         {
-            FilePath = filePath,
-            Text = await File.ReadAllTextAsync(filePath)
-        };
+            filesList.Add(new FileModel(Path.GetFileName(file.Path.LocalPath))
+            {
+                FilePath = file.Path.LocalPath,
+                Text = await File.ReadAllTextAsync(file.Path.LocalPath)
+            });
+        }
+
+        return filesList;
     }
 
     /// <summary>
