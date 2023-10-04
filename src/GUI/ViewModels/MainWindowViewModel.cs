@@ -28,8 +28,6 @@ public class MainWindowViewModel : ReactiveObject
     private readonly TabManager _tabManager;
     private readonly ProjectManager _projectManager;
 
-    private string _windowTitle = DefaultWindowTitle;
-
     /// <summary>
     /// Empty constructor for designer
     /// </summary>

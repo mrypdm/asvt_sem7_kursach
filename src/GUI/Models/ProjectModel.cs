@@ -20,7 +20,7 @@ public class ProjectModel
     /// Directory of project
     /// </summary>
     [JsonIgnore]
-    public string Directory { get; set; } = null;
+    public string Directory { get; set; }
 
     /// <summary>
     /// Project file name

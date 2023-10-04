@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using GUI.Models;
+using Shared.Helpers;
 
 namespace GUI.Managers;
 
@@ -37,8 +37,7 @@ public class ProjectManager
             Directory = projectDir[0].Path.LocalPath
         };
 
-        await using var file = File.OpenWrite(Project.ProjectFilePath);
-        await JsonSerializer.SerializeAsync(file, Project, new JsonSerializerOptions { WriteIndented = true });
+        await JsonHelper.SerializeToFileAsync(Project, Project.ProjectFilePath);
     }
 
     public async Task OpenProjectAsync()
@@ -61,8 +60,7 @@ public class ProjectManager
             return;
         }
 
-        await using var file = File.OpenRead(projectFile[0].Path.LocalPath);
-        Project = JsonSerializer.Deserialize<ProjectModel>(file);
+        Project = await JsonHelper.DeserializeFileAsync<ProjectModel>(projectFile[0].Path.LocalPath);
         Project.Directory = Path.GetDirectoryName(projectFile[0].Path.LocalPath);
     }
 }
