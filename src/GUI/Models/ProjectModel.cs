@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json.Serialization;
 using Shared.Converters;
 
@@ -18,9 +20,9 @@ public class ProjectModel
     public string Name { get; set; } = "NewProject";
 
     /// <summary>
-    /// Files of project
+    /// Files of project (relative paths)
     /// </summary>
-    public string[] Files { get; set; } = Array.Empty<string>();
+    public List<string> Files { get; set; } = new();
 
     /// <summary>
     /// Executable file
@@ -30,7 +32,7 @@ public class ProjectModel
     /// <summary>
     /// External devices
     /// </summary>
-    public string[] ExternalDevices { get; set; } = Array.Empty<string>();
+    public List<string> ExternalDevices { get; set; } = new();
 
     /// <summary>
     /// Initial address of stack pointer (original value), <see cref="StackAddress"/>
@@ -59,6 +61,12 @@ public class ProjectModel
     /// </summary>
     [JsonIgnore]
     public string ProjectFilePath => Path.Combine(Directory, ProjectFileName);
+
+    /// <summary>
+    /// Absolute paths to project files
+    /// </summary>
+    [JsonIgnore]
+    public IEnumerable<string> ProjectFilesPaths => Files.Select(f => Path.Combine(Directory, f));
 
     /// <summary>
     /// Initial address of stack pointer

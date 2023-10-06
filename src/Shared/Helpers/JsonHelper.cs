@@ -16,10 +16,11 @@ public static class JsonHelper
     /// <param name="filePath">Path to file</param>
     public static async Task SerializeToFileAsync(object obj, string filePath)
     {
-        await using var file = File.OpenWrite(filePath);
-        await JsonSerializer.SerializeAsync(file, obj, new JsonSerializerOptions { WriteIndented = true });
+        var json = await Task.Run(() =>
+            JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true }));
+        await File.WriteAllTextAsync(filePath, json);
     }
-    
+
     /// <summary>
     /// Deserialize file to <typeparamref name="TEntity"/>
     /// </summary>
@@ -29,6 +30,28 @@ public static class JsonHelper
     public static async ValueTask<TEntity> DeserializeFileAsync<TEntity>(string filePath)
     {
         await using var file = File.OpenRead(filePath);
-        return await JsonSerializer.DeserializeAsync<TEntity>(file);
+        return await JsonSerializer.DeserializeAsync<TEntity>(file,
+            new JsonSerializerOptions { AllowTrailingCommas = true });
+    }
+
+    /// <summary>
+    /// Validates JSON text
+    /// </summary>
+    /// <param name="jsonString">JSON string</param>
+    /// <typeparam name="TEntity">Type to deserialize to</typeparam>
+    /// <returns>null if JSON is correct, error message if not</returns>
+    public static async Task<string> ValidateJson<TEntity>(string jsonString)
+    {
+        try
+        {
+            await Task.Run(() =>
+                JsonSerializer.Deserialize<TEntity>(jsonString,
+                    new JsonSerializerOptions { AllowTrailingCommas = true }));
+            return null;
+        }
+        catch (JsonException e)
+        {
+            return e.Message;
+        }
     }
 }

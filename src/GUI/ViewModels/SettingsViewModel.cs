@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
-using DynamicData;
 using DynamicData.Binding;
 using GUI.Managers;
 using GUI.Views;
@@ -31,21 +31,20 @@ public class SettingsViewModel : ReactiveObject
     {
         _storageProvider = window.StorageProvider;
         AllFontFamilies = new ObservableCollectionExtended<FontFamily>(FontManager.Current.SystemFonts);
-        
-        AddExternalDeviceCommand = ReactiveCommand.CreateFromTask(AddExternalDeviceAsync);
-        DeleteExternalDeviceCommand = ReactiveCommand.Create(DeleteExternalDevices);
 
-        window.Closing += async (_, _) =>
-        {
-            await SettingsManager.Instance.SaveGlobalSettings();
-        };
+        AddExternalDeviceCommand = ReactiveCommand.CreateFromTask(AddExternalDeviceAsync);
+        DeleteExternalDeviceCommand = ReactiveCommand.CreateFromTask(DeleteExternalDevices);
+
+        ProjectManager.Instance.PropertyChanged += (_, _) => this.RaisePropertyChanged(nameof(ExternalDevices));
+
+        window.Closing += async (_, _) => { await SettingsManager.Instance.SaveGlobalSettings(); };
     }
 
     /// <summary>
     /// Command for adding external devices
     /// </summary>
     public ReactiveCommand<Unit, Unit> AddExternalDeviceCommand { get; }
-    
+
     /// <summary>
     /// Command for deleting external devices
     /// </summary>
@@ -57,15 +56,7 @@ public class SettingsViewModel : ReactiveObject
     public ObservableCollection<FontFamily> AllFontFamilies { get; }
 
     /// <inheritdoc cref="SettingsManager.ExternalDevices"/>
-    public ObservableCollection<string> ExternalDevices
-    {
-        get => SettingsManager.Instance.ExternalDevices;
-        set
-        {
-            SettingsManager.Instance.ExternalDevices = value;
-            this.RaisePropertyChanged();
-        }
-    }
+    public ObservableCollection<string> ExternalDevices => new(ProjectManager.Instance.ExternalDevices);
 
     /// <summary>
     /// Collection with selected external devices
@@ -100,11 +91,21 @@ public class SettingsViewModel : ReactiveObject
             return;
         }
 
-        SettingsManager.Instance.ExternalDevices.Add(file[0].Path.AbsolutePath);
+        ProjectManager.Instance.AddExternalDevice(file[0].Path.LocalPath);
+        await ProjectManager.Instance.SaveProjectAsync();
+        this.RaisePropertyChanged(nameof(ExternalDevices));
     }
 
-    private void DeleteExternalDevices()
+    private async Task DeleteExternalDevices()
     {
-        SettingsManager.Instance.ExternalDevices.RemoveMany(SelectedExternalDevices);
+        var externalDevices = SelectedExternalDevices.ToList();
+
+        foreach (var device in externalDevices)
+        {
+            ProjectManager.Instance.RemoveExternalDevice(device);
+        }
+
+        await ProjectManager.Instance.SaveProjectAsync();
+        this.RaisePropertyChanged(nameof(ExternalDevices));
     }
 }
