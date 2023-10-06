@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Avalonia.Media;
 using GUI.Models;
 using GUI.Notifiers;
-using Microsoft.Extensions.Configuration;
 using Shared.Helpers;
 
 namespace GUI.Managers;
@@ -16,9 +15,6 @@ public sealed class SettingsManager : PropertyChangedNotifier
 {
     private FontFamily _fontFamily;
     private double _fontSize;
-
-    private int _programAddress = 1024; // 0o2000
-    private int _stackAddress = 1024; // 0o2000
 
     /// <summary>
     /// Current editor font family
@@ -44,45 +40,23 @@ public sealed class SettingsManager : PropertyChangedNotifier
     public ObservableCollection<string> ExternalDevices { get; set; } = new();
 
     /// <summary>
-    /// Address in memory where the program will be located
-    /// </summary>
-    public int ProgramAddress
-    {
-        get => _programAddress;
-        set => SetField(ref _programAddress, value);
-    }
-
-    /// <summary>
-    /// Stack pointer starting address
-    /// </summary>
-    public int StackAddress
-    {
-        get => _stackAddress;
-        set => SetField(ref _stackAddress, value);
-    }
-
-    /// <summary>
     /// Get instance of settings manager
     /// </summary>
     public static SettingsManager Instance { get; private set; }
 
-    private SettingsManager()
+    private SettingsManager(EditorOptions options)
     {
+        FontFamily = options.FontFamily;
+        FontSize = options.FontSize;
     }
 
     /// <summary>
     /// Creates settings manager
     /// </summary>
-    /// <param name="globalConfiguration">Global configuration of editor</param>
-    public static void Create(IConfigurationRoot globalConfiguration)
+    /// <param name="editorOptions">Editor options</param>
+    public static void Create(EditorOptions editorOptions)
     {
-        var editorOptions = globalConfiguration.GetOptions<EditorOptions>();
-
-        Instance ??= new SettingsManager
-        {
-            FontFamily = editorOptions.FontFamily,
-            FontSize = editorOptions.FontSize
-        };
+        Instance ??= new SettingsManager(editorOptions);
     }
 
     /// <summary>

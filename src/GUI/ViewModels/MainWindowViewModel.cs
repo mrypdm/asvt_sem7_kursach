@@ -26,7 +26,6 @@ public class MainWindowViewModel : ReactiveObject
     private readonly Window _window;
     private readonly FileManager _fileManager;
     private readonly TabManager _tabManager;
-    private readonly ProjectManager _projectManager;
 
     /// <summary>
     /// Empty constructor for designer
@@ -57,7 +56,6 @@ public class MainWindowViewModel : ReactiveObject
 
         _fileManager = new FileManager(window.StorageProvider);
         _tabManager = new TabManager(SelectTabCommand);
-        _projectManager = new ProjectManager(window.StorageProvider);
 
         window.Closing += OnClosingWindow;
 
@@ -101,7 +99,7 @@ public class MainWindowViewModel : ReactiveObject
     /// Command for closing file
     /// </summary>
     public ReactiveCommand<Unit, Unit> CloseFileCommand { get; }
-    
+
     /// <summary>
     /// Command for creating project
     /// </summary>
@@ -122,9 +120,9 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     private ReactiveCommand<FileTab, Unit> SelectTabCommand { get; }
 
-    public string WindowTitle => _projectManager.Project == null
+    public string WindowTitle => ProjectManager.Instance.Project == null
         ? DefaultWindowTitle
-        : $"{DefaultWindowTitle} - {_projectManager.Project.Name}";
+        : $"{DefaultWindowTitle} - {ProjectManager.Instance.Project.Name}";
 
     /// <summary>
     /// Collection of tabs
@@ -319,9 +317,9 @@ public class MainWindowViewModel : ReactiveObject
 
     private async Task OpenProjectFileAsync()
     {
-        if (_projectManager.Project != null)
+        if (ProjectManager.Instance.Project != null)
         {
-            var files = await _fileManager.OpenFileAsync(_projectManager.Project.ProjectFilePath);
+            var files = await _fileManager.OpenFileAsync(ProjectManager.Instance.Project.ProjectFilePath);
             await CreateTabForFiles(new[] { files });
         }
     }
@@ -345,14 +343,14 @@ public class MainWindowViewModel : ReactiveObject
             return;
         }
 
-        await _projectManager.CreateProjectAsync(box.InputValue.Trim());
+        await ProjectManager.Instance.CreateProjectAsync(_window.StorageProvider, box.InputValue.Trim());
         await OpenProjectFileAsync();
         this.RaisePropertyChanged(nameof(WindowTitle));
     }
 
     private async Task OpenProjectAsync()
     {
-        await _projectManager.OpenProjectAsync();
+        await ProjectManager.Instance.OpenProjectAsync(_window.StorageProvider);
         await OpenProjectFileAsync();
         this.RaisePropertyChanged(nameof(WindowTitle));
     }

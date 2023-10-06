@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json.Serialization;
+using Shared.Converters;
 
 namespace GUI.Models;
 
@@ -10,11 +11,36 @@ namespace GUI.Models;
 public class ProjectModel
 {
     public const string ProjectFileExtension = "pdp11proj";
-    
+
     /// <summary>
     /// Name of project
     /// </summary>
     public string Name { get; set; } = "NewProject";
+
+    /// <summary>
+    /// Files of project
+    /// </summary>
+    public string[] Files { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    /// Executable file
+    /// </summary>
+    public string Executable { get; set; } = string.Empty;
+
+    /// <summary>
+    /// External devices
+    /// </summary>
+    public string[] ExternalDevices { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    /// Initial address of stack pointer (original value), <see cref="StackAddress"/>
+    /// </summary>
+    public string StackAddressString { get; set; } = "0o1000";
+
+    /// <summary>
+    /// Start address of program (original value), <see cref="ProgramAddress"/>
+    /// </summary>
+    public string ProgramAddressString { get; set; } = "0o1000";
 
     /// <summary>
     /// Directory of project
@@ -35,17 +61,22 @@ public class ProjectModel
     public string ProjectFilePath => Path.Combine(Directory, ProjectFileName);
 
     /// <summary>
-    /// Files of project
+    /// Initial address of stack pointer
     /// </summary>
-    public string[] Files { get; set; } = Array.Empty<string>();
+    [JsonIgnore]
+    public int StackAddress
+    {
+        get => new NumberStringConverter().Convert(StackAddressString);
+        set => StackAddressString = $"0o{Convert.ToString(value, 8)}";
+    }
 
     /// <summary>
-    /// Executable file
+    /// Start address of program
     /// </summary>
-    public string Executable { get; set; } = string.Empty;
-
-    /// <summary>
-    /// External devices
-    /// </summary>
-    public string[] ExternalDevices { get; set; } = Array.Empty<string>();
+    [JsonIgnore]
+    public int ProgramAddress
+    {
+        get => new NumberStringConverter().Convert(ProgramAddressString);
+        set => ProgramAddressString = $"0o{Convert.ToString(value, 8)}";
+    }
 }

@@ -3,6 +3,7 @@ using System;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using GUI.Managers;
+using GUI.Models;
 using Shared.Helpers;
 
 namespace GUI;
@@ -16,7 +17,10 @@ public static class Program
     public static void Main(string[] args)
     {
         var configuration = ConfigurationHelper.BuildFromJson();
-        SettingsManager.Create(configuration);
+
+        var editorOptions = configuration.GetOptions<EditorOptions>();
+        SettingsManager.Create(editorOptions);
+        ProjectManager.Create();
 
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args, ShutdownMode.OnMainWindowClose);
     }

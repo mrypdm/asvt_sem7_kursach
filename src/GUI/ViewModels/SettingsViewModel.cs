@@ -86,20 +86,6 @@ public class SettingsViewModel : ReactiveObject
         set => SettingsManager.Instance.FontSize = value;
     }
 
-    /// <inheritdoc cref="SettingsManager.ProgramAddress"/>
-    public int ProgramAddress
-    {
-        get => SettingsManager.Instance.ProgramAddress;
-        set => SettingsManager.Instance.ProgramAddress = value;
-    }
-
-    /// <inheritdoc cref="SettingsManager.StackAddress"/>
-    public int StackAddress
-    {
-        get => SettingsManager.Instance.StackAddress;
-        set => SettingsManager.Instance.StackAddress = value;
-    }
-
     private async Task AddExternalDeviceAsync()
     {
         var file = await _storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions

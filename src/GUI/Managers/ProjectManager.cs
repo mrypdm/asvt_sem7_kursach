@@ -7,20 +7,41 @@ using Shared.Helpers;
 
 namespace GUI.Managers;
 
+/// <summary>
+/// Project manager
+/// </summary>
 public class ProjectManager
 {
-    private readonly IStorageProvider _storageProvider;
+    /// <summary>
+    /// Instance of project manager
+    /// </summary>
+    public static ProjectManager Instance { get; private set; }
 
-    public ProjectManager(IStorageProvider storageProvider)
+    private ProjectManager()
     {
-        _storageProvider = storageProvider;
     }
-    
+
+    /// <summary>
+    /// Creates instance of manager
+    /// </summary>
+    public static void Create()
+    {
+        Instance = new ProjectManager();
+    }
+
+    /// <summary>
+    /// Current project
+    /// </summary>
     public ProjectModel Project { get; private set; }
 
-    public async Task CreateProjectAsync(string projectName)
+    /// <summary>
+    /// Creates new project
+    /// </summary>
+    /// <param name="storageProvider">Storage provider</param>
+    /// <param name="projectName">Name of project</param>
+    public async Task CreateProjectAsync(IStorageProvider storageProvider, string projectName)
     {
-        var projectDir = await _storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        var projectDir = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
             Title = "Choose project folder...",
             AllowMultiple = false
@@ -40,9 +61,13 @@ public class ProjectManager
         await JsonHelper.SerializeToFileAsync(Project, Project.ProjectFilePath);
     }
 
-    public async Task OpenProjectAsync()
+    /// <summary>
+    /// Opens project
+    /// </summary>
+    /// <param name="storageProvider">Storage provider</param>
+    public async Task OpenProjectAsync(IStorageProvider storageProvider)
     {
-        var projectFile = await _storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        var projectFile = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = "Open project file...",
             AllowMultiple = false,
