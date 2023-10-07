@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Avalonia.Media;
 using GUI.Exceptions;
@@ -32,7 +31,6 @@ public class TabManager : PropertyChangedNotifier
     public TabManager(ICommand defaultCommand)
     {
         _defaultCommand = defaultCommand;
-        SelectTab(CreateTab());
     }
 
     /// <summary>
@@ -58,7 +56,7 @@ public class TabManager : PropertyChangedNotifier
     /// <exception cref="TabExistsException">If tab for file already exists</exception>
     public FileTab CreateTab(FileModel file = null, ICommand command = null)
     {
-        if (file?.FilePath != null)
+        if (file != null)
         {
             var existingTab = Tabs.SingleOrDefault(t => t.File.FilePath == file.FilePath);
             if (existingTab != null)
@@ -70,7 +68,7 @@ public class TabManager : PropertyChangedNotifier
             }
         }
 
-        file ??= new FileModel($"new {GenerateNewTabNumber()}");
+        file ??= new FileModel();
 
         var tab = new FileTab(file)
         {
@@ -98,9 +96,6 @@ public class TabManager : PropertyChangedNotifier
     /// <summary>
     /// Deletes tab. If there are no tabs left, it creates an empty tab.
     /// </summary>
-    /// <remarks>
-    /// After deletion, the previous tab will be selected
-    /// </remarks>
     /// <param name="tab">Tab reference</param>
     public void DeleteTab(FileTab tab)
     {
@@ -108,7 +103,7 @@ public class TabManager : PropertyChangedNotifier
 
         Tabs.Remove(tab);
 
-        var tabToSelect = Tabs.ElementAtOrDefault(index == -1 ? 0 : index) ?? CreateTab();
+        var tabToSelect = Tabs.ElementAtOrDefault(index == -1 ? 0 : index);
         SelectTab(tabToSelect);
     }
 
@@ -124,7 +119,11 @@ public class TabManager : PropertyChangedNotifier
         }
 
         Tab = tab;
-        Tab.Background = SelectedBackground;
+
+        if (Tab != null)
+        {
+            Tab.Background = SelectedBackground;
+        }
     }
 
     /// <summary>
@@ -135,17 +134,5 @@ public class TabManager : PropertyChangedNotifier
     public void ChangeForeground(FileTab tab, IBrush brush)
     {
         tab.Foreground = brush;
-    }
-
-    private int GenerateNewTabNumber()
-    {
-        var patter = new Regex("^new ([0-9]+)$");
-        var num = Tabs
-            .Select(t => patter.Match((t.Content as string)!))
-            .Where(m => m.Groups.Count == 2)
-            .Select(m => m.Groups.Values.ElementAt(1))
-            .DefaultIfEmpty()
-            .Max(g => int.Parse(g?.Value ?? "0"));
-        return ++num;
     }
 }

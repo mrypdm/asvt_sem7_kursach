@@ -23,18 +23,21 @@ public class ProjectManager : PropertyChangedNotifier
     /// </summary>
     public ProjectModel Project
     {
-        get => _project;
+        get => _project ?? throw new InvalidOperationException("Project is not opened");
         set => SetField(ref _project, value);
     }
 
-    public IReadOnlyCollection<string> ExternalDevices => Project.ExternalDevices;
+    /// <summary>
+    /// Is project opened
+    /// </summary>
+    public bool IsOpened => _project != null;
 
     /// <summary>
     /// Creates new project
     /// </summary>
     /// <param name="storageProvider">Storage provider</param>
     /// <param name="projectName">Name of project</param>
-    public async Task CreateProjectAsync(IStorageProvider storageProvider, string projectName)
+    public async Task<bool> CreateProjectAsync(IStorageProvider storageProvider, string projectName)
     {
         var projectDir = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
@@ -44,7 +47,7 @@ public class ProjectManager : PropertyChangedNotifier
 
         if (!projectDir.Any())
         {
-            return;
+            return false;
         }
 
         var project = new ProjectModel
@@ -53,16 +56,17 @@ public class ProjectManager : PropertyChangedNotifier
             Directory = projectDir[0].Path.LocalPath
         };
 
-        await JsonHelper.SerializeToFileAsync(project, Project.ProjectFilePath);
-
+        await JsonHelper.SerializeToFileAsync(project, project.ProjectFilePath);
         Project = project;
+
+        return true;
     }
 
     /// <summary>
     /// Opens project
     /// </summary>
     /// <param name="storageProvider">Storage provider</param>
-    public async Task OpenProjectAsync(IStorageProvider storageProvider)
+    public async Task<bool> OpenProjectAsync(IStorageProvider storageProvider)
     {
         var projectFile = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
@@ -79,10 +83,11 @@ public class ProjectManager : PropertyChangedNotifier
 
         if (!projectFile.Any())
         {
-            return;
+            return false;
         }
 
         await LoadProjectAsync(projectFile[0].Path.LocalPath);
+        return true;
     }
 
     /// <summary>
@@ -122,6 +127,11 @@ public class ProjectManager : PropertyChangedNotifier
     /// <param name="filePath">File path</param>
     public void AddFileToProject(string filePath)
     {
+        if (Project.ProjectFilePath.Contains(filePath))
+        {
+            return;
+        }
+
         Project.Files.Add(Path.GetRelativePath(Project.Directory, filePath));
     }
 
@@ -140,7 +150,14 @@ public class ProjectManager : PropertyChangedNotifier
     /// <param name="filePath">File path</param>
     public void SetExecutableFile(string filePath)
     {
-        Project.Executable = Path.GetRelativePath(Project.Directory, filePath);
+        if (Project.Files.Contains(filePath))
+        {
+            Project.Executable = Path.GetRelativePath(Project.Directory, filePath);
+        }
+        else
+        {
+            throw new ArgumentException($"The file '{filePath}' does not belong to the project", nameof(filePath));
+        }
     }
 
     /// <summary>
@@ -149,6 +166,11 @@ public class ProjectManager : PropertyChangedNotifier
     /// <param name="filePath">Path to external device</param>
     public void AddExternalDevice(string filePath)
     {
+        if (Project.ExternalDevices.Contains(filePath))
+        {
+            return;
+        }
+
         Project.ExternalDevices.Add(filePath);
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -56,7 +57,9 @@ public class SettingsViewModel : ReactiveObject
     public ObservableCollection<FontFamily> AllFontFamilies { get; }
 
     /// <inheritdoc cref="SettingsManager.ExternalDevices"/>
-    public ObservableCollection<string> ExternalDevices => new(ProjectManager.Instance.ExternalDevices);
+    public ObservableCollection<string> ExternalDevices => new(ProjectManager.Instance.IsOpened
+        ? ProjectManager.Instance.Project.ExternalDevices
+        : Array.Empty<string>());
 
     /// <summary>
     /// Collection with selected external devices

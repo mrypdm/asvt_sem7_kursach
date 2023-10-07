@@ -5,10 +5,8 @@ namespace GUI.Models;
 /// <summary>
 /// File model
 /// </summary>
-public record FileModel(string Label)
+public record FileModel
 {
-    public string Label { get; set; } = Label;
-
     /// <summary>
     /// Path to file
     /// </summary>
@@ -17,7 +15,7 @@ public record FileModel(string Label)
     /// <summary>
     /// File name or label, if <see cref="FilePath"/> is null
     /// </summary>
-    public string FileName => FilePath == null ? Label : Path.GetFileName(FilePath);
+    public string FileName => Path.GetFileName(FilePath);
 
     /// <summary>
     /// File content

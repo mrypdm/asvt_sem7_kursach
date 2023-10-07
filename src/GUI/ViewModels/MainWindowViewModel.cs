@@ -12,7 +12,6 @@ using GUI.Managers;
 using GUI.Models;
 using GUI.Views;
 using MsBox.Avalonia.Enums;
-using MsBox.Avalonia.Models;
 using ReactiveUI;
 using Shared.Helpers;
 using MessageBoxManager = GUI.Managers.MessageBoxManager;
@@ -25,6 +24,7 @@ namespace GUI.ViewModels;
 public class MainWindowViewModel : ReactiveObject
 {
     private const string DefaultWindowTitle = "PDP-11 Simulator";
+    private const string MainFileName = "main.asm";
 
     private readonly Window _window;
     private readonly FileManager _fileManager;
@@ -44,7 +44,7 @@ public class MainWindowViewModel : ReactiveObject
     public MainWindowViewModel(Window window)
     {
         _window = window;
-        CreateFileCommand = ReactiveCommand.Create(CreateFileAsync);
+        CreateFileCommand = ReactiveCommand.CreateFromTask(CreateFileAsync);
         OpenFileCommand = ReactiveCommand.CreateFromTask(OpenFileAsync);
         SaveFileCommand = ReactiveCommand.CreateFromTask<bool>(
             async saveAs => await SaveFileAndUpdateTab(_tabManager!.Tab, saveAs));
@@ -52,8 +52,8 @@ public class MainWindowViewModel : ReactiveObject
         DeleteFileCommand = ReactiveCommand.CreateFromTask(DeleteFileAsync);
         CloseFileCommand = ReactiveCommand.CreateFromTask(async () => await CloseTabAsync(_tabManager!.Tab, true));
         SelectTabCommand = ReactiveCommand.Create<FileTab>(tab => _tabManager!.SelectTab(tab));
-        CreateProjectCommand = ReactiveCommand.CreateFromTask(CreateProjectAsync);
-        OpenProjectCommand = ReactiveCommand.CreateFromTask(OpenProjectAsync);
+        CreateProjectCommand = ReactiveCommand.CreateFromTask(async () => { await CreateProjectAsync(); });
+        OpenProjectCommand = ReactiveCommand.CreateFromTask(async () => { await OpenProjectAsync(); });
 
         OpenSettingsWindowCommand = ReactiveCommand.Create(OpenSettingsWindow);
 
@@ -61,6 +61,14 @@ public class MainWindowViewModel : ReactiveObject
         _tabManager = new TabManager(SelectTabCommand);
 
         window.Closing += OnClosingWindow;
+
+        window.Opened += async (_, _) =>
+        {
+            if (!await InitProject())
+            {
+                _window.Close();
+            }
+        };
 
         ProjectManager.Instance.PropertyChanged += (_, _) =>
         {
@@ -129,9 +137,9 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     private ReactiveCommand<FileTab, Unit> SelectTabCommand { get; }
 
-    public string WindowTitle => ProjectManager.Instance.Project == null
-        ? DefaultWindowTitle
-        : $"{DefaultWindowTitle} - {ProjectManager.Instance.Project.Name}";
+    public string WindowTitle => ProjectManager.Instance.IsOpened
+        ? $"{DefaultWindowTitle} - {ProjectManager.Instance.Project.Name}"
+        : DefaultWindowTitle;
 
     /// <summary>
     /// Collection of tabs
@@ -164,6 +172,8 @@ public class MainWindowViewModel : ReactiveObject
     /// <inheritdoc cref="SettingsManager.FontSize"/>
     public double FontSize => SettingsManager.Instance.FontSize;
 
+    #region Tabs and files
+
     private async Task CreateTabForFiles(IEnumerable<FileModel> files)
     {
         FileTab tab = null;
@@ -181,10 +191,9 @@ public class MainWindowViewModel : ReactiveObject
                 var res = await MessageBoxManager
                     .ShowCustomMessageBoxAsync(
                         "Warning", $"File '{file.FileName}' is already open", Icon.Warning, _window,
-                        new ButtonDefinition { IsCancel = true, IsDefault = false, Name = "Skip" },
-                        new ButtonDefinition { IsCancel = false, IsDefault = true, Name = "Reopen" });
+                        MessageBoxManager.ReopenButton, MessageBoxManager.SkipButton);
 
-                if (res == "Reopen")
+                if (res == MessageBoxManager.ReopenButton.Name)
                 {
                     e.Tab.File.Text = file.Text;
                     if (ReferenceEquals(e.Tab, _tabManager.Tab))
@@ -195,20 +204,23 @@ public class MainWindowViewModel : ReactiveObject
             }
         }
 
-        if (_tabManager.Tab.File.FilePath == null && string.IsNullOrWhiteSpace(_tabManager.Tab.File.Text))
-        {
-            _tabManager.DeleteTab(_tabManager.Tab);
-        }
-
         _tabManager.SelectTab(tab);
     }
 
     /// <summary>
     /// Creates new file and tab for it
     /// </summary>
-    private void CreateFileAsync()
+    private async Task CreateFileAsync()
     {
-        _tabManager.SelectTab(_tabManager.CreateTab());
+        var file = await _fileManager.CreateFile(
+            ProjectManager.Instance.IsOpened ? ProjectManager.Instance.Project.Directory : null, null);
+
+        if (file != null)
+        {
+            await CreateTabForFiles(new[] { file });
+            ProjectManager.Instance.AddFileToProject(file.FilePath);
+            await ProjectManager.Instance.SaveProjectAsync();
+        }
     }
 
     /// <summary>
@@ -218,12 +230,10 @@ public class MainWindowViewModel : ReactiveObject
     {
         var files = await _fileManager.OpenFilesAsync();
 
-        if (files == null)
+        if (files != null)
         {
-            return;
+            await CreateTabForFiles(files);
         }
-
-        await CreateTabForFiles(files);
     }
 
     /// <summary>
@@ -234,13 +244,13 @@ public class MainWindowViewModel : ReactiveObject
     private async Task<bool> SaveFileAsAsync(FileModel file)
     {
         var paths = Tabs
-            .Where(t => t.File.FilePath != null && t.File != file)
+            .Where(t => t.File.FilePath != file.FilePath)
             .Select(t => t.File.FilePath)
             .ToHashSet();
 
         do
         {
-            var filePath = await _fileManager.CreateFile(file.FileName);
+            var filePath = await _fileManager.SelectFileAsync(null, file.FileName);
 
             if (filePath == null)
             {
@@ -258,6 +268,11 @@ public class MainWindowViewModel : ReactiveObject
         } while (true);
     }
 
+    /// <summary>
+    /// Saves project file
+    /// </summary>
+    /// <param name="file">File info</param>
+    /// <returns>True if saved</returns>
     private async Task<bool> SaveProjectFile(FileModel file)
     {
         var error = await JsonHelper.ValidateJson<ProjectModel>(file.Text);
@@ -282,18 +297,19 @@ public class MainWindowViewModel : ReactiveObject
     /// <returns>True if file was saved</returns>
     private async Task<bool> SaveFileAsync(FileModel file, bool saveAs)
     {
-        if (file.FilePath == ProjectManager.Instance.Project?.ProjectFilePath)
+        if (file.FilePath ==
+            (ProjectManager.Instance.IsOpened ? ProjectManager.Instance.Project.ProjectFilePath : null))
         {
             return await SaveProjectFile(file);
         }
 
-        if (!saveAs && file.FilePath != null)
+        if (saveAs)
         {
-            await _fileManager.WriteFileAsync(file);
-            return true;
+            return await SaveFileAsAsync(file);
         }
 
-        return await SaveFileAsAsync(file);
+        await _fileManager.WriteFileAsync(file);
+        return true;
     }
 
     /// <summary>
@@ -327,7 +343,9 @@ public class MainWindowViewModel : ReactiveObject
 
         if (res == ButtonResult.Yes)
         {
-            _fileManager.Delete(File);
+            ProjectManager.Instance.RemoveFileFromProject(File.FilePath);
+            await ProjectManager.Instance.SaveProjectAsync();
+            await _fileManager.DeleteAsync(File);
             _tabManager.DeleteTab(_tabManager.Tab);
         }
     }
@@ -371,75 +389,112 @@ public class MainWindowViewModel : ReactiveObject
         }
     }
 
+    #endregion
+
+    #region Project
+
+    /// <summary>
+    /// Create or open project at startup
+    /// </summary>
+    /// <returns>True if created or opened</returns>
+    private async Task<bool> InitProject()
+    {
+        while (true)
+        {
+            var boxRes = await MessageBoxManager.ShowCustomMessageBoxAsync("Init", "Create or open project", Icon.Info,
+                _window, MessageBoxManager.CreateButton, MessageBoxManager.OpenButton, MessageBoxManager.CancelButton
+            );
+
+            if (boxRes == MessageBoxManager.CreateButton.Name && await CreateProjectAsync()
+                || boxRes == MessageBoxManager.OpenButton.Name && await OpenProjectAsync())
+            {
+                return true;
+            }
+
+            if (boxRes == MessageBoxManager.CancelButton.Name || boxRes == null)
+            {
+                return false;
+            }
+        }
+    }
+
     /// <summary>
     /// Asks for tabs closing
     /// </summary>
     /// <returns>True if we user agreed</returns>
     private async Task<bool> NewProjectValidation()
     {
-        if (Tabs.Any(t => t.File.FilePath != null && !string.IsNullOrWhiteSpace(t.File.Text)))
+        if (!Tabs.Any())
         {
-            var res = await MessageBoxManager
-                .ShowMessageBoxAsync("Warning", "This action closes current project and all tabs",
-                    ButtonEnum.OkAbort, Icon.Warning, _window);
-
-            if (res == ButtonResult.Ok)
-            {
-                await CloseAllTabs();
-                ProjectManager.Instance.CloseProject();
-                return true;
-            }
+            return true;
         }
 
-        return true;
+        var res = await MessageBoxManager
+            .ShowMessageBoxAsync("Warning", "This action closes current project and all tabs",
+                ButtonEnum.OkAbort, Icon.Warning, _window);
+
+        return res == ButtonResult.Ok;
     }
 
     /// <summary>
-    /// Opens project file
+    /// Opens new project files and closes old project files
     /// </summary>
     private async Task OpenProjectFilesAsync()
     {
+        await CloseAllTabs();
+
         var projectFile = await _fileManager.OpenFileAsync(ProjectManager.Instance.Project.ProjectFilePath);
 
         var files = new List<FileModel> { projectFile };
 
-        foreach (var file in ProjectManager.Instance.Project.ProjectFilesPaths)
+        foreach (var filePath in ProjectManager.Instance.Project.ProjectFilesPaths)
         {
-            files.Add(await _fileManager.OpenFileAsync(file));
+            try
+            {
+                var file = await _fileManager.OpenFileAsync(filePath);
+                files.Add(file);
+            }
+            catch (FileNotFoundException e)
+            {
+                await MessageBoxManager.ShowErrorMessageBox($"{e.Message} Skipping it.", _window);
+            }
         }
 
         await CreateTabForFiles(files);
     }
 
-    private async Task CreateProjectAsync()
+    private async Task<bool> CreateProjectAsync()
     {
         if (!await NewProjectValidation())
         {
-            return;
+            return false;
         }
 
-        var (res, value) = await MessageBoxManager.ShowInputMessageBoxAsync("Create project", "Enter project name",
-            ButtonEnum.OkCancel,
-            Icon.Setting, _window, "Project name");
-
-        if (res == ButtonResult.Cancel)
+        string projectName;
+        while (true)
         {
-            return;
-        }
+            (var res, projectName) = await MessageBoxManager.ShowInputMessageBoxAsync("Create project",
+                "Enter project name", ButtonEnum.OkCancel, Icon.Setting, _window, "Project name");
 
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            await MessageBoxManager.ShowErrorMessageBox("Project name cannot be empty", _window);
-            return;
-        }
-
-        await ProjectManager.Instance.CreateProjectAsync(_window.StorageProvider, value.Trim());
-
-        if (ProjectManager.Instance.Project != null)
-        {
-            var mainFile = new FileModel("main.asm")
+            if (res == ButtonResult.Cancel)
             {
-                FilePath = Path.Combine(ProjectManager.Instance.Project.Directory, "main.asm")
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(projectName))
+            {
+                await MessageBoxManager.ShowErrorMessageBox("Project name cannot be empty", _window);
+                continue;
+            }
+
+            break;
+        }
+
+        if (await ProjectManager.Instance.CreateProjectAsync(_window.StorageProvider, projectName.Trim()))
+        {
+            var mainFile = new FileModel
+            {
+                FilePath = Path.Combine(ProjectManager.Instance.Project.Directory, MainFileName)
             };
             await _fileManager.WriteFileAsync(mainFile);
             ProjectManager.Instance.AddFileToProject(mainFile.FilePath);
@@ -447,31 +502,37 @@ public class MainWindowViewModel : ReactiveObject
             await ProjectManager.Instance.SaveProjectAsync();
 
             await OpenProjectFilesAsync();
+            return true;
         }
+
+        return false;
     }
 
-    private async Task OpenProjectAsync()
+    private async Task<bool> OpenProjectAsync()
     {
         if (!await NewProjectValidation())
         {
-            return;
+            return false;
         }
 
         try
         {
-            await ProjectManager.Instance.OpenProjectAsync(_window.StorageProvider);
+            if (await ProjectManager.Instance.OpenProjectAsync(_window.StorageProvider))
+            {
+                await OpenProjectFilesAsync();
+                return true;
+            }
         }
         catch (FormatException e)
         {
             await MessageBoxManager.ShowErrorMessageBox(e.Message, _window);
-            return;
+            return false;
         }
 
-        if (ProjectManager.Instance.Project != null)
-        {
-            await OpenProjectFilesAsync();
-        }
+        return false;
     }
+
+    #endregion
 
     /// <summary>
     /// Opens <see cref="SettingsWindow"/>
@@ -481,6 +542,8 @@ public class MainWindowViewModel : ReactiveObject
         var settingsWindow = new SettingsWindow();
         settingsWindow.Show();
     }
+
+    #region Handlers
 
     private async void OnClosingWindow(object sender, WindowClosingEventArgs args)
     {
@@ -509,7 +572,7 @@ public class MainWindowViewModel : ReactiveObject
 
     private async void OnProjectUpdated()
     {
-        if (ProjectManager.Instance.Project == null)
+        if (!ProjectManager.Instance.IsOpened)
         {
             return;
         }
@@ -523,4 +586,6 @@ public class MainWindowViewModel : ReactiveObject
             this.RaisePropertyChanged(nameof(FileContent));
         }
     }
+
+    #endregion
 }

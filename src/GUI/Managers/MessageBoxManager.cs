@@ -8,6 +8,12 @@ namespace GUI.Managers;
 
 public static class MessageBoxManager
 {
+    public static readonly ButtonDefinition CreateButton = new() { Name = "Create" };
+    public static readonly ButtonDefinition OpenButton = new() { Name = "Open" };
+    public static readonly ButtonDefinition ReopenButton = new() { Name = "Reopen" };
+    public static readonly ButtonDefinition SkipButton = new() { Name = "Skip" };
+    public static readonly ButtonDefinition CancelButton = new() { Name = "Cancel" };
+
     public static async Task<ButtonResult> ShowMessageBoxAsync(string title, string text, ButtonEnum buttons, Icon icon,
         Window owner)
     {

@@ -12,6 +12,7 @@ namespace GUI.Managers;
 /// </summary>
 public class FileManager
 {
+    
     private readonly IStorageProvider _storageProvider;
 
     /// <summary>
@@ -21,6 +22,25 @@ public class FileManager
     public FileManager(IStorageProvider storageProvider)
     {
         _storageProvider = storageProvider;
+    }
+
+    /// <summary>
+    /// Selects file on disk
+    /// </summary>
+    /// <param name="directoryPath">Initial directory</param>
+    /// <param name="fileName">Initial file name</param>
+    /// <returns>Path to file</returns>
+    public async Task<string> SelectFileAsync(string directoryPath, string fileName)
+    {
+        var newFile = await _storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Save file as...",
+            ShowOverwritePrompt = true,
+            SuggestedFileName = fileName,
+            SuggestedStartLocation = await _storageProvider.TryGetFolderFromPathAsync(directoryPath),
+        });
+
+        return newFile?.Path.LocalPath;
     }
 
     /// <summary>
@@ -50,7 +70,12 @@ public class FileManager
         return filesList;
     }
 
-    public async Task<FileModel> OpenFileAsync(string filePath) => new(Path.GetFileName(filePath))
+    /// <summary>
+    /// Open file on path
+    /// </summary>
+    /// <param name="filePath">File path</param>
+    /// <returns>File info</returns>
+    public async Task<FileModel> OpenFileAsync(string filePath) => new()
     {
         FilePath = filePath,
         Text = await File.ReadAllTextAsync(filePath)
@@ -59,19 +84,26 @@ public class FileManager
     /// <summary>
     /// Creates new file
     /// </summary>
+    /// <param name="directoryPath">Initial directory</param>
     /// <param name="fileName">Initial file name</param>
-    /// <returns>Path to file</returns>
-    public async Task<string> CreateFile(string fileName)
+    /// <returns>File info</returns>
+    public async Task<FileModel> CreateFile(string directoryPath, string fileName)
     {
-        var newFile = await _storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-        {
-            Title = "Save file as...",
-            ShowOverwritePrompt = true,
-            SuggestedFileName = fileName,
-            DefaultExtension = "asm"
-        });
+        var filePath = await SelectFileAsync(directoryPath, fileName);
 
-        return newFile?.Path.LocalPath;
+        if (filePath == null)
+        {
+            return null;
+        }
+
+        var file = new FileModel
+        {
+            FilePath = filePath
+        };
+
+        await WriteFileAsync(file);
+
+        return file;
     }
 
     /// <summary>
@@ -88,11 +120,5 @@ public class FileManager
     /// Deletes file
     /// </summary>
     /// <param name="file">File info</param>
-    public void Delete(FileModel file)
-    {
-        if (file.FilePath != null)
-        {
-            File.Delete(file.FilePath);
-        }
-    }
+    public Task DeleteAsync(FileModel file) => Task.Run(() => File.Delete(file.FilePath));
 }
