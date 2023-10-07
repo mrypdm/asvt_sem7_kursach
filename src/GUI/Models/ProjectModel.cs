@@ -69,6 +69,12 @@ public class ProjectModel
     public IList<string> ProjectFilesPaths => Files.Select(f => Path.Combine(Directory, f)).ToList();
 
     /// <summary>
+    /// Absolute path to executable file
+    /// </summary>
+    [JsonIgnore]
+    public string ExecutableFilePath => Executable == string.Empty ? null : Path.Combine(Directory, Executable);
+
+    /// <summary>
     /// Initial address of stack pointer
     /// </summary>
     [JsonIgnore]

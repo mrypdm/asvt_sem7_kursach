@@ -141,6 +141,12 @@ public class ProjectManager : PropertyChangedNotifier
     public void RemoveFileFromProject(string filePath)
     {
         var index = Project.ProjectFilesPaths.IndexOf(filePath);
+
+        if (Project.ExecutableFilePath == filePath)
+        {
+            Project.Executable = string.Empty;
+        }
+        
         Project.Files.RemoveAt(index);
     }
 
