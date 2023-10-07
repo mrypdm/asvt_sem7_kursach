@@ -66,7 +66,7 @@ public class ProjectModel
     /// Absolute paths to project files
     /// </summary>
     [JsonIgnore]
-    public IEnumerable<string> ProjectFilesPaths => Files.Select(f => Path.Combine(Directory, f));
+    public IList<string> ProjectFilesPaths => Files.Select(f => Path.Combine(Directory, f)).ToList();
 
     /// <summary>
     /// Initial address of stack pointer

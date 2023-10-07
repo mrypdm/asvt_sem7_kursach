@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -141,7 +140,8 @@ public class ProjectManager : PropertyChangedNotifier
     /// <param name="filePath">File path</param>
     public void RemoveFileFromProject(string filePath)
     {
-        Project.Files.Remove(Path.GetRelativePath(Project.Directory, filePath));
+        var index = Project.ProjectFilesPaths.IndexOf(filePath);
+        Project.Files.RemoveAt(index);
     }
 
     /// <summary>
