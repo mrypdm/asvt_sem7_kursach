@@ -17,6 +17,11 @@ public sealed class SettingsManager : PropertyChangedNotifier
     private double _fontSize;
 
     /// <summary>
+    /// Options from command line
+    /// </summary>
+    public CommandLineOptions CommandLineOptions { get; }
+
+    /// <summary>
     /// Current editor font family
     /// </summary>
     public FontFamily FontFamily
@@ -44,19 +49,21 @@ public sealed class SettingsManager : PropertyChangedNotifier
     /// </summary>
     public static SettingsManager Instance { get; private set; }
 
-    private SettingsManager(EditorOptions options)
+    private SettingsManager(EditorOptions options, CommandLineOptions commandLineOptions)
     {
         FontFamily = options.FontFamily;
         FontSize = options.FontSize;
+        CommandLineOptions = commandLineOptions;
     }
 
     /// <summary>
     /// Creates settings manager
     /// </summary>
     /// <param name="editorOptions">Editor options</param>
-    public static void Create(EditorOptions editorOptions)
+    /// <param name="commandLineOptions">Options from command line</param>
+    public static void Create(EditorOptions editorOptions, CommandLineOptions commandLineOptions)
     {
-        Instance ??= new SettingsManager(editorOptions);
+        Instance ??= new SettingsManager(editorOptions, commandLineOptions);
     }
 
     /// <summary>

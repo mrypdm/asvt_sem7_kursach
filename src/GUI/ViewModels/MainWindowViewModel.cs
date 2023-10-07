@@ -29,6 +29,7 @@ public class MainWindowViewModel : ReactiveObject
     private readonly Window _window;
     private readonly FileManager _fileManager;
     private readonly TabManager _tabManager;
+    private SettingsWindow _settingsWindow;
 
     /// <summary>
     /// Empty constructor for designer
@@ -399,6 +400,12 @@ public class MainWindowViewModel : ReactiveObject
     /// <returns>True if created or opened</returns>
     private async Task<bool> InitProject()
     {
+        if (SettingsManager.Instance.CommandLineOptions.Project != null &&
+            await OpenProjectAsync(SettingsManager.Instance.CommandLineOptions.Project))
+        {
+            return true;
+        }
+
         while (true)
         {
             var boxRes = await MessageBoxManager.ShowCustomMessageBoxAsync("Init", "Create or open project", Icon.Info,
@@ -508,7 +515,7 @@ public class MainWindowViewModel : ReactiveObject
         return false;
     }
 
-    private async Task<bool> OpenProjectAsync()
+    private async Task<bool> OpenProjectAsync(string projectPath = null)
     {
         if (!await NewProjectValidation())
         {
@@ -517,13 +524,20 @@ public class MainWindowViewModel : ReactiveObject
 
         try
         {
-            if (await ProjectManager.Instance.OpenProjectAsync(_window.StorageProvider))
+            if (projectPath == null && await ProjectManager.Instance.OpenProjectAsync(_window.StorageProvider))
             {
                 await OpenProjectFilesAsync();
                 return true;
             }
+
+            if (projectPath != null)
+            {
+                await ProjectManager.Instance.LoadProjectAsync(projectPath);
+                await OpenProjectFilesAsync();
+                return true;
+            }
         }
-        catch (FormatException e)
+        catch (Exception e)
         {
             await MessageBoxManager.ShowErrorMessageBox(e.Message, _window);
             return false;
@@ -539,8 +553,15 @@ public class MainWindowViewModel : ReactiveObject
     /// </summary>
     private void OpenSettingsWindow()
     {
-        var settingsWindow = new SettingsWindow();
-        settingsWindow.Show();
+        if (_settingsWindow is not { IsLoaded: true })
+        {
+            _settingsWindow = new SettingsWindow();
+            _settingsWindow.Show();
+        }
+        else
+        {
+            _settingsWindow.Activate();
+        }
     }
 
     #region Handlers

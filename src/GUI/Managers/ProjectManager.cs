@@ -94,6 +94,8 @@ public class ProjectManager : PropertyChangedNotifier
     /// </summary>
     public async Task LoadProjectAsync(string projectFilePath)
     {
+        projectFilePath = Path.Combine(Directory.GetCurrentDirectory(), projectFilePath);
+
         try
         {
             var project = await JsonHelper.DeserializeFileAsync<ProjectModel>(projectFilePath);
@@ -146,7 +148,7 @@ public class ProjectManager : PropertyChangedNotifier
         {
             Project.Executable = string.Empty;
         }
-        
+
         Project.Files.RemoveAt(index);
     }
 

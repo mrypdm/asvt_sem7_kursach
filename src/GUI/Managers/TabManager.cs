@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using Avalonia;
 using Avalonia.Media;
 using GUI.Exceptions;
 using GUI.Models;
@@ -74,6 +75,7 @@ public class TabManager : PropertyChangedNotifier
         {
             Content = file.FileName,
             MinWidth = 100,
+            Margin = new Thickness(0, 5),
             Command = command ?? _defaultCommand
         };
         tab.CommandParameter = tab;
