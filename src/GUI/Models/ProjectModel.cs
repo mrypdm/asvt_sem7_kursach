@@ -66,7 +66,7 @@ public class ProjectModel
     /// Absolute paths to project files
     /// </summary>
     [JsonIgnore]
-    public IList<string> ProjectFilesPaths => Files.Select(f => Path.Combine(Directory, f)).ToList();
+    public IList<string> ProjectFilesPaths => Files.Select(f => Path.GetFullPath(Path.Combine(Directory, f))).ToList();
 
     /// <summary>
     /// Absolute path to executable file

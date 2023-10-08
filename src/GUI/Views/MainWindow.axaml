@@ -63,14 +63,16 @@
 
         <Separator DockPanel.Dock="Top" Height="2" />
 
-        <ItemsControl Name="FileTabsListBox" Margin="5,0,0,5" DockPanel.Dock="Left"
-                      ItemsSource="{Binding Tabs}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto">
+            <ItemsControl Name="FileTabsListBox" Margin="5,0,0,5" DockPanel.Dock="Left"
+                          ItemsSource="{Binding Tabs}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
 
         <TextBox Name="SourceCodeTextBox" Margin="5,0,5,5"
                  AcceptsReturn="True" AcceptsTab="True"
