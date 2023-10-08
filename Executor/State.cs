@@ -1,8 +1,9 @@
 ﻿using System;
 namespace State{
     public class State {
-        public ushort ram; // aka Регистер адреса памяти
-        public ushort rip; // aka Instruction pointer
-        public ushort[8] r;
+        public ushort RAM; // aka Регистер адреса памяти
+        public ushort MDR; // aka Регистр данных памяти
+        public ushort RIP; // aka Instruction pointer
+        public ushort[8] R;
     }
 }
