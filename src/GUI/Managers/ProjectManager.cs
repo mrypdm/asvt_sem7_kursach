@@ -158,7 +158,7 @@ public class ProjectManager : PropertyChangedNotifier
     /// <param name="filePath">File path</param>
     public void SetExecutableFile(string filePath)
     {
-        if (Project.Files.Contains(filePath))
+        if (Project.ProjectFilesPaths.Contains(filePath))
         {
             Project.Executable = Path.GetRelativePath(Project.Directory, filePath);
         }
