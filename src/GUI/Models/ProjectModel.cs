@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
 using Shared.Converters;
+using Shared.Helpers;
 
 namespace GUI.Models;
 
@@ -60,19 +60,19 @@ public class ProjectModel
     /// Path to project file
     /// </summary>
     [JsonIgnore]
-    public string ProjectFilePath => Path.Combine(Directory, ProjectFileName);
+    public string ProjectFilePath => PathHelper.Combine(Directory, ProjectFileName);
 
     /// <summary>
     /// Absolute paths to project files
     /// </summary>
     [JsonIgnore]
-    public IList<string> ProjectFilesPaths => Files.Select(f => Path.GetFullPath(Path.Combine(Directory, f))).ToList();
+    public IList<string> ProjectFilesPaths => Files.Select(f => PathHelper.Combine(Directory, f)).ToList();
 
     /// <summary>
     /// Absolute path to executable file
     /// </summary>
     [JsonIgnore]
-    public string ExecutableFilePath => Executable == string.Empty ? null : Path.Combine(Directory, Executable);
+    public string ExecutableFilePath => Executable == string.Empty ? null : PathHelper.Combine(Directory, Executable);
 
     /// <summary>
     /// Initial address of stack pointer

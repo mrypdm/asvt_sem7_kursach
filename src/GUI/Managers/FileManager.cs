@@ -37,7 +37,7 @@ public class FileManager
             Title = "Save file as...",
             ShowOverwritePrompt = true,
             SuggestedFileName = fileName,
-            SuggestedStartLocation = await _storageProvider.TryGetFolderFromPathAsync(directoryPath),
+            SuggestedStartLocation = await _storageProvider.TryGetFolderFromPathAsync(directoryPath)
         });
 
         return newFile?.Path.LocalPath;

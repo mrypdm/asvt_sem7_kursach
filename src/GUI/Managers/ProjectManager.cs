@@ -94,12 +94,12 @@ public class ProjectManager : PropertyChangedNotifier
     /// </summary>
     public async Task LoadProjectAsync(string projectFilePath)
     {
-        projectFilePath = Path.Combine(Directory.GetCurrentDirectory(), projectFilePath);
+        projectFilePath = PathHelper.Combine(Directory.GetCurrentDirectory(), projectFilePath);
 
         try
         {
             var project = await JsonHelper.DeserializeFileAsync<ProjectModel>(projectFilePath);
-            project.Directory = Path.GetDirectoryName(projectFilePath);
+            project.Directory = PathHelper.GetDirectoryName(projectFilePath);
             Project = project;
         }
         catch (JsonException e)
@@ -160,7 +160,7 @@ public class ProjectManager : PropertyChangedNotifier
     {
         if (Project.ProjectFilesPaths.Contains(filePath))
         {
-            Project.Executable = Path.GetRelativePath(Project.Directory, filePath);
+            Project.Executable = PathHelper.GetRelativePath(Project.Directory, filePath);
         }
         else
         {

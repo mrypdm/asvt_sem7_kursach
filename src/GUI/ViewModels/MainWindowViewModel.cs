@@ -501,7 +501,7 @@ public class MainWindowViewModel : ReactiveObject
         {
             var mainFile = new FileModel
             {
-                FilePath = Path.Combine(ProjectManager.Instance.Project.Directory, MainFileName)
+                FilePath = PathHelper.Combine(ProjectManager.Instance.Project.Directory, MainFileName)
             };
             await _fileManager.WriteFileAsync(mainFile);
             ProjectManager.Instance.AddFileToProject(mainFile.FilePath);

@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using Shared.Helpers;
 
 namespace GUI.Models;
 
@@ -13,9 +13,9 @@ public record FileModel
     public string FilePath { get; set; }
 
     /// <summary>
-    /// File name or label, if <see cref="FilePath"/> is null
+    /// File name
     /// </summary>
-    public string FileName => Path.GetFileName(FilePath);
+    public string FileName => PathHelper.GetFileName(FilePath);
 
     /// <summary>
     /// File content
