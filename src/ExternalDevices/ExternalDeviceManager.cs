@@ -11,13 +11,7 @@ namespace ExternalDevices;
 /// </summary>
 public class ExternalDevicesManager
 {
-    private const string ExternalDeviceFactoryClassName = "ExternalDeviceFactory";
-
     private readonly List<ExternalDeviceModel> _devices = new();
-
-    public ExternalDevicesManager()
-    {
-    }
 
     public IReadOnlyCollection<IExternalDevice> ExternalDevices => _devices.Select(d => d.ExternalDevice).ToList();
 
