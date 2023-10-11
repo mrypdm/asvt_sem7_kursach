@@ -7,7 +7,7 @@ namespace DemoExternalDevice;
 /// Demo external device - TTY input. Example taken from the book
 /// "Organization and Assembly Language Programming for the PDP-1 and VAX-11" by Wen C. Lin Computer
 /// </summary>
-internal class ExternalDevice : IExternalDevice
+public class ExternalDevice : IExternalDevice
 {
     /// <inheritdoc />
     public ushort BufferRegisterAddress => Convert.ToUInt16("177562", 8);
@@ -22,8 +22,18 @@ internal class ExternalDevice : IExternalDevice
     public bool HasInterrupt => false;
 
     /// <inheritdoc />
-    public ushort BufferRegister { get; set; } = 0;
+    public ushort BufferRegister { get; set; }
 
     /// <inheritdoc />
-    public ushort ControlRegister { get; set; } = 0;
+    public ushort ControlRegister { get; set; }
+
+    /// <inheritdoc />
+    public int Init()
+    {
+        
+        BufferRegister = 0;
+        ControlRegister = 0;
+
+        return 0;
+    }
 }

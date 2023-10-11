@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Loader;
 using ExternalDeviceSdk;
 
-namespace ExternalDevicesManager;
+namespace ExternalDevices;
 
 /// <summary>
 /// Context of external device

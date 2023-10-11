@@ -34,4 +34,10 @@ public interface IExternalDevice
     /// Value of control register
     /// </summary>
     ushort ControlRegister { get; set; }
+
+    /// <summary>
+    /// External device initialization and reset
+    /// </summary>
+    /// <returns>Result code</returns>
+    public int Init();
 }

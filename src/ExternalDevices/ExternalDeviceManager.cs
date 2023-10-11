@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.Loader;
 using ExternalDeviceSdk;
 
-namespace ExternalDevicesManager;
+namespace ExternalDevices;
 
 /// <summary>
 /// Manager for external devices
@@ -31,9 +31,9 @@ public class ExternalDevicesManager
         {
             return;
         }
-        
-        var(context, device) = LoadDeviceFromAssembly(devicePath);
-        
+
+        var (context, device) = LoadDeviceFromAssembly(devicePath);
+
         _devices.Add(new ExternalDeviceModel
         {
             AssemblyPath = devicePath,
@@ -54,7 +54,7 @@ public class ExternalDevicesManager
         {
             return;
         }
-        
+
         model.AssemblyContext.Unload();
         _devices.Remove(model);
     }
@@ -79,15 +79,18 @@ public class ExternalDevicesManager
 
     private static (AssemblyLoadContext, IExternalDevice) LoadDeviceFromAssembly(string assemblyFilePath)
     {
-        var context = new AssemblyLoadContext(assemblyFilePath);
+        var context = new AssemblyLoadContext(assemblyFilePath, true);
         var assembly = context.LoadFromAssemblyPath(assemblyFilePath);
 
-        var type = assembly.GetType(ExternalDeviceFactoryClassName) ??
-                   throw new InvalidOperationException("Cannot find external device factory");
+        var type = assembly
+                       .GetExportedTypes()
+                       .FirstOrDefault(t =>
+                           t.IsClass && t.GetInterfaces().Any(i => i.FullName == typeof(IExternalDevice).FullName))
+                   ?? throw new InvalidOperationException("Cannot find external device class");
 
-        dynamic factory = Activator.CreateInstance(type) ??
-                          throw new InvalidOperationException("Cannot create factory");
+        var device = Activator.CreateInstance(type) as IExternalDevice ??
+                     throw new InvalidOperationException("Cannot create instance of device");
 
-        return (context, factory.GetDevice() as IExternalDevice);
+        return (context, device);
     }
 }
