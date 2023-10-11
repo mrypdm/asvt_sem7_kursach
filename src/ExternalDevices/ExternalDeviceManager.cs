@@ -13,6 +13,9 @@ public class ExternalDevicesManager
 {
     private readonly List<ExternalDeviceModel> _devices = new();
 
+    /// <summary>
+    /// Collection of connected external devices
+    /// </summary>
     public IReadOnlyCollection<IExternalDevice> ExternalDevices => _devices.Select(d => d.ExternalDevice).ToList();
 
     /// <summary>
