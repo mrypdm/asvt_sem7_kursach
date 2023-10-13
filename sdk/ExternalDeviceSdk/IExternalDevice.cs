@@ -28,16 +28,16 @@ public interface IExternalDevice
     /// <summary>
     /// Value of buffer register
     /// </summary>
-    ushort BufferRegister { get; set; }
+    ushort BufferRegisterValue { get; set; }
     
     /// <summary>
     /// Value of control register
     /// </summary>
-    ushort ControlRegister { get; set; }
+    ushort ControlRegisterValue { get; set; }
 
     /// <summary>
     /// External device initialization and reset
     /// </summary>
     /// <returns>Result code</returns>
-    public int Init();
+    int Init();
 }

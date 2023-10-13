@@ -22,18 +22,16 @@ public class ExternalDevice : IExternalDevice
     public bool HasInterrupt => false;
 
     /// <inheritdoc />
-    public ushort BufferRegister { get; set; }
+    public ushort BufferRegisterValue { get; set; }
 
     /// <inheritdoc />
-    public ushort ControlRegister { get; set; }
+    public ushort ControlRegisterValue { get; set; }
 
     /// <inheritdoc />
     public int Init()
     {
-        
-        BufferRegister = 0;
-        ControlRegister = 0;
-
+        BufferRegisterValue = 0;
+        ControlRegisterValue = 0;
         return 0;
     }
 }
