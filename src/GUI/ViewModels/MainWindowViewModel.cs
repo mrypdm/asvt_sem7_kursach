@@ -52,14 +52,16 @@ public class MainWindowViewModel : ReactiveObject
         SaveAllFilesCommand = ReactiveCommand.CreateFromTask(SaveAllFilesAsync);
         DeleteFileCommand = ReactiveCommand.CreateFromTask(DeleteFileAsync);
         CloseFileCommand = ReactiveCommand.CreateFromTask(async () => await CloseTabAsync(_tabManager!.Tab, true));
-        SelectTabCommand = ReactiveCommand.Create<FileTab>(tab => _tabManager!.SelectTab(tab));
         CreateProjectCommand = ReactiveCommand.CreateFromTask(async () => { await CreateProjectAsync(); });
         OpenProjectCommand = ReactiveCommand.CreateFromTask(async () => { await OpenProjectAsync(); });
-
         OpenSettingsWindowCommand = ReactiveCommand.Create(OpenSettingsWindow);
 
         _fileManager = new FileManager(window.StorageProvider);
-        _tabManager = new TabManager(SelectTabCommand);
+        _tabManager = new TabManager(tab => 
+        {
+            _tabManager!.SelectTab(tab);
+            return Task.CompletedTask;
+        }, async tab => await CloseTabAsync(tab, true));
 
         window.Closing += OnClosingWindow;
 
@@ -132,11 +134,6 @@ public class MainWindowViewModel : ReactiveObject
     /// Command for opening <see cref="SettingsWindow"/>
     /// </summary>
     public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
-
-    /// <summary>
-    /// Command for selecting tab. Sets to tab at runtime
-    /// </summary>
-    private ReactiveCommand<FileTab, Unit> SelectTabCommand { get; }
 
     public string WindowTitle => ProjectManager.Instance.IsOpened
         ? $"{DefaultWindowTitle} - {ProjectManager.Instance.Project.Name}"

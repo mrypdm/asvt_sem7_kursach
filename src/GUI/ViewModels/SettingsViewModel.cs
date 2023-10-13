@@ -13,6 +13,9 @@ using ReactiveUI;
 
 namespace GUI.ViewModels;
 
+/// <summary>
+/// View model for <see cref="SettingsWindow"/>
+/// </summary>
 public class SettingsViewModel : ReactiveObject
 {
     private readonly IStorageProvider _storageProvider;
