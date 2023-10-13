@@ -154,7 +154,7 @@ public class MainWindowViewModel : ReactiveObject
         {
             File.Text = value;
             File.IsNeedSave = true;
-            _tabManager.ChangeForeground(_tabManager.Tab, TabManager.NeedSaveForeground);
+            _tabManager.Tab.ViewModel.NotifyForegroundChanged();
             this.RaisePropertyChanged();
         }
     }
@@ -325,8 +325,8 @@ public class MainWindowViewModel : ReactiveObject
     {
         if (await SaveFileAsync(tab.File, saveAs))
         {
-            _tabManager.RenameTab(tab, tab.File.FileName);
-            _tabManager.ChangeForeground(tab, TabManager.DefaultForeground);
+            tab.ViewModel.NotifyHeaderChanged();
+            _tabManager.Tab.ViewModel.NotifyForegroundChanged();
         }
     }
 

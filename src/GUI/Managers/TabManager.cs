@@ -15,12 +15,6 @@ namespace GUI.Managers;
 /// </summary>
 public class TabManager : PropertyChangedNotifier
 {
-    public static readonly IBrush DefaultBackground = new SolidColorBrush(Colors.White);
-    public static readonly IBrush SelectedBackground = new SolidColorBrush(Colors.LightGray, 0.5D);
-
-    public static readonly IBrush DefaultForeground = new SolidColorBrush(Colors.Black);
-    public static readonly IBrush NeedSaveForeground = new SolidColorBrush(Colors.DodgerBlue);
-
     private readonly Func<FileTab, Task> _selectCommand;
     private readonly Func<FileTab, Task> _closeCommand;
 
@@ -79,16 +73,6 @@ public class TabManager : PropertyChangedNotifier
     }
 
     /// <summary>
-    /// Changes tab header
-    /// </summary>
-    /// <param name="tab">Tab reference</param>
-    /// <param name="header">New header</param>
-    public void RenameTab(FileTab tab, string header)
-    {
-        tab.Content = header;
-    }
-
-    /// <summary>
     /// Deletes tab. If there are no tabs left, it creates an empty tab.
     /// </summary>
     /// <param name="tab">Tab reference</param>
@@ -108,26 +92,8 @@ public class TabManager : PropertyChangedNotifier
     /// <param name="tab">Tab reference</param>
     public void SelectTab(FileTab tab)
     {
-        if (Tab != null)
-        {
-            Tab.Background = DefaultBackground;
-        }
-
+        Tab?.ViewModel.SetTabUnselected();
         Tab = tab;
-
-        if (Tab != null)
-        {
-            Tab.Background = SelectedBackground;
-        }
-    }
-
-    /// <summary>
-    /// Changes tab foreground
-    /// </summary>
-    /// <param name="tab">Tab reference</param>
-    /// <param name="brush">Brush</param>
-    public void ChangeForeground(FileTab tab, IBrush brush)
-    {
-        tab.Foreground = brush;
+        Tab?.ViewModel.SetTabSelected();
     }
 }

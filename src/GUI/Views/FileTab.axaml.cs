@@ -24,4 +24,6 @@ public partial class FileTab : UserControl
     }
 
     public FileModel File => _viewModel.File;
+
+    public FileTabViewModel ViewModel => _viewModel;
 }
