@@ -10,13 +10,12 @@ public static class Program
 {
     private const string PipeName = "MainToChildPipe";
 
-    private static bool _termination;
     private static string _otherSideName;
     private static PipeStream _pipe;
 
     public static void Main(string[] args)
     {
-        if (args[0] == "child")
+        if (args.Length > 0 && args[0] == "child")
         {
             InitChild();
         }
@@ -25,14 +24,15 @@ public static class Program
             InitMain();
         }
 
-        var readerTask = Task.Run(ReaderTask);
-        var pipeChecker = PipeChecker();
-
+        Task.Run(ReaderTask);
         WriterTask();
+        Shutdown();
+    }
 
+    private static void Shutdown()
+    {
         _pipe.Close();
-        readerTask.Wait();
-        pipeChecker.Wait();
+        Process.GetCurrentProcess().Kill();
     }
 
     /// <summary>
@@ -105,19 +105,22 @@ public static class Program
                     continue;
                 }
 
-                if (line == "!shutdown")
-                {
-                    _termination = true;
-                    break;
-                }
-
                 writer.WriteLine(line);
                 writer.Flush();
+
+                if (line == "!shutdown")
+                {
+                    break;
+                }
             }
         }
-        catch (Exception e)
+        catch (Exception e) when (_pipe.IsConnected)
         {
             Console.WriteLine($"[Writer] [ERR] [{e.Message}]");
+        }
+        catch
+        {
+            // Ignore
         }
     }
 
@@ -130,7 +133,7 @@ public static class Program
         {
             using var reader = new StreamReader(_pipe);
             var buffer = new char[1024];
-            while (_pipe.IsConnected && !_termination)
+            while (_pipe.IsConnected)
             {
                 var count = reader.Read(buffer, 0, buffer.Length);
 
@@ -141,28 +144,21 @@ public static class Program
 
                 Console.Write($"({_otherSideName}): ");
                 Console.Write(buffer, 0, count);
+
+                if (string.Equals(new string(buffer, 0, count), $"!shutdown{Environment.NewLine}"))
+                {
+                    Console.WriteLine("Shutdown request");
+                    Shutdown();
+                }
             }
         }
-        catch (Exception e)
+        catch (Exception e) when (_pipe.IsConnected)
         {
             Console.WriteLine($"[Reader] [ERR] [{e.Message}]");
         }
-    }
-
-    /// <summary>
-    /// Task for check pipe status and terminating process if it is disconnected
-    /// </summary>
-    private static async Task PipeChecker()
-    {
-        while (_pipe.IsConnected && !_termination)
+        catch
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(100));
-        }
-
-        if (!_pipe.IsConnected && !_termination)
-        {
-            Console.WriteLine("Pipe is disconnected. Shutting down");
-            Process.GetCurrentProcess().Kill();
+            // ignore
         }
     }
 }
