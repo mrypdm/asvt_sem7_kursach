@@ -50,6 +50,8 @@ public static class Program
 
         if (OperatingSystem.IsLinux())
         {
+            // Linux has many different terminal shells,
+            // so this solution is not general, but it's good as an example.
             process.StartInfo.FileName = "gnome-terminal";
             process.StartInfo.Arguments = "-- ./Terminal child";
         }
