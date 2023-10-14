@@ -31,7 +31,6 @@ public static class Program
 
     private static void Shutdown()
     {
-        _pipe.Close();
         Process.GetCurrentProcess().Kill();
     }
 
