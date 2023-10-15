@@ -119,6 +119,7 @@ public static class Program
                 await writer.FlushAsync();
             }
         }
+        // If pipe is closed or token is cancelled, exceptions can be thrown. So ignore them
         catch (Exception) when (!_pipe.IsConnected || TokenSource.IsCancellationRequested)
         {
             // Ignore
@@ -134,14 +135,19 @@ public static class Program
     /// </summary>
     private static async Task ReaderTask()
     {
+        using var reader = new StreamReader(_pipe);
+        var buffer = new char[1024];
+
         try
         {
-            using var reader = new StreamReader(_pipe);
-            var buffer = new char[1024];
             while (_pipe.IsConnected && !TokenSource.IsCancellationRequested)
             {
                 var count = await StreamHelper.ReadAsync(reader, buffer, TokenSource.Token);
 
+                // The pipe has an IsConnected field, but it does not update itself,
+                // so to determine the state of the pipe we use the number of characters read:
+                // if there are none, then the pipe is closed
+                // see https://stackoverflow.com/questions/18759125
                 if (count == 0)
                 {
                     Console.WriteLine("Child disconnected. Shutting down.");

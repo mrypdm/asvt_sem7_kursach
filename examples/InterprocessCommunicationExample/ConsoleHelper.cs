@@ -6,8 +6,17 @@ using System.Threading.Tasks;
 
 namespace Terminal;
 
+/// <summary>
+/// Helper for <see cref="Console"/>
+/// </summary>
 public static class ConsoleHelper
 {
+    /// <summary>
+    /// Read line from <see cref="Console"/> asynchronously
+    /// </summary>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>string</returns>
+    /// <exception cref="OperationCanceledException">The <paramref name="token"/> has had cancellation requested</exception>
     public static async Task<string> ReadLineAsync(CancellationToken token)
     {
         ConsoleKeyInfo keyInfo = default;
@@ -87,8 +96,19 @@ public static class ConsoleHelper
     }
 }
 
+/// <summary>
+/// Helper for <see cref="Stream"/> and its children
+/// </summary>
 public static class StreamHelper
 {
+    /// <summary>
+    /// Reads from <paramref name="reader"/> to <param name="buffer"> asynchronously</param>
+    /// </summary>
+    /// <param name="reader">Reader</param>
+    /// <param name="buffer">Buffer</param>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>Count of read chars</returns>
+    /// <exception cref="OperationCanceledException">The <paramref name="token"/> has had cancellation requested</exception>
     public static async Task<int> ReadAsync(this StreamReader reader, char[] buffer, CancellationToken token)
     {
         var readingTask = reader.ReadAsync(buffer, 0, buffer.Length);
