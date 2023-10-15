@@ -35,22 +35,11 @@ public static class Program
         var readerTask = ReaderTask();
         var writerTask = WriterTask();
 
-        AppDomain.CurrentDomain.ProcessExit += (_, _) =>
-        {
-            if (!TokenSource.IsCancellationRequested)
-            {
-                using var writer = new StreamWriter(_pipe);
-                writer.WriteLine(ConsoleHelper.ShutdownRequest);
-                writer.Flush();
-            }
-
-            TokenSource.Cancel();
-            Resources.ForEach(r => r.Dispose());
-        };
-
         writerTask.Wait();
         TokenSource.Cancel();
         readerTask.Wait();
+
+        Resources.ForEach(r => r.Dispose());
     }
 
     /// <summary>
@@ -121,13 +110,13 @@ public static class Program
             {
                 var line = await ConsoleHelper.ReadLineAsync(TokenSource.Token);
 
-                await writer.WriteLineAsync(line);
-                await writer.FlushAsync();
-
-                if (line == ConsoleHelper.ShutdownRequest)
+                if (line == "!shutdown")
                 {
                     break;
                 }
+
+                await writer.WriteLineAsync(line);
+                await writer.FlushAsync();
             }
         }
         catch (Exception) when (!_pipe.IsConnected || TokenSource.IsCancellationRequested)
@@ -155,17 +144,13 @@ public static class Program
 
                 if (count == 0)
                 {
-                    continue;
+                    Console.WriteLine("Child disconnected. Shutting down.");
+                    TokenSource.Cancel();
+                    return;
                 }
 
                 Console.Write($"({_otherSideName}): ");
                 Console.Write(buffer, 0, count);
-
-                if (string.Equals(new string(buffer, 0, count), $"!shutdown{Environment.NewLine}"))
-                {
-                    Console.WriteLine("Shutdown request");
-                    TokenSource.Cancel();
-                }
             }
         }
         catch (Exception) when (!_pipe.IsConnected || TokenSource.IsCancellationRequested)

@@ -8,14 +8,10 @@ namespace Terminal;
 
 public static class ConsoleHelper
 {
-    public const string ShutdownRequest = "!shutdown";
-    
     public static async Task<string> ReadLineAsync(CancellationToken token)
     {
         ConsoleKeyInfo keyInfo = default;
         var builder = new StringBuilder();
-
-        Console.TreatControlCAsInput = true;
 
         do
         {
@@ -36,12 +32,6 @@ public static class ConsoleHelper
 
             if ((keyInfo.Modifiers & ConsoleModifiers.Control) == ConsoleModifiers.Control)
             {
-                if (keyInfo.Key == ConsoleKey.C)
-                {
-                    Console.WriteLine("!shutdown");
-                    return ShutdownRequest;
-                }
-
                 continue;
             }
 
