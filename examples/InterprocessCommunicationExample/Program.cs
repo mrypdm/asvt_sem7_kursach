@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Terminal;
@@ -12,6 +14,9 @@ public static class Program
 
     private static string _otherSideName;
     private static PipeStream _pipe;
+
+    private static readonly CancellationTokenSource TokenSource = new();
+    private static readonly List<IDisposable> Resources = new();
 
     public static void Main(string[] args)
     {
@@ -24,14 +29,28 @@ public static class Program
             InitMain();
         }
 
-        Task.Run(ReaderTask);
-        WriterTask();
-        Shutdown();
-    }
+        Resources.Add(_pipe);
+        Resources.Add(TokenSource);
 
-    private static void Shutdown()
-    {
-        Process.GetCurrentProcess().Kill();
+        var readerTask = ReaderTask();
+        var writerTask = WriterTask();
+
+        AppDomain.CurrentDomain.ProcessExit += (_, _) =>
+        {
+            if (!TokenSource.IsCancellationRequested)
+            {
+                using var writer = new StreamWriter(_pipe);
+                writer.WriteLine(ConsoleHelper.ShutdownRequest);
+                writer.Flush();
+            }
+
+            TokenSource.Cancel();
+            Resources.ForEach(r => r.Dispose());
+        };
+
+        writerTask.Wait();
+        TokenSource.Cancel();
+        readerTask.Wait();
     }
 
     /// <summary>
@@ -71,6 +90,8 @@ public static class Program
         pipe.WaitForConnection();
         Console.WriteLine("Connected");
 
+        Resources.Add(process);
+
         _pipe = pipe;
     }
 
@@ -90,51 +111,47 @@ public static class Program
     /// <summary>
     /// Task for reading stdin and sending messages to other side
     /// </summary>
-    private static void WriterTask()
+    private static async Task WriterTask()
     {
+        await using var writer = new StreamWriter(_pipe);
+
         try
         {
-            using var writer = new StreamWriter(_pipe);
-            while (_pipe.IsConnected)
+            while (_pipe.IsConnected && !TokenSource.IsCancellationRequested)
             {
-                var line = Console.ReadLine();
+                var line = await ConsoleHelper.ReadLineAsync(TokenSource.Token);
 
-                if (line == null)
-                {
-                    continue;
-                }
+                await writer.WriteLineAsync(line);
+                await writer.FlushAsync();
 
-                writer.WriteLine(line);
-                writer.Flush();
-
-                if (line == "!shutdown")
+                if (line == ConsoleHelper.ShutdownRequest)
                 {
                     break;
                 }
             }
         }
-        catch (Exception e) when (_pipe.IsConnected)
-        {
-            Console.WriteLine($"[Writer] [ERR] [{e.Message}]");
-        }
-        catch
+        catch (Exception) when (!_pipe.IsConnected || TokenSource.IsCancellationRequested)
         {
             // Ignore
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"[Writer] [ERR] [{e.Message}]");
         }
     }
 
     /// <summary>
     /// Task for reading messages from other side and writing them to stdout
     /// </summary>
-    private static void ReaderTask()
+    private static async Task ReaderTask()
     {
         try
         {
             using var reader = new StreamReader(_pipe);
             var buffer = new char[1024];
-            while (_pipe.IsConnected)
+            while (_pipe.IsConnected && !TokenSource.IsCancellationRequested)
             {
-                var count = reader.Read(buffer, 0, buffer.Length);
+                var count = await StreamHelper.ReadAsync(reader, buffer, TokenSource.Token);
 
                 if (count == 0)
                 {
@@ -147,17 +164,17 @@ public static class Program
                 if (string.Equals(new string(buffer, 0, count), $"!shutdown{Environment.NewLine}"))
                 {
                     Console.WriteLine("Shutdown request");
-                    Shutdown();
+                    TokenSource.Cancel();
                 }
             }
         }
-        catch (Exception e) when (_pipe.IsConnected)
+        catch (Exception) when (!_pipe.IsConnected || TokenSource.IsCancellationRequested)
+        {
+            // Ignore
+        }
+        catch (Exception e)
         {
             Console.WriteLine($"[Reader] [ERR] [{e.Message}]");
-        }
-        catch
-        {
-            // ignore
         }
     }
 }
