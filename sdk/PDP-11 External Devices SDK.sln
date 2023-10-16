@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalDeviceSdk", "Extern
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoExternalDevice", "DemoExternalDevice\DemoExternalDevice.csproj", "{D40AB370-43C1-4F92-823C-131085B51CDE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvalidExternalDevice", "InvalidExternalDevice\InvalidExternalDevice.csproj", "{AB800494-8B0C-4CA6-9001-DCFEB2A3E150}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoubleExternalDevice", "DoubleExternalDevice\DoubleExternalDevice.csproj", "{5642FEFF-66F1-4396-823E-863D22190D2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{D40AB370-43C1-4F92-823C-131085B51CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D40AB370-43C1-4F92-823C-131085B51CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D40AB370-43C1-4F92-823C-131085B51CDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB800494-8B0C-4CA6-9001-DCFEB2A3E150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB800494-8B0C-4CA6-9001-DCFEB2A3E150}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB800494-8B0C-4CA6-9001-DCFEB2A3E150}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB800494-8B0C-4CA6-9001-DCFEB2A3E150}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5642FEFF-66F1-4396-823E-863D22190D2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5642FEFF-66F1-4396-823E-863D22190D2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5642FEFF-66F1-4396-823E-863D22190D2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5642FEFF-66F1-4396-823E-863D22190D2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

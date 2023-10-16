@@ -1,7 +1,7 @@
 ﻿namespace ExternalDeviceSdk;
 
 /// <summary>
-/// Interface for external device
+/// External device
 /// </summary>
 public interface IExternalDevice
 {

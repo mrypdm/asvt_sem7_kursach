@@ -5,10 +5,13 @@ namespace ExternalDevicesTests;
 
 public class ExternalDevicesManagerTests
 {
-    private static string DefaultExternalDeviceAbsolutePath =>
+    private static string DefaultExternalDevice =>
         Path.Combine(Directory.GetCurrentDirectory(), "DemoExternalDevice/DemoExternalDevice.dll");
 
-    private static string InvalidExternalDeviceAbsolutePath =>
+    private static string DoubleExternalDevice =>
+        Path.Combine(Directory.GetCurrentDirectory(), "DemoExternalDevice/DoubleExternalDevice.dll");
+
+    private static string InvalidExternalDevice =>
         Path.Combine(Directory.GetCurrentDirectory(), "DemoExternalDevice/InvalidExternalDevice.dll");
 
     [Test]
@@ -18,7 +21,7 @@ public class ExternalDevicesManagerTests
         var manager = new ExternalDevicesManager();
 
         // Act & Assert
-        Assert.That(manager.ValidateDevice(DefaultExternalDeviceAbsolutePath), Is.True);
+        Assert.That(manager.ValidateDevice(DefaultExternalDevice), Is.True);
     }
 
     [Test]
@@ -28,7 +31,7 @@ public class ExternalDevicesManagerTests
         var manager = new ExternalDevicesManager();
 
         // Act & Assert
-        Assert.That(manager.ValidateDevice(InvalidExternalDeviceAbsolutePath), Is.False);
+        Assert.That(manager.ValidateDevice(InvalidExternalDevice), Is.False);
     }
 
     [Test]
@@ -38,7 +41,7 @@ public class ExternalDevicesManagerTests
         var manager = new ExternalDevicesManager();
 
         // Act
-        manager.AddDevice(DefaultExternalDeviceAbsolutePath);
+        manager.AddDevice(DefaultExternalDevice);
 
         // Assert
         Assert.That(manager.ExternalDevices, Has.Count.EqualTo(1));
@@ -49,10 +52,10 @@ public class ExternalDevicesManagerTests
     {
         // Arrange
         var manager = new ExternalDevicesManager();
-        manager.AddDevice(DefaultExternalDeviceAbsolutePath);
+        manager.AddDevice(DefaultExternalDevice);
 
         // Act
-        manager.RemoveDevice(DefaultExternalDeviceAbsolutePath);
+        manager.RemoveDevice(DefaultExternalDevice);
 
         // Assert
         Assert.That(manager.ExternalDevices, Has.Count.EqualTo(0));
@@ -65,7 +68,7 @@ public class ExternalDevicesManagerTests
         var manager = new ExternalDevicesManager();
 
         // Act
-        manager.RemoveDevice(DefaultExternalDeviceAbsolutePath);
+        manager.RemoveDevice(DefaultExternalDevice);
 
         // Assert
         Assert.That(manager.ExternalDevices, Has.Count.EqualTo(0));
@@ -76,12 +79,25 @@ public class ExternalDevicesManagerTests
     {
         // Arrange
         var manager = new ExternalDevicesManager();
-        manager.AddDevice(DefaultExternalDeviceAbsolutePath);
+        manager.AddDevice(DefaultExternalDevice);
 
         // Act
-        manager.AddDevice(DefaultExternalDeviceAbsolutePath);
+        manager.AddDevice(DefaultExternalDevice);
 
         // Assert
         Assert.That(manager.ExternalDevices, Has.Count.EqualTo(1));
+    }
+
+    [Test]
+    public void AddDoubleDeviceDevice()
+    {
+        // Arrange
+        var manager = new ExternalDevicesManager();
+
+        // Act
+        manager.AddDevice(DoubleExternalDevice);
+
+        // Assert
+        Assert.That(manager.ExternalDevices, Has.Count.EqualTo(2));
     }
 }
