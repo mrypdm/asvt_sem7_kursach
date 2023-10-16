@@ -5,7 +5,6 @@ using Moq;
 
 namespace ExternalDevicesTests;
 
-[NonParallelizable]
 public class ExternalDevicesManagerTests
 {
     [Test]

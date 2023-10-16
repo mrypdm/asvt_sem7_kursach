@@ -3,7 +3,6 @@ using ExternalDevices.Providers;
 
 namespace ExternalDevicesTests;
 
-[NonParallelizable]
 public class ExternalDeviceProviderTests
 {
     [Test]
