@@ -32,5 +32,7 @@ public sealed class FirstDevice : IExternalDevice
     }
 
     /// <inheritdoc />
-    public void Dispose() {}
+    public void Dispose()
+    {
+    }
 }
