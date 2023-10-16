@@ -10,11 +10,11 @@ namespace ExternalDevices.Managers;
 /// <inheritdoc />
 public sealed class ExternalDevicesManager : IExternalDevicesManager
 {
-    private List<IExternalDeviceModel> _devices = new();
+    private List<IExternalDeviceContext> _devices = new();
 
     private readonly IExternalDeviceProvider _provider;
 
-    private List<IExternalDeviceModel> SafeDevices =>
+    private List<IExternalDeviceContext> SafeDevices =>
         _devices ?? throw new ObjectDisposedException("Manager is disposed");
 
     public ExternalDevicesManager(IExternalDeviceProvider provider)

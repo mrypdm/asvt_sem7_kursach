@@ -99,7 +99,7 @@ public class ExternalDevicesManagerTests
     public void ProviderCalledAtAdd_DisposeCalledAtDelete()
     {
         // Arrange
-        var model = new Mock<IExternalDeviceModel>();
+        var model = new Mock<IExternalDeviceContext>();
         model.Setup(m => m.AssemblyPath).Returns(Constants.DefaultExternalDevice);
 
         var provider = new Mock<IExternalDeviceProvider>();

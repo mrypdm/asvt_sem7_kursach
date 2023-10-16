@@ -13,7 +13,7 @@ public class ExternalDeviceModelTests
     public void ThrowIfDisposed()
     {
         // Arrange
-        var model = new ExternalDeviceModel(new AssemblyContext(null), Array.Empty<IExternalDevice>());
+        var model = new ExternalDeviceContext(new AssemblyContext(null), Array.Empty<IExternalDevice>());
         model.Dispose();
 
         // Act & Assert

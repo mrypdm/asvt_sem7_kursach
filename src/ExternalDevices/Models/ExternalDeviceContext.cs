@@ -6,13 +6,13 @@ using ExternalDeviceSdk;
 namespace ExternalDevices.Models;
 
 /// <inheritdoc />
-public sealed class ExternalDeviceModel : IExternalDeviceModel
+public sealed class ExternalDeviceContext : IExternalDeviceContext
 {
     private AssemblyContext _context;
 
     private List<IExternalDevice> _devices;
 
-    public ExternalDeviceModel(AssemblyContext context, IEnumerable<IExternalDevice> devices)
+    public ExternalDeviceContext(AssemblyContext context, IEnumerable<IExternalDevice> devices)
     {
         _context = context;
         _devices = devices.ToList();

@@ -7,7 +7,7 @@ namespace ExternalDevices.Models;
 /// <summary>
 /// Context of external device
 /// </summary>
-public interface IExternalDeviceModel : IDisposable
+public interface IExternalDeviceContext : IDisposable
 {
     /// <summary>
     /// Path to assembly file

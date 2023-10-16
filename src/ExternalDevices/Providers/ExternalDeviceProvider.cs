@@ -24,7 +24,7 @@ public class ExternalDeviceProvider : IExternalDeviceProvider
     }
 
     /// <inheritdoc />
-    public IExternalDeviceModel LoadDevice(string assemblyFilePath)
+    public IExternalDeviceContext LoadDevice(string assemblyFilePath)
     {
         var context = new AssemblyContext(assemblyFilePath);
         var assembly = context.Load(assemblyFilePath);
@@ -45,6 +45,6 @@ public class ExternalDeviceProvider : IExternalDeviceProvider
                 t => CreateInstance<IExternalDevice>(t, out var err)
                      ?? throw new InvalidOperationException($"Cannot create instance of device '{t.FullName}'", err));
 
-        return new ExternalDeviceModel(context, devices);
+        return new ExternalDeviceContext(context, devices);
     }
 }

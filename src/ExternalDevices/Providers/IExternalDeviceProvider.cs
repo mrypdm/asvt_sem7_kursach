@@ -3,7 +3,7 @@
 namespace ExternalDevices.Providers;
 
 /// <summary>
-/// Provider for <see cref="ExternalDeviceModel"/>
+/// Provider for <see cref="ExternalDeviceContext"/>
 /// </summary>
 public interface IExternalDeviceProvider
 {
@@ -12,5 +12,5 @@ public interface IExternalDeviceProvider
     /// </summary>
     /// <param name="assemblyFilePath">Path to assembly file</param>
     /// <returns>Device model</returns>
-    IExternalDeviceModel LoadDevice(string assemblyFilePath);
+    IExternalDeviceContext LoadDevice(string assemblyFilePath);
 }
