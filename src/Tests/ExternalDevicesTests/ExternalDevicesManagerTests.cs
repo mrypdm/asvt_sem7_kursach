@@ -5,14 +5,11 @@ namespace ExternalDevicesTests;
 
 public class ExternalDevicesManagerTests
 {
-    private const string DefaultExternalDevice = "DemoExternalDevice/DemoExternalDevice.dll";
-    private const string InvalidExternalDevice = "DemoExternalDevice/InvalidExternalDevice.dll";
-
     private static string DefaultExternalDeviceAbsolutePath =>
-        Path.Combine(Directory.GetCurrentDirectory(), DefaultExternalDevice);
+        Path.Combine(Directory.GetCurrentDirectory(), "DemoExternalDevice/DemoExternalDevice.dll");
 
     private static string InvalidExternalDeviceAbsolutePath =>
-        Path.Combine(Directory.GetCurrentDirectory(), InvalidExternalDevice);
+        Path.Combine(Directory.GetCurrentDirectory(), "DemoExternalDevice/InvalidExternalDevice.dll");
 
     [Test]
     public void ValidateCorrectDevice()

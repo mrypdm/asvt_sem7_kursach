@@ -1,4 +1,5 @@
-﻿using System.Runtime.Loader;
+﻿using System.Collections.Generic;
+using System.Runtime.Loader;
 using ExternalDeviceSdk;
 
 namespace ExternalDevices;
@@ -21,5 +22,5 @@ public class ExternalDeviceModel
     /// <summary>
     /// External device object
     /// </summary>
-    public IExternalDevice ExternalDevice { get; set; }
+    public List<IExternalDevice> ExternalDevices { get; set; }
 }

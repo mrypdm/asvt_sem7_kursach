@@ -16,7 +16,8 @@ public class ExternalDevicesManager
     /// <summary>
     /// Collection of connected external devices
     /// </summary>
-    public IReadOnlyCollection<IExternalDevice> ExternalDevices => _devices.Select(d => d.ExternalDevice).ToList();
+    public IReadOnlyCollection<IExternalDevice> ExternalDevices
+        => _devices.SelectMany(d => d.ExternalDevices).ToList();
 
     /// <summary>
     /// Adds new device
@@ -29,14 +30,9 @@ public class ExternalDevicesManager
             return;
         }
 
-        var (context, device) = LoadDeviceFromAssembly(devicePath);
+        var device = LoadDeviceFromAssembly(devicePath);
 
-        _devices.Add(new ExternalDeviceModel
-        {
-            AssemblyPath = devicePath,
-            AssemblyContext = context,
-            ExternalDevice = device
-        });
+        _devices.Add(device);
     }
 
     /// <summary>
@@ -65,7 +61,8 @@ public class ExternalDevicesManager
     {
         try
         {
-            LoadDeviceFromAssembly(devicePath);
+            var device = LoadDeviceFromAssembly(devicePath);
+            device.AssemblyContext.Unload();
             return true;
         }
         catch (Exception)
@@ -74,20 +71,32 @@ public class ExternalDevicesManager
         }
     }
 
-    private static (AssemblyLoadContext, IExternalDevice) LoadDeviceFromAssembly(string assemblyFilePath)
+    private static ExternalDeviceModel LoadDeviceFromAssembly(string assemblyFilePath)
     {
         var context = new AssemblyLoadContext(assemblyFilePath, true);
         var assembly = context.LoadFromAssemblyPath(assemblyFilePath);
 
-        var type = assembly
-                       .GetExportedTypes()
-                       .FirstOrDefault(t =>
-                           t.IsClass && t.GetInterfaces().Any(i => i.FullName == typeof(IExternalDevice).FullName))
-                   ?? throw new InvalidOperationException("Cannot find external device class");
+        var types = assembly
+            .GetExportedTypes()
+            .Where(t =>
+                t.IsClass && t.GetInterfaces().Any(i => i.FullName == typeof(IExternalDevice).FullName))
+            .ToList();
 
-        var device = Activator.CreateInstance(type) as IExternalDevice ??
-                     throw new InvalidOperationException("Cannot create instance of device");
+        if (!types.Any())
+        {
+            throw new InvalidOperationException("Cannot find external devices.");
+        }
 
-        return (context, device);
+        var devices = types
+            .Select(t => Activator.CreateInstance(t) as IExternalDevice
+                         ?? throw new InvalidOperationException($"Cannot create instance of device '{t.FullName}'"))
+            .ToList();
+
+        return new ExternalDeviceModel
+        {
+            AssemblyPath = assemblyFilePath,
+            AssemblyContext = context,
+            ExternalDevices = devices
+        };
     }
 }
