@@ -8,7 +8,13 @@ namespace Executor{
     }
     public class Command {
         private Argument Arguments[2];
-        public int Execute();
+        public State Execute(State CurrentState);
 
     }
+
+    public int MatchArgumentsNumber(ushort opcode){
+
+    }
+
+
 }
