@@ -17,7 +17,7 @@ public class ExternalDeviceModel
     /// <summary>
     /// Context of assembly
     /// </summary>
-    public AssemblyLoadContext AssemblyContext { get; set; }
+    public IAssemblyContext AssemblyContext { get; set; }
     
     /// <summary>
     /// External device object

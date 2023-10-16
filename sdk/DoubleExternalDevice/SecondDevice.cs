@@ -3,14 +3,14 @@
 namespace DoubleExternalDevice;
 
 /// <inheritdoc />
-public class SecondDevice : IExternalDevice
+public sealed class SecondDevice : IExternalDevice
 {
     /// <inheritdoc />
     public ushort BufferRegisterAddress => Convert.ToUInt16("177562", 8);
-    
+
     /// <inheritdoc />
     public ushort ControlRegisterAddress => Convert.ToUInt16("177560", 8);
-    
+
     /// <inheritdoc />
     public ushort InterruptVectorAddress => Convert.ToUInt16("60", 8);
 
@@ -29,5 +29,9 @@ public class SecondDevice : IExternalDevice
         BufferRegisterValue = 0;
         ControlRegisterValue = 0;
         return 0;
+    }
+
+    public void Dispose()
+    {
     }
 }

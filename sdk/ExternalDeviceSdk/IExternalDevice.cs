@@ -1,9 +1,11 @@
-﻿namespace ExternalDeviceSdk;
+﻿using System;
+
+namespace ExternalDeviceSdk;
 
 /// <summary>
 /// External device
 /// </summary>
-public interface IExternalDevice
+public interface IExternalDevice : IDisposable
 {
     /// <summary>
     /// Address of buffer register

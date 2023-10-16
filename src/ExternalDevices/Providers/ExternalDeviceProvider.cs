@@ -12,8 +12,8 @@ public class ExternalDeviceProvider : IExternalDeviceProvider
     /// <inheritdoc />
     public ExternalDeviceModel LoadDevice(string assemblyFilePath)
     {
-        var context = new AssemblyLoadContext(assemblyFilePath, true);
-        var assembly = context.LoadFromAssemblyPath(assemblyFilePath);
+        var context = new AssemblyContext(assemblyFilePath);
+        var assembly = context.Load(assemblyFilePath);
 
         var types = assembly
             .GetExportedTypes()
@@ -42,6 +42,7 @@ public class ExternalDeviceProvider : IExternalDeviceProvider
     /// <inheritdoc />
     public void UnloadDevice(ExternalDeviceModel model)
     {
+        model.ExternalDevices.ForEach(d => d.Dispose());
         model.AssemblyContext.Unload();
     }
 }
