@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:GUI.ViewModels"
         xmlns:converter="clr-namespace:GUI.Converters"
-        mc:Ignorable="d" SizeToContent="WidthAndHeight" MinWidth="500"
+        mc:Ignorable="d" SizeToContent="WidthAndHeight" MinWidth="500" CanResize="False"
         FontFamily="Century Gothic" FontSize="14"
         x:Class="GUI.Views.SettingsWindow" x:DataType="vm:SettingsViewModel"
         Title="Settings" Icon="/Assets/icon.ico">
