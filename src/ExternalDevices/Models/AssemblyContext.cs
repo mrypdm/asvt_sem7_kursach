@@ -42,15 +42,5 @@ public sealed class AssemblyContext : IAssemblyContext
     }
 
     /// <inheritdoc />
-    public void Dispose()
-    {
-        Unload();
-        GC.SuppressFinalize(this);
-    }
-
-    /// <inheritdoc />
-    ~AssemblyContext()
-    {
-        Unload();
-    }
+    public void Dispose() => Unload();
 }
