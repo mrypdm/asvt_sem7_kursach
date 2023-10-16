@@ -33,10 +33,3 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity diagnostic --diag diag.log
-
-    - name: Upload Lint Report to Github
-      uses: actions/upload-artifact@v3
-      with:
-        name: nightly
-        path: diag.log
-        retention-days: 10
