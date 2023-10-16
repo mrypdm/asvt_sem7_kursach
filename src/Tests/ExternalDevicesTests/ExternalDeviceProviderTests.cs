@@ -10,15 +10,12 @@ public class ExternalDeviceProviderTests
     public void LoadDefaultDevice(string path, int count)
     {
         // Arrange
-
         var provider = new ExternalDeviceProvider();
 
         // Act
-
         var model = provider.LoadDevice(path);
 
         // Assert
-
         Assert.Multiple(() =>
         {
             Assert.That(model.AssemblyPath, Is.EqualTo(path));
@@ -30,11 +27,9 @@ public class ExternalDeviceProviderTests
     public void LoadInvalidDevice()
     {
         // Arrange
-
         var provider = new ExternalDeviceProvider();
 
         // Act & Assert
-
         Assert.Throws<InvalidOperationException>(() => provider.LoadDevice(Constants.InvalidExternalDevice));
     }
 

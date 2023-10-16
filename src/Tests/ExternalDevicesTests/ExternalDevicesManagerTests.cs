@@ -99,7 +99,6 @@ public class ExternalDevicesManagerTests
     public void ProviderCalledAtAdd_DisposeCalledAtDelete()
     {
         // Arrange
-
         var model = new Mock<IExternalDeviceModel>();
         model.Setup(m => m.AssemblyPath).Returns(Constants.DefaultExternalDevice);
 
@@ -110,11 +109,9 @@ public class ExternalDevicesManagerTests
         manager.AddDevice(Constants.DefaultExternalDevice);
 
         // Act
-
         manager.RemoveDevice(Constants.DefaultExternalDevice);
 
         // Assert
-
         model.Verify(m => m.Dispose(), Times.Once);
         provider.Verify(p => p.LoadDevice(Constants.DefaultExternalDevice), Times.Once);
     }
@@ -145,7 +142,6 @@ public class ExternalDevicesManagerTests
         manager.Dispose();
         
         // Act & Assert
-
         Assert.Throws<ObjectDisposedException>(() => manager.AddDevice(Constants.DefaultExternalDevice));
         Assert.Throws<ObjectDisposedException>(() => manager.RemoveDevice(Constants.DefaultExternalDevice));
         Assert.Throws<ObjectDisposedException>(() => manager.Clear());
