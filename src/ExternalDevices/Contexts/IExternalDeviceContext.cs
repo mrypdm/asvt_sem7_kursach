@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ExternalDeviceSdk;
 
-namespace ExternalDevices.Models;
+namespace ExternalDevices.Contexts;
 
 /// <summary>
 /// Context of external device

@@ -1,6 +1,6 @@
 using System;
+using ExternalDevices.Contexts;
 using ExternalDevices.Managers;
-using ExternalDevices.Models;
 using ExternalDevices.Providers;
 using Moq;
 

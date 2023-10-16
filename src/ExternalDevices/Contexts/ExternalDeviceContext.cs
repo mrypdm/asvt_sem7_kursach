@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExternalDeviceSdk;
 
-namespace ExternalDevices.Models;
+namespace ExternalDevices.Contexts;
 
 /// <inheritdoc />
 public sealed class ExternalDeviceContext : IExternalDeviceContext

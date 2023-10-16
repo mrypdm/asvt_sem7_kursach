@@ -1,4 +1,4 @@
-﻿using ExternalDevices.Models;
+﻿using ExternalDevices.Contexts;
 
 namespace ExternalDevices.Providers;
 

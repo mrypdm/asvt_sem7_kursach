@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace ExternalDevices.Models;
+namespace ExternalDevices.Contexts;
 
 /// <summary>
 /// Assembly context

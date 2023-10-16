@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Runtime.Loader;
 
-namespace ExternalDevices.Models;
+namespace ExternalDevices.Contexts;
 
 /// <inheritdoc />
 public sealed class AssemblyContext : IAssemblyContext
