@@ -1,37 +1,49 @@
-﻿using System.Collections.Generic;
-using ExternalDevices.Models;
+﻿using System;
 using ExternalDevices.Providers;
-using ExternalDeviceSdk;
-using Moq;
 
 namespace ExternalDevicesTests;
 
+[NonParallelizable]
 public class ExternalDeviceProviderTests
 {
     [Test]
-    public void DisposeForDeviceIsCalled()
+    [TestCaseSource(nameof(LoadDefaultDeviceSource))]
+    public void LoadDefaultDevice(string path, int count)
     {
         // Arrange
-
-        var device = new Mock<IExternalDevice>();
-        var context = new Mock<IAssemblyContext>();
-
-        var model = new ExternalDeviceModel
-        {
-            AssemblyPath = string.Empty,
-            AssemblyContext = context.Object,
-            ExternalDevices = new List<IExternalDevice> { device.Object, device.Object }
-        };
 
         var provider = new ExternalDeviceProvider();
 
         // Act
 
-        provider.UnloadDevice(model);
+        var model = provider.LoadDevice(path);
 
         // Assert
 
-        device.Verify(d => d.Dispose(), Times.Exactly(2));
-        context.Verify(d => d.Unload(), Times.Once);
+        Assert.Multiple(() =>
+        {
+            Assert.That(model.AssemblyPath, Is.EqualTo(path));
+            Assert.That(model.ExternalDevices, Has.Count.EqualTo(count));
+            Assert.That(model.AssemblyContext.Assembly.Location, Is.EqualTo(path));
+        });
     }
+
+    [Test]
+    public void LoadInvalidDevice()
+    {
+        // Arrange
+
+        var provider = new ExternalDeviceProvider();
+
+        // Act & Assert
+
+        Assert.Throws<InvalidOperationException>(() => provider.LoadDevice(Constants.InvalidExternalDevice));
+    }
+
+    // ReSharper disable once InconsistentNaming
+    private static object[] LoadDefaultDeviceSource =
+    {
+        new object[] { Constants.DefaultExternalDevice, 1 },
+        new object[] { Constants.DoubleExternalDevice, 2 }
+    };
 }
