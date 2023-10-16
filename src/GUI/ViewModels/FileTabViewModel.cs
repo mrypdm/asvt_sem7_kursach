@@ -39,6 +39,7 @@ public class FileTabViewModel : ReactiveObject
         Func<FileTab, Task> closeCommand)
     {
         File = file;
+        TabBackground = DefaultBackground;
         SelectTabCommand = ReactiveCommand.CreateFromTask(async () => await selectCommand(fileTab));
         CloseTabCommand = ReactiveCommand.CreateFromTask(async () => await closeCommand(fileTab));
     }

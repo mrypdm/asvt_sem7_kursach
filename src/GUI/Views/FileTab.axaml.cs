@@ -7,15 +7,29 @@ using GUI.ViewModels;
 
 namespace GUI.Views;
 
+/// <summary>
+/// File tab view
+/// </summary>
 public partial class FileTab : UserControl
 {
-    private readonly FileTabViewModel _viewModel;
+    /// <summary>
+    /// Default constructor for designer
+    /// </summary>
+    public FileTab()
+    {
+    }
     
+    /// <summary>
+    /// Creates new instance of file tab
+    /// </summary>
+    /// <param name="file">File info</param>
+    /// <param name="selectCommand">Action on selecting tab</param>
+    /// <param name="closeCommand">Action on closing tab</param>
     public FileTab(FileModel file, Func<FileTab, Task> selectCommand, Func<FileTab, Task> closeCommand)
     {
         InitializeComponent();
-        _viewModel = new FileTabViewModel(this, file, selectCommand, closeCommand);
-        DataContext = _viewModel;
+        ViewModel = new FileTabViewModel(this, file, selectCommand, closeCommand);
+        DataContext = ViewModel;
     }
 
     private void InitializeComponent()
@@ -23,7 +37,13 @@ public partial class FileTab : UserControl
         AvaloniaXamlLoader.Load(this);
     }
 
-    public FileModel File => _viewModel.File;
+    /// <summary>
+    /// File info
+    /// </summary>
+    public FileModel File => ViewModel.File;
 
-    public FileTabViewModel ViewModel => _viewModel;
+    /// <summary>
+    /// File tab view model
+    /// </summary>
+    public FileTabViewModel ViewModel { get; }
 }

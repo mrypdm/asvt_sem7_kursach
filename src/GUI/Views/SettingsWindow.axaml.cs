@@ -5,6 +5,9 @@ using GUI.ViewModels;
 
 namespace GUI.Views;
 
+/// <summary>
+/// Settings window view
+/// </summary>
 public partial class SettingsWindow : Window
 {
     public SettingsWindow()

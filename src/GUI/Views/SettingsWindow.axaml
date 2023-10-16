@@ -22,13 +22,13 @@
 
         <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Font Size</Label>
         <TextBox Margin="5,0,5,0" Text="{Binding FontSize, Converter={StaticResource StringDoubleConverter}}" />
-        
+
         <Separator Margin="5,5,5,5" Height="2" />
 
         <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">External Devices</Label>
         <ListBox Margin="5,0,5,0" MinHeight="150" ItemsSource="{Binding ExternalDevices}"
                  SelectedItems="{Binding SelectedExternalDevices}" />
-        <Button Margin="5,5,5,0" Command="{Binding AddExternalDeviceCommand}">Add</Button>
-        <Button Margin="5,5,5,5" Command="{Binding DeleteExternalDeviceCommand}">Remove</Button>
+        <Button Margin="5,5,5,0" Content="Add" Command="{Binding AddExternalDeviceCommand}" />
+        <Button Margin="5,5,5,5" Content="Remove" Command="{Binding DeleteExternalDeviceCommand}" />
     </StackPanel>
 </Window>
