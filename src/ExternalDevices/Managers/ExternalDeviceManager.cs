@@ -67,7 +67,8 @@ public sealed class ExternalDevicesManager : IExternalDevicesManager
         }
     }
 
-    private void Unload()
+    /// <inheritdoc />
+    public void Dispose()
     {
         if (_devices == null)
         {
@@ -76,17 +77,5 @@ public sealed class ExternalDevicesManager : IExternalDevicesManager
 
         _devices.ForEach(d => d.Dispose());
         _devices = null;
-    }
-
-    public void Dispose()
-    {
-        Unload();
-        GC.SuppressFinalize(this);
-    }
-
-    /// <inheritdoc />
-    ~ExternalDevicesManager()
-    {
-        Unload();
     }
 }
