@@ -8,9 +8,9 @@ using ExternalDeviceSdk;
 namespace ExternalDevices.Managers;
 
 /// <inheritdoc />
-public class ExternalDevicesManager : IExternalDevicesManager
+public sealed class ExternalDevicesManager : IExternalDevicesManager
 {
-    private readonly List<ExternalDeviceModel> _devices = new();
+    private List<IExternalDeviceModel> _devices = new();
 
     private readonly IExternalDeviceProvider _provider;
 
@@ -48,7 +48,7 @@ public class ExternalDevicesManager : IExternalDevicesManager
             return;
         }
 
-        _provider.UnloadDevice(model);
+        model.Dispose();
         _devices.Remove(model);
     }
 
@@ -58,12 +58,35 @@ public class ExternalDevicesManager : IExternalDevicesManager
         try
         {
             var device = _provider.LoadDevice(devicePath);
-            _provider.UnloadDevice(device);
+            device.Dispose();
             return true;
         }
         catch (Exception)
         {
             return false;
         }
+    }
+
+    private void Unload()
+    {
+        if (_devices == null)
+        {
+            return;
+        }
+
+        _devices.ForEach(d => d.Dispose());
+        _devices = null;
+    }
+
+    public void Dispose()
+    {
+        Unload();
+        GC.SuppressFinalize(this);
+    }
+
+    /// <inheritdoc />
+    ~ExternalDevicesManager()
+    {
+        Unload();
     }
 }

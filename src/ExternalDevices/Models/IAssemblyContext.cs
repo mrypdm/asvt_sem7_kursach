@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 
 namespace ExternalDevices.Models;
@@ -5,7 +6,7 @@ namespace ExternalDevices.Models;
 /// <summary>
 /// Assembly context
 /// </summary>
-public interface IAssemblyContext
+public interface IAssemblyContext : IDisposable
 {
     /// <summary>
     /// Loaded assembly

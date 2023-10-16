@@ -1,26 +1,46 @@
-﻿using System.Collections.Generic;
-using System.Runtime.Loader;
+﻿using System;
+using System.Collections.Generic;
 using ExternalDeviceSdk;
 
 namespace ExternalDevices.Models;
 
-/// <summary>
-/// Context of external device
-/// </summary>
-public class ExternalDeviceModel
+/// <inheritdoc />
+public sealed class ExternalDeviceModel : IExternalDeviceModel
 {
-    /// <summary>
-    /// Path to assembly file
-    /// </summary>
+    private bool _disposed;
+
+    /// <inheritdoc />
     public string AssemblyPath { get; set; }
-    
-    /// <summary>
-    /// Context of assembly
-    /// </summary>
+
+    /// <inheritdoc />
     public IAssemblyContext AssemblyContext { get; set; }
-    
-    /// <summary>
-    /// External device object
-    /// </summary>
+
+    /// <inheritdoc />
     public List<IExternalDevice> ExternalDevices { get; set; }
+
+    private void Unload()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+
+        ExternalDevices.ForEach(d => d.Dispose());
+        AssemblyContext.Dispose();
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        Unload();
+        GC.SuppressFinalize(this);
+    }
+
+    /// <inheritdoc />
+    ~ExternalDeviceModel()
+    {
+        Unload();
+    }
 }

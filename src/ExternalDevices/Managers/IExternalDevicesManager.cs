@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ExternalDeviceSdk;
 
 namespace ExternalDevices.Managers;
@@ -6,7 +7,7 @@ namespace ExternalDevices.Managers;
 /// <summary>
 /// Manager for <see cref="IExternalDevice"/>
 /// </summary>
-public interface IExternalDevicesManager
+public interface IExternalDevicesManager : IDisposable
 {
     /// <summary>
     /// Collection of connected external devices

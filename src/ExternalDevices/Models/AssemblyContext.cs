@@ -5,7 +5,7 @@ using System.Runtime.Loader;
 namespace ExternalDevices.Models;
 
 /// <inheritdoc />
-public class AssemblyContext : IAssemblyContext
+public sealed class AssemblyContext : IAssemblyContext
 {
     private readonly AssemblyLoadContext _context;
 
@@ -24,7 +24,7 @@ public class AssemblyContext : IAssemblyContext
         {
             throw new InvalidOperationException("Assembly has been already loaded");
         }
-        
+
         Assembly = _context.LoadFromAssemblyPath(assemblyPath);
         return Assembly;
     }
@@ -32,7 +32,25 @@ public class AssemblyContext : IAssemblyContext
     /// <inheritdoc />
     public void Unload()
     {
+        if (Assembly == null)
+        {
+            return;
+        }
+
         _context.Unload();
         Assembly = null;
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        Unload();
+        GC.SuppressFinalize(this);
+    }
+
+    /// <inheritdoc />
+    ~AssemblyContext()
+    {
+        Unload();
     }
 }

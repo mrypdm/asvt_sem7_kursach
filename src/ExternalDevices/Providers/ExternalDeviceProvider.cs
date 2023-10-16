@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.Loader;
 using ExternalDevices.Models;
 using ExternalDeviceSdk;
 
@@ -9,8 +8,23 @@ namespace ExternalDevices.Providers;
 /// <inheritdoc />
 public class ExternalDeviceProvider : IExternalDeviceProvider
 {
+    private static TType CreateInstance<TType>(Type type, out Exception error) where TType : class
+    {
+        try
+        {
+            var res = Activator.CreateInstance(type) as TType;
+            error = null;
+            return res;
+        }
+        catch (Exception e)
+        {
+            error = e;
+            return null;
+        }
+    }
+    
     /// <inheritdoc />
-    public ExternalDeviceModel LoadDevice(string assemblyFilePath)
+    public IExternalDeviceModel LoadDevice(string assemblyFilePath)
     {
         var context = new AssemblyContext(assemblyFilePath);
         var assembly = context.Load(assemblyFilePath);
@@ -27,8 +41,8 @@ public class ExternalDeviceProvider : IExternalDeviceProvider
         }
 
         var devices = types
-            .Select(t => Activator.CreateInstance(t) as IExternalDevice
-                         ?? throw new InvalidOperationException($"Cannot create instance of device '{t.FullName}'"))
+            .Select(t => CreateInstance<IExternalDevice>(t, out var err)
+                         ?? throw new InvalidOperationException($"Cannot create instance of device '{t.FullName}'", err))
             .ToList();
 
         return new ExternalDeviceModel
@@ -37,12 +51,5 @@ public class ExternalDeviceProvider : IExternalDeviceProvider
             AssemblyContext = context,
             ExternalDevices = devices
         };
-    }
-
-    /// <inheritdoc />
-    public void UnloadDevice(ExternalDeviceModel model)
-    {
-        model.ExternalDevices.ForEach(d => d.Dispose());
-        model.AssemblyContext.Unload();
     }
 }
