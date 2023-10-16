@@ -1,5 +1,6 @@
 using System.IO;
-using ExternalDevices;
+using ExternalDevices.Managers;
+using ExternalDevices.Providers;
 
 namespace ExternalDevicesTests;
 
@@ -18,7 +19,7 @@ public class ExternalDevicesManagerTests
     public void ValidateCorrectDevice()
     {
         // Arrange
-        var manager = new ExternalDevicesManager();
+        var manager = new ExternalDevicesManager(new ExternalDeviceProvider());
 
         // Act & Assert
         Assert.That(manager.ValidateDevice(DefaultExternalDevice), Is.True);
@@ -28,7 +29,7 @@ public class ExternalDevicesManagerTests
     public void ValidateIncorrectDevice()
     {
         // Arrange
-        var manager = new ExternalDevicesManager();
+        var manager = new ExternalDevicesManager(new ExternalDeviceProvider());
 
         // Act & Assert
         Assert.That(manager.ValidateDevice(InvalidExternalDevice), Is.False);
@@ -38,7 +39,7 @@ public class ExternalDevicesManagerTests
     public void LoadDevice()
     {
         // Arrange
-        var manager = new ExternalDevicesManager();
+        var manager = new ExternalDevicesManager(new ExternalDeviceProvider());
 
         // Act
         manager.AddDevice(DefaultExternalDevice);
@@ -51,7 +52,7 @@ public class ExternalDevicesManagerTests
     public void DeleteDevice()
     {
         // Arrange
-        var manager = new ExternalDevicesManager();
+        var manager = new ExternalDevicesManager(new ExternalDeviceProvider());
         manager.AddDevice(DefaultExternalDevice);
 
         // Act
@@ -65,7 +66,7 @@ public class ExternalDevicesManagerTests
     public void DeleteUnexistingDevice()
     {
         // Arrange
-        var manager = new ExternalDevicesManager();
+        var manager = new ExternalDevicesManager(new ExternalDeviceProvider());
 
         // Act
         manager.RemoveDevice(DefaultExternalDevice);
@@ -78,7 +79,7 @@ public class ExternalDevicesManagerTests
     public void AddDuplicateDevice()
     {
         // Arrange
-        var manager = new ExternalDevicesManager();
+        var manager = new ExternalDevicesManager(new ExternalDeviceProvider());
         manager.AddDevice(DefaultExternalDevice);
 
         // Act
@@ -92,7 +93,7 @@ public class ExternalDevicesManagerTests
     public void AddDoubleDeviceDevice()
     {
         // Arrange
-        var manager = new ExternalDevicesManager();
+        var manager = new ExternalDevicesManager(new ExternalDeviceProvider());
 
         // Act
         manager.AddDevice(DoubleExternalDevice);

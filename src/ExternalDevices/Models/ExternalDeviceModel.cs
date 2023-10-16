@@ -2,7 +2,7 @@
 using System.Runtime.Loader;
 using ExternalDeviceSdk;
 
-namespace ExternalDevices;
+namespace ExternalDevices.Models;
 
 /// <summary>
 /// Context of external device
