@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ExternalDeviceSdk;
 
 namespace ExternalDevices.Models;
@@ -10,15 +9,16 @@ public sealed class ExternalDeviceModel : IExternalDeviceModel
     private bool _disposed;
 
     /// <inheritdoc />
-    public string AssemblyPath { get; set; }
+    public string AssemblyPath { get; init; }
 
     /// <inheritdoc />
-    public IAssemblyContext AssemblyContext { get; set; }
+    public IAssemblyContext AssemblyContext { get; init; }
 
     /// <inheritdoc />
-    public List<IExternalDevice> ExternalDevices { get; set; }
+    public List<IExternalDevice> ExternalDevices { get; init; }
 
-    private void Unload()
+    /// <inheritdoc />
+    public void Dispose()
     {
         if (_disposed)
         {
@@ -29,18 +29,5 @@ public sealed class ExternalDeviceModel : IExternalDeviceModel
 
         ExternalDevices.ForEach(d => d.Dispose());
         AssemblyContext.Dispose();
-    }
-
-    /// <inheritdoc />
-    public void Dispose()
-    {
-        Unload();
-        GC.SuppressFinalize(this);
-    }
-
-    /// <inheritdoc />
-    ~ExternalDeviceModel()
-    {
-        Unload();
     }
 }
