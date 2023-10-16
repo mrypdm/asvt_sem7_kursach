@@ -32,4 +32,13 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity diagnostic
+      run: dotnet test --no-build --verbosity diagnostic --diag diag.log
+
+    - name: Read package.json
+      id: diag_log_read
+      uses: juliangruber/read-file-action@v1.1.6
+      with:
+        path: ./diag.log
+
+    - name: Echo package.json
+      run: echo "${{ steps.diag_log_read.outputs.content }}"
