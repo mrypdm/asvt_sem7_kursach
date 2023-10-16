@@ -23,7 +23,6 @@ public class ExternalDeviceProviderTests
         {
             Assert.That(model.AssemblyPath, Is.EqualTo(path));
             Assert.That(model.ExternalDevices, Has.Count.EqualTo(count));
-            Assert.That(model.AssemblyContext.Assembly.Location, Is.EqualTo(path));
         });
     }
 

@@ -1,3 +1,4 @@
+using System;
 using ExternalDevices.Managers;
 using ExternalDevices.Models;
 using ExternalDevices.Providers;
@@ -116,5 +117,37 @@ public class ExternalDevicesManagerTests
 
         model.Verify(m => m.Dispose(), Times.Once);
         provider.Verify(p => p.LoadDevice(Constants.DefaultExternalDevice), Times.Once);
+    }
+
+    [Test]
+    public void ClearDevices()
+    {
+        // Arrange
+        var manager = new ExternalDevicesManager(new ExternalDeviceProvider());
+
+        manager.AddDevice(Constants.DefaultExternalDevice);
+        manager.AddDevice(Constants.DoubleExternalDevice);
+
+        Assert.That(manager.ExternalDevices, Has.Count.EqualTo(3));
+
+        // Act
+        manager.Clear();
+
+        // Assert
+        Assert.That(manager.ExternalDevices, Has.Count.EqualTo(0));
+    }
+
+    [Test]
+    public void ThrowIfDisposed()
+    {
+        // Arrange
+        var manager = new ExternalDevicesManager(new ExternalDeviceProvider());
+        manager.Dispose();
+        
+        // Act & Assert
+
+        Assert.Throws<ObjectDisposedException>(() => manager.AddDevice(Constants.DefaultExternalDevice));
+        Assert.Throws<ObjectDisposedException>(() => manager.RemoveDevice(Constants.DefaultExternalDevice));
+        Assert.Throws<ObjectDisposedException>(() => manager.Clear());
     }
 }

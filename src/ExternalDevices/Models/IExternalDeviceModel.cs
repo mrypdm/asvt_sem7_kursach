@@ -15,12 +15,7 @@ public interface IExternalDeviceModel : IDisposable
     string AssemblyPath { get; }
 
     /// <summary>
-    /// Context of assembly
-    /// </summary>
-    IAssemblyContext AssemblyContext { get; }
-
-    /// <summary>
     /// External device object
     /// </summary>
-    List<IExternalDevice> ExternalDevices { get; }
+    IReadOnlyCollection<IExternalDevice> ExternalDevices { get; }
 }

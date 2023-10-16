@@ -32,4 +32,9 @@ public interface IExternalDevicesManager : IDisposable
     /// <param name="devicePath">Path to external device</param>
     /// <returns>True if device is valid</returns>
     bool ValidateDevice(string devicePath);
+
+    /// <summary>
+    /// Removes all devices
+    /// </summary>
+    void Clear();
 }

@@ -22,7 +22,7 @@ public class ExternalDeviceProvider : IExternalDeviceProvider
             return null;
         }
     }
-    
+
     /// <inheritdoc />
     public IExternalDeviceModel LoadDevice(string assemblyFilePath)
     {
@@ -41,15 +41,10 @@ public class ExternalDeviceProvider : IExternalDeviceProvider
         }
 
         var devices = types
-            .Select(t => CreateInstance<IExternalDevice>(t, out var err)
-                         ?? throw new InvalidOperationException($"Cannot create instance of device '{t.FullName}'", err))
-            .ToList();
+            .Select(
+                t => CreateInstance<IExternalDevice>(t, out var err)
+                     ?? throw new InvalidOperationException($"Cannot create instance of device '{t.FullName}'", err));
 
-        return new ExternalDeviceModel
-        {
-            AssemblyPath = assemblyFilePath,
-            AssemblyContext = context,
-            ExternalDevices = devices
-        };
+        return new ExternalDeviceModel(context, devices);
     }
 }

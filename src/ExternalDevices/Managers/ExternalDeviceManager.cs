@@ -14,6 +14,9 @@ public sealed class ExternalDevicesManager : IExternalDevicesManager
 
     private readonly IExternalDeviceProvider _provider;
 
+    private List<IExternalDeviceModel> SafeDevices =>
+        _devices ?? throw new ObjectDisposedException("Manager is disposed");
+
     public ExternalDevicesManager(IExternalDeviceProvider provider)
     {
         _provider = provider;
@@ -22,26 +25,26 @@ public sealed class ExternalDevicesManager : IExternalDevicesManager
     /// <summary>
     /// Collection of connected external devices
     /// </summary>
-    public IReadOnlyCollection<IExternalDevice> ExternalDevices
-        => _devices.SelectMany(d => d.ExternalDevices).ToList();
+    public IReadOnlyCollection<IExternalDevice> ExternalDevices =>
+        SafeDevices.SelectMany(d => d.ExternalDevices).ToList();
 
     /// <inheritdoc />
     public void AddDevice(string devicePath)
     {
-        if (_devices.SingleOrDefault(d => d.AssemblyPath == devicePath) != null)
+        if (SafeDevices.SingleOrDefault(d => d.AssemblyPath == devicePath) != null)
         {
             return;
         }
 
         var device = _provider.LoadDevice(devicePath);
 
-        _devices.Add(device);
+        SafeDevices.Add(device);
     }
 
     /// <inheritdoc />
     public void RemoveDevice(string devicePath)
     {
-        var model = _devices.SingleOrDefault(d => d.AssemblyPath == devicePath);
+        var model = SafeDevices.SingleOrDefault(d => d.AssemblyPath == devicePath);
 
         if (model == null)
         {
@@ -49,7 +52,7 @@ public sealed class ExternalDevicesManager : IExternalDevicesManager
         }
 
         model.Dispose();
-        _devices.Remove(model);
+        SafeDevices.Remove(model);
     }
 
     /// <inheritdoc />
@@ -68,6 +71,13 @@ public sealed class ExternalDevicesManager : IExternalDevicesManager
     }
 
     /// <inheritdoc />
+    public void Clear()
+    {
+        SafeDevices.ForEach(d => d.Dispose());
+        SafeDevices.Clear();
+    }
+
+    /// <inheritdoc />
     public void Dispose()
     {
         if (_devices == null)
@@ -75,7 +85,7 @@ public sealed class ExternalDevicesManager : IExternalDevicesManager
             return;
         }
 
-        _devices.ForEach(d => d.Dispose());
+        Clear();
         _devices = null;
     }
 }
