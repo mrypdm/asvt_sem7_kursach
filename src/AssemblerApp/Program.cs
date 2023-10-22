@@ -1,12 +1,14 @@
 ﻿using AssemblerLib;
+using System.Collections.Generic;
 
 class Program
 {
     static void Main(string[] args)
     {
-        string main_asm_file = "main.asm";
-        string[] linked_asm_files = new string[] { "macro.asm" };
+        var mainAsmFile = @"D:\Университет\7 семестр\Курсовая работы\main.asm";
+        var linkedAsmFiles = new List<string> { @"D:\Университет\7 семестр\Курсовая работы\macro.asm" };
 
-        Assembler asm = new(ref main_asm_file, ref linked_asm_files);
+        var asm = new Assembler(mainAsmFile, linkedAsmFiles);
+        asm.Assemble().Wait();
     }
 }

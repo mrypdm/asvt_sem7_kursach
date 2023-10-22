@@ -1,15 +1,32 @@
-﻿namespace AssemblerLib
-{
-    public class Assembler
-    {
-        public Assembler(ref string main_asm_file, ref string[] linked_asm_files)
-        {
-            //code
-        }
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-        public void assemble()
+namespace AssemblerLib;
+
+public class Assembler
+{
+    private string _mainFilePath;
+    private List<string> _linkedFilesPaths;
+    private readonly Parser _parser;
+    private readonly List<CommandLine> _commands;
+
+    public Assembler(string mainFilePath, IEnumerable<string> linkedFilesPaths)
+    {
+        _mainFilePath = mainFilePath;
+        _linkedFilesPaths = linkedFilesPaths.ToList();
+        _parser = new Parser();
+        _commands = new List<CommandLine>();
+    }
+
+    public async Task Assemble()
+    {
+        _commands.AddRange(await _parser.Parse(_mainFilePath));
+
+        foreach (var i in _commands)
         {
-            //code
+            Console.WriteLine($"{i.Mark}; {i.Instruction}; {string.Join(';', i.Arguments)}");
         }
     }
 }
