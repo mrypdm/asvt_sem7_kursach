@@ -1,15 +1,12 @@
 using System;
-using Argument;
+using OpcodeFiller;
 
 namespace Executor{
     public class OpcodeIndentifyer {
 
         private OpcodeIndentifyer Instance;
-
-        private Dictionary<string, string> TwoOperands;
-        private Dictionary<string, string> OneOperand;
-        private Dictionary<string, string> BranchOperationC0;
-        private Dictionary<string, string> BranchOperationC1;
+        private Dictionary<string, string>[8] OpcodesDictionary;
+        
         public OpcodeIndentifyer GetInstance(){
             if (Instance == null){
                 Instance = new OpcodeIndentifyer()
@@ -19,7 +16,7 @@ namespace Executor{
         private OpcodeIndentifyer(){
             
         }
-        public GetCommandName(){
+        public GetCommandName(ushort Word){
             
         }
     }
