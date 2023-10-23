@@ -66,7 +66,7 @@ namespace OpcodeFiller{
     }
 
     public void BranchOperationC1Fill(Dictionary<string, string> BranchOperationC1){
-        BranchOperationC0.Add("mask", "65024"); // 0b1111_1110_0000_0000
+        BranchOperationC1.Add("mask", "65024"); // 0b1111_1110_0000_0000
         BranchOperationC1.Add("100", "BMI");
         BranchOperationC1.Add("101", "BLOS");
         BranchOperationC1.Add("102", "BVS");
@@ -125,9 +125,9 @@ namespace OpcodeFiller{
         SubroutineInstruction0.Add("mask", "65528"); // 0b1111_1111_1111_1000
         SubroutineInstruction0.Add("00020", "RTS");
     }
-    public void SubroutineInstruction1Fill(Dictionary<string, string> SubroutineInstruction0){
-        SubroutineInstruction0.Add("mask", "65472"); // 0b1111_1111_1100_0000 
-        SubroutineInstruction0.Add("0064", "MARK");
+    public void SubroutineInstruction1Fill(Dictionary<string, string> SubroutineInstruction1){
+        SubroutineInstruction1.Add("mask", "65472"); // 0b1111_1111_1100_0000 
+        SubroutineInstruction1.Add("0064", "MARK");
     }
 
 
