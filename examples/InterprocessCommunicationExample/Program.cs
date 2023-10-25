@@ -71,6 +71,7 @@ public static class Program
         else
         {
             Console.WriteLine($"Unsupported OS: {Environment.OSVersion.Platform}");
+            Environment.Exit(2);
         }
 
         process.Start();
@@ -150,7 +151,7 @@ public static class Program
                 // see https://stackoverflow.com/questions/18759125
                 if (count == 0)
                 {
-                    Console.WriteLine("Child disconnected. Shutting down.");
+                    Console.WriteLine("Other side disconnected. Shutting down.");
                     TokenSource.Cancel();
                     return;
                 }

@@ -65,11 +65,6 @@ public static class ConsoleHelper
                 {
                     var (column, row) = Console.GetCursorPosition();
 
-                    if (column == row && row == 0)
-                    {
-                        continue;
-                    }
-
                     if (--column == -1)
                     {
                         column = Console.WindowWidth - 1;
@@ -102,7 +97,7 @@ public static class ConsoleHelper
 public static class StreamHelper
 {
     /// <summary>
-    /// Reads from <paramref name="reader"/> to <param name="buffer"> asynchronously</param>
+    /// Reads from <paramref name="reader"/> to <paramref name="buffer"/> asynchronously
     /// </summary>
     /// <param name="reader">Reader</param>
     /// <param name="buffer">Buffer</param>
