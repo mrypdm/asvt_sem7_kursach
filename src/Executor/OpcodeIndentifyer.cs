@@ -1,0 +1,32 @@
+using System;
+
+namespace Executor{
+    public class OpcodeIndentifyer {
+        private OpcodeIndentifyer Instance;
+        private Dictionary<string, > OpcodesDictionary;
+        private ushort[] Masks = {65472, 61440, 65024, 65024, 65535, 65520, 65280, 65528, 65528, 65472};
+        
+        public OpcodeIndentifyer GetInstance(){
+            if (Instance == null){
+                Instance = new OpcodeIndentifyer();
+            }
+            return Instance;
+        }
+        private OpcodeIndentifyer(){
+            
+        }
+        public string GetCommandName(ushort Word){
+            ushort Mask;
+            string CommandName;
+            ushort Opcode;
+
+            for(int i = 0; i < 10; i++){
+                Mask = Masks[i];
+                Opcode = Word & Mask;
+                
+            }
+            throw new InvalidOperationException("Invalid Operation!");
+        }
+    }
+
+}

@@ -1,57 +1,90 @@
 using System;
-using OpcodeFiller;
 
 namespace Executor{
-    public class OpcodeIndentifyer {
+    interface ICommand{
+        void Execute (State state, Memory memory);
+    }
+    
+    abstract class TwoOperands : ICommand{
+        private ushort OpcodeMask = 0b1111_0000_0000_0000;
+        private ushort SourceMask1 = 0b0000_1110_0000_0000;
+        private ushort SourceMask2 =  0b0000_0000_0011_1000;
+        private ushort RegisterMask1 = 0b0000_0001_1100_0000;
+        private ushort RegisterMask2 =  0b0000_0000_0000_0111;
 
-        private OpcodeIndentifyer Instance;
-        private Dictionary<string, string>[10] OpcodesDictionary;
-        
-        public OpcodeIndentifyer GetInstance(){
-            if (Instance == null){
-                Instance = new OpcodeIndentifyer();
-            }
-            return Instance;
+        private ushort GetRegister1(ushort word){
+            return (word & RegisterMask1) >> 6;
         }
-        private OpcodeIndentifyer(){
-            OneOperandFill(OpcodesDictionary[0]);
-            TwoOperandsFill(OpcodesDictionary[1]);
-            BranchOperationC0Fill(OpcodesDictionary[2]);
-            BranchOperationC1Fill(OpcodesDictionary[3]);
-            TrapFill(OpcodesDictionary[4]);
-            ConditionCodeFill(OpcodesDictionary[5]);
-            TrapInstructionsFill(OpcodesDictionary[6]);
-            FloatingInstructionSetFill(OpcodesDictionary[7]);
-            SubroutineInstruction0Fill(OpcodesDictionary[8]);
-            SubroutineInstruction1Fill(OpcodesDictionary[9]);
+        private ushort GetRegister2(ushort word){
+            return word & RegisterMask2;
         }
-        public string GetCommandName(ushort Word){
-            ushort mask;
-            string CommandName;
-            ushort opcode;
-
-            foreach(Dictionary<string, string> Dict in OpcodesDictionary){
-                mask = Int32.parse(Dict["mask"]);
-                opcode = Word & mask;
-                if (Dict.TryGetValue(Word, out CommandName)){
-                    return CommandName;
-                }
-            }
-            throw new InvalidOperationException("Invalid Operation!");
+        private ushort GetSource2(ushort word){
+            return (word & SourceMask2) >> 3;
         }
+        private ushort GetSource1(ushort word){
+            return (word & SourceMask1) >> 9;
+        }
+        private ushort GetOpcode(ushort word){
+            return (word & OpcodeMask);
+        }
+        public virtual void Execute (State state, Memory memory);
     }
 
-    public record Argument{
-        
-    }
-    public class Command {
-        private Argument Arguments[2];
-        public State Execute(State CurrentState);
+    abstract class OneOperand : ICommand{
+        private ushort OpcodeMask = 0b1111_1111_1100_0000;
+        private ushort SourceMask = 0b0000_0000_0011_1000;
+        private ushort RegisterMask =  0b0000_0000_0000_0111;
 
-        public Command(Memory memory, ushort address){
-
+        private ushort GetRegister(ushort word){
+            return (word & RegisterMask);
         }
+        private ushort GetSource(ushort word){
+            return (word & SourceMask) >> 3;
+        }
+        private ushort GetOpcode(ushort word){
+            return (word & OpcodeMask);
+        }
+        public abstract void Execute (State state, Memory memory);
+    }
 
+    abstract class BranchOperationC : ICommand{
+        private ushort OpcodeMask = 0b1111_1111_0000_0000;
+        private ushort OffsetMask = 0b0000_0000_1111_1111;
+
+        private ushort GetOffset(ushort word){
+            return (word & OffsetMask);
+        }
+        private ushort GetOpcode(ushort word){
+            return (word & OpcodeMask);
+        }
+        public virtual void Execute (State state, Memory memory);
+    }
+
+
+    abstract class FloatingInstructionSet: ICommand{
+        private ushort OpcodeMask = 0b1111_1111_1111_1000;
+        private ushort RegisterMask = 0b0000_0000_0000_0111;
+
+        private ushort GetRegister(ushort word){
+            return (word & RegisterMask);
+        }
+        private ushort GetOpcode(ushort word){
+            return (word & OpcodeMask);
+        }
+        public virtual void Execute (State state, Memory memory);
+    }
+    
+    abstract class ConditionCode: ICommand{
+        private ushort OpcodeMask = 0b1111_1111_1111_0000;
+        private ushort FlagMask = 0b0000_0000_0000_1111;
+
+        private ushort GetRegister(ushort word){
+            return (word & FlagMask);
+        }
+        private ushort GetOpcode(ushort word){
+            return (word & OpcodeMask);
+        }
+        public virtual void Execute (State state, Memory memory);
     }
 
 }

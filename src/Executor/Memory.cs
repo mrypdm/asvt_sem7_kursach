@@ -2,7 +2,7 @@ using System
 
 namespace Executor
 {
-    public class  Memory{
+    public class Memory{
         public ushort[] ReservedAddress{
             get{
 
@@ -19,6 +19,9 @@ namespace Executor
 
             }
         }
+        public ushort ResolveAddress(ushort mode, ushort register){
+            
+        }
 
         public ushort Get(uint address){
 
@@ -28,6 +31,6 @@ namespace Executor
             
         }
     
-}
+    }
 
 }

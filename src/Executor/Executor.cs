@@ -2,6 +2,16 @@ using System;
 
 namespace Executor{
 
+     public class Command {
+        public string Name;
+        public Action<State, Memory> Execute;
+        public Command(string name, Action<State, Memory> realization){
+            Name = name;
+            Execute = realization;
+        }
+
+    }
+
     enum Flag{
         Z,
         N,
