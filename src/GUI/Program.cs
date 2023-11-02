@@ -22,7 +22,6 @@ public static class Program
         var editorOptions = configuration.GetOptions<EditorOptions>();
 
         SettingsManager.Create(editorOptions, commandLineOptions);
-        ProjectManager.Create();
 
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args, ShutdownMode.OnMainWindowClose);
     }

@@ -13,7 +13,6 @@ public partial class SettingsWindow : Window
     public SettingsWindow()
     {
         InitializeComponent();
-        DataContext = new SettingsViewModel(this);
 #if DEBUG
         this.AttachDevTools();
 #endif

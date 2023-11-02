@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using DynamicData.Binding;
@@ -18,6 +18,7 @@ namespace GUI.ViewModels;
 /// </summary>
 public class SettingsViewModel : BaseViewModel<SettingsWindow>
 {
+    private readonly ProjectManager _projectManager;
     private readonly IStorageProvider _storageProvider;
 
     /// <summary>
@@ -31,43 +32,49 @@ public class SettingsViewModel : BaseViewModel<SettingsWindow>
     /// Creates new instance of settings window view model
     /// </summary>
     /// <param name="window">Reference to <see cref="SettingsWindow"/></param>
-    public SettingsViewModel(SettingsWindow window) : base(window)
+    /// <param name="projectManager">Project manager</param>
+    public SettingsViewModel(SettingsWindow window, ProjectManager projectManager) : base(window)
     {
+        _projectManager = projectManager;
         _storageProvider = window.StorageProvider;
         AllFontFamilies = new ObservableCollectionExtended<FontFamily>(FontManager.Current.SystemFonts);
 
-        AddExternalDeviceCommand = ReactiveCommand.CreateFromTask(AddExternalDeviceAsync);
-        DeleteExternalDeviceCommand = ReactiveCommand.CreateFromTask(DeleteExternalDevices);
+        AddDeviceCommand = ReactiveCommand.CreateFromTask(AddDeviceAsync);
+        DeleteDeviceCommand = ReactiveCommand.CreateFromTask(DeleteDevices);
 
-        ProjectManager.Instance.PropertyChanged += (_, _) => this.RaisePropertyChanged(nameof(ExternalDevices));
+        projectManager.PropertyChanged += ProjectPropertyChanged;
 
-        window.Closing += async (_, _) => { await SettingsManager.Instance.SaveGlobalSettings(); };
+        window.Closing += async (_, _) =>
+        {
+            projectManager.PropertyChanged -= ProjectPropertyChanged;
+            await SettingsManager.Instance.SaveGlobalSettings();
+        };
     }
 
     /// <summary>
-    /// Command for adding external devices
+    /// Command for adding devices
     /// </summary>
-    public ReactiveCommand<Unit, Unit> AddExternalDeviceCommand { get; }
+    public ReactiveCommand<Unit, Unit> AddDeviceCommand { get; }
 
     /// <summary>
-    /// Command for deleting external devices
+    /// Command for deleting devices
     /// </summary>
-    public ReactiveCommand<Unit, Unit> DeleteExternalDeviceCommand { get; }
+    public ReactiveCommand<Unit, Unit> DeleteDeviceCommand { get; }
 
     /// <summary>
     /// Collection with all fonts
     /// </summary>
     public ObservableCollection<FontFamily> AllFontFamilies { get; }
 
-    /// <inheritdoc cref="SettingsManager.ExternalDevices"/>
-    public ObservableCollection<string> ExternalDevices => new(ProjectManager.Instance.IsOpened
-        ? ProjectManager.Instance.Project.ExternalDevices
+    /// <inheritdoc cref="SettingsManager.Devices"/>
+    public ObservableCollection<string> Devices => new(_projectManager.IsOpened
+        ? _projectManager.Project.Devices
         : Array.Empty<string>());
 
     /// <summary>
-    /// Collection with selected external devices
+    /// Collection with selected devices
     /// </summary>
-    public ObservableCollection<string> SelectedExternalDevices { get; set; } = new();
+    public ObservableCollection<string> SelectedDevices { get; set; } = new();
 
     /// <inheritdoc cref="SettingsManager.FontFamily"/>
     public FontFamily FontFamily
@@ -83,11 +90,11 @@ public class SettingsViewModel : BaseViewModel<SettingsWindow>
         set => SettingsManager.Instance.FontSize = value;
     }
 
-    private async Task AddExternalDeviceAsync()
+    private async Task AddDeviceAsync()
     {
         var file = await _storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Open external device library...",
+            Title = "Open device library...",
             AllowMultiple = false,
             FileTypeFilter = new[] { new FilePickerFileType("DLL") { Patterns = new[] { "*.dll" } } }
         });
@@ -97,21 +104,26 @@ public class SettingsViewModel : BaseViewModel<SettingsWindow>
             return;
         }
 
-        ProjectManager.Instance.AddExternalDevice(file[0].Path.LocalPath);
-        await ProjectManager.Instance.SaveProjectAsync();
-        this.RaisePropertyChanged(nameof(ExternalDevices));
+        _projectManager.AddDeviceToProject(file[0].Path.LocalPath);
+        await _projectManager.SaveProjectAsync();
+        this.RaisePropertyChanged(nameof(Devices));
     }
 
-    private async Task DeleteExternalDevices()
+    private async Task DeleteDevices()
     {
-        var externalDevices = SelectedExternalDevices.ToList();
+        var devices = SelectedDevices.ToList();
 
-        foreach (var device in externalDevices)
+        foreach (var device in devices)
         {
-            ProjectManager.Instance.RemoveExternalDevice(device);
+            _projectManager.RemoveDeviceFromProject(device);
         }
 
-        await ProjectManager.Instance.SaveProjectAsync();
-        this.RaisePropertyChanged(nameof(ExternalDevices));
+        await _projectManager.SaveProjectAsync();
+        this.RaisePropertyChanged(nameof(Devices));
+    }
+
+    private void ProjectPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+    {
+        this.RaisePropertyChanged(nameof(Devices));
     }
 }

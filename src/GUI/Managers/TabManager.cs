@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia.Media;
 using GUI.Exceptions;
 using GUI.Models;
 using GUI.Notifiers;

@@ -25,9 +25,9 @@ public class ProjectModel
     public string Executable { get; set; } = string.Empty;
 
     /// <summary>
-    /// External devices
+    /// Devices
     /// </summary>
-    public List<string> ExternalDevices { get; set; } = new();
+    public List<string> Devices { get; set; } = new();
 
     /// <summary>
     /// Initial address of stack pointer (original value), <see cref="StackAddress"/>

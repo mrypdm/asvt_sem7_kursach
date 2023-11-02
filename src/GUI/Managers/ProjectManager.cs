@@ -124,6 +124,15 @@ public class ProjectManager : PropertyChangedNotifier
     }
 
     /// <summary>
+    /// Saves project to disk and invokes <see cref="PropertyChangedNotifier.PropertyChanged"/>
+    /// </summary>
+    public async Task SaveProjectAsync()
+    {
+        await JsonHelper.SerializeToFileAsync(Project, Project.ProjectFilePath);
+        OnPropertyChanged(nameof(Project));
+    }
+
+    /// <summary>
     /// Adds file to project
     /// </summary>
     /// <param name="filePath">File path</param>
@@ -170,51 +179,25 @@ public class ProjectManager : PropertyChangedNotifier
     }
 
     /// <summary>
-    /// Add external device to project
+    /// Add device to project
     /// </summary>
-    /// <param name="filePath">Path to external device</param>
-    public void AddExternalDevice(string filePath)
+    /// <param name="filePath">Path to device</param>
+    public void AddDeviceToProject(string filePath)
     {
-        if (Project.ExternalDevices.Contains(filePath))
+        if (Project.Devices.Contains(filePath))
         {
             return;
         }
 
-        Project.ExternalDevices.Add(filePath);
+        Project.Devices.Add(filePath);
     }
 
     /// <summary>
-    /// Removes external device from project
+    /// Removes device from project
     /// </summary>
-    /// <param name="filePath">Path to external device</param>
-    public void RemoveExternalDevice(string filePath)
+    /// <param name="filePath">Path to device</param>
+    public void RemoveDeviceFromProject(string filePath)
     {
-        Project.ExternalDevices.Remove(filePath);
-    }
-
-    /// <summary>
-    /// Saves project to disk and invokes <see cref="PropertyChangedNotifier.PropertyChanged"/>
-    /// </summary>
-    public async Task SaveProjectAsync()
-    {
-        await JsonHelper.SerializeToFileAsync(Project, Project.ProjectFilePath);
-        OnPropertyChanged(nameof(Project));
-    }
-
-    /// <summary>
-    /// Instance of project manager
-    /// </summary>
-    public static ProjectManager Instance { get; private set; }
-
-    private ProjectManager()
-    {
-    }
-
-    /// <summary>
-    /// Creates instance of manager
-    /// </summary>
-    public static void Create()
-    {
-        Instance = new ProjectManager();
+        Project.Devices.Remove(filePath);
     }
 }

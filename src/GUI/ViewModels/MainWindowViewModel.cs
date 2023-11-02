@@ -28,7 +28,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
 
     private readonly FileManager _fileManager;
     private readonly TabManager _tabManager;
-    private SettingsWindow _settingsWindow;
+    private readonly ProjectManager _projectManager;
 
     /// <summary>
     /// Empty constructor for designer
@@ -52,17 +52,17 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
         CloseFileCommand = ReactiveCommand.CreateFromTask(async () => await CloseTabAsync(_tabManager!.Tab, true));
         CreateProjectCommand = ReactiveCommand.CreateFromTask(async () => { await CreateProjectAsync(); });
         OpenProjectCommand = ReactiveCommand.CreateFromTask(async () => { await OpenProjectAsync(); });
-        OpenSettingsWindowCommand = ReactiveCommand.Create(OpenSettingsWindow);
+        OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindow);
 
         _fileManager = new FileManager(window.StorageProvider);
-        _tabManager = new TabManager(tab => 
+        _tabManager = new TabManager(tab =>
         {
             _tabManager!.SelectTab(tab);
             return Task.CompletedTask;
         }, async tab => await CloseTabAsync(tab, true));
+        _projectManager = new ProjectManager();
 
         window.Closing += OnClosingWindow;
-
         window.Opened += async (_, _) =>
         {
             if (!await InitProject())
@@ -71,7 +71,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
             }
         };
 
-        ProjectManager.Instance.PropertyChanged += (_, _) =>
+        _projectManager.PropertyChanged += (_, _) =>
         {
             this.RaisePropertyChanged(nameof(WindowTitle));
             OnProjectUpdated();
@@ -133,8 +133,8 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// </summary>
     public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
 
-    public string WindowTitle => ProjectManager.Instance.IsOpened
-        ? $"{DefaultWindowTitle} - {ProjectManager.Instance.Project.ProjectFileName}"
+    public string WindowTitle => _projectManager.IsOpened
+        ? $"{DefaultWindowTitle} - {_projectManager.Project.ProjectFileName}"
         : DefaultWindowTitle;
 
     /// <summary>
@@ -209,13 +209,13 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     private async Task CreateFileAsync()
     {
         var file = await _fileManager.CreateFile(
-            ProjectManager.Instance.IsOpened ? ProjectManager.Instance.Project.Directory : null, null);
+            _projectManager.IsOpened ? _projectManager.Project.Directory : null, null);
 
         if (file != null)
         {
             await CreateTabForFiles(new[] { file });
-            ProjectManager.Instance.AddFileToProject(file.FilePath);
-            await ProjectManager.Instance.SaveProjectAsync();
+            _projectManager.AddFileToProject(file.FilePath);
+            await _projectManager.SaveProjectAsync();
         }
     }
 
@@ -276,7 +276,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
         if (error == null)
         {
             await _fileManager.WriteFileAsync(file);
-            await ProjectManager.Instance.ReloadProjectAsync();
+            await _projectManager.ReloadProjectAsync();
             return true;
         }
 
@@ -294,7 +294,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     private async Task<bool> SaveFileAsync(FileModel file, bool saveAs)
     {
         if (file.FilePath ==
-            (ProjectManager.Instance.IsOpened ? ProjectManager.Instance.Project.ProjectFilePath : null))
+            (_projectManager.IsOpened ? _projectManager.Project.ProjectFilePath : null))
         {
             return await SaveProjectFile(file);
         }
@@ -339,8 +339,8 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
 
         if (res == ButtonResult.Yes)
         {
-            ProjectManager.Instance.RemoveFileFromProject(File.FilePath);
-            await ProjectManager.Instance.SaveProjectAsync();
+            _projectManager.RemoveFileFromProject(File.FilePath);
+            await _projectManager.SaveProjectAsync();
             await _fileManager.DeleteAsync(File);
             _tabManager.DeleteTab(_tabManager.Tab);
         }
@@ -351,7 +351,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// </summary>
     private async Task CloseTabAsync(FileTab tab, bool isUi)
     {
-        if (tab.File.FilePath == ProjectManager.Instance.Project.ProjectFilePath && isUi)
+        if (tab.File.FilePath == _projectManager.Project.ProjectFilePath && isUi)
         {
             await MessageBoxManager.ShowErrorMessageBox("Cannot close project file", View);
             return;
@@ -445,11 +445,11 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     {
         await CloseAllTabs();
 
-        var projectFile = await _fileManager.OpenFileAsync(ProjectManager.Instance.Project.ProjectFilePath);
+        var projectFile = await _fileManager.OpenFileAsync(_projectManager.Project.ProjectFilePath);
 
         var files = new List<FileModel> { projectFile };
 
-        foreach (var filePath in ProjectManager.Instance.Project.ProjectFilesPaths)
+        foreach (var filePath in _projectManager.Project.ProjectFilesPaths)
         {
             try
             {
@@ -492,16 +492,16 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
             break;
         }
 
-        if (await ProjectManager.Instance.CreateProjectAsync(View.StorageProvider, projectName.Trim()))
+        if (await _projectManager.CreateProjectAsync(View.StorageProvider, projectName.Trim()))
         {
             var mainFile = new FileModel
             {
-                FilePath = PathHelper.Combine(ProjectManager.Instance.Project.Directory, MainFileName)
+                FilePath = PathHelper.Combine(_projectManager.Project.Directory, MainFileName)
             };
             await _fileManager.WriteFileAsync(mainFile);
-            ProjectManager.Instance.AddFileToProject(mainFile.FilePath);
-            ProjectManager.Instance.SetExecutableFile(mainFile.FilePath);
-            await ProjectManager.Instance.SaveProjectAsync();
+            _projectManager.AddFileToProject(mainFile.FilePath);
+            _projectManager.SetExecutableFile(mainFile.FilePath);
+            await _projectManager.SaveProjectAsync();
 
             await OpenProjectFilesAsync();
             return true;
@@ -519,7 +519,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
 
         try
         {
-            if (projectPath == null && await ProjectManager.Instance.OpenProjectAsync(View.StorageProvider))
+            if (projectPath == null && await _projectManager.OpenProjectAsync(View.StorageProvider))
             {
                 await OpenProjectFilesAsync();
                 return true;
@@ -527,7 +527,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
 
             if (projectPath != null)
             {
-                await ProjectManager.Instance.LoadProjectAsync(projectPath);
+                await _projectManager.LoadProjectAsync(projectPath);
                 await OpenProjectFilesAsync();
                 return true;
             }
@@ -546,17 +546,10 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// <summary>
     /// Opens <see cref="SettingsWindow"/>
     /// </summary>
-    private void OpenSettingsWindow()
+    private async Task OpenSettingsWindow()
     {
-        if (_settingsWindow is not { IsLoaded: true })
-        {
-            _settingsWindow = new SettingsWindow();
-            _settingsWindow.Show();
-        }
-        else
-        {
-            _settingsWindow.Activate();
-        }
+        var viewModel = new SettingsViewModel(new SettingsWindow(), _projectManager);
+        await viewModel.View.ShowDialog(View);
     }
 
     #region Handlers
@@ -588,12 +581,12 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
 
     private async void OnProjectUpdated()
     {
-        if (!ProjectManager.Instance.IsOpened)
+        if (!_projectManager.IsOpened)
         {
             return;
         }
 
-        var projectTab = Tabs.SingleOrDefault(t => t.File.FilePath == ProjectManager.Instance.Project.ProjectFilePath);
+        var projectTab = Tabs.SingleOrDefault(t => t.File.FilePath == _projectManager.Project.ProjectFilePath);
         if (projectTab != null)
         {
             var fileOnDisk = await _fileManager.OpenFileAsync(projectTab.File.FilePath);
