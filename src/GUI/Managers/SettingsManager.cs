@@ -40,11 +40,6 @@ public sealed class SettingsManager : PropertyChangedNotifier
     }
 
     /// <summary>
-    /// Current connected devices
-    /// </summary>
-    public ObservableCollection<string> Devices { get; set; } = new();
-
-    /// <summary>
     /// Get instance of settings manager
     /// </summary>
     public static SettingsManager Instance { get; private set; }

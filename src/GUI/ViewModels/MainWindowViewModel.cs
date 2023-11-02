@@ -246,7 +246,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
 
         do
         {
-            var filePath = await _fileManager.SelectFileAsync(null, file.FileName);
+            var filePath = await _fileManager.GetFileAsync(null, file.FileName);
 
             if (filePath == null)
             {

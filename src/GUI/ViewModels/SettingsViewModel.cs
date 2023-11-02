@@ -108,20 +108,16 @@ public class SettingsViewModel : BaseViewModel<SettingsWindow>
 
         _projectManager.AddDeviceToProject(file[0].Path.LocalPath);
         await _projectManager.SaveProjectAsync();
-        this.RaisePropertyChanged(nameof(Devices));
     }
 
     private async Task DeleteDevices()
     {
         var devices = SelectedDevices.ToList();
-
         foreach (var device in devices)
         {
             _projectManager.RemoveDeviceFromProject(device);
         }
-
         await _projectManager.SaveProjectAsync();
-        this.RaisePropertyChanged(nameof(Devices));
     }
 
     private void ProjectPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)

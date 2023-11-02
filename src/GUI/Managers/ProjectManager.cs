@@ -10,38 +10,32 @@ using Shared.Providers;
 
 namespace GUI.Managers;
 
-/// <summary>
-/// Project manager
-/// </summary>
-public class ProjectManager : PropertyChangedNotifier
+/// <inheritdoc cref="IProjectManager" />
+public class ProjectManager : PropertyChangedNotifier, IProjectManager
 {
     private readonly IProjectProvider _provider;
     private ProjectModel _project;
 
+    /// <summary>
+    /// Creates new instance of <see cref="ProjectManager"/>
+    /// </summary>
+    /// <param name="provider">Project provider</param>
     public ProjectManager(IProjectProvider provider)
     {
         _provider = provider;
     }
 
-    /// <summary>
-    /// Current project
-    /// </summary>
+    /// <inheritdoc />
     public ProjectModel Project
     {
         get => _project ?? throw new InvalidOperationException("Project is not opened");
         set => SetField(ref _project, value);
     }
 
-    /// <summary>
-    /// Is project opened
-    /// </summary>
+    /// <inheritdoc />
     public bool IsOpened => _project != null;
 
-    /// <summary>
-    /// Creates new project
-    /// </summary>
-    /// <param name="storageProvider">Storage provider</param>
-    /// <param name="projectName">Name of project</param>
+    /// <inheritdoc />
     public async Task<bool> CreateProjectAsync(IStorageProvider storageProvider, string projectName)
     {
         var projectDir = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
@@ -67,10 +61,7 @@ public class ProjectManager : PropertyChangedNotifier
         return true;
     }
 
-    /// <summary>
-    /// Opens project
-    /// </summary>
-    /// <param name="storageProvider">Storage provider</param>
+    /// <inheritdoc />
     public async Task<bool> OpenProjectAsync(IStorageProvider storageProvider)
     {
         var projectFile = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -95,41 +86,29 @@ public class ProjectManager : PropertyChangedNotifier
         return true;
     }
 
-    /// <summary>
-    /// Load project from disk
-    /// </summary>
+    /// <inheritdoc />
     public async Task LoadProjectAsync(string projectFilePath)
     {
         Project = await _provider.OpenProjectAsync(projectFilePath);
     }
 
-    /// <summary>
-    /// Reload project from disk
-    /// </summary>
+    /// <inheritdoc />
     public Task ReloadProjectAsync() => LoadProjectAsync(Project.ProjectFilePath);
 
-    /// <summary>
-    /// Closing project
-    /// </summary>
-    /// <remarks>This method will not call <see cref="SaveProjectAsync"/></remarks>
+    /// <inheritdoc />
     public void CloseProject()
     {
         Project = null;
     }
 
-    /// <summary>
-    /// Saves project to disk and invokes <see cref="PropertyChangedNotifier.PropertyChanged"/>
-    /// </summary>
+    /// <inheritdoc />
     public async Task SaveProjectAsync()
     {
         await JsonHelper.SerializeToFileAsync(Project, Project.ProjectFilePath);
-        OnPropertyChanged(nameof(Project));
+        await ReloadProjectAsync();
     }
 
-    /// <summary>
-    /// Adds file to project
-    /// </summary>
-    /// <param name="filePath">File path</param>
+    /// <inheritdoc />
     public void AddFileToProject(string filePath)
     {
         if (Project.ProjectFilePath.Contains(filePath))
@@ -138,12 +117,10 @@ public class ProjectManager : PropertyChangedNotifier
         }
 
         Project.Files.Add(Path.GetRelativePath(Project.Directory, filePath));
+        OnPropertyChanged(nameof(Project));
     }
 
-    /// <summary>
-    /// Remove file from project
-    /// </summary>
-    /// <param name="filePath">File path</param>
+    /// <inheritdoc />
     public void RemoveFileFromProject(string filePath)
     {
         var index = Project.ProjectFilesPaths.IndexOf(filePath);
@@ -154,17 +131,16 @@ public class ProjectManager : PropertyChangedNotifier
         }
 
         Project.Files.RemoveAt(index);
+        OnPropertyChanged(nameof(Project));
     }
 
-    /// <summary>
-    /// Set executable file for project
-    /// </summary>
-    /// <param name="filePath">File path</param>
+    /// <inheritdoc />
     public void SetExecutableFile(string filePath)
     {
         if (Project.ProjectFilesPaths.Contains(filePath))
         {
             Project.Executable = PathHelper.GetRelativePath(Project.Directory, filePath);
+            OnPropertyChanged(nameof(Project));
         }
         else
         {
@@ -172,10 +148,7 @@ public class ProjectManager : PropertyChangedNotifier
         }
     }
 
-    /// <summary>
-    /// Add device to project
-    /// </summary>
-    /// <param name="filePath">Path to device</param>
+    /// <inheritdoc />
     public void AddDeviceToProject(string filePath)
     {
         if (Project.Devices.Contains(filePath))
@@ -184,14 +157,13 @@ public class ProjectManager : PropertyChangedNotifier
         }
 
         Project.Devices.Add(filePath);
+        OnPropertyChanged(nameof(Project));
     }
 
-    /// <summary>
-    /// Removes device from project
-    /// </summary>
-    /// <param name="filePath">Path to device</param>
+    /// <inheritdoc />
     public void RemoveDeviceFromProject(string filePath)
     {
         Project.Devices.Remove(filePath);
+        OnPropertyChanged(nameof(Project));
     }
 }
