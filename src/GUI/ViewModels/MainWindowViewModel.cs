@@ -21,12 +21,11 @@ namespace GUI.ViewModels;
 /// <summary>
 /// View model for <see cref="MainWindow"/>
 /// </summary>
-public class MainWindowViewModel : ReactiveObject
+public class MainWindowViewModel : BaseViewModel<MainWindow>
 {
     private const string DefaultWindowTitle = "PDP-11 Simulator";
     private const string MainFileName = "main.asm";
 
-    private readonly Window _window;
     private readonly FileManager _fileManager;
     private readonly TabManager _tabManager;
     private SettingsWindow _settingsWindow;
@@ -34,7 +33,7 @@ public class MainWindowViewModel : ReactiveObject
     /// <summary>
     /// Empty constructor for designer
     /// </summary>
-    public MainWindowViewModel()
+    public MainWindowViewModel() : base(null)
     {
     }
 
@@ -42,9 +41,8 @@ public class MainWindowViewModel : ReactiveObject
     /// Creates new instance of main window view model
     /// </summary>
     /// <param name="window">Reference to <see cref="MainWindow"/></param>
-    public MainWindowViewModel(Window window)
+    public MainWindowViewModel(MainWindow window) : base(window)
     {
-        _window = window;
         CreateFileCommand = ReactiveCommand.CreateFromTask(CreateFileAsync);
         OpenFileCommand = ReactiveCommand.CreateFromTask(OpenFileAsync);
         SaveFileCommand = ReactiveCommand.CreateFromTask<bool>(
@@ -69,7 +67,7 @@ public class MainWindowViewModel : ReactiveObject
         {
             if (!await InitProject())
             {
-                _window.Close();
+                View.Close();
             }
         };
 
@@ -136,7 +134,7 @@ public class MainWindowViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
 
     public string WindowTitle => ProjectManager.Instance.IsOpened
-        ? $"{DefaultWindowTitle} - {ProjectManager.Instance.Project.Name}"
+        ? $"{DefaultWindowTitle} - {ProjectManager.Instance.Project.ProjectFileName}"
         : DefaultWindowTitle;
 
     /// <summary>
@@ -188,7 +186,7 @@ public class MainWindowViewModel : ReactiveObject
 
                 var res = await MessageBoxManager
                     .ShowCustomMessageBoxAsync(
-                        "Warning", $"File '{file.FileName}' is already open", Icon.Warning, _window,
+                        "Warning", $"File '{file.FileName}' is already open", Icon.Warning, View,
                         MessageBoxManager.ReopenButton, MessageBoxManager.SkipButton);
 
                 if (res == MessageBoxManager.ReopenButton.Name)
@@ -262,7 +260,7 @@ public class MainWindowViewModel : ReactiveObject
                 return true;
             }
 
-            await MessageBoxManager.ShowErrorMessageBox("That file already opened", _window);
+            await MessageBoxManager.ShowErrorMessageBox("That file already opened", View);
         } while (true);
     }
 
@@ -282,7 +280,7 @@ public class MainWindowViewModel : ReactiveObject
             return true;
         }
 
-        await MessageBoxManager.ShowErrorMessageBox(error, _window);
+        await MessageBoxManager.ShowErrorMessageBox(error, View);
 
         return false;
     }
@@ -337,7 +335,7 @@ public class MainWindowViewModel : ReactiveObject
     {
         var res = await MessageBoxManager
             .ShowMessageBoxAsync("Confirmation", $"Are you sure you want to delete the file '{File.FileName}'?",
-                ButtonEnum.YesNo, Icon.Question, _window);
+                ButtonEnum.YesNo, Icon.Question, View);
 
         if (res == ButtonResult.Yes)
         {
@@ -355,7 +353,7 @@ public class MainWindowViewModel : ReactiveObject
     {
         if (tab.File.FilePath == ProjectManager.Instance.Project.ProjectFilePath && isUi)
         {
-            await MessageBoxManager.ShowErrorMessageBox("Cannot close project file", _window);
+            await MessageBoxManager.ShowErrorMessageBox("Cannot close project file", View);
             return;
         }
 
@@ -363,7 +361,7 @@ public class MainWindowViewModel : ReactiveObject
         {
             var res = await MessageBoxManager
                 .ShowMessageBoxAsync("Confirmation", $"Do you want to save the file '{File.FileName}'?",
-                    ButtonEnum.YesNo, Icon.Question, _window);
+                    ButtonEnum.YesNo, Icon.Question, View);
 
             if (res == ButtonResult.Yes)
             {
@@ -406,7 +404,7 @@ public class MainWindowViewModel : ReactiveObject
         while (true)
         {
             var boxRes = await MessageBoxManager.ShowCustomMessageBoxAsync("Init", "Create or open project", Icon.Info,
-                _window, MessageBoxManager.CreateButton, MessageBoxManager.OpenButton, MessageBoxManager.CancelButton
+                View, MessageBoxManager.CreateButton, MessageBoxManager.OpenButton, MessageBoxManager.CancelButton
             );
 
             if (boxRes == MessageBoxManager.CreateButton.Name && await CreateProjectAsync()
@@ -435,7 +433,7 @@ public class MainWindowViewModel : ReactiveObject
 
         var res = await MessageBoxManager
             .ShowMessageBoxAsync("Warning", "This action closes current project and all tabs",
-                ButtonEnum.OkAbort, Icon.Warning, _window);
+                ButtonEnum.OkAbort, Icon.Warning, View);
 
         return res == ButtonResult.Ok;
     }
@@ -460,7 +458,7 @@ public class MainWindowViewModel : ReactiveObject
             }
             catch (FileNotFoundException e)
             {
-                await MessageBoxManager.ShowErrorMessageBox($"{e.Message} Skipping it.", _window);
+                await MessageBoxManager.ShowErrorMessageBox($"{e.Message} Skipping it.", View);
             }
         }
 
@@ -478,7 +476,7 @@ public class MainWindowViewModel : ReactiveObject
         while (true)
         {
             (var res, projectName) = await MessageBoxManager.ShowInputMessageBoxAsync("Create project",
-                "Enter project name", ButtonEnum.OkCancel, Icon.Setting, _window, "Project name");
+                "Enter project name", ButtonEnum.OkCancel, Icon.Setting, View, "Project name");
 
             if (res == ButtonResult.Cancel)
             {
@@ -487,14 +485,14 @@ public class MainWindowViewModel : ReactiveObject
 
             if (string.IsNullOrWhiteSpace(projectName))
             {
-                await MessageBoxManager.ShowErrorMessageBox("Project name cannot be empty", _window);
+                await MessageBoxManager.ShowErrorMessageBox("Project name cannot be empty", View);
                 continue;
             }
 
             break;
         }
 
-        if (await ProjectManager.Instance.CreateProjectAsync(_window.StorageProvider, projectName.Trim()))
+        if (await ProjectManager.Instance.CreateProjectAsync(View.StorageProvider, projectName.Trim()))
         {
             var mainFile = new FileModel
             {
@@ -521,7 +519,7 @@ public class MainWindowViewModel : ReactiveObject
 
         try
         {
-            if (projectPath == null && await ProjectManager.Instance.OpenProjectAsync(_window.StorageProvider))
+            if (projectPath == null && await ProjectManager.Instance.OpenProjectAsync(View.StorageProvider))
             {
                 await OpenProjectFilesAsync();
                 return true;
@@ -536,7 +534,7 @@ public class MainWindowViewModel : ReactiveObject
         }
         catch (Exception e)
         {
-            await MessageBoxManager.ShowErrorMessageBox(e.Message, _window);
+            await MessageBoxManager.ShowErrorMessageBox(e.Message, View);
             return false;
         }
 
@@ -571,7 +569,7 @@ public class MainWindowViewModel : ReactiveObject
         {
             var res = await MessageBoxManager
                 .ShowMessageBoxAsync("Warning", "You have unsaved files. Save all of them?",
-                    ButtonEnum.YesNoCancel, Icon.Warning, _window);
+                    ButtonEnum.YesNoCancel, Icon.Warning, View);
 
             if (res == ButtonResult.Cancel)
             {
@@ -584,8 +582,8 @@ public class MainWindowViewModel : ReactiveObject
             }
         }
 
-        _window.Closing -= OnClosingWindow;
-        _window.Close();
+        View.Closing -= OnClosingWindow;
+        View.Close();
     }
 
     private async void OnProjectUpdated()

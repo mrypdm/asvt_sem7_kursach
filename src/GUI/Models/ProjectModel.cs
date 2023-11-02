@@ -15,11 +15,6 @@ public class ProjectModel
     public const string ProjectFileExtension = "pdp11proj";
 
     /// <summary>
-    /// Name of project
-    /// </summary>
-    public string Name { get; set; } = "NewProject";
-
-    /// <summary>
     /// Files of project (relative paths)
     /// </summary>
     public List<string> Files { get; set; } = new();
@@ -54,7 +49,7 @@ public class ProjectModel
     /// Project file name
     /// </summary>
     [JsonIgnore]
-    public string ProjectFileName => $"{Name}.{ProjectFileExtension}";
+    public string ProjectFileName { get; set; }
 
     /// <summary>
     /// Path to project file

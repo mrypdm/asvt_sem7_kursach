@@ -16,14 +16,14 @@ namespace GUI.ViewModels;
 /// <summary>
 /// View model for <see cref="SettingsWindow"/>
 /// </summary>
-public class SettingsViewModel : ReactiveObject
+public class SettingsViewModel : BaseViewModel<SettingsWindow>
 {
     private readonly IStorageProvider _storageProvider;
 
     /// <summary>
     /// Empty constructor for designer
     /// </summary>
-    public SettingsViewModel()
+    public SettingsViewModel() : base(null)
     {
     }
 
@@ -31,7 +31,7 @@ public class SettingsViewModel : ReactiveObject
     /// Creates new instance of settings window view model
     /// </summary>
     /// <param name="window">Reference to <see cref="SettingsWindow"/></param>
-    public SettingsViewModel(Window window)
+    public SettingsViewModel(SettingsWindow window) : base(window)
     {
         _storageProvider = window.StorageProvider;
         AllFontFamilies = new ObservableCollectionExtended<FontFamily>(FontManager.Current.SystemFonts);

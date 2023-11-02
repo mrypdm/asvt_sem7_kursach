@@ -11,20 +11,20 @@ namespace GUI.ViewModels;
 /// <summary>
 /// View model for <see cref="FileTab"/>
 /// </summary>
-public class FileTabViewModel : ReactiveObject
+public class FileTabViewModel : BaseViewModel<FileTab>
 {
     private static readonly IBrush DefaultBackground = new SolidColorBrush(Colors.White);
     private static readonly IBrush SelectedBackground = new SolidColorBrush(Colors.LightGray, 0.5D);
 
-    public static readonly IBrush DefaultForeground = new SolidColorBrush(Colors.Black);
-    public static readonly IBrush NeedSaveForeground = new SolidColorBrush(Colors.DodgerBlue);
+    private static readonly IBrush DefaultForeground = new SolidColorBrush(Colors.Black);
+    private static readonly IBrush NeedSaveForeground = new SolidColorBrush(Colors.DodgerBlue);
 
     private IBrush _currentBackground;
 
     /// <summary>
     /// Constructor for designer
     /// </summary>
-    public FileTabViewModel()
+    public FileTabViewModel() : base(null)
     {
     }
 
@@ -36,7 +36,7 @@ public class FileTabViewModel : ReactiveObject
     /// <param name="selectCommand">Command to select tab</param>
     /// <param name="closeCommand">Command to close tab</param>
     public FileTabViewModel(FileTab fileTab, FileModel file, Func<FileTab, Task> selectCommand,
-        Func<FileTab, Task> closeCommand)
+        Func<FileTab, Task> closeCommand) : base(fileTab)
     {
         File = file;
         TabBackground = DefaultBackground;

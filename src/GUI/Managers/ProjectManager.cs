@@ -51,7 +51,7 @@ public class ProjectManager : PropertyChangedNotifier
 
         var project = new ProjectModel
         {
-            Name = projectName,
+            ProjectFileName = $"{projectName}.{ProjectModel.ProjectFileExtension}",
             Directory = projectDir[0].Path.LocalPath
         };
 
@@ -100,6 +100,7 @@ public class ProjectManager : PropertyChangedNotifier
         {
             var project = await JsonHelper.DeserializeFileAsync<ProjectModel>(projectFilePath);
             project.Directory = PathHelper.GetDirectoryName(projectFilePath);
+            project.ProjectFileName = PathHelper.GetFileName(projectFilePath);
             Project = project;
         }
         catch (JsonException e)
