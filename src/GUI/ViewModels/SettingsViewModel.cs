@@ -49,6 +49,8 @@ public class SettingsViewModel : BaseViewModel<SettingsWindow>
             projectManager.PropertyChanged -= ProjectPropertyChanged;
             await SettingsManager.Instance.SaveGlobalSettings();
         };
+        
+        InitContext();
     }
 
     /// <summary>

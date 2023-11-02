@@ -10,10 +10,10 @@ public abstract class BaseViewModel<TView> : ReactiveObject where TView : Contro
     protected BaseViewModel(TView view)
     {
         View = view;
+    }
 
-        if (view != null)
-        {
-            view.DataContext = this;
-        }
+    protected void InitContext()
+    {
+        View.DataContext = this;
     }
 }

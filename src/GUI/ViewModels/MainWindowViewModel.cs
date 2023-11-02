@@ -86,6 +86,8 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
                 this.RaisePropertyChanged(nameof(FileContent));
             }
         };
+        
+        InitContext();
     }
 
     /// <summary>
@@ -133,7 +135,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// </summary>
     public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
 
-    public string WindowTitle => _projectManager.IsOpened
+    public string WindowTitle => _projectManager?.IsOpened == true
         ? $"{DefaultWindowTitle} - {_projectManager.Project.ProjectFileName}"
         : DefaultWindowTitle;
 
