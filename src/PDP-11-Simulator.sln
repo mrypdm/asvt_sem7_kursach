@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalDevices", "ExternalDevices\ExternalDevices.csproj", "{DB871164-03B4-48AA-8C97-2B5164C5330F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devices", "Devices\Devices.csproj", "{DB871164-03B4-48AA-8C97-2B5164C5330F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalDeviceSdk", "..\sdk\ExternalDeviceSdk\ExternalDeviceSdk.csproj", "{3380BD58-2F2C-4E7C-9B95-4D94E30841E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceSdk", "..\sdk\DeviceSdk\DeviceSdk.csproj", "{3380BD58-2F2C-4E7C-9B95-4D94E30841E4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4D205E16-C093-4F23-B82D-29B9289F9289}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalDevicesTests", "Tests\ExternalDevicesTests\ExternalDevicesTests.csproj", "{A7DC68FF-6C0C-4050-904A-EC029CAFB8D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevicesTests", "Tests\DevicesTests\DevicesTests.csproj", "{A7DC68FF-6C0C-4050-904A-EC029CAFB8D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
