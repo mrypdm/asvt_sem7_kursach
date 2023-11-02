@@ -24,7 +24,7 @@ public class DeviceProvider : IDeviceProvider
     }
 
     /// <inheritdoc />
-    public IDeviceContext LoadDevice(string assemblyFilePath)
+    public IDeviceContext Load(string assemblyFilePath)
     {
         var context = new AssemblyContext(assemblyFilePath);
         var assembly = context.Load(assemblyFilePath);
@@ -49,11 +49,11 @@ public class DeviceProvider : IDeviceProvider
     }
     
     /// <inheritdoc />
-    public bool TryLoadDevice(string assemblyFilePath, out IDeviceContext device)
+    public bool TryLoad(string assemblyFilePath, out IDeviceContext device)
     {
         try
         {
-            device = LoadDevice(assemblyFilePath);
+            device = Load(assemblyFilePath);
             return true;
         }
         catch

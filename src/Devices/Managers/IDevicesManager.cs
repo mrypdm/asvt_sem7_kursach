@@ -18,20 +18,13 @@ public interface IDevicesManager : IDisposable
     /// Adds new device
     /// </summary>
     /// <param name="devicePath">Path to device</param>
-    void AddDevice(string devicePath);
+    void Add(string devicePath);
 
     /// <summary>
     /// Removes device
     /// </summary>
     /// <param name="devicePath">Path to device</param>
-    void RemoveDevice(string devicePath);
-
-    /// <summary>
-    /// Validates device
-    /// </summary>
-    /// <param name="devicePath">Path to device</param>
-    /// <returns>True if device is valid</returns>
-    bool ValidateDevice(string devicePath);
+    void Remove(string devicePath);
 
     /// <summary>
     /// Removes all devices

@@ -13,7 +13,7 @@ public class DeviceProviderTests
         var provider = new DeviceProvider();
 
         // Act
-        var model = provider.LoadDevice(path);
+        var model = provider.Load(path);
 
         // Assert
         Assert.Multiple(() =>
@@ -30,7 +30,24 @@ public class DeviceProviderTests
         var provider = new DeviceProvider();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => provider.LoadDevice(Constants.InvalidDevice));
+        Assert.Throws<InvalidOperationException>(() => provider.Load(Constants.InvalidDevice));
+    }
+
+    [Test]
+    public void TryLoadInvalidDevice()
+    {
+        // Arrange
+        var provider = new DeviceProvider();
+
+        // Act
+        var res = provider.TryLoad(Constants.InvalidDevice, out var device);
+        
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(res, Is.False);
+            Assert.That(device, Is.Null);
+        });
     }
 
     // ReSharper disable once InconsistentNaming

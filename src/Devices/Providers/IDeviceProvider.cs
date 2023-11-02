@@ -12,7 +12,7 @@ public interface IDeviceProvider
     /// </summary>
     /// <param name="assemblyFilePath">Path to assembly file</param>
     /// <returns>Device model</returns>
-    IDeviceContext LoadDevice(string assemblyFilePath);
+    IDeviceContext Load(string assemblyFilePath);
 
     /// <summary>
     /// Tries to load device from assembly
@@ -20,5 +20,5 @@ public interface IDeviceProvider
     /// <param name="assemblyFilePath">Path to assembly path</param>
     /// <param name="device">Device model</param>
     /// <returns>True if device was loaded, False otherwise</returns>
-    bool TryLoadDevice(string assemblyFilePath, out IDeviceContext device);
+    bool TryLoad(string assemblyFilePath, out IDeviceContext device);
 }

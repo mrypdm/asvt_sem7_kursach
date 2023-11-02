@@ -14,8 +14,7 @@ public sealed class DevicesManager : IDevicesManager
 
     private readonly IDeviceProvider _provider;
 
-    private List<IDeviceContext> SafeContexts =>
-        _contexts ?? throw new ObjectDisposedException("Manager is disposed");
+    private List<IDeviceContext> SafeContexts => _contexts ?? throw new ObjectDisposedException("Manager is disposed");
 
     public DevicesManager(IDeviceProvider provider)
     {
@@ -28,20 +27,20 @@ public sealed class DevicesManager : IDevicesManager
     public IReadOnlyCollection<IDevice> Devices => SafeContexts.SelectMany(d => d.Devices).ToList();
 
     /// <inheritdoc />
-    public void AddDevice(string devicePath)
+    public void Add(string devicePath)
     {
         if (SafeContexts.SingleOrDefault(d => d.AssemblyPath == devicePath) != null)
         {
             return;
         }
 
-        var device = _provider.LoadDevice(devicePath);
+        var device = _provider.Load(devicePath);
 
         SafeContexts.Add(device);
     }
 
     /// <inheritdoc />
-    public void RemoveDevice(string devicePath)
+    public void Remove(string devicePath)
     {
         var model = SafeContexts.SingleOrDefault(d => d.AssemblyPath == devicePath);
 
@@ -52,21 +51,6 @@ public sealed class DevicesManager : IDevicesManager
 
         model.Dispose();
         SafeContexts.Remove(model);
-    }
-
-    /// <inheritdoc />
-    public bool ValidateDevice(string devicePath)
-    {
-        try
-        {
-            var device = _provider.LoadDevice(devicePath);
-            device.Dispose();
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
     }
 
     /// <inheritdoc />
