@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Shared.Models;
+using Domain.Models;
 
-namespace Shared.Validators;
+namespace Domain.Validators;
 
 /// <summary>
 /// Validator for <see cref="ProjectModel"/>

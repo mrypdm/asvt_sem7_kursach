@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Shared.Models;
+using Domain.Models;
 using Shared.Providers;
 
-namespace Shared.Validators;
+namespace Domain.Validators;
 
 /// <inheritdoc />
 public class ProjectValidator : IProjectValidator

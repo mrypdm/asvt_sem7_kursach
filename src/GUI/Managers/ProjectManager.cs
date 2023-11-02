@@ -3,9 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using Domain.Models;
 using GUI.Notifiers;
 using Shared.Helpers;
-using Shared.Models;
 using Shared.Providers;
 
 namespace GUI.Managers;

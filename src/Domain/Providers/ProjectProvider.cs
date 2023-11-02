@@ -1,9 +1,10 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using Domain.Models;
 using Shared.Helpers;
-using Shared.Models;
+using Shared.Providers;
 
-namespace Shared.Providers;
+namespace Domain.Providers;
 
 /// <inheritdoc />
 public class ProjectProvider : IProjectProvider

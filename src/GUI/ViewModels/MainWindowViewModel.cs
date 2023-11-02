@@ -14,8 +14,8 @@ using GUI.Views;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using Shared.Helpers;
-using Shared.Models;
-using Shared.Providers;
+using Domain.Models;
+using Domain.Providers;
 using MessageBoxManager = GUI.Managers.MessageBoxManager;
 
 namespace GUI.ViewModels;

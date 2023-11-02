@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using Domain.Models;
 using GUI.Notifiers;
-using Shared.Models;
 
 namespace GUI.Managers;
 

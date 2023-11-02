@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using Shared.Converters;
 using Shared.Helpers;
 
-namespace Shared.Models;
+namespace Domain.Models;
 
 /// <summary>
 /// Model of project
