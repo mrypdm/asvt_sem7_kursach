@@ -50,8 +50,7 @@ public class DeviceProviderTests
         });
     }
 
-    // ReSharper disable once InconsistentNaming
-    private static object[] LoadDefaultDeviceSource =
+    private static readonly object[] LoadDefaultDeviceSource =
     {
         new object[] { Constants.DefaultDevice, 1 },
         new object[] { Constants.DoubleDevice, 2 }
