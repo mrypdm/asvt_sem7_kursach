@@ -14,6 +14,8 @@ using GUI.Views;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using Shared.Helpers;
+using Shared.Models;
+using Shared.Providers;
 using MessageBoxManager = GUI.Managers.MessageBoxManager;
 
 namespace GUI.ViewModels;
@@ -54,7 +56,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
         OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindow);
 
         _fileManager = new FileManager(window.StorageProvider);
-        _projectManager = new ProjectManager();
+        _projectManager = new ProjectManager(new ProjectProvider());
 
         _tabManager = new TabManager(tab =>
         {

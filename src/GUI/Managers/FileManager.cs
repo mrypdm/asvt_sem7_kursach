@@ -12,7 +12,6 @@ namespace GUI.Managers;
 /// </summary>
 public class FileManager
 {
-    
     private readonly IStorageProvider _storageProvider;
 
     /// <summary>

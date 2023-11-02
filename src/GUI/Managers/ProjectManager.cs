@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
-using GUI.Models;
 using GUI.Notifiers;
 using Shared.Helpers;
+using Shared.Models;
+using Shared.Providers;
 
 namespace GUI.Managers;
 
@@ -15,7 +15,13 @@ namespace GUI.Managers;
 /// </summary>
 public class ProjectManager : PropertyChangedNotifier
 {
+    private readonly IProjectProvider _provider;
     private ProjectModel _project;
+
+    public ProjectManager(IProjectProvider provider)
+    {
+        _provider = provider;
+    }
 
     /// <summary>
     /// Current project
@@ -94,19 +100,7 @@ public class ProjectManager : PropertyChangedNotifier
     /// </summary>
     public async Task LoadProjectAsync(string projectFilePath)
     {
-        projectFilePath = PathHelper.Combine(Directory.GetCurrentDirectory(), projectFilePath);
-
-        try
-        {
-            var project = await JsonHelper.DeserializeFileAsync<ProjectModel>(projectFilePath);
-            project.Directory = PathHelper.GetDirectoryName(projectFilePath);
-            project.ProjectFileName = PathHelper.GetFileName(projectFilePath);
-            Project = project;
-        }
-        catch (JsonException e)
-        {
-            throw new FormatException(e.Message, e);
-        }
+        Project = await _provider.OpenProjectAsync(projectFilePath);
     }
 
     /// <summary>
