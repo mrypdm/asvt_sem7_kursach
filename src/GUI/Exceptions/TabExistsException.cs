@@ -1,5 +1,5 @@
 ﻿using System;
-using GUI.Views;
+using GUI.ViewModels;
 
 namespace GUI.Exceptions;
 
@@ -16,5 +16,5 @@ public class TabExistsException : InvalidOperationException
     /// <summary>
     /// Reference to an existing tab
     /// </summary>
-    public FileTab Tab { get; init; }
+    public FileTabViewModel Tab { get; init; }
 }

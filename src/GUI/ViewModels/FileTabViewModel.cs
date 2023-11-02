@@ -35,13 +35,15 @@ public class FileTabViewModel : BaseViewModel<FileTab>
     /// <param name="file">File model</param>
     /// <param name="selectCommand">Command to select tab</param>
     /// <param name="closeCommand">Command to close tab</param>
-    public FileTabViewModel(FileTab fileTab, FileModel file, Func<FileTab, Task> selectCommand,
-        Func<FileTab, Task> closeCommand) : base(fileTab)
+    public FileTabViewModel(FileTab fileTab, FileModel file, Func<FileTabViewModel, Task> selectCommand,
+        Func<FileTabViewModel, Task> closeCommand) : base(fileTab)
     {
         File = file;
         TabBackground = DefaultBackground;
-        SelectTabCommand = ReactiveCommand.CreateFromTask(async () => await selectCommand(fileTab));
-        CloseTabCommand = ReactiveCommand.CreateFromTask(async () => await closeCommand(fileTab));
+        SelectTabCommand = ReactiveCommand.CreateFromTask(async () => await selectCommand(this));
+        CloseTabCommand = ReactiveCommand.CreateFromTask(async () => await closeCommand(this));
+        
+        InitContext();
     }
 
     /// <summary>

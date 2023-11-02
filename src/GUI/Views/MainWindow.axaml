@@ -21,7 +21,6 @@
             </KeyBinding.CommandParameter>
         </KeyBinding>
         <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAllFilesCommand}" />
-        <KeyBinding Gesture="Ctrl+W" Command="{Binding CloseFileCommand}" />
         <KeyBinding Gesture="Ctrl+Alt+S" Command="{Binding OpenSettingsWindowCommand}" />
 
         <KeyBinding Gesture="Ctrl+Shift+N" Command="{Binding CreateProjectCommand}" />
@@ -45,7 +44,6 @@
                 </MenuItem>
                 <MenuItem Header="Save All" InputGesture="Ctrl+Shift+S" Command="{Binding SaveAllFilesCommand}" />
                 <MenuItem Header="Delete" Command="{Binding DeleteFileCommand}" />
-                <MenuItem Header="Close" InputGesture="Ctrl+W" Command="{Binding CloseFileCommand}" />
             </MenuItem>
             <MenuItem Header="Project" Margin="5,0,5,0">
                 <MenuItem Header="Create" InputGesture="Ctrl+Shift+N" Command="{Binding CreateProjectCommand}" />

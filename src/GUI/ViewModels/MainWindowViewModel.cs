@@ -49,18 +49,19 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
             async saveAs => await SaveFileAndUpdateTab(_tabManager!.Tab, saveAs));
         SaveAllFilesCommand = ReactiveCommand.CreateFromTask(SaveAllFilesAsync);
         DeleteFileCommand = ReactiveCommand.CreateFromTask(DeleteFileAsync);
-        CloseFileCommand = ReactiveCommand.CreateFromTask(async () => await CloseTabAsync(_tabManager!.Tab, true));
         CreateProjectCommand = ReactiveCommand.CreateFromTask(async () => { await CreateProjectAsync(); });
         OpenProjectCommand = ReactiveCommand.CreateFromTask(async () => { await OpenProjectAsync(); });
         OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindow);
 
         _fileManager = new FileManager(window.StorageProvider);
+        _projectManager = new ProjectManager();
+
         _tabManager = new TabManager(tab =>
         {
             _tabManager!.SelectTab(tab);
             return Task.CompletedTask;
         }, async tab => await CloseTabAsync(tab, true));
-        _projectManager = new ProjectManager();
+        _tabManager.Tabs.CollectionChanged += (_, _) => { this.RaisePropertyChanged(nameof(Tabs)); };
 
         window.Closing += OnClosingWindow;
         window.Opened += async (_, _) =>
@@ -86,7 +87,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
                 this.RaisePropertyChanged(nameof(FileContent));
             }
         };
-        
+
         InitContext();
     }
 
@@ -116,11 +117,6 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     public ReactiveCommand<Unit, Unit> DeleteFileCommand { get; }
 
     /// <summary>
-    /// Command for closing file
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> CloseFileCommand { get; }
-
-    /// <summary>
     /// Command for creating project
     /// </summary>
     public ReactiveCommand<Unit, Unit> CreateProjectCommand { get; }
@@ -142,7 +138,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// <summary>
     /// Collection of tabs
     /// </summary>
-    public ObservableCollection<FileTab> Tabs => _tabManager.Tabs;
+    public ObservableCollection<FileTab> Tabs => new(_tabManager.Tabs.Select(t => t.View));
 
     /// <summary>
     /// Current text of <see cref="MainWindow.SourceCodeTextBox"/>
@@ -154,7 +150,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
         {
             File.Text = value;
             File.IsNeedSave = true;
-            _tabManager.Tab.ViewModel.NotifyForegroundChanged();
+            _tabManager.Tab.NotifyForegroundChanged();
             this.RaisePropertyChanged();
         }
     }
@@ -174,7 +170,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
 
     private async Task CreateTabForFiles(IEnumerable<FileModel> files)
     {
-        FileTab tab = null;
+        FileTabViewModel tab = null;
 
         foreach (var file in files)
         {
@@ -241,7 +237,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// <returns>True if file was saved</returns>
     private async Task<bool> SaveFileAsAsync(FileModel file)
     {
-        var paths = Tabs
+        var paths = _tabManager.Tabs
             .Where(t => t.File.FilePath != file.FilePath)
             .Select(t => t.File.FilePath)
             .ToHashSet();
@@ -315,18 +311,18 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// </summary>
     private async Task SaveAllFilesAsync()
     {
-        foreach (var tab in Tabs)
+        foreach (var tab in _tabManager.Tabs)
         {
             await SaveFileAndUpdateTab(tab, false);
         }
     }
 
-    private async Task SaveFileAndUpdateTab(FileTab tab, bool saveAs)
+    private async Task SaveFileAndUpdateTab(FileTabViewModel tab, bool saveAs)
     {
         if (await SaveFileAsync(tab.File, saveAs))
         {
-            tab.ViewModel.NotifyHeaderChanged();
-            _tabManager.Tab.ViewModel.NotifyForegroundChanged();
+            tab.NotifyHeaderChanged();
+            _tabManager.Tab.NotifyForegroundChanged();
         }
     }
 
@@ -351,7 +347,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// <summary>
     /// Closes tab
     /// </summary>
-    private async Task CloseTabAsync(FileTab tab, bool isUi)
+    private async Task CloseTabAsync(FileTabViewModel tab, bool isUi)
     {
         if (tab.File.FilePath == _projectManager.Project.ProjectFilePath && isUi)
         {
@@ -379,7 +375,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// </summary>
     private async Task CloseAllTabs()
     {
-        var tabs = Tabs.ToList();
+        var tabs = _tabManager.Tabs.ToList();
 
         foreach (var tab in tabs)
         {
@@ -560,7 +556,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     {
         args.Cancel = true;
 
-        if (Tabs.Any(t => t.File.IsNeedSave))
+        if (_tabManager.Tabs.Any(t => t.File.IsNeedSave))
         {
             var res = await MessageBoxManager
                 .ShowMessageBoxAsync("Warning", "You have unsaved files. Save all of them?",
@@ -588,7 +584,8 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
             return;
         }
 
-        var projectTab = Tabs.SingleOrDefault(t => t.File.FilePath == _projectManager.Project.ProjectFilePath);
+        var projectTab =
+            _tabManager.Tabs.SingleOrDefault(t => t.File.FilePath == _projectManager.Project.ProjectFilePath);
         if (projectTab != null)
         {
             var fileOnDisk = await _fileManager.OpenFileAsync(projectTab.File.FilePath);

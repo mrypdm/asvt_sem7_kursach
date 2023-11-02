@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GUI.Exceptions;
 using GUI.Models;
 using GUI.Notifiers;
+using GUI.ViewModels;
 using GUI.Views;
 
 namespace GUI.Managers;
@@ -14,17 +15,17 @@ namespace GUI.Managers;
 /// </summary>
 public class TabManager : PropertyChangedNotifier
 {
-    private readonly Func<FileTab, Task> _selectCommand;
-    private readonly Func<FileTab, Task> _closeCommand;
+    private readonly Func<FileTabViewModel, Task> _selectCommand;
+    private readonly Func<FileTabViewModel, Task> _closeCommand;
 
-    private FileTab _tab;
+    private FileTabViewModel _tab;
 
     /// <summary>
     /// Creates new instance of tab manager
     /// </summary>
     /// <param name="selectCommand">Command to select tab</param>
     /// <param name="closeCommand">Command to close tab</param>
-    public TabManager(Func<FileTab, Task> selectCommand, Func<FileTab, Task> closeCommand)
+    public TabManager(Func<FileTabViewModel, Task> selectCommand, Func<FileTabViewModel, Task> closeCommand)
     {
         _selectCommand = selectCommand;
         _closeCommand = closeCommand;
@@ -33,16 +34,16 @@ public class TabManager : PropertyChangedNotifier
     /// <summary>
     /// Current selected tab
     /// </summary>
-    public FileTab Tab
+    public FileTabViewModel Tab
     {
         get => _tab;
-        private set => SetField(ref _tab, value);
+        set => SetField(ref _tab, value);
     }
 
     /// <summary>
     /// Collection of all tabs
     /// </summary>
-    public ObservableCollection<FileTab> Tabs { get; } = new();
+    public ObservableCollection<FileTabViewModel> Tabs { get; } = new();
 
     /// <summary>
     /// Creates new tab for file and put it into <see cref="Tabs"/>
@@ -50,7 +51,7 @@ public class TabManager : PropertyChangedNotifier
     /// <param name="file">File info (or default with file name 'new_N')</param>
     /// <returns>Created tab</returns>
     /// <exception cref="TabExistsException">If tab for file already exists</exception>
-    public FileTab CreateTab(FileModel file = null)
+    public FileTabViewModel CreateTab(FileModel file = null)
     {
         if (file != null)
         {
@@ -64,18 +65,16 @@ public class TabManager : PropertyChangedNotifier
             }
         }
 
-        var tab = new FileTab(file ?? new FileModel(), _selectCommand, _closeCommand);
-
-        Tabs.Add(tab);
-
-        return tab;
+        var viewModel = new FileTabViewModel(new FileTab(), file ?? new FileModel(), _selectCommand, _closeCommand);
+        Tabs.Add(viewModel);
+        return viewModel;
     }
 
     /// <summary>
     /// Deletes tab. If there are no tabs left, it creates an empty tab.
     /// </summary>
     /// <param name="tab">Tab reference</param>
-    public void DeleteTab(FileTab tab)
+    public void DeleteTab(FileTabViewModel tab)
     {
         var index = Tabs.IndexOf(tab) - 1;
 
@@ -89,10 +88,10 @@ public class TabManager : PropertyChangedNotifier
     /// Changes current tab
     /// </summary>
     /// <param name="tab">Tab reference</param>
-    public void SelectTab(FileTab tab)
+    public void SelectTab(FileTabViewModel tab)
     {
-        Tab?.ViewModel.SetTabUnselected();
+        Tab?.SetTabUnselected();
         Tab = tab;
-        Tab?.ViewModel.SetTabSelected();
+        Tab?.SetTabSelected();
     }
 }
