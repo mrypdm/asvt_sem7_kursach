@@ -17,12 +17,14 @@ public static class ConfigurationHelper
     public static TOption GetOptions<TOption>(this IConfigurationRoot configuration, string section = null)
         where TOption : new()
     {
+        var configurationSection = configuration.GetSection(section ?? typeof(TOption).Name);
+        if (!configurationSection.Exists())
+        {
+            return default;
+        }
+
         var options = new TOption();
-        var configurationSection = configuration.GetSection<TOption>(section);
         configurationSection?.Bind(options);
         return options;
     }
-
-    public static IConfigurationSection GetSection<TOption>(this IConfiguration configuration, string section = null) =>
-        configuration.GetSection(section ?? typeof(TOption).Name);
 }
