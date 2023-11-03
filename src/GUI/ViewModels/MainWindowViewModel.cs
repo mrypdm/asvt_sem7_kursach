@@ -273,7 +273,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// <returns>True if saved</returns>
     private async Task<bool> SaveProjectFile(FileModel file)
     {
-        var error = await JsonHelper.ValidateJson<ProjectModel>(file.Text);
+        var error = await JsonHelper.ValidateJsonAsync<ProjectModel>(file.Text);
 
         if (error == null)
         {

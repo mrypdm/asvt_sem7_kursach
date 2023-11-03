@@ -9,6 +9,12 @@ namespace Shared.Helpers;
 /// </summary>
 public static class JsonHelper
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        AllowTrailingCommas = true,
+        WriteIndented = true,
+    };
+    
     /// <summary>
     /// Serialize object to file
     /// </summary>
@@ -16,8 +22,7 @@ public static class JsonHelper
     /// <param name="filePath">Path to file</param>
     public static async Task SerializeToFileAsync(object obj, string filePath)
     {
-        var json = await Task.Run(() =>
-            JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true }));
+        var json = await Task.Run(() => JsonSerializer.Serialize(obj, JsonSerializerOptions));
         await File.WriteAllTextAsync(filePath, json);
     }
 
@@ -30,8 +35,7 @@ public static class JsonHelper
     public static async ValueTask<TEntity> DeserializeFileAsync<TEntity>(string filePath)
     {
         await using var file = File.OpenRead(filePath);
-        return await JsonSerializer.DeserializeAsync<TEntity>(file,
-            new JsonSerializerOptions { AllowTrailingCommas = true });
+        return await JsonSerializer.DeserializeAsync<TEntity>(file, JsonSerializerOptions);
     }
 
     /// <summary>
@@ -40,13 +44,11 @@ public static class JsonHelper
     /// <param name="jsonString">JSON string</param>
     /// <typeparam name="TEntity">Type to deserialize to</typeparam>
     /// <returns>null if JSON is correct, error message if not</returns>
-    public static async Task<string> ValidateJson<TEntity>(string jsonString)
+    public static async Task<string> ValidateJsonAsync<TEntity>(string jsonString)
     {
         try
         {
-            await Task.Run(() =>
-                JsonSerializer.Deserialize<TEntity>(jsonString,
-                    new JsonSerializerOptions { AllowTrailingCommas = true }));
+            await Task.Run(() => JsonSerializer.Deserialize<TEntity>(jsonString, JsonSerializerOptions));
             return null;
         }
         catch (JsonException e)
