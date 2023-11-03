@@ -10,28 +10,28 @@ namespace Shared.Tests;
 public class PathHelperWinTests
 {
     [Test]
-    [TestCaseSource(nameof(CombineTestWinSource))]
+    [TestCaseSource(nameof(CombineTestSource))]
     public void CombineTest(string path1, string path2, string expected)
     {
         Assert.That(PathHelper.Combine(path1, path2), Is.EqualTo(expected));
     }
 
     [Test]
-    [TestCaseSource(nameof(GetDirectoryNameTestWinSource))]
+    [TestCaseSource(nameof(GetDirectoryNameTestSource))]
     public void GetDirectoryNameTest(string path, string expected)
     {
         Assert.That(PathHelper.GetDirectoryName(path), Is.EqualTo(expected));
     }
 
     [Test]
-    [TestCaseSource(nameof(GetFileNameTestWinSource))]
+    [TestCaseSource(nameof(GetFileNameTestSource))]
     public void GetFileNameTest(string path, string expected)
     {
         Assert.That(PathHelper.GetFileName(path), Is.EqualTo(expected));
     }
 
     [Test]
-    [TestCaseSource(nameof(GetRelativePathTestWinSource))]
+    [TestCaseSource(nameof(GetRelativePathTestSource))]
     public void GetRelativePathTest(string relativeTo, string path, string expected)
     {
         Assert.That(PathHelper.GetRelativePath(relativeTo, path), Is.EqualTo(expected));
@@ -51,7 +51,7 @@ public class PathHelperWinTests
         Assert.That(PathHelper.GetPathType(path), Is.EqualTo(expected));
     }
 
-    private static readonly object[] CombineTestWinSource =
+    private static readonly object[] CombineTestSource =
     {
         new[] { "C:\\a", "b\\c.txt", "C:\\a\\b\\c.txt" },
         new[] { "C:\\a\\..", "b\\c.txt", "C:\\b\\c.txt" },
@@ -60,7 +60,7 @@ public class PathHelperWinTests
         new[] { "C:\\a", "C:\\b", "C:\\b" }
     };
 
-    private static readonly object[] GetDirectoryNameTestWinSource =
+    private static readonly object[] GetDirectoryNameTestSource =
     {
         new[] { "C:\\a\\b\\c.txt", "C:\\a\\b" },
         new[] { "C:\\a\\..\\b\\c.txt", "C:\\b" },
@@ -69,7 +69,7 @@ public class PathHelperWinTests
         new[] { "C:\\", null }
     };
 
-    private static readonly object[] GetFileNameTestWinSource =
+    private static readonly object[] GetFileNameTestSource =
     {
         new[] { "C:\\a\\b\\c.txt", "c.txt" },
         new[] { "C:\\a\\..\\b\\c.txt", "c.txt" },
@@ -82,7 +82,7 @@ public class PathHelperWinTests
         new string[] { null, null }
     };
 
-    private static readonly object[] GetRelativePathTestWinSource =
+    private static readonly object[] GetRelativePathTestSource =
     {
         new[] { "C:\\a", "C:\\c.txt", "..\\c.txt" },
         new[] { "C:\\a\\..", "C:\\c.txt", "c.txt" },

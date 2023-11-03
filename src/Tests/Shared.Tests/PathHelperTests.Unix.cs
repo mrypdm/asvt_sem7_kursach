@@ -10,28 +10,28 @@ namespace Shared.Tests;
 public class PathHelperUnixTests
 {
     [Test]
-    [TestCaseSource(nameof(CombineTestUnixSource))]
+    [TestCaseSource(nameof(CombineTestSource))]
     public void CombineTest(string path1, string path2, string expected)
     {
         Assert.That(PathHelper.Combine(path1, path2), Is.EqualTo(expected));
     }
 
     [Test]
-    [TestCaseSource(nameof(GetDirectoryNameTestUnixSource))]
+    [TestCaseSource(nameof(GetDirectoryNameTestSource))]
     public void GetDirectoryNameTest(string path, string expected)
     {
         Assert.That(PathHelper.GetDirectoryName(path), Is.EqualTo(expected));
     }
 
     [Test]
-    [TestCaseSource(nameof(GetFileNameTestUnixSource))]
+    [TestCaseSource(nameof(GetFileNameTestSource))]
     public void GetFileNameTest(string path, string expected)
     {
         Assert.That(PathHelper.GetFileName(path), Is.EqualTo(expected));
     }
 
     [Test]
-    [TestCaseSource(nameof(GetRelativePathTestUnixSource))]
+    [TestCaseSource(nameof(GetRelativePathTestSource))]
     public void GetRelativePathTest(string relativeTo, string path, string expected)
     {
         Assert.That(PathHelper.GetRelativePath(relativeTo, path), Is.EqualTo(expected));
@@ -51,7 +51,7 @@ public class PathHelperUnixTests
         Assert.That(PathHelper.GetPathType(path), Is.EqualTo(expected));
     }
 
-    private static readonly object[] CombineTestUnixSource =
+    private static readonly object[] CombineTestSource =
     {
         new[] { "/a", "b/c.txt", "/a/b/c.txt" },
         new[] { "/a/..", "b/c.txt", "/b/c.txt" },
@@ -60,7 +60,7 @@ public class PathHelperUnixTests
         new[] { "/a", "/b", "/b" }
     };
 
-    private static readonly object[] GetDirectoryNameTestUnixSource =
+    private static readonly object[] GetDirectoryNameTestSource =
     {
         new[] { "/a/b/c.txt", "/a/b" },
         new[] { "/a/../b/c.txt", "/b" },
@@ -69,7 +69,7 @@ public class PathHelperUnixTests
         new[] { "/", null }
     };
 
-    private static readonly object[] GetFileNameTestUnixSource =
+    private static readonly object[] GetFileNameTestSource =
     {
         new[] { "/a/b/c.txt", "c.txt" },
         new[] { "/a/../b/c.txt", "c.txt" },
@@ -82,7 +82,7 @@ public class PathHelperUnixTests
         new string[] { null, null }
     };
 
-    private static readonly object[] GetRelativePathTestUnixSource =
+    private static readonly object[] GetRelativePathTestSource =
     {
         new[] { "/a", "/c.txt", "../c.txt" },
         new[] { "/a/..", "/c.txt", "c.txt" },
