@@ -6,7 +6,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
-using DynamicData.Binding;
+using Domain.Models;
 using GUI.Managers;
 using GUI.Views;
 using ReactiveUI;
@@ -16,10 +16,9 @@ namespace GUI.ViewModels;
 /// <summary>
 /// View model for <see cref="SettingsWindow"/>
 /// </summary>
-public class SettingsViewModel : BaseViewModel<SettingsWindow>
+public class SettingsViewModel : WindowViewModel<SettingsWindow>
 {
-    private readonly ProjectManager _projectManager;
-    private readonly IStorageProvider _storageProvider;
+    private readonly IProjectManager _projectManager;
 
     /// <summary>
     /// Empty constructor for designer
@@ -33,11 +32,10 @@ public class SettingsViewModel : BaseViewModel<SettingsWindow>
     /// </summary>
     /// <param name="window">Reference to <see cref="SettingsWindow"/></param>
     /// <param name="projectManager">Project manager</param>
-    public SettingsViewModel(SettingsWindow window, ProjectManager projectManager) : base(window)
+    public SettingsViewModel(SettingsWindow window, IProjectManager projectManager) : base(window)
     {
         _projectManager = projectManager;
-        _storageProvider = window.StorageProvider;
-        AllFontFamilies = new ObservableCollectionExtended<FontFamily>(FontManager.Current.SystemFonts);
+        AllFontFamilies = new ObservableCollection<FontFamily>(FontManager.Current.SystemFonts);
 
         AddDeviceCommand = ReactiveCommand.CreateFromTask(AddDeviceAsync);
         DeleteDeviceCommand = ReactiveCommand.CreateFromTask(DeleteDevices);
@@ -68,7 +66,7 @@ public class SettingsViewModel : BaseViewModel<SettingsWindow>
     /// </summary>
     public ObservableCollection<FontFamily> AllFontFamilies { get; }
 
-    /// <inheritdoc cref="SettingsManager.Devices"/>
+    /// <inheritdoc cref="ProjectModel.Devices"/>
     public ObservableCollection<string> Devices => new(_projectManager.IsOpened
         ? _projectManager.Project.Devices
         : Array.Empty<string>());
@@ -94,7 +92,7 @@ public class SettingsViewModel : BaseViewModel<SettingsWindow>
 
     private async Task AddDeviceAsync()
     {
-        var file = await _storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        var file = await View.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = "Open device library...",
             AllowMultiple = false,

@@ -25,7 +25,7 @@ public class ProjectModel
     public string Executable { get; set; } = string.Empty;
 
     /// <summary>
-    /// Devices
+    /// List of connected devices
     /// </summary>
     public List<string> Devices { get; set; } = new();
 

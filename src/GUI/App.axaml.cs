@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Domain.Providers;
+using GUI.Managers;
 using GUI.ViewModels;
 using GUI.Views;
 
@@ -17,7 +19,11 @@ public class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var viewModel = new MainWindowViewModel(new MainWindow());
+            var viewModel = new MainWindowViewModel(
+                new MainWindow(),
+                new TabManager(),
+                new ProjectManager(new ProjectProvider()),
+                new FileManager());
             desktop.MainWindow = viewModel.View;
         }
 

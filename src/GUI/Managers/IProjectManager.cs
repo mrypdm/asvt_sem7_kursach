@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Domain.Models;
 using GUI.Notifiers;
@@ -8,7 +9,7 @@ namespace GUI.Managers;
 /// <summary>
 /// Manager for <see cref="ProjectModel"/>
 /// </summary>
-public interface IProjectManager
+public interface IProjectManager : INotifyPropertyChanged
 {
     /// <summary>
     /// Current project

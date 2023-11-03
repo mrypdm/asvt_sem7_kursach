@@ -15,7 +15,6 @@ using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using Shared.Helpers;
 using Domain.Models;
-using Domain.Providers;
 using MessageBoxManager = GUI.Managers.MessageBoxManager;
 
 namespace GUI.ViewModels;
@@ -23,14 +22,14 @@ namespace GUI.ViewModels;
 /// <summary>
 /// View model for <see cref="MainWindow"/>
 /// </summary>
-public class MainWindowViewModel : BaseViewModel<MainWindow>
+public class MainWindowViewModel : WindowViewModel<MainWindow>
 {
     private const string DefaultWindowTitle = "PDP-11 Simulator";
     private const string MainFileName = "main.asm";
 
-    private readonly FileManager _fileManager;
-    private readonly TabManager _tabManager;
-    private readonly ProjectManager _projectManager;
+    private readonly IFileManager _fileManager;
+    private readonly ITabManager _tabManager;
+    private readonly IProjectManager _projectManager;
 
     /// <summary>
     /// Empty constructor for designer
@@ -43,7 +42,11 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// Creates new instance of main window view model
     /// </summary>
     /// <param name="window">Reference to <see cref="MainWindow"/></param>
-    public MainWindowViewModel(MainWindow window) : base(window)
+    /// <param name="projectManager"></param>
+    /// <param name="fileManager"></param>
+    /// <param name="tabManager"></param>
+    public MainWindowViewModel(MainWindow window, ITabManager tabManager, IProjectManager projectManager,
+        IFileManager fileManager) : base(window)
     {
         CreateFileCommand = ReactiveCommand.CreateFromTask(CreateFileAsync);
         OpenFileCommand = ReactiveCommand.CreateFromTask(OpenFileAsync);
@@ -55,15 +58,24 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
         OpenProjectCommand = ReactiveCommand.CreateFromTask(async () => { await OpenProjectAsync(); });
         OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindow);
 
-        _fileManager = new FileManager(window.StorageProvider);
-        _projectManager = new ProjectManager(new ProjectProvider());
+        _fileManager = fileManager;
 
-        _tabManager = new TabManager(tab =>
+        _projectManager = projectManager;
+        _projectManager.PropertyChanged += (_, _) =>
         {
-            _tabManager!.SelectTab(tab);
-            return Task.CompletedTask;
-        }, async tab => await CloseTabAsync(tab, true));
+            this.RaisePropertyChanged(nameof(WindowTitle));
+            OnProjectUpdated();
+        };
+
+        _tabManager = tabManager;
         _tabManager.Tabs.CollectionChanged += (_, _) => { this.RaisePropertyChanged(nameof(Tabs)); };
+        _tabManager.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(_tabManager.Tab))
+            {
+                this.RaisePropertyChanged(nameof(FileContent));
+            }
+        };
 
         window.Closing += OnClosingWindow;
         window.Opened += async (_, _) =>
@@ -74,21 +86,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
             }
         };
 
-        _projectManager.PropertyChanged += (_, _) =>
-        {
-            this.RaisePropertyChanged(nameof(WindowTitle));
-            OnProjectUpdated();
-        };
-
         SettingsManager.Instance.PropertyChanged += (_, args) => this.RaisePropertyChanged(args.PropertyName);
-
-        _tabManager.PropertyChanged += (_, args) =>
-        {
-            if (args.PropertyName == nameof(_tabManager.Tab))
-            {
-                this.RaisePropertyChanged(nameof(FileContent));
-            }
-        };
 
         InitContext();
     }
@@ -178,7 +176,11 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
         {
             try
             {
-                tab = _tabManager.CreateTab(file);
+                tab = _tabManager.CreateTab(file, t =>
+                {
+                    _tabManager.SelectTab(t);
+                    return Task.CompletedTask;
+                }, t => CloseTabAsync(t, true));
             }
             catch (TabExistsException e)
             {
@@ -208,7 +210,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// </summary>
     private async Task CreateFileAsync()
     {
-        var file = await _fileManager.CreateFile(
+        var file = await _fileManager.CreateFile(View.StorageProvider,
             _projectManager.IsOpened ? _projectManager.Project.Directory : null, null);
 
         if (file != null)
@@ -224,7 +226,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     /// </summary>
     private async Task OpenFileAsync()
     {
-        var files = await _fileManager.OpenFilesAsync();
+        var files = await _fileManager.OpenFilesAsync(View.StorageProvider);
 
         if (files != null)
         {
@@ -246,7 +248,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
 
         do
         {
-            var filePath = await _fileManager.GetFileAsync(null, file.FileName);
+            var filePath = await _fileManager.GetFileAsync(View.StorageProvider, null, file.FileName);
 
             if (filePath == null)
             {
@@ -549,7 +551,7 @@ public class MainWindowViewModel : BaseViewModel<MainWindow>
     private async Task OpenSettingsWindow()
     {
         var viewModel = new SettingsViewModel(new SettingsWindow(), _projectManager);
-        await viewModel.View.ShowDialog(View);
+        await viewModel.ShowDialog(View);
     }
 
     #region Handlers

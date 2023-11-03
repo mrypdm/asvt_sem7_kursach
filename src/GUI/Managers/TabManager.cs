@@ -13,17 +13,7 @@ namespace GUI.Managers;
 /// <inheritdoc cref="ITabManager" />
 public class TabManager : PropertyChangedNotifier, ITabManager
 {
-    private readonly Func<FileTabViewModel, Task> _selectCommand;
-    private readonly Func<FileTabViewModel, Task> _closeCommand;
-
     private FileTabViewModel _tab;
-
-    /// <inheritdoc />
-    public TabManager(Func<FileTabViewModel, Task> selectCommand, Func<FileTabViewModel, Task> closeCommand)
-    {
-        _selectCommand = selectCommand;
-        _closeCommand = closeCommand;
-    }
 
     /// <inheritdoc />
     public FileTabViewModel Tab
@@ -36,7 +26,8 @@ public class TabManager : PropertyChangedNotifier, ITabManager
     public ObservableCollection<FileTabViewModel> Tabs { get; } = new();
 
     /// <inheritdoc />
-    public FileTabViewModel CreateTab(FileModel file = null)
+    public FileTabViewModel CreateTab(FileModel file, Func<FileTabViewModel, Task> selectCommand,
+        Func<FileTabViewModel, Task> closeCommand)
     {
         if (file != null)
         {
@@ -50,7 +41,7 @@ public class TabManager : PropertyChangedNotifier, ITabManager
             }
         }
 
-        var viewModel = new FileTabViewModel(new FileTab(), file ?? new FileModel(), _selectCommand, _closeCommand);
+        var viewModel = new FileTabViewModel(new FileTab(), file ?? new FileModel(), selectCommand, closeCommand);
         Tabs.Add(viewModel);
         return viewModel;
     }
