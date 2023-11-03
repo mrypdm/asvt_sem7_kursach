@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Domain.Models;
 using Shared.Helpers;
-using Shared.Providers;
 
 namespace Domain.Providers;
 

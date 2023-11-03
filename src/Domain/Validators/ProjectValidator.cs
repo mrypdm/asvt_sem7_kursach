@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Domain.Models;
-using Shared.Providers;
+using Domain.Providers;
 
 namespace Domain.Validators;
 

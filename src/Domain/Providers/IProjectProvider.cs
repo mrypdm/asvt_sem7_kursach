@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Domain.Models;
 
-namespace Shared.Providers;
+namespace Domain.Providers;
 
 /// <summary>
 /// Provider for <see cref="ProjectModel"/>
