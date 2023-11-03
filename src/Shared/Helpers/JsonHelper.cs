@@ -12,7 +12,7 @@ public static class JsonHelper
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
         AllowTrailingCommas = true,
-        WriteIndented = true,
+        WriteIndented = true
     };
     
     /// <summary>

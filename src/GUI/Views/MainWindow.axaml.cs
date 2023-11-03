@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using GUI.ViewModels;
 
 namespace GUI.Views;
 

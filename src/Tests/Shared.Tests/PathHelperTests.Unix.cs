@@ -92,7 +92,7 @@ public class PathHelperUnixTests
     private static readonly object[] GetRelativePathInvalidThrowsTestSource =
     {
         new string[] { null, null },
-        new[] { "  ", "" },
+        new[] { "  ", "" }
     };
 
     private static readonly object[] GetPathTypeTestSource =

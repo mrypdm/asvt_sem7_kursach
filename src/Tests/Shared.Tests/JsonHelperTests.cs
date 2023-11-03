@@ -87,7 +87,7 @@ public class JsonHelperTests
             "{\"Files\":[]\"Executable\": \"\",\"Devices\":[],\"StackAddressString\":\"0o1000\",\"ProgramAddressString\":\"0o1000\"}",
             false,
             new ProjectModel()
-        },
+        }
     };
 
     private static readonly object[] DeserializeProjectFileAsyncTestSource =
@@ -136,7 +136,7 @@ public class JsonHelperTests
                 StackAddressString = "0b1010",
                 ProgramAddressString = "0xFF"
             }
-        },
+        }
     };
 
     private static readonly object[] SerializeToFileAsyncTestSource =

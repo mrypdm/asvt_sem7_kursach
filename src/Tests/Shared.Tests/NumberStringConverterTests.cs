@@ -31,7 +31,7 @@ public class NumberStringConverterTests
         new object[] { "0b1100", 12 },
         new object[] { "1100", 1100 },
         new object[] { "0x1f", 31 },
-        new object[] { "0o10", 8 },
+        new object[] { "0o10", 8 }
     };
 
     private static readonly object[] ConvertInvalidTestSource =
@@ -39,6 +39,6 @@ public class NumberStringConverterTests
         new[] { "1f" },
         new[] { "x1f" },
         new[] { "1,5" },
-        new[] { "b1010" },
+        new[] { "b1010" }
     };
 }
