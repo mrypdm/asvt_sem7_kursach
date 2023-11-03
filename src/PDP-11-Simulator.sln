@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceSdk", "..\sdk\DeviceS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4D205E16-C093-4F23-B82D-29B9289F9289}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevicesTests", "Tests\DevicesTests\DevicesTests.csproj", "{A7DC68FF-6C0C-4050-904A-EC029CAFB8D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devices.Tests", "Tests\Devices.Tests\Devices.Tests.csproj", "{A7DC68FF-6C0C-4050-904A-EC029CAFB8D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

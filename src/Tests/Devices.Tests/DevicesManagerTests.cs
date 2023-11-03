@@ -4,7 +4,7 @@ using Devices.Managers;
 using Devices.Providers;
 using Moq;
 
-namespace DevicesTests;
+namespace Devices.Tests;
 
 public class DevicesManagerTests
 {

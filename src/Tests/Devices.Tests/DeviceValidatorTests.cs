@@ -1,7 +1,7 @@
 ﻿using Devices.Providers;
 using Devices.Validators;
 
-namespace DevicesTests;
+namespace Devices.Tests;
 
 public class DeviceValidatorTests
 {

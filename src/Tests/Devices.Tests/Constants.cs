@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace DevicesTests;
+namespace Devices.Tests;
 
 public static class Constants
 {

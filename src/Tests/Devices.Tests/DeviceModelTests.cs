@@ -4,7 +4,7 @@ using System.Linq;
 using Devices.Contexts;
 using DeviceSdk;
 
-namespace DevicesTests;
+namespace Devices.Tests;
 
 public class DeviceModelTests
 {

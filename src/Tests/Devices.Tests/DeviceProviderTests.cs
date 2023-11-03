@@ -1,7 +1,7 @@
 ﻿using System;
 using Devices.Providers;
 
-namespace DevicesTests;
+namespace Devices.Tests;
 
 public class DeviceProviderTests
 {
