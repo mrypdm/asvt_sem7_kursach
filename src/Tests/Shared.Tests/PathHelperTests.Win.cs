@@ -11,14 +11,14 @@ public class PathHelperWinTests
 {
     [Test]
     [TestCaseSource(nameof(CombineTestWinSource))]
-    public void CombineTestWin(string path1, string path2, string expected)
+    public void CombineTest(string path1, string path2, string expected)
     {
         Assert.That(PathHelper.Combine(path1, path2), Is.EqualTo(expected));
     }
 
     [Test]
     [TestCaseSource(nameof(GetDirectoryNameTestWinSource))]
-    public void GetDirectoryNameTestWin(string path, string expected)
+    public void GetDirectoryNameTest(string path, string expected)
     {
         Assert.That(PathHelper.GetDirectoryName(path), Is.EqualTo(expected));
     }
@@ -32,7 +32,7 @@ public class PathHelperWinTests
 
     [Test]
     [TestCaseSource(nameof(GetRelativePathTestWinSource))]
-    public void GetRelativePathTestWin(string relativeTo, string path, string expected)
+    public void GetRelativePathTest(string relativeTo, string path, string expected)
     {
         Assert.That(PathHelper.GetRelativePath(relativeTo, path), Is.EqualTo(expected));
     }

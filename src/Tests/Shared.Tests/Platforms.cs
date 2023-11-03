@@ -13,5 +13,5 @@ public static class Platforms
     /// <summary>
     /// Unix platform
     /// </summary>
-    public const string Unix = nameof(Unix);
+    public const string Unix = "Unix,MacOsX";
 }
