@@ -48,6 +48,6 @@ public static class CommandLineHelper
             }, e => e);
         }
 
-        return commandLineParserResult.Value ?? new TResult();
+        return commandLineParserResult.Value;
     }
 }
