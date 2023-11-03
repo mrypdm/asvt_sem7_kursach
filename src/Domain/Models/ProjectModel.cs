@@ -15,14 +15,14 @@ public class ProjectModel
     public const string ProjectFileExtension = "pdp11proj";
 
     /// <summary>
-    /// Files of project (relative paths)
-    /// </summary>
-    public List<string> Files { get; set; } = new();
-
-    /// <summary>
     /// Executable file
     /// </summary>
     public string Executable { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Files of project (relative paths)
+    /// </summary>
+    public List<string> Files { get; set; } = new();
 
     /// <summary>
     /// List of connected devices
@@ -40,22 +40,22 @@ public class ProjectModel
     public string ProgramAddressString { get; set; } = "0o1000";
 
     /// <summary>
+    /// Path to project file
+    /// </summary>
+    [JsonIgnore]
+    public string ProjectFilePath { get; set; }
+
+    /// <summary>
     /// Directory of project
     /// </summary>
     [JsonIgnore]
-    public string Directory { get; set; }
+    public string Directory => PathHelper.GetDirectoryName(ProjectFilePath);
 
     /// <summary>
     /// Project file name
     /// </summary>
     [JsonIgnore]
-    public string ProjectFileName { get; set; }
-
-    /// <summary>
-    /// Path to project file
-    /// </summary>
-    [JsonIgnore]
-    public string ProjectFilePath => PathHelper.Combine(Directory, ProjectFileName);
+    public string ProjectFileName => PathHelper.GetFileName(ProjectFilePath);
 
     /// <summary>
     /// Absolute paths to project files

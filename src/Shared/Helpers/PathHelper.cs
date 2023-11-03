@@ -7,6 +7,13 @@ namespace Shared.Helpers;
 /// </summary>
 public static class PathHelper
 {
+    public enum PathType
+    {
+        File,
+        Directory,
+        UnExisting
+    }
+    
     /// <inheritdoc cref="Path.Combine(string?, string?)"/>
     public static string Combine(string path1, string path2) => Path.GetFullPath(Path.Combine(path1, path2));
 
@@ -18,4 +25,24 @@ public static class PathHelper
 
     /// <inheritdoc cref="Path.GetRelativePath"/>
     public static string GetRelativePath(string relativeTo, string path) => Path.GetRelativePath(relativeTo, path);
+
+    /// <summary>
+    /// Gives the type of the object pointed to by the path
+    /// </summary>
+    /// <param name="path">Path to object</param>
+    /// <returns>Type of path</returns>
+    public static PathType GetPathType(string path)
+    {
+        if (File.Exists(path))
+        {
+            return PathType.File;
+        }
+
+        if (Directory.Exists(path))
+        {
+            return PathType.Directory;
+        }
+
+        return PathType.UnExisting;
+    }
 }

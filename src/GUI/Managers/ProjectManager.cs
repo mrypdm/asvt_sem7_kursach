@@ -49,13 +49,13 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
             return false;
         }
 
+        var filePath = Path.Combine(projectDir[0].Path.LocalPath, $"{projectName}.{ProjectModel.ProjectFileExtension}");
         var project = new ProjectModel
         {
-            ProjectFileName = $"{projectName}.{ProjectModel.ProjectFileExtension}",
-            Directory = projectDir[0].Path.LocalPath
+            ProjectFilePath = filePath
         };
 
-        await JsonHelper.SerializeToFileAsync(project, project.ProjectFilePath);
+        await JsonHelper.SerializeToFileAsync(project, filePath);
         Project = project;
 
         return true;

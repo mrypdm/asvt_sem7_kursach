@@ -13,8 +13,7 @@ public class ProjectProvider : IProjectProvider
     {
         filePath = PathHelper.Combine(Directory.GetCurrentDirectory(), filePath);
         var project = await JsonHelper.DeserializeFileAsync<ProjectModel>(filePath);
-        project.Directory = PathHelper.GetDirectoryName(filePath);
-        project.ProjectFileName = PathHelper.GetFileName(filePath);
+        project.ProjectFilePath = filePath;
         return project;
     }
 

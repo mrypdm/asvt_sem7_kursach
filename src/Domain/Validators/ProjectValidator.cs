@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Domain.Models;
 using Domain.Providers;
+using Shared.Helpers;
 
 namespace Domain.Validators;
 
@@ -19,7 +20,7 @@ public class ProjectValidator : IProjectValidator
     }
 
     /// <inheritdoc />
-    public async Task ThrowIfInvalid(string projectPath)
+    public async Task ThrowIfFileInvalidAsync(string projectPath)
     {
         try
         {
@@ -32,23 +33,52 @@ public class ProjectValidator : IProjectValidator
     }
 
     /// <inheritdoc />
-    public void ThrowIfInvalid(ProjectModel projectModel)
+    public void ThrowIfModelInvalid(ProjectModel projectModel)
     {
-        var unExistingFiles = projectModel.ProjectFilesPaths.Where(p => !File.Exists(p)).ToArray();
-        if (unExistingFiles.Any())
+        if (string.IsNullOrWhiteSpace(projectModel.ProjectFilePath))
         {
-            throw new ValidationException($"These files do not exist on disk: {string.Join("; ", unExistingFiles)}");
+            throw new ValidationException("Project file path is not set");
         }
 
-        var unExistingDevices = projectModel.Devices.Where(p => !File.Exists(p)).ToArray();
-        if (unExistingDevices.Any())
+        if (PathHelper.GetPathType(projectModel.ProjectFilePath) != PathHelper.PathType.File)
         {
-            throw new ValidationException($"These files do not exist on disk: {string.Join("; ", unExistingDevices)}");
+            throw new ValidationException("Project file does not exist");
+        }
+
+        var badFiles = projectModel.ProjectFilesPaths
+            .Where(p => PathHelper.GetPathType(p) != PathHelper.PathType.File)
+            .ToArray();
+        if (badFiles.Any())
+        {
+            throw new ValidationException($"These files do not exist on disk: {string.Join("; ", badFiles)}");
+        }
+
+        var badDevices = projectModel.Devices
+            .Where(p => PathHelper.GetPathType(p) != PathHelper.PathType.File)
+            .ToArray();
+        if (badDevices.Any())
+        {
+            throw new ValidationException($"These files do not exist on disk: {string.Join("; ", badDevices)}");
+        }
+
+        if (string.IsNullOrWhiteSpace(projectModel.Executable))
+        {
+            throw new ValidationException("Executable file is not set");
         }
 
         if (!projectModel.ProjectFilesPaths.Contains(projectModel.ExecutableFilePath))
         {
             throw new ValidationException("Executable file is not represented in project files");
+        }
+
+        if (string.IsNullOrWhiteSpace(projectModel.ProgramAddressString))
+        {
+            throw new ValidationException("Program start address is not set");
+        }
+
+        if (string.IsNullOrWhiteSpace(projectModel.StackAddressString))
+        {
+            throw new ValidationException("Stack start address is not set");
         }
 
         // TODO: Check that device is valid

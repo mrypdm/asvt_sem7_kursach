@@ -1,6 +1,6 @@
 ﻿{
-  "Files": [],
   "Executable": "",
+  "Files": [],
   "Devices": [ "C:\\a.dll" ],
   "StackAddressString": "0b1010",
   "ProgramAddressString": "0xFF"

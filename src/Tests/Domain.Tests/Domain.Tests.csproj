@@ -14,7 +14,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Domain\Domain.csproj" />
+        <ProjectReference Include="..\..\Domain\Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Projects\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

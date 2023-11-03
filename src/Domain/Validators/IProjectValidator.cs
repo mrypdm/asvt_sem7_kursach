@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Domain.Models;
 
 namespace Domain.Validators;
@@ -12,11 +13,13 @@ public interface IProjectValidator
     /// Throws if project file is invalid
     /// </summary>
     /// <param name="projectPath">Path to project file</param>
-    Task ThrowIfInvalid(string projectPath);
+    /// <exception cref="ValidationException">If project file is invalid</exception>
+    Task ThrowIfFileInvalidAsync(string projectPath);
 
     /// <summary>
     /// Throws if project model is invalid
     /// </summary>
     /// <param name="projectModel">Project model</param>
-    void ThrowIfInvalid(ProjectModel projectModel);
+    /// <exception cref="ValidationException">If project model is invalid</exception>
+    void ThrowIfModelInvalid(ProjectModel projectModel);
 }

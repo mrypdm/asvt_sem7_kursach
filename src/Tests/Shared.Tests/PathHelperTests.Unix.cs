@@ -44,6 +44,13 @@ public class PathHelperUnixTests
         Assert.Catch<ArgumentException>(() => PathHelper.GetRelativePath(relativeTo, path));
     }
 
+    [Test]
+    [TestCaseSource(nameof(GetPathTypeTestSource))]
+    public void GetPathTypeTest(string path, PathHelper.PathType expected)
+    {
+        Assert.That(PathHelper.GetPathType(path), Is.EqualTo(expected));
+    }
+
     private static readonly object[] CombineTestUnixSource =
     {
         new[] { "/a", "b/c.txt", "/a/b/c.txt" },
@@ -86,5 +93,13 @@ public class PathHelperUnixTests
     {
         new string[] { null, null },
         new[] { "  ", "" },
+    };
+
+    private static readonly object[] GetPathTypeTestSource =
+    {
+        new object[] { null, PathHelper.PathType.UnExisting },
+        new object[] { "  ", PathHelper.PathType.UnExisting },
+        new object[] { "./Jsons/1.json", PathHelper.PathType.File },
+        new object[] { "./Jsons", PathHelper.PathType.Directory }
     };
 }

@@ -44,6 +44,13 @@ public class PathHelperWinTests
         Assert.Catch<ArgumentException>(() => PathHelper.GetRelativePath(relativeTo, path));
     }
 
+    [Test]
+    [TestCaseSource(nameof(GetPathTypeTestSource))]
+    public void GetPathTypeTest(string path, PathHelper.PathType expected)
+    {
+        Assert.That(PathHelper.GetPathType(path), Is.EqualTo(expected));
+    }
+
     private static readonly object[] CombineTestWinSource =
     {
         new[] { "C:\\a", "b\\c.txt", "C:\\a\\b\\c.txt" },
@@ -89,5 +96,13 @@ public class PathHelperWinTests
         new[] { "  ", "" },
         new[] { "C:\\", " " },
         new[] { " ", "C:\\c.txt" }
+    };
+
+    private static readonly object[] GetPathTypeTestSource =
+    {
+        new object[] { null, PathHelper.PathType.UnExisting },
+        new object[] { "  ", PathHelper.PathType.UnExisting },
+        new object[] { "./Jsons/1.json", PathHelper.PathType.File },
+        new object[] { "./Jsons", PathHelper.PathType.Directory }
     };
 }

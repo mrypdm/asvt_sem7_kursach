@@ -1,0 +1,10 @@
+﻿{
+  "Files": [
+    "main.asm"
+  ],
+  "Executable": "main.asm",
+  "Devices": [
+    "C:\\device.dll"
+  ]
+  "StackAddressString": "0xff",
+  "ProgramAddressString": "0b1010"

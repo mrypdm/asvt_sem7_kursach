@@ -38,12 +38,15 @@ public class JsonHelperTests
     public async Task SerializeToFileAsyncTest(object obj, string pathToExpected)
     {
         // Arrange
+
         const string testFile = $"./Jsons/{nameof(SerializeToFileAsyncTest)}.json";
 
         // Act
+
         await JsonHelper.SerializeToFileAsync(obj, testFile);
 
         // Assert
+
         var actual = await File.ReadAllTextAsync(testFile);
         actual = new string(actual.Where(c => !char.IsWhiteSpace(c)).ToArray());
         
