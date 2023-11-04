@@ -1,4 +1,10 @@
+using System;
+using Memory;
+using Executor;
 class SOB: ICommand{
+
+        private Memory memory;
+        private State state;
         private ushort OpcodeMask = 0b1111_1110_0000_0000;
         private ushort RegisterMask = 0b0000_0001_1100_0000;
         private ushort OffsetMask = 0b0000_0000_0011_1111;
@@ -6,22 +12,30 @@ class SOB: ICommand{
 
         public SOB();
 
-        private ushort GetRegister(ushort word){
+        public ushort GetRegister(ushort word){
             return (word & RegisterMask) >> 5;
         }
-        private ushort GetOffset(ushort word){
+        public ushort GetOffset(ushort word){
             return (word & OffsetMask);
         }
-        private ushort GetOpcode(ushort word){
+        public ushort GetOpcode(ushort word){
             return (word & OpcodeMask);
         }
 
-        public Argument GetArguments(ushort word){
-            
+        public Argument GetArguments(ushort word);
+        public void Execute (State state, Memory memory);
 
+        public SOB(State state, Memory memory){
+            this.memory = memory;
+            this.state = state;
         }
-        public void Execute (State state, Memory memory){
+}
 
-        }
+class MOV: TwoOperands{
+   public MOV(State state, Memory memory): base(state, memory){}
+   public Argument GetArguments(ushort word){
+    
+   }
+   public void Execute (State state, Memory memory);
 
-    }
+}

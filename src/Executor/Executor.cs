@@ -2,23 +2,6 @@ using System;
 
 namespace Executor{
 
-     public class Command {
-        public string Name;
-        public Action<State, Memory> Execute;
-        public Command(string name, Action<State, Memory> realization){
-            Name = name;
-            Execute = realization;
-        }
-
-    }
-
-    enum Flag{
-        Z,
-        N,
-        C, 
-        V, 
-        T
-    }
     
     public class State {
         
@@ -34,9 +17,7 @@ namespace Executor{
             return Instance;
         }
 
-        public SetFlag(Flag flag, bool val)[
-
-        ]
+        public SetFlag();
 
         private State(){
             Array.Fill(R, 0);
@@ -52,15 +33,18 @@ namespace Executor{
 
         public Executor GetInstance(){
             if (Instance == null){
-                Instance = new Executor(State.GetInstance())
+                Instance = new Executor(State.GetInstance());
             }
             
         }
         private Executor(State NewState){
             CurrentState = NewState;
         }
+
         private State CurrentState;
+        
         private Command CurrentCommand;
+        
         public int ExecuteProgram();
 
         private int ReadCommand(){
