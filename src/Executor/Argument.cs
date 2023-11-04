@@ -1,10 +1,10 @@
 namespace Executor{
 
-    interface IArgument{
+    public interface IArgument{
         ushort GetValue();
         void SetValue(ushort word);
     }
-    class TwoOperandsArg: IArgument{
+    public class TwoOperandsArg: IArgument{
         private ushort Mode;
         private ushort Register;
         private State state;
@@ -23,7 +23,7 @@ namespace Executor{
             return;
         }
     }
-    class OneOperandArg: IArgument{
+    public class OneOperandArg: IArgument{
 
         private ushort Mode;
         private ushort Register;

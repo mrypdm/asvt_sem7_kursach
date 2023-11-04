@@ -6,9 +6,9 @@ namespace Executor{
         
         private static Executor Instance;
 
-        public static Executor GetInstance(){
+        public static Executor GetInstance(State state){
             if (Instance == null){
-                Instance = new Executor(State.GetInstance());
+                Instance = new Executor(state);
             }
             return Instance;
         }

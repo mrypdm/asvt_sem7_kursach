@@ -1,19 +1,19 @@
 using System;
 
 namespace Executor{
-    interface ICommand{
+    public interface ICommand{
         void Execute (IArgument[] arguments);
         IArgument[] GetArguments(ushort word);
     }
     
-    abstract class TwoOperands : ICommand{
+    public abstract class TwoOperands : ICommand{
         private Memory memory;
         private State state;
-        private ushort OpcodeMask = (ushort)0b1111_0000_0000_0000;
-        private ushort SourceMask1 = (ushort)0b0000_1110_0000_0000;
-        private ushort SourceMask2 =  (ushort)0b0000_0000_0011_1000;
-        private ushort RegisterMask1 = (ushort)0b0000_0001_1100_0000;
-        private ushort RegisterMask2 =  (ushort)0b0000_0000_0000_0111;
+        private ushort OpcodeMask = 0b1111_0000_0000_0000;
+        private ushort SourceMask1 = 0b0000_1110_0000_0000;
+        private ushort SourceMask2 = 0b0000_0000_0011_1000;
+        private ushort RegisterMask1 = 0b0000_0001_1100_0000;
+        private ushort RegisterMask2 = 0b0000_0000_0000_0111;
 
         public ushort GetRegister1(ushort word){
             return (ushort)((word & RegisterMask1) >> 6);
@@ -41,7 +41,7 @@ namespace Executor{
 
     }
 
-    abstract class OneOperand : ICommand{
+    public abstract class OneOperand : ICommand{
         private Memory memory;
         private State state;
         private ushort OpcodeMask = 0b1111_1111_1100_0000;
@@ -67,7 +67,7 @@ namespace Executor{
         }
     }
 
-    abstract class BranchOperationC : ICommand{
+    public abstract class BranchOperationC : ICommand{
         private Memory memory;
         private State state;
         private ushort OpcodeMask = 0b1111_1111_0000_0000;
@@ -90,7 +90,7 @@ namespace Executor{
     }
 
 
-    abstract class FloatingInstructionSet: ICommand{
+    public abstract class FloatingInstructionSet: ICommand{
         private Memory memory;
         private State state;
         private ushort OpcodeMask = 0b1111_1111_1111_1000;
@@ -112,7 +112,7 @@ namespace Executor{
         }
     }
     
-    abstract class ConditionCode: ICommand{
+    public abstract class ConditionCode: ICommand{
         private Memory memory;
         private State state;
         private ushort OpcodeMask = 0b1111_1111_1111_0000;

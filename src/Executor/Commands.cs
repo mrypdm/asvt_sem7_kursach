@@ -1,7 +1,7 @@
 using System;
 
 namespace Executor{
-    class SOB: ICommand{
+    public class SOB: ICommand{
 
         private Memory memory;
         private State state;
@@ -35,7 +35,7 @@ namespace Executor{
         }
 }
 
-    class MOV: TwoOperands{
+    public class MOV: TwoOperands{
         private Memory memory;
         private State state;
         public MOV(State state, Memory memory): base(state, memory){}
