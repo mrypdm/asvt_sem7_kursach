@@ -1,7 +1,7 @@
 using System;
-using Memory;
-using Executor;
-class SOB: ICommand{
+
+namespace Executor{
+    class SOB: ICommand{
 
         private Memory memory;
         private State state;
@@ -10,20 +10,24 @@ class SOB: ICommand{
         private ushort OffsetMask = 0b0000_0000_0011_1111;
 
 
-        public SOB();
-
         public ushort GetRegister(ushort word){
-            return (word & RegisterMask) >> 5;
+            return (ushort)((word & RegisterMask) >> 5);
         }
         public ushort GetOffset(ushort word){
-            return (word & OffsetMask);
+            return (ushort)(word & OffsetMask);
         }
         public ushort GetOpcode(ushort word){
-            return (word & OpcodeMask);
+            return (ushort)(word & OpcodeMask);
         }
 
-        public Argument GetArguments(ushort word);
-        public void Execute (State state, Memory memory);
+        public IArgument[] GetArguments(ushort word){
+            IArgument[] args = new SOBArg[1];
+            args[0] = new SOBArg(GetRegister(word), GetOffset(word), state, memory);
+            return args;
+        }
+        public void Execute (IArgument[] arguments){
+            return;
+        }
 
         public SOB(State state, Memory memory){
             this.memory = memory;
@@ -31,11 +35,20 @@ class SOB: ICommand{
         }
 }
 
-class MOV: TwoOperands{
-   public MOV(State state, Memory memory): base(state, memory){}
-   public Argument GetArguments(ushort word){
-    
-   }
-   public void Execute (State state, Memory memory);
+    class MOV: TwoOperands{
+        private Memory memory;
+        private State state;
+        public MOV(State state, Memory memory): base(state, memory){}
 
+        public override IArgument[] GetArguments(ushort word){
+            IArgument[] args = new TwoOperandsArg[2];
+            args[0] = new TwoOperandsArg(GetMode1(word), GetRegister1(word), state, memory);
+            args[1] = new TwoOperandsArg(GetMode2(word), GetRegister2(word), state, memory);
+            return args;
+        }
+        public override void Execute (IArgument[] arguments){
+            return;
+        }
+
+    }
 }

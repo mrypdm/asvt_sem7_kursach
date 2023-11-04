@@ -9,15 +9,19 @@ namespace Executor{
         private ushort Register;
         private State state;
         private Memory memory;
-        TwoOperandsArg(ushort Mode, ushort Register, State state, Memory memory){
+        public TwoOperandsArg(ushort Mode, ushort Register, State state, Memory memory){
             this.memory = memory;
             this.state = state;
             this.Register = Register;
             this.Mode = Mode;
         }
         
-        ushort GetValue();
-        void SetValue(ushort word);
+        public ushort GetValue(){
+            return 0;
+        }
+        public void SetValue(ushort word){
+            return;
+        }
     }
     class OneOperandArg: IArgument{
 
@@ -25,10 +29,36 @@ namespace Executor{
         private ushort Register;
         private State state;
         private Memory memory;
-        ushort GetValue();
-        void SetValue(ushort word);
-        OneOperandArg(ushort Mode, ushort Register, State state, Memory memory){
-            
+        public ushort GetValue(){
+            return 0;
+        }
+        public void SetValue(ushort word){
+            return;
+        }
+        public OneOperandArg(ushort Mode, ushort Register, State state, Memory memory){
+            this.memory = memory;
+            this.state = state;
+            this.Register = Register;
+            this.Mode = Mode;
+        }
+    }
+    class SOBArg: IArgument{
+
+        private ushort Offset;
+        private ushort Register;
+        private State state;
+        private Memory memory;
+        public ushort GetValue(){
+            return 0;
+        }
+        public void SetValue(ushort word){
+            return;
+        }
+        public SOBArg(ushort Register, ushort Offset, State state, Memory memory){
+            this.memory = memory;
+            this.state = state;
+            this.Register = Register;
+            this.Offset = Offset;
         }
     }
 }

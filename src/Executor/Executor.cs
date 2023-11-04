@@ -2,40 +2,15 @@ using System;
 
 namespace Executor{
 
-    
-    public class State {
-        
-        private static State Instance;
-        public ushort ProcessorStateWord; // flags
-        public ushort MemoryAddressRegister; // РАП
-        public ushort[8] R;
-
-        public State GetInstance(){
-            if (Instance == null){
-                Instance = new State();
-            }
-            return Instance;
-        }
-
-        public SetFlag();
-
-        private State(){
-            Array.Fill(R, 0);
-            ProcessorStateWord = 0;
-            MemoryAddressRegister = 0;
-        }
-
-    }
-
-    public static class Executor {
+    public class Executor {
         
         private static Executor Instance;
 
-        public Executor GetInstance(){
+        public static Executor GetInstance(){
             if (Instance == null){
                 Instance = new Executor(State.GetInstance());
             }
-            
+            return Instance;
         }
         private Executor(State NewState){
             CurrentState = NewState;
@@ -43,19 +18,18 @@ namespace Executor{
 
         private State CurrentState;
         
-        private Command CurrentCommand;
-        
-        public int ExecuteProgram();
+        public int ExecuteProgram(){
+            return 0;
+        }
 
-        private int ReadCommand(){
-            CurrentCommand = Command(CurrentState.MemoryAddressRegister);
-            
+        private int ReadCommand(ushort addr){
+            return 0;
         }
         public int ExecuteNextInstruction(){
             CurrentState.MemoryAddressRegister = CurrentState.R[7];
             CurrentState.R[7] += 2;
-            ReadCommand(CurrentState[7]);
-
+            ReadCommand(CurrentState.R[7]);
+            return 0;
         }
         public int LoadProgram(string filename){
             return 0;
