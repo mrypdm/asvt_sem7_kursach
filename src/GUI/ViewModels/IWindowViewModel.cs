@@ -7,18 +7,14 @@ namespace GUI.ViewModels;
 /// Base view model for <see cref="Window"/> heirs
 /// </summary>
 /// <typeparam name="TWindow">Heir of <see cref="Window"/></typeparam>
-public abstract class WindowViewModel<TWindow> : BaseViewModel<TWindow>, IWindowViewModel<TWindow> where TWindow: Window
+public interface IWindowViewModel<out TWindow> : IViewModel<TWindow> where TWindow: Window
 {
-    protected WindowViewModel(TWindow view) : base(view)
-    {
-    }
-
     /// <inheritdoc cref="Window.Show()"/>
-    public void Show() => View.Show();
+    void Show();
 
     /// <inheritdoc cref="Window.ShowDialog(Window)"/>
-    public Task ShowDialog(Window owner) => View.ShowDialog(owner);
-    
+    Task ShowDialog(Window owner);
+
     /// <inheritdoc cref="Window.ShowDialog{TResult}(Window)"/>
-    public Task<TResult> ShowDialog<TResult>(Window owner) => View.ShowDialog<TResult>(owner);
+    Task<TResult> ShowDialog<TResult>(Window owner);
 }

@@ -2,8 +2,8 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Reactive;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Domain.Models;
@@ -13,12 +13,11 @@ using ReactiveUI;
 
 namespace GUI.ViewModels;
 
-/// <summary>
-/// View model for <see cref="SettingsWindow"/>
-/// </summary>
-public class SettingsViewModel : WindowViewModel<SettingsWindow>
+/// <inheritdoc cref="ISettingsViewModel"/>
+public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewModel
 {
     private readonly IProjectManager _projectManager;
+    private readonly IFileManager _fileManager;
 
     /// <summary>
     /// Empty constructor for designer
@@ -32,9 +31,12 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>
     /// </summary>
     /// <param name="window">Reference to <see cref="SettingsWindow"/></param>
     /// <param name="projectManager">Project manager</param>
-    public SettingsViewModel(SettingsWindow window, IProjectManager projectManager) : base(window)
+    /// <param name="fileManager">File manager</param>
+    public SettingsViewModel(SettingsWindow window, IProjectManager projectManager, IFileManager fileManager) :
+        base(window)
     {
         _projectManager = projectManager;
+        _fileManager = fileManager;
         AllFontFamilies = new ObservableCollection<FontFamily>(FontManager.Current.SystemFonts);
 
         AddDeviceCommand = ReactiveCommand.CreateFromTask(AddDeviceAsync);
@@ -47,23 +49,17 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>
             projectManager.PropertyChanged -= ProjectPropertyChanged;
             await SettingsManager.Instance.SaveGlobalSettingsAsync();
         };
-        
+
         InitContext();
     }
 
-    /// <summary>
-    /// Command for adding devices
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> AddDeviceCommand { get; }
+    /// <inheritdoc />
+    public ICommand AddDeviceCommand { get; }
 
-    /// <summary>
-    /// Command for deleting devices
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> DeleteDeviceCommand { get; }
+    /// <inheritdoc />
+    public ICommand DeleteDeviceCommand { get; }
 
-    /// <summary>
-    /// Collection with all fonts
-    /// </summary>
+    /// <inheritdoc />
     public ObservableCollection<FontFamily> AllFontFamilies { get; }
 
     /// <inheritdoc cref="ProjectModel.Devices"/>
@@ -71,19 +67,17 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>
         ? _projectManager.Project.Devices
         : Array.Empty<string>());
 
-    /// <summary>
-    /// Collection with selected devices
-    /// </summary>
+    /// <inheritdoc />
     public ObservableCollection<string> SelectedDevices { get; set; } = new();
 
-    /// <inheritdoc cref="SettingsManager.FontFamily"/>
+    /// <inheritdoc />
     public FontFamily FontFamily
     {
         get => SettingsManager.Instance.FontFamily;
         set => SettingsManager.Instance.FontFamily = value;
     }
 
-    /// <inheritdoc cref="SettingsManager.FontSize"/>
+    /// <inheritdoc />
     public double FontSize
     {
         get => SettingsManager.Instance.FontSize;
@@ -92,19 +86,21 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>
 
     private async Task AddDeviceAsync()
     {
-        var file = await View.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        var options = new FilePickerOpenOptions
         {
             Title = "Open device library...",
             AllowMultiple = false,
             FileTypeFilter = new[] { new FilePickerFileType("DLL") { Patterns = new[] { "*.dll" } } }
-        });
+        };
 
-        if (file.Count != 1)
+        var file = await _fileManager.GetFileAsync(View.StorageProvider, options);
+
+        if (file == null)
         {
             return;
         }
 
-        _projectManager.AddDeviceToProject(file[0].Path.LocalPath);
+        _projectManager.AddDeviceToProject(file);
         await _projectManager.SaveProjectAsync();
     }
 

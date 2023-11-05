@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,23 +12,39 @@ namespace GUI.Managers;
 public class FileManager : IFileManager
 {
     /// <inheritdoc />
-    public async Task<string> GetFileAsync(IStorageProvider storageProvider, string directoryPath, string fileName)
+    public async Task<string> GetFileAsync(IStorageProvider storageProvider, PickerOptions options)
     {
-        var newFile = await storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        switch (options)
         {
-            Title = "Save file as...",
-            ShowOverwritePrompt = true,
-            SuggestedFileName = fileName,
-            SuggestedStartLocation = await storageProvider.TryGetFolderFromPathAsync(directoryPath)
-        });
-
-        return newFile?.Path.LocalPath;
+            case FilePickerSaveOptions saveOptions:
+            {
+                var newFile = await storageProvider.SaveFilePickerAsync(saveOptions);
+                return newFile?.Path.LocalPath;
+            }
+            case FilePickerOpenOptions { AllowMultiple: true }:
+                throw new InvalidOperationException($"{nameof(FilePickerOpenOptions.AllowMultiple)} must be false");
+            case FilePickerOpenOptions openOptions:
+            {
+                var file = await storageProvider.OpenFilePickerAsync(openOptions);
+                return file.Count == 1 ? file[0].Path.LocalPath : null;
+            }
+            default:
+                throw new InvalidOperationException($"Invalid type of {nameof(options)} - {options.GetType().Name}");
+        }
     }
 
     /// <inheritdoc />
     public async Task<FileModel> CreateFile(IStorageProvider storageProvider, string directoryPath, string fileName)
     {
-        var filePath = await GetFileAsync(storageProvider, directoryPath, fileName);
+        var options = new FilePickerSaveOptions
+        {
+            Title = "Create file...",
+            ShowOverwritePrompt = true,
+            SuggestedFileName = fileName,
+            SuggestedStartLocation = await storageProvider.TryGetFolderFromPathAsync(directoryPath)
+        };
+
+        var filePath = await GetFileAsync(storageProvider, options);
 
         if (filePath == null)
         {

@@ -7,6 +7,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using GUI.Exceptions;
 using GUI.Managers;
 using GUI.Models;
@@ -15,7 +16,7 @@ using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using Shared.Helpers;
 using Domain.Models;
-using MessageBoxManager = GUI.Managers.MessageBoxManager;
+using GUI.MessageBoxes;
 
 namespace GUI.ViewModels;
 
@@ -28,6 +29,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     private const string MainFileName = "main.asm";
 
     private readonly IFileManager _fileManager;
+    private readonly IMessageBoxManager _messageBoxManager;
     private readonly ITabManager _tabManager;
     private readonly IProjectManager _projectManager;
 
@@ -42,11 +44,12 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// Creates new instance of main window view model
     /// </summary>
     /// <param name="window">Reference to <see cref="MainWindow"/></param>
-    /// <param name="projectManager"></param>
-    /// <param name="fileManager"></param>
-    /// <param name="tabManager"></param>
+    /// <param name="projectManager">Project manager</param>
+    /// <param name="fileManager">File manager</param>
+    /// <param name="tabManager">Tab manager</param>
+    /// <param name="messageBoxManager">Message box manager</param>
     public MainWindowViewModel(MainWindow window, ITabManager tabManager, IProjectManager projectManager,
-        IFileManager fileManager) : base(window)
+        IFileManager fileManager, IMessageBoxManager messageBoxManager) : base(window)
     {
         CreateFileCommand = ReactiveCommand.CreateFromTask(CreateFileAsync);
         OpenFileCommand = ReactiveCommand.CreateFromTask(OpenFileAsync);
@@ -59,6 +62,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
         OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindow);
 
         _fileManager = fileManager;
+        _messageBoxManager = messageBoxManager;
 
         _projectManager = projectManager;
         _projectManager.PropertyChanged += (_, _) =>
@@ -186,12 +190,12 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
             {
                 tab = e.Tab;
 
-                var res = await MessageBoxManager
+                var res = await _messageBoxManager
                     .ShowCustomMessageBoxAsync(
                         "Warning", $"File '{file.FileName}' is already open", Icon.Warning, View,
-                        MessageBoxManager.ReopenButton, MessageBoxManager.SkipButton);
+                        Buttons.ReopenButton, Buttons.SkipButton);
 
-                if (res == MessageBoxManager.ReopenButton.Name)
+                if (res == Buttons.ReopenButton.Name)
                 {
                     e.Tab.File.Text = file.Text;
                     if (ReferenceEquals(e.Tab, _tabManager.Tab))
@@ -246,9 +250,16 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
             .Select(t => t.File.FilePath)
             .ToHashSet();
 
+        var options = new FilePickerSaveOptions
+        {
+            Title = "Save file as...",
+            ShowOverwritePrompt = true,
+            SuggestedFileName = file.FileName
+        };
+
         do
         {
-            var filePath = await _fileManager.GetFileAsync(View.StorageProvider, null, file.FileName);
+            var filePath = await _fileManager.GetFileAsync(View.StorageProvider, options);
 
             if (filePath == null)
             {
@@ -262,7 +273,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
                 return true;
             }
 
-            await MessageBoxManager.ShowErrorMessageBox("That file already opened", View);
+            await _messageBoxManager.ShowErrorMessageBox("That file already opened", View);
         } while (true);
     }
 
@@ -282,7 +293,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
             return true;
         }
 
-        await MessageBoxManager.ShowErrorMessageBox(error, View);
+        await _messageBoxManager.ShowErrorMessageBox(error, View);
 
         return false;
     }
@@ -298,7 +309,14 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
         if (file.FilePath ==
             (_projectManager.IsOpened ? _projectManager.Project.ProjectFilePath : null))
         {
-            return await SaveProjectFile(file);
+            if (!saveAs)
+            {
+                return await SaveProjectFile(file);
+            }
+
+            await _messageBoxManager.ShowMessageBoxAsync("Warning", "This feature is not available for project file",
+                ButtonEnum.Ok, Icon.Warning, View);
+            return false;
         }
 
         if (saveAs)
@@ -335,7 +353,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// </summary>
     private async Task DeleteFileAsync()
     {
-        var res = await MessageBoxManager
+        var res = await _messageBoxManager
             .ShowMessageBoxAsync("Confirmation", $"Are you sure you want to delete the file '{File.FileName}'?",
                 ButtonEnum.YesNo, Icon.Question, View);
 
@@ -355,13 +373,13 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     {
         if (tab.File.FilePath == _projectManager.Project.ProjectFilePath && isUi)
         {
-            await MessageBoxManager.ShowErrorMessageBox("Cannot close project file", View);
+            await _messageBoxManager.ShowErrorMessageBox("Cannot close project file", View);
             return;
         }
 
         if (tab.File.IsNeedSave)
         {
-            var res = await MessageBoxManager
+            var res = await _messageBoxManager
                 .ShowMessageBoxAsync("Confirmation", $"Do you want to save the file '{File.FileName}'?",
                     ButtonEnum.YesNo, Icon.Question, View);
 
@@ -405,17 +423,17 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
 
         while (true)
         {
-            var boxRes = await MessageBoxManager.ShowCustomMessageBoxAsync("Init", "Create or open project", Icon.Info,
-                View, MessageBoxManager.CreateButton, MessageBoxManager.OpenButton, MessageBoxManager.CancelButton
+            var boxRes = await _messageBoxManager.ShowCustomMessageBoxAsync("Init", "Create or open project", Icon.Info,
+                View, Buttons.CreateButton, Buttons.OpenButton, Buttons.CancelButton
             );
 
-            if (boxRes == MessageBoxManager.CreateButton.Name && await CreateProjectAsync()
-                || boxRes == MessageBoxManager.OpenButton.Name && await OpenProjectAsync())
+            if (boxRes == Buttons.CreateButton.Name && await CreateProjectAsync()
+                || boxRes == Buttons.OpenButton.Name && await OpenProjectAsync())
             {
                 return true;
             }
 
-            if (boxRes == MessageBoxManager.CancelButton.Name || boxRes == null)
+            if (boxRes == Buttons.CancelButton.Name || boxRes == null)
             {
                 return false;
             }
@@ -433,7 +451,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
             return true;
         }
 
-        var res = await MessageBoxManager
+        var res = await _messageBoxManager
             .ShowMessageBoxAsync("Warning", "This action closes current project and all tabs",
                 ButtonEnum.OkAbort, Icon.Warning, View);
 
@@ -460,7 +478,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
             }
             catch (FileNotFoundException e)
             {
-                await MessageBoxManager.ShowErrorMessageBox($"{e.Message} Skipping it.", View);
+                await _messageBoxManager.ShowErrorMessageBox($"{e.Message} Skipping it.", View);
             }
         }
 
@@ -477,7 +495,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
         string projectName;
         while (true)
         {
-            (var res, projectName) = await MessageBoxManager.ShowInputMessageBoxAsync("Create project",
+            (var res, projectName) = await _messageBoxManager.ShowInputMessageBoxAsync("Create project",
                 "Enter project name", ButtonEnum.OkCancel, Icon.Setting, View, "Project name");
 
             if (res == ButtonResult.Cancel)
@@ -487,7 +505,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
 
             if (string.IsNullOrWhiteSpace(projectName))
             {
-                await MessageBoxManager.ShowErrorMessageBox("Project name cannot be empty", View);
+                await _messageBoxManager.ShowErrorMessageBox("Project name cannot be empty", View);
                 continue;
             }
 
@@ -536,7 +554,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
         }
         catch (Exception e)
         {
-            await MessageBoxManager.ShowErrorMessageBox(e.Message, View);
+            await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
             return false;
         }
 
@@ -550,7 +568,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// </summary>
     private async Task OpenSettingsWindow()
     {
-        var viewModel = new SettingsViewModel(new SettingsWindow(), _projectManager);
+        var viewModel = new SettingsViewModel(new SettingsWindow(), _projectManager, _fileManager);
         await viewModel.ShowDialog(View);
     }
 
@@ -562,7 +580,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
 
         if (_tabManager.Tabs.Any(t => t.File.IsNeedSave))
         {
-            var res = await MessageBoxManager
+            var res = await _messageBoxManager
                 .ShowMessageBoxAsync("Warning", "You have unsaved files. Save all of them?",
                     ButtonEnum.YesNoCancel, Icon.Warning, View);
 
