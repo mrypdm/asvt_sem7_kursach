@@ -13,11 +13,11 @@ namespace GUI.ViewModels;
 /// </summary>
 public class FileTabViewModel : BaseViewModel<FileTab>
 {
-    private static readonly IBrush DefaultBackground = new SolidColorBrush(Colors.White);
-    private static readonly IBrush SelectedBackground = new SolidColorBrush(Colors.LightGray, 0.5D);
+    public static readonly IBrush DefaultBackground = new SolidColorBrush(Colors.White);
+    public static readonly IBrush SelectedBackground = new SolidColorBrush(Colors.LightGray, 0.5D);
 
-    private static readonly IBrush DefaultForeground = new SolidColorBrush(Colors.Black);
-    private static readonly IBrush NeedSaveForeground = new SolidColorBrush(Colors.DodgerBlue);
+    public static readonly IBrush DefaultForeground = new SolidColorBrush(Colors.Black);
+    public static readonly IBrush NeedSaveForeground = new SolidColorBrush(Colors.DodgerBlue);
 
     private IBrush _currentBackground;
 
