@@ -137,7 +137,7 @@ public class TabManagerTests
 
     private static FileModel CreateFile() => new()
     {
-        FilePath = $"C:\\{Guid.NewGuid()}",
+        FilePath = $"{Guid.NewGuid()}.txt",
         Text = "",
         IsNeedSave = false
     };

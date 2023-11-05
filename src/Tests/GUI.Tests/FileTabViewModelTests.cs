@@ -17,7 +17,7 @@ public class FileTabViewModelTests : GuiTest<App>
             // Arrange
 
             var view = new FileTab();
-            var file = new FileModel { FilePath = "C:\\header.txt" };
+            var file = new FileModel { FilePath = "header.txt" };
 
             // Act
 

@@ -47,7 +47,7 @@ public class SettingsViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            const string devicePath = "C:\\a.dll";
+            const string devicePath = "a.dll";
             PickerOptions options = null;
 
             var fileManagerMock = new Mock<IFileManager>();
@@ -91,7 +91,7 @@ public class SettingsViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            var devices = new[] { "C:\\a.dll", "C:\\b.dll" };
+            var devices = new[] { "a.dll", "b.dll" };
 
             var projectManagerMock = new Mock<IProjectManager>();
             projectManagerMock.Setup(m => m.SaveProjectAsync()).Returns(Task.CompletedTask);
