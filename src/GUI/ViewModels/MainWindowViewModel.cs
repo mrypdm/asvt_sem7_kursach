@@ -150,7 +150,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
         {
             File.Text = value;
             File.IsNeedSave = true;
-            _tabManager.Tab.NotifyForegroundChanged();
+            _tabManager.UpdateForeground(_tabManager.Tab);
             this.RaisePropertyChanged();
         }
     }
@@ -170,7 +170,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
 
     private async Task CreateTabForFiles(IEnumerable<FileModel> files)
     {
-        FileTabViewModel tab = null;
+        IFileTabViewModel tab = null;
 
         foreach (var file in files)
         {
@@ -321,12 +321,12 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
         }
     }
 
-    private async Task SaveFileAndUpdateTab(FileTabViewModel tab, bool saveAs)
+    private async Task SaveFileAndUpdateTab(IFileTabViewModel tab, bool saveAs)
     {
         if (await SaveFileAsync(tab.File, saveAs))
         {
-            tab.NotifyHeaderChanged();
-            _tabManager.Tab.NotifyForegroundChanged();
+            _tabManager.UpdateForeground(tab);
+            _tabManager.UpdateHeader(tab);
         }
     }
 
@@ -351,7 +351,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// <summary>
     /// Closes tab
     /// </summary>
-    private async Task CloseTabAsync(FileTabViewModel tab, bool isUi)
+    private async Task CloseTabAsync(IFileTabViewModel tab, bool isUi)
     {
         if (tab.File.FilePath == _projectManager.Project.ProjectFilePath && isUi)
         {
@@ -397,7 +397,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// <returns>True if created or opened</returns>
     private async Task<bool> InitProject()
     {
-        if (SettingsManager.Instance.CommandLineOptions.Project != null &&
+        if (SettingsManager.Instance.CommandLineOptions?.Project != null &&
             await OpenProjectAsync(SettingsManager.Instance.CommandLineOptions.Project))
         {
             return true;

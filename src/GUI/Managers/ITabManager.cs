@@ -16,12 +16,12 @@ public interface ITabManager : INotifyPropertyChanged
     /// <summary>
     /// Current selected tab
     /// </summary>
-    FileTabViewModel Tab { get; set; }
+    IFileTabViewModel Tab { get; set; }
 
     /// <summary>
     /// Collection of all tabs
     /// </summary>
-    ObservableCollection<FileTabViewModel> Tabs { get; }
+    ObservableCollection<IFileTabViewModel> Tabs { get; }
 
     /// <summary>
     /// Creates new tab for file and put it into <see cref="TabManager.Tabs"/>
@@ -31,18 +31,30 @@ public interface ITabManager : INotifyPropertyChanged
     /// <param name="closeCommand">Command on tab closing</param>
     /// <returns>Created tab</returns>
     /// <exception cref="TabExistsException">If tab for file already exists</exception>
-    FileTabViewModel CreateTab(FileModel file, Func<FileTabViewModel, Task> selectCommand,
-        Func<FileTabViewModel, Task> closeCommand);
+    IFileTabViewModel CreateTab(FileModel file, Func<IFileTabViewModel, Task> selectCommand,
+        Func<IFileTabViewModel, Task> closeCommand);
 
     /// <summary>
     /// Deletes tab. If there are no tabs left, it creates an empty tab.
     /// </summary>
     /// <param name="tab">Tab reference</param>
-    void DeleteTab(FileTabViewModel tab);
+    void DeleteTab(IFileTabViewModel tab);
 
     /// <summary>
     /// Changes current tab
     /// </summary>
     /// <param name="tab">Tab reference</param>
-    void SelectTab(FileTabViewModel tab);
+    void SelectTab(IFileTabViewModel tab);
+
+    /// <summary>
+    /// Updates foreground of tab
+    /// </summary>
+    /// <param name="tab">Tab reference</param>
+    void UpdateForeground(IFileTabViewModel tab);
+
+    /// <summary>
+    /// Updates header of tab
+    /// </summary>
+    /// <param name="tab">Tab reference</param>
+    void UpdateHeader(IFileTabViewModel tab);
 }

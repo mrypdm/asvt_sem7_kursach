@@ -16,5 +16,5 @@ public class TabExistsException : InvalidOperationException
     /// <summary>
     /// Reference to an existing tab
     /// </summary>
-    public FileTabViewModel Tab { get; init; }
+    public IFileTabViewModel Tab { get; init; }
 }

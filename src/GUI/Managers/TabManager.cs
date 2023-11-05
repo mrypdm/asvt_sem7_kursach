@@ -16,18 +16,18 @@ public class TabManager : PropertyChangedNotifier, ITabManager
     private FileTabViewModel _tab;
 
     /// <inheritdoc />
-    public FileTabViewModel Tab
+    public IFileTabViewModel Tab
     {
         get => _tab;
-        set => SetField(ref _tab, value);
+        set => SetField(ref _tab, value as FileTabViewModel);
     }
 
     /// <inheritdoc />
-    public ObservableCollection<FileTabViewModel> Tabs { get; } = new();
+    public ObservableCollection<IFileTabViewModel> Tabs { get; } = new();
 
     /// <inheritdoc />
-    public FileTabViewModel CreateTab(FileModel file, Func<FileTabViewModel, Task> selectCommand,
-        Func<FileTabViewModel, Task> closeCommand)
+    public IFileTabViewModel CreateTab(FileModel file, Func<IFileTabViewModel, Task> selectCommand,
+        Func<IFileTabViewModel, Task> closeCommand)
     {
         if (file != null)
         {
@@ -47,7 +47,7 @@ public class TabManager : PropertyChangedNotifier, ITabManager
     }
 
     /// <inheritdoc />
-    public void DeleteTab(FileTabViewModel tab)
+    public void DeleteTab(IFileTabViewModel tab)
     {
         var index = Tabs.IndexOf(tab) - 1;
 
@@ -58,10 +58,30 @@ public class TabManager : PropertyChangedNotifier, ITabManager
     }
 
     /// <inheritdoc />
-    public void SelectTab(FileTabViewModel tab)
+    public void SelectTab(IFileTabViewModel tab)
     {
-        Tab?.SetTabUnselected();
+        if (_tab != null)
+        {
+            _tab.IsSelected = false;
+        }
+
         Tab = tab;
-        Tab?.SetTabSelected();
+
+        if (_tab != null)
+        {
+            _tab.IsSelected = true;
+        }
+    }
+
+    /// <inheritdoc />
+    public void UpdateForeground(IFileTabViewModel tab)
+    {
+        (tab as FileTabViewModel)?.NotifyForegroundChanged();
+    }
+
+    /// <inheritdoc />
+    public void UpdateHeader(IFileTabViewModel tab)
+    {
+        (tab as FileTabViewModel)?.NotifyHeaderChanged();
     }
 }

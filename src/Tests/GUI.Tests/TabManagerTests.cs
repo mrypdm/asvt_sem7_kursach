@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using GUI.Exceptions;
 using GUI.Managers;
 using GUI.Models;
-using GUI.ViewModels;
 
 namespace GUI.Tests;
 
@@ -18,7 +18,7 @@ public class TabManagerTests
 
         // Act
 
-        var tab = manager.CreateTab(file, null, null);
+        var tab = manager.CreateTab(file, _ => Task.CompletedTask, _ => Task.CompletedTask);
 
         // Assert
 
@@ -37,7 +37,7 @@ public class TabManagerTests
         // Arrange
 
         var manager = new TabManager();
-        var tab = manager.CreateTab(CreateFile(), null, null);
+        var tab = manager.CreateTab(CreateFile(), _ => Task.CompletedTask, _ => Task.CompletedTask);
 
         // Act
 
@@ -59,7 +59,7 @@ public class TabManagerTests
         // Arrange
 
         var manager = new TabManager();
-        var tab = manager.CreateTab(CreateFile(), null, null);
+        var tab = manager.CreateTab(CreateFile(), _ => Task.CompletedTask, _ => Task.CompletedTask);
 
         // Act
 
@@ -70,7 +70,7 @@ public class TabManagerTests
         Assert.Multiple(() =>
         {
             Assert.That(manager.Tab, Is.EqualTo(tab));
-            Assert.That(tab.TabBackground, Is.EqualTo(FileTabViewModel.SelectedBackground));
+            Assert.That(tab.IsSelected, Is.True);
         });
     }
 
@@ -79,11 +79,9 @@ public class TabManagerTests
     {
         // Arrange
 
-        var hasCalled = false;
-
         var manager = new TabManager();
-        var tab1 = manager.CreateTab(CreateFile(), null, null);
-        var tab2 = manager.CreateTab(CreateFile(), null, null);
+        var tab1 = manager.CreateTab(CreateFile(), _ => Task.CompletedTask, _ => Task.CompletedTask);
+        var tab2 = manager.CreateTab(CreateFile(), _ => Task.CompletedTask, _ => Task.CompletedTask);
 
         manager.SelectTab(tab1);
 
@@ -96,8 +94,8 @@ public class TabManagerTests
         Assert.Multiple(() =>
         {
             Assert.That(manager.Tab, Is.EqualTo(tab2));
-            Assert.That(tab1.TabBackground, Is.EqualTo(FileTabViewModel.DefaultBackground));
-            Assert.That(tab2.TabBackground, Is.EqualTo(FileTabViewModel.SelectedBackground));
+            Assert.That(tab1.IsSelected, Is.False);
+            Assert.That(tab2.IsSelected, Is.True);
         });
     }
 
@@ -107,19 +105,19 @@ public class TabManagerTests
         // Arrange
 
         var manager = new TabManager();
-        var tab1 = manager.CreateTab(CreateFile(), null, null);
-        var tab2 = manager.CreateTab(CreateFile(), null, null);
-        var tab3 = manager.CreateTab(CreateFile(), null, null);
+        manager.CreateTab(CreateFile(), _ => Task.CompletedTask, _ => Task.CompletedTask);
+        var tab2 = manager.CreateTab(CreateFile(), _ => Task.CompletedTask, _ => Task.CompletedTask);
+        var tab3 = manager.CreateTab(CreateFile(), _ => Task.CompletedTask, _ => Task.CompletedTask);
 
-        manager.SelectTab(tab2);
+        manager.SelectTab(tab3);
 
         // Act
 
-        manager.DeleteTab(tab2);
+        manager.DeleteTab(tab3);
 
         // Assert
 
-        Assert.That(manager.Tab, Is.EqualTo(tab1));
+        Assert.That(manager.Tab, Is.EqualTo(tab2));
     }
 
     [Test]
@@ -129,12 +127,12 @@ public class TabManagerTests
 
         var file = CreateFile();
         var manager = new TabManager();
-        manager.CreateTab(file, null, null);
+        manager.CreateTab(file, _ => Task.CompletedTask, _ => Task.CompletedTask);
 
         // Act & Assert
 
         Assert.Throws<TabExistsException>(() =>
-            manager.CreateTab(file, null, null));
+            manager.CreateTab(file, _ => Task.CompletedTask, _ => Task.CompletedTask));
     }
 
     private static FileModel CreateFile() => new()

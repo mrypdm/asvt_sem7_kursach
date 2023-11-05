@@ -3,15 +3,10 @@ using ReactiveUI;
 
 namespace GUI.ViewModels;
 
-/// <summary>
-/// Base view model for <see cref="Control"/> heirs
-/// </summary>
-/// <typeparam name="TView">Heir of <see cref="Control"/></typeparam>
-public abstract class BaseViewModel<TView> : ReactiveObject where TView : Control
+/// <inheritdoc cref="IViewModel{TView}"/>
+public abstract class BaseViewModel<TView> : ReactiveObject, IViewModel<TView> where TView : Control
 {
-    /// <summary>
-    /// View
-    /// </summary>
+    /// <inheritdoc />
     public TView View { get; }
 
     protected BaseViewModel(TView view)

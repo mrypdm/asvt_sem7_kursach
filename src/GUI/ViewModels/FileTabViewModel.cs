@@ -8,10 +8,8 @@ using ReactiveUI;
 
 namespace GUI.ViewModels;
 
-/// <summary>
-/// View model for <see cref="FileTab"/>
-/// </summary>
-public class FileTabViewModel : BaseViewModel<FileTab>
+/// <inheritdoc cref="IFileTabViewModel"/>
+public class FileTabViewModel : BaseViewModel<FileTab>, IFileTabViewModel
 {
     public static readonly IBrush DefaultBackground = new SolidColorBrush(Colors.White);
     public static readonly IBrush SelectedBackground = new SolidColorBrush(Colors.LightGray, 0.5D);
@@ -46,38 +44,33 @@ public class FileTabViewModel : BaseViewModel<FileTab>
         InitContext();
     }
 
-    /// <summary>
-    /// File model
-    /// </summary>
+    /// <inheritdoc />
     public FileModel File { get; }
 
-    /// <summary>
-    /// Header for tab
-    /// </summary>
+    /// <inheritdoc />
     public string TabHeader => File.FileName;
 
-    /// <summary>
-    /// Current foreground
-    /// </summary>
+    /// <inheritdoc />
     public IBrush TabForeground => File.IsNeedSave ? NeedSaveForeground : DefaultForeground;
 
-    /// <summary>
-    /// Current background
-    /// </summary>
+    /// <inheritdoc />
     public IBrush TabBackground
     {
         get => _currentBackground;
         set => this.RaiseAndSetIfChanged(ref _currentBackground, value);
     }
+    
+    /// <inheritdoc />
+    public bool IsSelected
+    {
+        get => ReferenceEquals(TabBackground, SelectedBackground);
+        set => TabBackground = value ? SelectedBackground : DefaultBackground;
+    }
 
-    /// <summary>
-    /// Command for select tab
-    /// </summary>
+    /// <inheritdoc />
     public ICommand SelectTabCommand { get; }
 
-    /// <summary>
-    /// Command for closing tab
-    /// </summary>
+    /// <inheritdoc />
     public ICommand CloseTabCommand { get; }
 
     /// <summary>
@@ -94,21 +87,5 @@ public class FileTabViewModel : BaseViewModel<FileTab>
     public void NotifyForegroundChanged()
     {
         this.RaisePropertyChanged(nameof(TabForeground));
-    }
-
-    /// <summary>
-    /// Select tab
-    /// </summary>
-    public void SetTabSelected()
-    {
-        TabBackground = SelectedBackground;
-    }
-
-    /// <summary>
-    /// Unselect tab
-    /// </summary>
-    public void SetTabUnselected()
-    {
-        TabBackground = DefaultBackground;
     }
 }
