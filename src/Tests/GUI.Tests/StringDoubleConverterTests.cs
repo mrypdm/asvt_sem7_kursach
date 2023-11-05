@@ -13,7 +13,7 @@ public class StringDoubleConverterTests
 
         var converter = new StringDoubleConverter();
 
-        // Act && Assert
+        // Act & Assert
 
         Assert.That(converter.ConvertBack(str, null, null, null), Is.EqualTo(expected));
     }
@@ -26,7 +26,7 @@ public class StringDoubleConverterTests
 
         var converter = new StringDoubleConverter();
 
-        // Act && Assert
+        // Act & Assert
 
         Assert.That(converter.Convert(num, null, null, null), Is.EqualTo(expected));
     }

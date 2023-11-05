@@ -7,163 +7,188 @@ using Moq;
 
 namespace GUI.Tests;
 
-public class FileTabViewModelTests
+public class FileTabViewModelTests : GuiTest<App>
 {
     [Test]
-    public void CreationTest()
+    public async Task CreationTest()
     {
-        // Arrange
-
-        var view = new FileTab();
-        var file = new FileModel { FilePath = "C:\\header.txt" };
-
-        // Act
-
-        var viewModel = new FileTabViewModel(view, file, null, null);
-
-        // Assert
-
-        Assert.Multiple(() =>
+        await RunTest(() =>
         {
-            Assert.That(viewModel.File, Is.EqualTo(file));
-            Assert.That(viewModel.View, Is.EqualTo(view));
-            Assert.That(view.DataContext, Is.EqualTo(viewModel));
-            Assert.That(viewModel.TabHeader, Is.EqualTo("header.txt"));
+            // Arrange
+
+            var view = new FileTab();
+            var file = new FileModel { FilePath = "C:\\header.txt" };
+
+            // Act
+
+            var viewModel = new FileTabViewModel(view, file, null, null);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(viewModel.File, Is.EqualTo(file));
+                Assert.That(viewModel.View, Is.EqualTo(view));
+                Assert.That(view.DataContext, Is.EqualTo(viewModel));
+                Assert.That(viewModel.TabHeader, Is.EqualTo("header.txt"));
+            });
         });
     }
 
     [Test]
-    public void SelectTabBackgroundTest()
+    public async Task SelectTabBackgroundTest()
     {
-        // Arrange
-
-        var viewModel = new FileTabViewModel(new FileTab(), null, null, null)
+        await RunTest(() =>
         {
+            // Arrange
+
+            var viewModel = new FileTabViewModel(new FileTab(), null, null, null)
+            {
+                // Act
+                IsSelected = true
+            };
+
+            // Arrange
+
+            Assert.That(viewModel.TabBackground, Is.EqualTo(FileTabViewModel.SelectedBackground));
+        });
+    }
+
+    [Test]
+    public async Task UnselectTabBackgroundTest()
+    {
+        await RunTest(() =>
+        {
+            // Arrange
+
+            var viewModel = new FileTabViewModel(new FileTab(), null, null, null)
+            {
+                IsSelected = true
+            };
+
             // Act
-            IsSelected = true
-        };
 
-        // Arrange
+            viewModel.IsSelected = false;
 
-        Assert.That(viewModel.TabBackground, Is.EqualTo(FileTabViewModel.SelectedBackground));
+            // Arrange
+
+            Assert.That(viewModel.TabBackground, Is.EqualTo(FileTabViewModel.DefaultBackground));
+        });
     }
 
     [Test]
-    public void UnselectTabBackgroundTest()
+    public async Task NeedSaveForegroundTest()
     {
-        // Arrange
-
-        var viewModel = new FileTabViewModel(new FileTab(), null, null, null)
+        await RunTest(() =>
         {
-            IsSelected = true
-        };
+            // Arrange
 
-        // Act
+            var viewModel = new FileTabViewModel(new FileTab(), new FileModel { IsNeedSave = true }, null, null);
+            Assert.That(viewModel.TabForeground, Is.EqualTo(FileTabViewModel.NeedSaveForeground));
 
-        viewModel.IsSelected = false;
+            // Act
 
-        // Arrange
-
-        Assert.That(viewModel.TabBackground, Is.EqualTo(FileTabViewModel.DefaultBackground));
-    }
-
-    [Test]
-    public void NeedSaveForegroundTest()
-    {
-        // Arrange
-
-        var viewModel = new FileTabViewModel(new FileTab(), new FileModel { IsNeedSave = true }, null, null);
-        Assert.That(viewModel.TabForeground, Is.EqualTo(FileTabViewModel.NeedSaveForeground));
-
-        // Act
-
-        viewModel.File.IsNeedSave = false;
-        Assert.That(viewModel.TabForeground, Is.EqualTo(FileTabViewModel.DefaultForeground));
+            viewModel.File.IsNeedSave = false;
+            Assert.That(viewModel.TabForeground, Is.EqualTo(FileTabViewModel.DefaultForeground));
+        });
     }
 
     [Test]
     [TestCase(false)]
     [TestCase(true)]
-    public void SelectEventTest(bool initSelection)
+    public async Task SelectEventTest(bool initSelection)
     {
-        // Arrange
-
-        var viewModel = new FileTabViewModel(new FileTab(), null, null, null)
+        await RunTest(() =>
         {
-            IsSelected = initSelection
-        };
+            // Arrange
 
-        var propertyName = string.Empty;
+            var viewModel = new FileTabViewModel(new FileTab(), null, null, null)
+            {
+                IsSelected = initSelection
+            };
 
-        viewModel.PropertyChanged += (_, args) => { propertyName = args.PropertyName; };
+            var propertyName = string.Empty;
 
-        // Act
+            viewModel.PropertyChanged += (_, args) => { propertyName = args.PropertyName; };
 
-        viewModel.IsSelected = !initSelection;
+            // Act
 
-        // Assert
+            viewModel.IsSelected = !initSelection;
 
-        Assert.That(propertyName, Is.EqualTo(nameof(viewModel.TabBackground)));
+            // Assert
+
+            Assert.That(propertyName, Is.EqualTo(nameof(viewModel.TabBackground)));
+        });
     }
 
     [Test]
-    public void HeaderChangedEventTest()
+    public async Task HeaderChangedEventTest()
     {
-        // Arrange
+        await RunTest(() =>
+        {
+            // Arrange
 
-        var viewModel = new FileTabViewModel(new FileTab(), null, null, null);
+            var viewModel = new FileTabViewModel(new FileTab(), null, null, null);
 
-        var propertyName = string.Empty;
+            var propertyName = string.Empty;
 
-        viewModel.PropertyChanged += (_, args) => { propertyName = args.PropertyName; };
+            viewModel.PropertyChanged += (_, args) => { propertyName = args.PropertyName; };
 
-        // Act
+            // Act
 
-        viewModel.NotifyHeaderChanged();
+            viewModel.NotifyHeaderChanged();
 
-        // Assert
+            // Assert
 
-        Assert.That(propertyName, Is.EqualTo(nameof(viewModel.TabHeader)));
+            Assert.That(propertyName, Is.EqualTo(nameof(viewModel.TabHeader)));
+        });
     }
 
     [Test]
-    public void ForegroundChangedEventTest()
+    public async Task ForegroundChangedEventTest()
     {
-        // Arrange
+        await RunTest(() =>
+        {
+            // Arrange
 
-        var viewModel = new FileTabViewModel(new FileTab(), null, null, null);
+            var viewModel = new FileTabViewModel(new FileTab(), null, null, null);
 
-        var propertyName = string.Empty;
+            var propertyName = string.Empty;
 
-        viewModel.PropertyChanged += (_, args) => { propertyName = args.PropertyName; };
+            viewModel.PropertyChanged += (_, args) => { propertyName = args.PropertyName; };
 
-        // Act
+            // Act
 
-        viewModel.NotifyForegroundChanged();
+            viewModel.NotifyForegroundChanged();
 
-        // Assert
+            // Assert
 
-        Assert.That(propertyName, Is.EqualTo(nameof(viewModel.TabForeground)));
+            Assert.That(propertyName, Is.EqualTo(nameof(viewModel.TabForeground)));
+        });
     }
 
     [Test]
-    public void CommandsTest()
+    public async Task CommandsTest()
     {
-        // Arrange
+        await RunTest(() =>
+        {
+            // Arrange
 
-        var selectCommandMock = new Mock<Func<IFileTabViewModel, Task>>();
-        var closeCommandMock = new Mock<Func<IFileTabViewModel, Task>>();
+            var selectCommandMock = new Mock<Func<IFileTabViewModel, Task>>();
+            var closeCommandMock = new Mock<Func<IFileTabViewModel, Task>>();
 
-        var viewModel = new FileTabViewModel(new FileTab(), null, selectCommandMock.Object, closeCommandMock.Object);
-        
-        // Act
+            var viewModel = new FileTabViewModel(new FileTab(), null,
+                selectCommandMock.Object, closeCommandMock.Object);
 
-        viewModel.SelectTabCommand.Execute(null);
-        viewModel.CloseTabCommand.Execute(null);
-        
-        // Assert
-        
-        selectCommandMock.Verify(c => c(viewModel), Times.Once);
-        closeCommandMock.Verify(c => c(viewModel), Times.Once);
+            // Act
+
+            viewModel.SelectTabCommand.Execute(null);
+            viewModel.CloseTabCommand.Execute(null);
+
+            // Assert
+
+            selectCommandMock.Verify(c => c(viewModel), Times.Once);
+            closeCommandMock.Verify(c => c(viewModel), Times.Once);
+        });
     }
 }

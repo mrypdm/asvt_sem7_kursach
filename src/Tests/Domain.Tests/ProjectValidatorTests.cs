@@ -17,7 +17,7 @@ public class ProjectValidatorTests
 
         var validator = new ProjectValidator(new ProjectProvider());
 
-        // Act && Assert
+        // Act & Assert
 
         if (invalid)
         {
@@ -37,7 +37,7 @@ public class ProjectValidatorTests
 
         var validator = new ProjectValidator(new ProjectProvider());
 
-        // Act && Assert
+        // Act & Assert
 
         if (invalid)
         {

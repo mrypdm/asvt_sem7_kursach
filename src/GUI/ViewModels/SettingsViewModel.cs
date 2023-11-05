@@ -111,6 +111,7 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
         {
             _projectManager.RemoveDeviceFromProject(device);
         }
+
         await _projectManager.SaveProjectAsync();
     }
 

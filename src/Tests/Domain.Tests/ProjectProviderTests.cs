@@ -64,7 +64,7 @@ public class ProjectProviderTests
 
         var provider = new ProjectProvider();
 
-        // Act && Assert
+        // Act & Assert
 
         Assert.CatchAsync<JsonException>(async () => await provider.OpenProjectAsync("./Projects/invalid.json"));
     }
