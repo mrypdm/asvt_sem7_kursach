@@ -25,7 +25,8 @@ public class StringDoubleConverter : IValueConverter
     /// </summary>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is string doubleString && double.TryParse(doubleString, out var number))
+        if (value is string doubleString &&
+            double.TryParse(doubleString, NumberStyles.Any, CultureInfo.InvariantCulture, out var number))
         {
             return number;
         }
