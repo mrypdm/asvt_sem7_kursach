@@ -63,7 +63,7 @@ public sealed class SettingsManager : PropertyChangedNotifier
     /// <summary>
     /// Save editor settings to disk <see cref="FontFamily"/>, <see cref="FontSize"/>
     /// </summary>
-    public async Task SaveGlobalSettings()
+    public async Task SaveGlobalSettingsAsync()
     {
         await ConfigurationHelper.SaveToJson(new Dictionary<string, object>
         {
