@@ -4,9 +4,9 @@ using Shared.Helpers;
 
 namespace Shared.Tests;
 
-internal class CommandLineHelperTests
+public class CommandLineHelperTests
 {
-    internal class Options
+    public class Options
     {
         [Option('f', "family", Required = false, Default = "Arial")]
         public string FontFamily { get; set; }
