@@ -29,7 +29,7 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     public ProjectModel Project
     {
         get => _project ?? throw new InvalidOperationException("Project is not opened");
-        set => SetField(ref _project, value);
+        private set => SetField(ref _project, value);
     }
 
     /// <inheritdoc />

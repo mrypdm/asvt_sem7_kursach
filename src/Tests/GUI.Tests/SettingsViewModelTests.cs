@@ -1,4 +1,5 @@
-﻿using System.Reactive;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
@@ -63,7 +64,7 @@ public class SettingsViewModelTests : GuiTest<App>
 
             // Act
 
-            viewModel.AddDeviceCommand.Execute(Unit.Default);
+            viewModel.AddDeviceCommand.Execute(null);
 
             // Assert
 
@@ -80,6 +81,88 @@ public class SettingsViewModelTests : GuiTest<App>
                 Assert.That(openOptions.FileTypeFilter![0].Patterns, Has.Count.EqualTo(1));
                 Assert.That(openOptions.FileTypeFilter[0].Patterns![0], Is.EqualTo("*.dll"));
             });
+        });
+    }
+
+    [Test]
+    public async Task DeleteDevicesTest()
+    {
+        await RunTest(() =>
+        {
+            // Arrange
+
+            var devices = new[] { "C:\\a.dll", "C:\\b.dll" };
+
+            var projectManagerMock = new Mock<IProjectManager>();
+            projectManagerMock.Setup(m => m.SaveProjectAsync()).Returns(Task.CompletedTask);
+
+            var viewModel = new SettingsViewModel(new SettingsWindow(), projectManagerMock.Object, null)
+            {
+                SelectedDevices = new ObservableCollection<string>(devices)
+            };
+
+            // Act
+
+            viewModel.DeleteDeviceCommand.Execute(null);
+
+            // Assert
+
+            projectManagerMock.Verify(m => m.RemoveDeviceFromProject(devices[0]), Times.Once);
+            projectManagerMock.Verify(m => m.RemoveDeviceFromProject(devices[1]), Times.Once);
+            projectManagerMock.Verify(m => m.SaveProjectAsync(), Times.Once);
+        });
+    }
+
+    [Test]
+    public async Task ChangeFontTest()
+    {
+        await RunTest(() =>
+        {
+            // Arrange
+
+            var fontFamily = new FontFamily("Font");
+            const int fontSize = 16;
+
+            var viewModel = new SettingsViewModel(new SettingsWindow(), new ProjectManager(null), null)
+            {
+                // Act
+                FontFamily = fontFamily,
+                FontSize = fontSize
+            };
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(SettingsManager.Instance.FontFamily, Is.EqualTo(fontFamily));
+                Assert.That(SettingsManager.Instance.FontSize, Is.EqualTo(fontSize));
+            });
+        });
+    }
+
+    [Test]
+    public async Task DeviceChangedEvent()
+    {
+        await RunAsyncTest(async () =>
+        {
+            // Arrange
+
+            var property = string.Empty;
+            var projectManagerMock = new Mock<IProjectManager>();
+            var viewModel = new SettingsViewModel(new SettingsWindow(), projectManagerMock.Object, new FileManager());
+
+            viewModel.PropertyChanged += (_, args) => { property = args.PropertyName; };
+
+            // Act
+
+            await projectManagerMock.RaiseAsync(m => m.PropertyChanged += null,
+                projectManagerMock.Object,
+                new PropertyChangedEventArgs("Project"));
+
+            // Assert
+
+            projectManagerMock.VerifyAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>(), Times.Once);
+            Assert.That(property, Is.EqualTo(nameof(viewModel.Devices)));
         });
     }
 }

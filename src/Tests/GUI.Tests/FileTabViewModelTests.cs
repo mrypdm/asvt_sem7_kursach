@@ -187,8 +187,8 @@ public class FileTabViewModelTests : GuiTest<App>
 
             // Assert
 
-            selectCommandMock.Verify(c => c(viewModel), Times.Once);
-            closeCommandMock.Verify(c => c(viewModel), Times.Once);
+            selectCommandMock.Verify(m => m(viewModel), Times.Once);
+            closeCommandMock.Verify(m => m(viewModel), Times.Once);
         });
     }
 }

@@ -16,4 +16,10 @@ public abstract class GuiTest<TApp>
         using var session = HeadlessUnitTestSession.StartNew(typeof(TApp));
         await session.Dispatch(testMethod, default);
     }
+    
+    protected async Task RunAsyncTest(Func<Task> testMethod)
+    {
+        using var session = HeadlessUnitTestSession.StartNew(typeof(TApp));
+        await session.Dispatch(testMethod, default);
+    }
 }
