@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Shared.Helpers;
 
@@ -27,7 +28,20 @@ public static class PathHelper
     public static string GetFileName(string path) => Path.GetFileName(path);
 
     /// <inheritdoc cref="Path.GetRelativePath"/>
-    public static string GetRelativePath(string relativeTo, string path) => Path.GetRelativePath(relativeTo, path);
+    public static string GetRelativePath(string relativeTo, string path)
+    {
+        if (string.IsNullOrWhiteSpace(relativeTo))
+        {
+            throw new ArgumentException("Path cannot be empty", nameof(relativeTo));
+        }
+        
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            throw new ArgumentException("Path cannot be empty", nameof(path));
+        }
+        
+        return Path.GetRelativePath(relativeTo, path);
+    }
 
     /// <summary>
     /// Gives the type of the object pointed to by the path
