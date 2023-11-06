@@ -70,4 +70,9 @@ public static class PathHelper
 
         return PathType.UnExisting;
     }
+
+    /// <summary>
+    /// Transforms Win-like path to Unix-like
+    /// </summary>
+    public static string ToUnix(string path) => path.Replace("\\", "/");
 }

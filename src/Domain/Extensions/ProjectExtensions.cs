@@ -18,12 +18,16 @@ public static class ProjectExtensions
     public static ProjectDto ToDto(this IProject project)
     {
         var converter = new OctalStringConverter();
-        
+
         return new ProjectDto
         {
-            Executable = PathHelper.GetRelativePath(project.ProjectDirectory, project.Executable),
-            Files = project.Files.Select(f => PathHelper.GetRelativePath(project.ProjectDirectory, f)).ToList(),
-            Devices = project.Devices.Select(f => PathHelper.GetRelativePath(project.ProjectDirectory, f)).ToList(),
+            Executable = PathHelper.ToUnix(PathHelper.GetRelativePath(project.ProjectDirectory, project.Executable)),
+            Files = project.Files
+                .Select(f => PathHelper.ToUnix(PathHelper.GetRelativePath(project.ProjectDirectory, f)))
+                .ToList(),
+            Devices = project.Devices
+                .Select(f => PathHelper.ToUnix(PathHelper.GetRelativePath(project.ProjectDirectory, f)))
+                .ToList(),
             StackAddress = converter.Convert(project.StackAddress),
             ProgramAddress = converter.Convert(project.ProgramAddress)
         };
@@ -48,7 +52,7 @@ public static class ProjectExtensions
     {
         var directory = PathHelper.GetDirectoryName(projectFilePath);
         var converter = new NumberStringConverter();
-        
+
         return new Project
         {
             ProjectFile = projectFilePath,
