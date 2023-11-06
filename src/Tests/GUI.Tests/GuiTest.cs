@@ -12,23 +12,21 @@ namespace GUI.Tests;
 public abstract class GuiTest<TApp>
 {
     private HeadlessUnitTestSession _session;
-    
+
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
         _session = HeadlessUnitTestSession.StartNew(typeof(TApp));
     }
-    
-    protected void RunTest(Action testMethod)
+
+    protected Task RunTest(Action testMethod)
     {
-        //using var session = HeadlessUnitTestSession.StartNew(typeof(TApp));
-        _session.Dispatch(testMethod, default).Wait();
+        return _session.Dispatch(testMethod, default);
     }
-    
-    protected void RunAsyncTest(Func<Task> testMethod)
+
+    protected Task RunAsyncTest(Func<Task> testMethod)
     {
-        //using var session = HeadlessUnitTestSession.StartNew(typeof(TApp));
-        _session.Dispatch(testMethod, default).Wait();
+        return _session.Dispatch(testMethod, default);
     }
 
     [OneTimeTearDown]

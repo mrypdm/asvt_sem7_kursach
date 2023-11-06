@@ -8,7 +8,7 @@ using Moq;
 
 namespace GUI.Tests.ViewModels;
 
-public class FileTabViewModelTests
+public class FileTabViewModelTests : GuiTest<App>
 {
     private static FileModel DefaultFile => new()
     {
@@ -16,160 +16,184 @@ public class FileTabViewModelTests
     };
 
     [Test]
-    public void CreationTest()
+    public async Task CreationTest()
     {
-        // Arrange
-
-        var view = new FileTab();
-        var file = new FileModel { FilePath = "header.txt" };
-
-        // Act
-
-        var viewModel = new FileTabViewModel(view, file, _ => Task.CompletedTask, _ => Task.CompletedTask);
-
-        // Assert
-
-        Assert.Multiple(() =>
+        await RunTest(() =>
         {
-            Assert.That(viewModel.File, Is.EqualTo(file));
-            Assert.That(viewModel.View, Is.EqualTo(view));
-            Assert.That(view.DataContext, Is.EqualTo(viewModel));
-            Assert.That(viewModel.TabHeader, Is.EqualTo("header.txt"));
+            // Arrange
+
+            var view = new FileTab();
+            var file = new FileModel { FilePath = "header.txt" };
+
+            // Act
+
+            var viewModel = new FileTabViewModel(view, file, _ => Task.CompletedTask, _ => Task.CompletedTask);
+
+            // Assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(viewModel.File, Is.EqualTo(file));
+                Assert.That(viewModel.View, Is.EqualTo(view));
+                Assert.That(view.DataContext, Is.EqualTo(viewModel));
+                Assert.That(viewModel.TabHeader, Is.EqualTo("header.txt"));
+            });
         });
     }
 
     [Test]
-    public void SelectTabBackgroundTest()
+    public async Task SelectTabBackgroundTest()
     {
-        // Arrange
-
-        var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
-            _ => Task.CompletedTask)
+        await RunTest(() =>
         {
+            // Arrange
+
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
+                _ => Task.CompletedTask)
+            {
+                // Act
+                IsSelected = true
+            };
+
+            // Arrange
+
+            Assert.That(viewModel.TabBackground, Is.EqualTo(FileTabViewModel.SelectedBackground));
+        });
+    }
+
+    [Test]
+    public async Task UnselectTabBackgroundTest()
+    {
+        await RunTest(() =>
+        {
+            // Arrange
+
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
+                _ => Task.CompletedTask)
+            {
+                IsSelected = true
+            };
+
             // Act
-            IsSelected = true
-        };
 
-        // Arrange
+            viewModel.IsSelected = false;
 
-        Assert.That(viewModel.TabBackground, Is.EqualTo(FileTabViewModel.SelectedBackground));
+            // Arrange
+
+            Assert.That(viewModel.TabBackground, Is.EqualTo(FileTabViewModel.DefaultBackground));
+        });
     }
 
     [Test]
-    public void UnselectTabBackgroundTest()
+    public async Task NeedSaveForegroundTest()
     {
-        // Arrange
-
-        var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
-            _ => Task.CompletedTask)
+        await RunTest(() =>
         {
-            IsSelected = true
-        };
+            // Arrange
 
-        // Act
+            var file = DefaultFile;
+            file.IsNeedSave = true;
 
-        viewModel.IsSelected = false;
+            var viewModel = new FileTabViewModel(new FileTab(), file, _ => Task.CompletedTask, _ => Task.CompletedTask);
+            Assert.That(viewModel.TabForeground, Is.EqualTo(FileTabViewModel.NeedSaveForeground));
 
-        // Arrange
+            // Act
 
-        Assert.That(viewModel.TabBackground, Is.EqualTo(FileTabViewModel.DefaultBackground));
-    }
-
-    [Test]
-    public void NeedSaveForegroundTest()
-    {
-        // Arrange
-
-        var file = DefaultFile;
-        file.IsNeedSave = true;
-
-        var viewModel = new FileTabViewModel(new FileTab(), file, _ => Task.CompletedTask, _ => Task.CompletedTask);
-        Assert.That(viewModel.TabForeground, Is.EqualTo(FileTabViewModel.NeedSaveForeground));
-
-        // Act
-
-        viewModel.File.IsNeedSave = false;
-        Assert.That(viewModel.TabForeground, Is.EqualTo(FileTabViewModel.DefaultForeground));
+            viewModel.File.IsNeedSave = false;
+            Assert.That(viewModel.TabForeground, Is.EqualTo(FileTabViewModel.DefaultForeground));
+        });
     }
 
     [Test]
     [TestCase(false)]
     [TestCase(true)]
-    public void SelectEventTest(bool initSelection)
+    public async Task SelectEventTest(bool initSelection)
     {
-        // Arrange
-
-        var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
-            _ => Task.CompletedTask)
+        await RunTest(() =>
         {
-            IsSelected = initSelection
-        };
+            // Arrange
 
-        var propertyAssert = new PropertyChangedAssert(viewModel);
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
+                _ => Task.CompletedTask)
+            {
+                IsSelected = initSelection
+            };
 
-        // Act
+            var propertyAssert = new PropertyChangedAssert(viewModel);
 
-        viewModel.IsSelected = !initSelection;
+            // Act
 
-        // Assert
+            viewModel.IsSelected = !initSelection;
 
-        propertyAssert.Assert(nameof(viewModel.TabBackground));
+            // Assert
+
+            propertyAssert.Assert(nameof(viewModel.TabBackground));
+        });
     }
 
     [Test]
-    public void HeaderChangedEventTest()
+    public async Task HeaderChangedEventTest()
     {
-        // Arrange
+        await RunTest(() =>
+        {
+            // Arrange
 
-        var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
-            _ => Task.CompletedTask);
-        var propertyAssert = new PropertyChangedAssert(viewModel);
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
+                _ => Task.CompletedTask);
+            var propertyAssert = new PropertyChangedAssert(viewModel);
 
-        // Act
+            // Act
 
-        viewModel.NotifyHeaderChanged();
+            viewModel.NotifyHeaderChanged();
 
-        // Assert
+            // Assert
 
-        propertyAssert.Assert(nameof(viewModel.TabHeader));
+            propertyAssert.Assert(nameof(viewModel.TabHeader));
+        });
     }
 
     [Test]
-    public void ForegroundChangedEventTest()
+    public async Task ForegroundChangedEventTest()
     {
-        // Arrange
+        await RunTest(() =>
+        {
+            // Arrange
 
-        var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
-            _ => Task.CompletedTask);
-        var propertyAssert = new PropertyChangedAssert(viewModel);
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
+                _ => Task.CompletedTask);
+            var propertyAssert = new PropertyChangedAssert(viewModel);
 
-        // Act
+            // Act
 
-        viewModel.NotifyForegroundChanged();
+            viewModel.NotifyForegroundChanged();
 
-        // Assert
+            // Assert
 
-        propertyAssert.Assert(nameof(viewModel.TabForeground));
+            propertyAssert.Assert(nameof(viewModel.TabForeground));
+        });
     }
 
     [Test]
-    public void CommandsTest()
+    public async Task CommandsTest()
     {
-        // Arrange
+        await RunTest(() =>
+        {
+            // Arrange
 
-        var selectCommand = new Mock<Func<IFileTabViewModel, Task>>();
-        var closeCommand = new Mock<Func<IFileTabViewModel, Task>>();
+            var selectCommand = new Mock<Func<IFileTabViewModel, Task>>();
+            var closeCommand = new Mock<Func<IFileTabViewModel, Task>>();
 
-        var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, selectCommand.Object, closeCommand.Object);
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, selectCommand.Object, closeCommand.Object);
 
-        // Act
+            // Act
 
-        viewModel.SelectTabCommand.Execute(null);
-        viewModel.CloseTabCommand.Execute(null);
+            viewModel.SelectTabCommand.Execute(null);
+            viewModel.CloseTabCommand.Execute(null);
 
-        // Assert
+            // Assert
 
-        selectCommand.Verify(m => m(viewModel), Times.Once);
-        closeCommand.Verify(m => m(viewModel), Times.Once);
+            selectCommand.Verify(m => m(viewModel), Times.Once);
+            closeCommand.Verify(m => m(viewModel), Times.Once);
+        });
     }
 }
