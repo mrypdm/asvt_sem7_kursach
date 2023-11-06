@@ -14,7 +14,7 @@ public interface IProjectManager : INotifyPropertyChanged
     /// <summary>
     /// Current project
     /// </summary>
-    Project Project { get; }
+    IProject Project { get; }
 
     /// <summary>
     /// Is project opened

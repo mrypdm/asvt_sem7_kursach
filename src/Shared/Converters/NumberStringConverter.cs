@@ -2,32 +2,37 @@
 
 namespace Shared.Converters;
 
-public class NumberStringConverter : IConverter<string, int>
+/// <summary>
+/// Converts a <see cref="string"/> to a <see cref="ushort"/> using the number system
+/// </summary>
+public class NumberStringConverter : IConverter<string, ushort>
 {
-    public int Convert(string value)
+    /// <inheritdoc />
+    public ushort Convert(string value)
     {
         if (value.StartsWith("0b"))
         {
-            return System.Convert.ToInt32(value[2..], 2);
+            return System.Convert.ToUInt16(value[2..], 2);
         }
 
         if (value.StartsWith("0o"))
         {
-            return System.Convert.ToInt32(value[2..], 8);
+            return System.Convert.ToUInt16(value[2..], 8);
         }
 
         if (value.StartsWith("0d"))
         {
-            return System.Convert.ToInt32(value[2..], 10);
+            return System.Convert.ToUInt16(value[2..], 10);
         }
 
         if (value.StartsWith("0x"))
         {
-            return System.Convert.ToInt32(value[2..], 16);
+            return System.Convert.ToUInt16(value[2..], 16);
         }
 
-        return System.Convert.ToInt32(value, 10);
+        return System.Convert.ToUInt16(value, 10);
     }
 
-    public Task<int> ConvertAsync(string value) => Task.FromResult(Convert(value));
+    /// <inheritdoc />
+    public Task<ushort> ConvertAsync(string value) => Task.FromResult(Convert(value));
 }

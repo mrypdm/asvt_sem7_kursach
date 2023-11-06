@@ -2,6 +2,6 @@
   "Executable": "",
   "Files": [],
   "Devices": [ "C:\\a.dll" ],
-  "StackAddressString": "0b1010",
-  "ProgramAddressString": "0xFF"
+  "StackAddress": "0b1010",
+  "ProgramAddress": "0xFF"
 }

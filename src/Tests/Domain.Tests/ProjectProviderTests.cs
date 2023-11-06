@@ -95,31 +95,34 @@ public class ProjectProviderTests
         {
             "./Projects/1.json", new Project
             {
-                Executable = "main.asm",
-                Files = new List<string> { "main.asm" },
-                StackAddressString = "0o1000",
-                ProgramAddressString = "0o1000",
+                Executable = $"{Constants.ProjectDir}main.asm",
+                Files = new List<string> { $"{Constants.ProjectDir}main.asm" },
+                StackAddress = 512,
+                ProgramAddress = 512,
             }
         },
         new object[]
         {
             "./Projects/2.json", new Project
             {
-                Executable = "main.asm",
-                Files = new List<string> { "main.asm", "another.asm" },
-                StackAddressString = "1000",
-                ProgramAddressString = "512",
+                Executable = $"{Constants.ProjectDir}main.asm",
+                Files = new List<string> { $"{Constants.ProjectDir}main.asm", $"{Constants.ProjectDir}another.asm" },
+                StackAddress = 1000,
+                ProgramAddress = 512,
             }
         },
         new object[]
         {
             "./Projects/3.json", new Project
             {
-                Executable = "main.asm",
-                Files = new List<string> { "main.asm" },
-                Devices = new List<string> { "C:\\device.dll" },
-                StackAddressString = "0xff",
-                ProgramAddressString = "0b1010",
+                Executable = $"{Constants.ProjectDir}main.asm",
+                Files = new List<string> { $"{Constants.ProjectDir}main.asm" },
+                Devices = new List<string>
+                {
+                    $"{Constants.CurrentDir}device.dll"
+                },
+                StackAddress = 255,
+                ProgramAddress = 10
             }
         }
     };

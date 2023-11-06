@@ -3,7 +3,7 @@
 namespace Shared.Converters;
 
 /// <summary>
-/// Type converter
+/// Convert <typeparamref name="TIn"/> to <typeparamref name="TOut"/>
 /// </summary>
 /// <typeparam name="TIn">Input type</typeparam>
 /// <typeparam name="TOut">Output type</typeparam>

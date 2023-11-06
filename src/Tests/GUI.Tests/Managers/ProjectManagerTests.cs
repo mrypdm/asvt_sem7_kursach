@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using Domain.Extensions;
 using Domain.Models;
 using Domain.Providers;
 using GUI.Managers;
@@ -46,7 +47,7 @@ public class ProjectManagerTests
         const string projectName = "TestProject";
         var directoryPath = Directory.GetCurrentDirectory();
         var expectedPath =
-            $"{directoryPath}{Path.DirectorySeparatorChar}{projectName}.{Project.ProjectFileExtension}";
+            $"{directoryPath}{Path.DirectorySeparatorChar}{projectName}.{ProjectManager.ProjectExtension}";
 
         var directory = new Mock<IStorageFolder>();
         directory.Setup(m => m.Path).Returns(new Uri(directoryPath));
@@ -67,8 +68,8 @@ public class ProjectManagerTests
 
         Assert.That(res, Is.True);
         Assert.That(manager.IsOpened, Is.True);
-        Assert.That(manager.Project.ProjectFilePath, Is.EqualTo(expectedPath));
-        Assert.That(PathHelper.GetPathType(manager.Project.ProjectFilePath), Is.EqualTo(PathHelper.PathType.File));
+        Assert.That(manager.Project.ProjectFile, Is.EqualTo(expectedPath));
+        Assert.That(PathHelper.GetPathType(manager.Project.ProjectFile), Is.EqualTo(PathHelper.PathType.File));
         storageProvider.Verify(m => m.OpenFolderPickerAsync(It.IsAny<FolderPickerOpenOptions>()), Times.Once);
         propertyChangedAssert.Assert(nameof(manager.Project));
     }
@@ -118,11 +119,11 @@ public class ProjectManagerTests
         const string projectName = "TestProject";
         var directoryPath = Directory.GetCurrentDirectory();
         var expectedPath =
-            $"{directoryPath}{Path.DirectorySeparatorChar}{projectName}.{Project.ProjectFileExtension}";
+            $"{directoryPath}{Path.DirectorySeparatorChar}{projectName}.{ProjectManager.ProjectExtension}";
 
         var project = new Project
         {
-            ProjectFilePath = expectedPath
+            ProjectFile = expectedPath
         };
 
         await JsonHelper.SerializeToFileAsync(project, expectedPath);
@@ -151,7 +152,7 @@ public class ProjectManagerTests
 
         Assert.That(res, Is.True);
         Assert.That(manager.IsOpened, Is.True);
-        Assert.That(manager.Project.ProjectFilePath, Is.EqualTo(expectedPath));
+        Assert.That(manager.Project.ProjectFile, Is.EqualTo(expectedPath));
         projectProvider.Verify(m => m.OpenProjectAsync(expectedPath), Times.Once);
         storageProvider.Verify(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()), Times.Once);
         file.Verify(m => m.Path, Times.Once);
@@ -188,13 +189,13 @@ public class ProjectManagerTests
 
         // Act
 
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        await manager.LoadProjectAsync(project.ProjectFile);
 
         // Assert
 
         Assert.That(manager.IsOpened, Is.True);
-        Assert.That(manager.Project.ProjectFilePath, Is.EqualTo(project.ProjectFilePath));
-        projectProvider.Verify(m => m.OpenProjectAsync(project.ProjectFilePath), Times.Once);
+        Assert.That(manager.Project.ProjectFile, Is.EqualTo(project.ProjectFile));
+        projectProvider.Verify(m => m.OpenProjectAsync(project.ProjectFile), Times.Once);
         propertyChangedAssert.Assert(nameof(manager.Project));
     }
 
@@ -203,14 +204,18 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, project) = await InitManager();
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        var (manager, _, project) = await InitManager();
+        await manager.LoadProjectAsync(project.ProjectFile);
         var propertyChangedAssert = new PropertyChangedAssert(manager);
 
         // Act
 
-        project.Executable = "main.asm";
-        await JsonHelper.SerializeToFileAsync(project, project.ProjectFilePath);
+        project = new Project
+        {
+            Executable = PathHelper.Combine(project.ProjectDirectory, "main.asm"),
+            ProjectFile = project.ProjectFile
+        };
+        await project.ToJsonAsync();
         await manager.ReloadProjectAsync();
 
         // Assert
@@ -225,8 +230,8 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, project) = await InitManager();
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        var (manager, provider, project) = await InitManager();
+        await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         var propertyChangedAssert = new PropertyChangedAssert(manager);
 
@@ -237,8 +242,9 @@ public class ProjectManagerTests
 
         // Assert
 
-        project = await JsonHelper.DeserializeFileAsync<Project>(project.ProjectFilePath);
-        Assert.That(project.Files, Does.Contain(expectedFile));
+        project = await provider.OpenProjectAsync(project.ProjectFile);
+        
+        Assert.That(project.Files, Has.Exactly(1).Matches<string>(s => s.Contains(expectedFile)));
         propertyChangedAssert.Assert(nameof(manager.Project));
     }
 
@@ -247,8 +253,8 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, project) = await InitManager();
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        var (manager, _, project) = await InitManager();
+        await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         var propertyChangedAssert = new PropertyChangedAssert(manager);
 
@@ -258,7 +264,7 @@ public class ProjectManagerTests
 
         // Assert
 
-        Assert.That(manager.Project.Files, Does.Contain(expectedFile));
+        Assert.That(manager.Project.Files, Has.Exactly(1).Matches<string>(s => s.Contains(expectedFile)));
         propertyChangedAssert.Assert(nameof(project.Files));
     }
 
@@ -267,8 +273,8 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, project) = await InitManager();
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        var (manager, _, project) = await InitManager();
+        await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         manager.AddFileToProject(expectedFile);
 
@@ -278,7 +284,7 @@ public class ProjectManagerTests
 
         // Assert
 
-        Assert.That(manager.Project.Files, Has.Exactly(1).Matches<string>(s => s == expectedFile));
+        Assert.That(manager.Project.Files, Has.Exactly(1).Matches<string>(s => s.Contains(expectedFile)));
     }
 
     [Test]
@@ -286,8 +292,8 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, project) = await InitManager();
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        var (manager, _, project) = await InitManager();
+        await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         manager.AddFileToProject(expectedFile);
         var propertyChangedAssert = new PropertyChangedAssert(manager);
@@ -307,8 +313,8 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, project) = await InitManager();
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        var (manager, _, project) = await InitManager();
+        await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
 
         // Act
@@ -325,8 +331,8 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, project) = await InitManager();
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        var (manager, _, project) = await InitManager();
+        await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         var propertyChangedAssert = new PropertyChangedAssert(manager);
 
@@ -345,8 +351,8 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, project) = await InitManager();
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        var (manager, _, project) = await InitManager();
+        await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         manager.AddDeviceToProject(expectedFile);
 
@@ -365,8 +371,8 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, project) = await InitManager();
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        var (manager, _, project) = await InitManager();
+        await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         manager.AddDeviceToProject(expectedFile);
         var propertyChangedAssert = new PropertyChangedAssert(manager);
@@ -386,8 +392,8 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, project) = await InitManager();
-        await manager.LoadProjectAsync(project.ProjectFilePath);
+        var (manager, _, project) = await InitManager();
+        await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
 
         // Act
@@ -403,27 +409,28 @@ public class ProjectManagerTests
     {
         var directoryPath = Directory.GetCurrentDirectory();
         var expectedPath =
-            $"{directoryPath}{Path.DirectorySeparatorChar}{name}.{Project.ProjectFileExtension}";
+            $"{directoryPath}{Path.DirectorySeparatorChar}{name}.{ProjectManager.ProjectExtension}";
 
         var project = new Project
         {
-            ProjectFilePath = expectedPath
+            ProjectFile = expectedPath
         };
 
-        await JsonHelper.SerializeToFileAsync(project, expectedPath);
+        await project.ToJsonAsync();
 
         return project;
     }
 
-    private static async Task<(IProjectManager, Project)> InitManager(
+    private static async Task<(IProjectManager, IProjectProvider, IProject)> InitManager(
         [CallerMemberName] string name = null)
     {
         var project = await InitProject(name);
-        var manager = new ProjectManager(new ProjectProvider());
-        return (manager, project);
+        var provider = new ProjectProvider();
+        var manager = new ProjectManager(provider);
+        return (manager, provider, project);
     }
 
-    private static async Task<(IProjectManager, Mock<IProjectProvider>, Project)> InitMockManager(
+    private static async Task<(IProjectManager, Mock<IProjectProvider>, IProject)> InitMockManager(
         [CallerMemberName] string name = null)
     {
         var project = await InitProject(name);

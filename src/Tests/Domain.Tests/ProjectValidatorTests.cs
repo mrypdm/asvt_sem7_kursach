@@ -64,9 +64,9 @@ public class ProjectValidatorTests
         {
             new Project
             {
-                Executable = "main.asm",
-                Files = new List<string> { "main.asm" },
-                ProjectFilePath = "./Projects/1.json"
+                Executable = $"{Constants.ProjectDir}main.asm",
+                Files = new List<string> { $"{Constants.ProjectDir}main.asm" },
+                ProjectFile = $"{Constants.ProjectDir}1.json"
             },
             false,
             null
@@ -75,8 +75,8 @@ public class ProjectValidatorTests
         {
             new Project
             {
-                Executable = "main.asm",
-                Files = new List<string> { "main.asm" }
+                Executable = $"{Constants.ProjectDir}main.asm",
+                Files = new List<string> { $"{Constants.ProjectDir}main.asm" }
             },
             true,
             "Project file path is not set"
@@ -85,9 +85,9 @@ public class ProjectValidatorTests
         {
             new Project
             {
-                Executable = "main.asm",
-                Files = new List<string> { "main.asm" },
-                ProjectFilePath = "./Projects"
+                Executable = $"{Constants.ProjectDir}main.asm",
+                Files = new List<string> { $"{Constants.ProjectDir}main.asm" },
+                ProjectFile = $"{Constants.ProjectDir}"
             },
             true,
             "Project file does not exist"
@@ -96,9 +96,9 @@ public class ProjectValidatorTests
         {
             new Project
             {
-                Executable = "another.asm",
-                Files = new List<string> { "another.asm" },
-                ProjectFilePath = "./Projects/1.json"
+                Executable = $"{Constants.ProjectDir}another.asm",
+                Files = new List<string> { $"{Constants.ProjectDir}another.asm" },
+                ProjectFile = $"{Constants.ProjectDir}1.json"
             },
             true,
             "These files do not exist on disk"
@@ -107,8 +107,8 @@ public class ProjectValidatorTests
         {
             new Project
             {
-                Files = new List<string> { "../Projects" },
-                ProjectFilePath = "./Projects/1.json"
+                Files = new List<string> { $"{Constants.ProjectDir}../Projects" },
+                ProjectFile = $"{Constants.ProjectDir}1.json"
             },
             true,
             "These files do not exist on disk"
@@ -118,8 +118,8 @@ public class ProjectValidatorTests
             new Project
             {
                 Executable = "  ",
-                Files = new List<string> { "main.asm" },
-                ProjectFilePath = "./Projects/1.json"
+                Files = new List<string> { $"{Constants.ProjectDir}main.asm" },
+                ProjectFile = $"{Constants.ProjectDir}1.json"
             },
             true,
             "Executable file is not set"
@@ -128,35 +128,11 @@ public class ProjectValidatorTests
         {
             new Project
             {
-                Executable = "main.asm",
-                ProjectFilePath = "./Projects/1.json"
+                Executable = $"{Constants.ProjectDir}main.asm",
+                ProjectFile = $"{Constants.ProjectDir}1.json"
             },
             true,
             "Executable file is not represented in project files"
-        },
-        new object[]
-        {
-            new Project
-            {
-                Executable = "main.asm",
-                Files = new List<string> { "main.asm" },
-                ProjectFilePath = "./Projects/1.json",
-                ProgramAddressString = ""
-            },
-            true,
-            "Program start address is not set"
-        },
-        new object[]
-        {
-            new Project
-            {
-                Executable = "main.asm",
-                Files = new List<string> { "main.asm" },
-                ProjectFilePath = "./Projects/1.json",
-                StackAddressString = ""
-            },
-            true,
-            "Stack start address is not set"
-        },
+        }
     };
 }

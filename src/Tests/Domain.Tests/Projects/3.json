@@ -4,8 +4,8 @@
   ],
   "Executable": "main.asm",
   "Devices": [
-    "C:\\device.dll"
+    "../device.dll"
   ],
-  "StackAddressString": "0xff",
-  "ProgramAddressString": "0b1010"
+  "StackAddress": "0xff",
+  "ProgramAddress": "0b1010"
 }

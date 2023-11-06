@@ -139,7 +139,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
 
     public string WindowTitle => _projectManager?.IsOpened == true
-        ? $"{DefaultWindowTitle} - {_projectManager.Project.ProjectFileName}"
+        ? $"{DefaultWindowTitle} - {_projectManager.Project.ProjectName}"
         : DefaultWindowTitle;
 
     /// <summary>
@@ -218,7 +218,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     private async Task CreateFileAsync()
     {
         var file = await _fileManager.CreateFile(View.StorageProvider,
-            _projectManager.IsOpened ? _projectManager.Project.Directory : null, null);
+            _projectManager.IsOpened ? _projectManager.Project.ProjectDirectory : null, null);
 
         if (file != null)
         {
@@ -287,7 +287,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// <returns>True if saved</returns>
     private async Task<bool> SaveProjectFile(FileModel file)
     {
-        var error = await JsonHelper.ValidateJsonAsync<Project>(file.Text);
+        var error = await JsonHelper.ValidateJsonAsync<ProjectDto>(file.Text);
 
         if (error == null)
         {
@@ -310,7 +310,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     private async Task<bool> SaveFileAsync(FileModel file, bool saveAs)
     {
         if (file.FilePath ==
-            (_projectManager.IsOpened ? _projectManager.Project.ProjectFilePath : null))
+            (_projectManager.IsOpened ? _projectManager.Project.ProjectFile : null))
         {
             if (!saveAs)
             {
@@ -374,7 +374,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// </summary>
     private async Task CloseTabAsync(IFileTabViewModel tab, bool isUi)
     {
-        if (tab.File.FilePath == _projectManager.Project.ProjectFilePath && isUi)
+        if (tab.File.FilePath == _projectManager.Project.ProjectFile && isUi)
         {
             await _messageBoxManager.ShowErrorMessageBox("Cannot close project file", View);
             return;
@@ -468,11 +468,11 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     {
         await CloseAllTabs();
 
-        var projectFile = await _fileManager.OpenFileAsync(_projectManager.Project.ProjectFilePath);
+        var projectFile = await _fileManager.OpenFileAsync(_projectManager.Project.ProjectFile);
 
         var files = new List<FileModel> { projectFile };
 
-        foreach (var filePath in _projectManager.Project.ProjectFilesPaths)
+        foreach (var filePath in _projectManager.Project.Files)
         {
             try
             {
@@ -526,7 +526,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
 
         var mainFile = new FileModel
         {
-            FilePath = PathHelper.Combine(_projectManager.Project.Directory, MainFileName)
+            FilePath = PathHelper.Combine(_projectManager.Project.ProjectDirectory, MainFileName)
         };
         await _fileManager.WriteFileAsync(mainFile);
         _projectManager.AddFileToProject(mainFile.FilePath);
@@ -621,7 +621,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
         }
 
         var projectTab =
-            _tabManager.Tabs.SingleOrDefault(t => t.File.FilePath == _projectManager.Project.ProjectFilePath);
+            _tabManager.Tabs.SingleOrDefault(t => t.File.FilePath == _projectManager.Project.ProjectFile);
         if (projectTab != null)
         {
             var fileOnDisk = await _fileManager.OpenFileAsync(projectTab.File.FilePath);

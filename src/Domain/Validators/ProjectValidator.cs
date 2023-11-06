@@ -34,17 +34,17 @@ public class ProjectValidator : IProjectValidator
     /// <inheritdoc />
     public void ThrowIfModelInvalid(Project project)
     {
-        if (string.IsNullOrWhiteSpace(project.ProjectFilePath))
+        if (string.IsNullOrWhiteSpace(project.ProjectFile))
         {
             throw new ValidationException("Project file path is not set");
         }
 
-        if (PathHelper.GetPathType(project.ProjectFilePath) != PathHelper.PathType.File)
+        if (PathHelper.GetPathType(project.ProjectFile) != PathHelper.PathType.File)
         {
             throw new ValidationException("Project file does not exist");
         }
 
-        var badFiles = project.ProjectFilesPaths
+        var badFiles = project.Files
             .Where(p => PathHelper.GetPathType(p) != PathHelper.PathType.File)
             .ToArray();
         if (badFiles.Any())
@@ -65,19 +65,9 @@ public class ProjectValidator : IProjectValidator
             throw new ValidationException("Executable file is not set");
         }
 
-        if (!project.ProjectFilesPaths.Contains(project.ExecutableFilePath))
+        if (!project.Files.Contains(project.Executable))
         {
             throw new ValidationException("Executable file is not represented in project files");
-        }
-
-        if (string.IsNullOrWhiteSpace(project.ProgramAddressString))
-        {
-            throw new ValidationException("Program start address is not set");
-        }
-
-        if (string.IsNullOrWhiteSpace(project.StackAddressString))
-        {
-            throw new ValidationException("Stack start address is not set");
         }
 
         // TODO: Check that device is valid

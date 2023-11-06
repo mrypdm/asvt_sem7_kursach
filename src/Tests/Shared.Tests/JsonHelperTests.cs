@@ -19,9 +19,9 @@ public class JsonHelperTests
 
     [Test]
     [TestCaseSource(nameof(DeserializeProjectFileTestSource))]
-    public async Task DeserializeProjectFileTest(string path, Project expected)
+    public async Task DeserializeProjectFileTest(string path, ProjectDto expected)
     {
-        var project = await JsonHelper.DeserializeFileAsync<Project>(path);
+        var project = await JsonHelper.DeserializeFileAsync<ProjectDto>(path);
 
         Assert.Multiple(() =>
         {
@@ -60,33 +60,33 @@ public class JsonHelperTests
     {
         new object[]
         {
-            "{\"Files\":[\"main.asm\"],\"Executable\": \"main.asm\",\"Devices\":[],\"StackAddressString\":\"0o1000\",\"ProgramAddressString\":\"0o1000\"}",
+            "{\"Files\":[\"main.asm\"],\"Executable\": \"main.asm\",\"Devices\":[],\"StackAddress\":\"0o1000\",\"ProgramAddress\":\"0o1000\"}",
             true,
-            new Project()
+            new ProjectDto()
         },
         new object[]
         {
-            "{\n  \"Files\": [\n    \"main.asm\"\n  ],\n  \"Executable\": \"main.asm\",\n  \"Devices\": [],\n  \"StackAddressString\": \"0o1000\",\n  \"ProgramAddressString\": \"0o1000\"\n}",
+            "{\n  \"Files\": [\n    \"main.asm\"\n  ],\n  \"Executable\": \"main.asm\",\n  \"Devices\": [],\n  \"StackAddress\": \"0o1000\",\n  \"ProgramAddress\": \"0o1000\"\n}",
             true,
-            new Project()
+            new ProjectDto()
         },
         new object[]
         {
-            "{\"Files\":[],\"Executable\": \"\",\"Devices\":[],\"StackAddressString\":\"0o1000\",\"ProgramAddressString\":\"0o1000\"}",
+            "{\"Files\":[],\"Executable\": \"\",\"Devices\":[],\"StackAddress\":\"0o1000\",\"ProgramAddress\":\"0o1000\"}",
             true,
-            new Project()
+            new ProjectDto()
         },
         new object[]
         {
-            "{\"Files\":[\"main.asm\"],\"Executable\": \"main.asm\",\"Devices\":[],\"StackAddressString\":\"0o1000\",\"ProgramAddressString\":\"0o1000\"",
+            "{\"Files\":[\"main.asm\"],\"Executable\": \"main.asm\",\"Devices\":[],\"StackAddress\":\"0o1000\",\"ProgramAddress\":\"0o1000\"",
             false,
-            new Project()
+            new ProjectDto()
         },
         new object[]
         {
-            "{\"Files\":[]\"Executable\": \"\",\"Devices\":[],\"StackAddressString\":\"0o1000\",\"ProgramAddressString\":\"0o1000\"}",
+            "{\"Files\":[]\"Executable\": \"\",\"Devices\":[],\"StackAddress\":\"0o1000\",\"ProgramAddress\":\"0o1000\"}",
             false,
-            new Project()
+            new ProjectDto()
         }
     };
 
@@ -95,46 +95,46 @@ public class JsonHelperTests
         new object[]
         {
             "./Jsons/1.json",
-            new Project
+            new ProjectDto
             {
                 Files = new List<string> { "main.asm" },
                 Executable = "main.asm",
-                StackAddressString = "0o1000",
-                ProgramAddressString = "0o1000"
+                StackAddress = "0o1000",
+                ProgramAddress = "0o1000"
             }
         },
         new object[]
         {
             "./Jsons/2.json",
-            new Project
+            new ProjectDto
             {
                 Files = new List<string>(),
                 Executable = string.Empty,
-                StackAddressString = "0o1000",
-                ProgramAddressString = "0o1000"
+                StackAddress = "0o1000",
+                ProgramAddress = "0o1000"
             }
         },
         new object[]
         {
             "./Jsons/3.json",
-            new Project
+            new ProjectDto
             {
                 Files = new List<string>(),
                 Executable = string.Empty,
-                StackAddressString = "0b1010",
-                ProgramAddressString = "0xFF"
+                StackAddress = "0b1010",
+                ProgramAddress = "0xFF"
             }
         },
         new object[]
         {
             "./Jsons/4.json",
-            new Project
+            new ProjectDto
             {
                 Files = new List<string>(),
                 Executable = string.Empty,
                 Devices = new List<string> { "C:\\a.dll" },
-                StackAddressString = "0b1010",
-                ProgramAddressString = "0xFF"
+                StackAddress = "0b1010",
+                ProgramAddress = "0xFF"
             }
         }
     };

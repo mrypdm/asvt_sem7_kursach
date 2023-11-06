@@ -5,6 +5,6 @@
   ],
   "Executable": "main.asm",
   "Devices": [],
-  "StackAddressString": "1000",
-  "ProgramAddressString": "512"
+  "StackAddress": "1000",
+  "ProgramAddress": "512"
 }

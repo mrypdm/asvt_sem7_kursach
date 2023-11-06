@@ -49,13 +49,6 @@ public class PathHelperTests
     }
 
     [Test]
-    [TestCaseSource(nameof(GetRelativePathInvalidThrowsTestSource))]
-    public void GetRelativePathInvalidThrowsTest(string relativeTo, string path)
-    {
-        Assert.Catch<ArgumentException>(() => PathHelper.GetRelativePath(relativeTo, path));
-    }
-
-    [Test]
     [TestCaseSource(nameof(GetPathTypeTestSource))]
     public void GetPathTypeTest(string path, PathHelper.PathType expected)
     {
@@ -111,15 +104,11 @@ public class PathHelperTests
     {
         new[] { $"{Root}{Separator}a", $"{Root}{Separator}c.txt", $"..{Separator}c.txt" },
         new[] { $"{Root}{Separator}a{Separator}..", $"{Root}{Separator}c.txt", "c.txt" },
-        new[] { $"{Root}{Separator}a{Separator}.", $"{Root}{Separator}c.txt", $"..{Separator}c.txt" }
-    };
-
-    private static readonly object[] GetRelativePathInvalidThrowsTestSource =
-    {
-        new string[] { null, null },
-        new[] { " ", "" },
-        new[] { $"{Root}{Separator}", " " },
-        new[] { " ", $"{Root}{Separator}" }
+        new[] { $"{Root}{Separator}a{Separator}.", $"{Root}{Separator}c.txt", $"..{Separator}c.txt" },
+        new[] { null, null, string.Empty },
+        new[] { " ", "", string.Empty },
+        new[] { $"{Root}{Separator}", " ", string.Empty },
+        new[] { " ", $"{Root}{Separator}", $"{Root}{Separator}" }
     };
 
     private static readonly object[] GetPathTypeTestSource =

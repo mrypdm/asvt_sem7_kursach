@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using Domain.Extensions;
 using Domain.Models;
 using Shared.Helpers;
 
@@ -12,9 +13,8 @@ public class ProjectProvider : IProjectProvider
     public async Task<Project> OpenProjectAsync(string filePath)
     {
         filePath = PathHelper.Combine(Directory.GetCurrentDirectory(), filePath);
-        var project = await JsonHelper.DeserializeFileAsync<Project>(filePath);
-        project.ProjectFilePath = filePath;
-        return project;
+        var project = await JsonHelper.DeserializeFileAsync<ProjectDto>(filePath);
+        return project.ToProject(filePath);
     }
 
     /// <inheritdoc />

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using Domain.Extensions;
 using Domain.Models;
 using Domain.Providers;
 using GUI.Notifiers;
@@ -13,8 +13,12 @@ namespace GUI.Managers;
 /// <inheritdoc cref="IProjectManager" />
 public class ProjectManager : PropertyChangedNotifier, IProjectManager
 {
+    public const string ProjectExtension = "pdp11proj";
+
     private readonly IProjectProvider _provider;
     private Project _project;
+
+    private Project SafeProject => _project ?? throw new InvalidOperationException("Project is not opened");
 
     /// <summary>
     /// Creates new instance of <see cref="ProjectManager"/>
@@ -26,10 +30,10 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     }
 
     /// <inheritdoc />
-    public Project Project
+    public IProject Project
     {
-        get => _project ?? throw new InvalidOperationException("Project is not opened");
-        private set => SetField(ref _project, value);
+        get => SafeProject;
+        private set => SetField(ref _project, value as Project);
     }
 
     /// <inheritdoc />
@@ -60,13 +64,13 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
         }
 
         var filePath =
-            PathHelper.Combine(projectDir[0].Path.LocalPath, $"{projectName}.{Project.ProjectFileExtension}");
+            PathHelper.Combine(projectDir[0].Path.LocalPath, $"{projectName}.{ProjectExtension}");
         var project = new Project
         {
-            ProjectFilePath = filePath
+            ProjectFile = filePath
         };
 
-        await JsonHelper.SerializeToFileAsync(project, filePath);
+        await project.ToJsonAsync();
         Project = project;
 
         return true;
@@ -86,9 +90,9 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
             AllowMultiple = false,
             FileTypeFilter = new[]
             {
-                new FilePickerFileType(Project.ProjectFileExtension)
+                new FilePickerFileType(ProjectExtension)
                 {
-                    Patterns = new[] { $"*.{Project.ProjectFileExtension}" }
+                    Patterns = new[] { $"*.{ProjectExtension}" }
                 }
             }
         });
@@ -109,56 +113,51 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     }
 
     /// <inheritdoc />
-    public Task ReloadProjectAsync() => LoadProjectAsync(Project.ProjectFilePath);
+    public Task ReloadProjectAsync() => LoadProjectAsync(SafeProject.ProjectFile);
 
     /// <inheritdoc />
     public async Task SaveProjectAsync()
     {
-        await JsonHelper.SerializeToFileAsync(Project, Project.ProjectFilePath);
-        await ReloadProjectAsync();
+        await SafeProject.ToJsonAsync();
+        OnPropertyChanged(nameof(Project));
     }
 
     /// <inheritdoc />
     public void AddFileToProject(string filePath)
     {
         filePath = PathHelper.GetFullPath(filePath);
-        if (Project.ProjectFilesPaths.Contains(filePath))
+        if (SafeProject.Files.Contains(filePath))
         {
             return;
         }
 
-        Project.Files.Add(Path.GetRelativePath(Project.Directory, filePath));
-        OnPropertyChanged(nameof(Project.Files));
+        SafeProject.Files.Add(filePath);
+        OnPropertyChanged(nameof(SafeProject.Files));
     }
 
     /// <inheritdoc />
     public void RemoveFileFromProject(string filePath)
     {
         filePath = PathHelper.GetFullPath(filePath);
-        var index = Project.ProjectFilesPaths.IndexOf(filePath);
 
-        if (index == -1)
+        if (SafeProject.Executable == filePath)
         {
-            return;
+            SafeProject.Executable = string.Empty;
+            OnPropertyChanged(nameof(SafeProject.Executable));
         }
 
-        if (Project.ExecutableFilePath == filePath)
-        {
-            Project.Executable = string.Empty;
-        }
-
-        Project.Files.RemoveAt(index);
-        OnPropertyChanged(nameof(Project.Files));
+        SafeProject.Files.Remove(filePath);
+        OnPropertyChanged(nameof(SafeProject.Files));
     }
 
     /// <inheritdoc />
     public void SetExecutableFile(string filePath)
     {
         filePath = PathHelper.GetFullPath(filePath);
-        if (Project.ProjectFilesPaths.Contains(filePath))
+        if (SafeProject.Files.Contains(filePath))
         {
-            Project.Executable = filePath;
-            OnPropertyChanged(nameof(Project.Executable));
+            SafeProject.Executable = filePath;
+            OnPropertyChanged(nameof(SafeProject.Executable));
         }
         else
         {
@@ -170,20 +169,20 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     public void AddDeviceToProject(string filePath)
     {
         filePath = PathHelper.GetFullPath(filePath);
-        if (Project.Devices.Contains(filePath))
+        if (SafeProject.Devices.Contains(filePath))
         {
             return;
         }
 
-        Project.Devices.Add(filePath);
-        OnPropertyChanged(nameof(Project.Devices));
+        SafeProject.Devices.Add(filePath);
+        OnPropertyChanged(nameof(SafeProject.Devices));
     }
 
     /// <inheritdoc />
     public void RemoveDeviceFromProject(string filePath)
     {
         filePath = PathHelper.GetFullPath(filePath);
-        Project.Devices.Remove(filePath);
-        OnPropertyChanged(nameof(Project.Devices));
+        SafeProject.Devices.Remove(filePath);
+        OnPropertyChanged(nameof(SafeProject.Devices));
     }
 }

@@ -1,91 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
-using Shared.Converters;
+﻿using System.Collections.Generic;
 using Shared.Helpers;
 
 namespace Domain.Models;
 
-/// <summary>
-/// Model of project
-/// </summary>
-public class Project
+/// <inheritdoc />
+public class Project : IProject
 {
-    public const string ProjectFileExtension = "pdp11proj";
-
-    /// <summary>
-    /// Executable file
-    /// </summary>
+    /// <inheritdoc />
     public string Executable { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Files of project (relative paths)
-    /// </summary>
-    public List<string> Files { get; set; } = new();
+    /// <inheritdoc />
+    public IList<string> Files { get; init; } = new List<string>();
 
-    /// <summary>
-    /// List of connected devices
-    /// </summary>
-    public List<string> Devices { get; set; } = new();
+    /// <inheritdoc />
+    public IList<string> Devices { get; init; } = new List<string>();
 
-    /// <summary>
-    /// Initial address of stack pointer (original value), <see cref="StackAddress"/>
-    /// </summary>
-    public string StackAddressString { get; set; } = "0o1000";
+    /// <inheritdoc />
+    public ushort StackAddress { get; set; } = 512;
 
-    /// <summary>
-    /// Start address of program (original value), <see cref="ProgramAddress"/>
-    /// </summary>
-    public string ProgramAddressString { get; set; } = "0o1000";
+    /// <inheritdoc />
+    public ushort ProgramAddress { get; set; } = 512;
 
-    /// <summary>
-    /// Path to project file
-    /// </summary>
-    [JsonIgnore]
-    public string ProjectFilePath { get; set; }
+    /// <inheritdoc />
+    public string ProjectFile { get; init; } = string.Empty;
 
-    /// <summary>
-    /// Directory of project
-    /// </summary>
-    [JsonIgnore]
-    public string Directory => PathHelper.GetDirectoryName(ProjectFilePath);
+    /// <inheritdoc />
+    public string ProjectDirectory => PathHelper.GetDirectoryName(ProjectFile);
 
-    /// <summary>
-    /// Project file name
-    /// </summary>
-    [JsonIgnore]
-    public string ProjectFileName => PathHelper.GetFileName(ProjectFilePath);
-
-    /// <summary>
-    /// Absolute paths to project files
-    /// </summary>
-    [JsonIgnore]
-    public IList<string> ProjectFilesPaths => Files.Select(f => PathHelper.Combine(Directory, f)).ToList();
-
-    /// <summary>
-    /// Absolute path to executable file
-    /// </summary>
-    [JsonIgnore]
-    public string ExecutableFilePath => Executable == string.Empty ? null : PathHelper.Combine(Directory, Executable);
-
-    /// <summary>
-    /// Initial address of stack pointer
-    /// </summary>
-    [JsonIgnore]
-    public int StackAddress
-    {
-        get => new NumberStringConverter().Convert(StackAddressString);
-        set => StackAddressString = $"0o{Convert.ToString(value, 8)}";
-    }
-
-    /// <summary>
-    /// Start address of program
-    /// </summary>
-    [JsonIgnore]
-    public int ProgramAddress
-    {
-        get => new NumberStringConverter().Convert(ProgramAddressString);
-        set => ProgramAddressString = $"0o{Convert.ToString(value, 8)}";
-    }
+    /// <inheritdoc />
+    public string ProjectName => PathHelper.GetFileName(ProjectFile);
 }
