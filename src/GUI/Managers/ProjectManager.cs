@@ -22,7 +22,7 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     /// <param name="provider">Project provider</param>
     public ProjectManager(IProjectProvider provider)
     {
-        _provider = provider;
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
     }
 
     /// <inheritdoc />
@@ -38,6 +38,16 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     /// <inheritdoc />
     public async Task<bool> CreateProjectAsync(IStorageProvider storageProvider, string projectName)
     {
+        if (storageProvider == null)
+        {
+            throw new ArgumentNullException(nameof(storageProvider));
+        }
+
+        if (string.IsNullOrWhiteSpace(projectName))
+        {
+            throw new ArgumentException("Project name cannot be empty", nameof(projectName));
+        }
+
         var projectDir = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
             Title = "Choose project folder...",
@@ -64,6 +74,11 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     /// <inheritdoc />
     public async Task<bool> OpenProjectAsync(IStorageProvider storageProvider)
     {
+        if (storageProvider == null)
+        {
+            throw new ArgumentNullException(nameof(storageProvider));
+        }
+
         var projectFile = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = "Open project file...",
@@ -96,12 +111,6 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     public Task ReloadProjectAsync() => LoadProjectAsync(Project.ProjectFilePath);
 
     /// <inheritdoc />
-    public void CloseProject()
-    {
-        Project = null;
-    }
-
-    /// <inheritdoc />
     public async Task SaveProjectAsync()
     {
         await JsonHelper.SerializeToFileAsync(Project, Project.ProjectFilePath);
@@ -111,7 +120,8 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     /// <inheritdoc />
     public void AddFileToProject(string filePath)
     {
-        if (Project.ProjectFilePath.Contains(filePath))
+        filePath = PathHelper.GetFullPath(filePath);
+        if (Project.ProjectFilesPaths.Contains(filePath))
         {
             return;
         }
@@ -123,7 +133,13 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     /// <inheritdoc />
     public void RemoveFileFromProject(string filePath)
     {
+        filePath = PathHelper.GetFullPath(filePath);
         var index = Project.ProjectFilesPaths.IndexOf(filePath);
+
+        if (index == -1)
+        {
+            return;
+        }
 
         if (Project.ExecutableFilePath == filePath)
         {
@@ -137,9 +153,10 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     /// <inheritdoc />
     public void SetExecutableFile(string filePath)
     {
+        filePath = PathHelper.GetFullPath(filePath);
         if (Project.ProjectFilesPaths.Contains(filePath))
         {
-            Project.Executable = PathHelper.GetRelativePath(Project.Directory, filePath);
+            Project.Executable = filePath;
             OnPropertyChanged(nameof(Project.Executable));
         }
         else
@@ -151,6 +168,7 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     /// <inheritdoc />
     public void AddDeviceToProject(string filePath)
     {
+        filePath = PathHelper.GetFullPath(filePath);
         if (Project.Devices.Contains(filePath))
         {
             return;
@@ -163,6 +181,7 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     /// <inheritdoc />
     public void RemoveDeviceFromProject(string filePath)
     {
+        filePath = PathHelper.GetFullPath(filePath);
         Project.Devices.Remove(filePath);
         OnPropertyChanged(nameof(Project.Devices));
     }

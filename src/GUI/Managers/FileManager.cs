@@ -14,6 +14,11 @@ public class FileManager : IFileManager
     /// <inheritdoc />
     public async Task<string> GetFileAsync(IStorageProvider storageProvider, PickerOptions options)
     {
+        if (storageProvider == null)
+        {
+            throw new ArgumentNullException(nameof(storageProvider));
+        }
+
         switch (options)
         {
             case FilePickerSaveOptions saveOptions:
@@ -26,7 +31,7 @@ public class FileManager : IFileManager
             case FilePickerOpenOptions openOptions:
             {
                 var file = await storageProvider.OpenFilePickerAsync(openOptions);
-                return file.Count == 1 ? file[0].Path.LocalPath : null;
+                return file.Any() ? file[0].Path.LocalPath : null;
             }
             default:
                 throw new InvalidOperationException($"Invalid type of {nameof(options)} - {options.GetType().Name}");
@@ -36,6 +41,11 @@ public class FileManager : IFileManager
     /// <inheritdoc />
     public async Task<FileModel> CreateFile(IStorageProvider storageProvider, string directoryPath, string fileName)
     {
+        if (storageProvider == null)
+        {
+            throw new ArgumentNullException(nameof(storageProvider));
+        }
+
         var options = new FilePickerSaveOptions
         {
             Title = "Create file...",
@@ -64,6 +74,11 @@ public class FileManager : IFileManager
     /// <inheritdoc />
     public async Task<ICollection<FileModel>> OpenFilesAsync(IStorageProvider storageProvider)
     {
+        if (storageProvider == null)
+        {
+            throw new ArgumentNullException(nameof(storageProvider));
+        }
+
         var files = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = "Open files...",

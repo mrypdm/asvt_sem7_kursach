@@ -50,17 +50,17 @@ public class SettingsViewModelTests : GuiTest<App>
             const string devicePath = "a.dll";
             PickerOptions options = null;
 
-            var fileManagerMock = new Mock<IFileManager>();
-            fileManagerMock
+            var fileManager = new Mock<IFileManager>();
+            fileManager
                 .Setup(m => m.GetFileAsync(It.IsAny<IStorageProvider>(), It.IsAny<PickerOptions>()))
                 .Callback<IStorageProvider, PickerOptions>((_, ops) => { options = ops; })
                 .ReturnsAsync(devicePath);
 
-            var projectManagerMock = new Mock<IProjectManager>();
-            projectManagerMock.Setup(m => m.SaveProjectAsync()).Returns(Task.CompletedTask);
+            var projectManager = new Mock<IProjectManager>();
+            projectManager.Setup(m => m.SaveProjectAsync()).Returns(Task.CompletedTask);
 
             var viewModel =
-                new SettingsViewModel(new SettingsWindow(), projectManagerMock.Object, fileManagerMock.Object);
+                new SettingsViewModel(new SettingsWindow(), projectManager.Object, fileManager.Object);
 
             // Act
 
@@ -68,9 +68,9 @@ public class SettingsViewModelTests : GuiTest<App>
 
             // Assert
 
-            fileManagerMock.Verify(m => m.GetFileAsync(It.IsAny<IStorageProvider>(), options), Times.Once);
-            projectManagerMock.Verify(m => m.AddDeviceToProject(devicePath), Times.Once);
-            projectManagerMock.Verify(m => m.SaveProjectAsync(), Times.Once);
+            fileManager.Verify(m => m.GetFileAsync(It.IsAny<IStorageProvider>(), options), Times.Once);
+            projectManager.Verify(m => m.AddDeviceToProject(devicePath), Times.Once);
+            projectManager.Verify(m => m.SaveProjectAsync(), Times.Once);
 
             var openOptions = options as FilePickerOpenOptions;
             Assert.Multiple(() =>
@@ -93,10 +93,10 @@ public class SettingsViewModelTests : GuiTest<App>
 
             var devices = new[] { "a.dll", "b.dll" };
 
-            var projectManagerMock = new Mock<IProjectManager>();
-            projectManagerMock.Setup(m => m.SaveProjectAsync()).Returns(Task.CompletedTask);
+            var projectManager = new Mock<IProjectManager>();
+            projectManager.Setup(m => m.SaveProjectAsync()).Returns(Task.CompletedTask);
 
-            var viewModel = new SettingsViewModel(new SettingsWindow(), projectManagerMock.Object, null)
+            var viewModel = new SettingsViewModel(new SettingsWindow(), projectManager.Object, null)
             {
                 SelectedDevices = new ObservableCollection<string>(devices)
             };
@@ -107,9 +107,9 @@ public class SettingsViewModelTests : GuiTest<App>
 
             // Assert
 
-            projectManagerMock.Verify(m => m.RemoveDeviceFromProject(devices[0]), Times.Once);
-            projectManagerMock.Verify(m => m.RemoveDeviceFromProject(devices[1]), Times.Once);
-            projectManagerMock.Verify(m => m.SaveProjectAsync(), Times.Once);
+            projectManager.Verify(m => m.RemoveDeviceFromProject(devices[0]), Times.Once);
+            projectManager.Verify(m => m.RemoveDeviceFromProject(devices[1]), Times.Once);
+            projectManager.Verify(m => m.SaveProjectAsync(), Times.Once);
         });
     }
 
@@ -123,7 +123,7 @@ public class SettingsViewModelTests : GuiTest<App>
             var fontFamily = new FontFamily("Font");
             const int fontSize = 16;
 
-            var viewModel = new SettingsViewModel(new SettingsWindow(), new ProjectManager(null), null)
+            var viewModel = new SettingsViewModel(new SettingsWindow(), new ProjectManager(new ProjectProvider()), null)
             {
                 // Act
                 FontFamily = fontFamily,
@@ -148,20 +148,20 @@ public class SettingsViewModelTests : GuiTest<App>
             // Arrange
 
             var property = string.Empty;
-            var projectManagerMock = new Mock<IProjectManager>();
-            var viewModel = new SettingsViewModel(new SettingsWindow(), projectManagerMock.Object, new FileManager());
+            var projectManager = new Mock<IProjectManager>();
+            var viewModel = new SettingsViewModel(new SettingsWindow(), projectManager.Object, new FileManager());
 
             viewModel.PropertyChanged += (_, args) => { property = args.PropertyName; };
 
             // Act
 
-            await projectManagerMock.RaiseAsync(m => m.PropertyChanged += null,
-                projectManagerMock.Object,
+            await projectManager.RaiseAsync(m => m.PropertyChanged += null,
+                projectManager.Object,
                 new PropertyChangedEventArgs("Project"));
 
             // Assert
 
-            projectManagerMock.VerifyAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>(), Times.Once);
+            projectManager.VerifyAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>(), Times.Once);
             Assert.That(property, Is.EqualTo(nameof(viewModel.Devices)));
         });
     }

@@ -495,10 +495,10 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
             return false;
         }
 
-        string projectName;
+        bool successCreation;
         while (true)
         {
-            (var res, projectName) = await _messageBoxManager.ShowInputMessageBoxAsync("Create project",
+            var (res, projectName) = await _messageBoxManager.ShowInputMessageBoxAsync("Create project",
                 "Enter project name", ButtonEnum.OkCancel, Icon.Setting, View, "Project name");
 
             if (res == ButtonResult.Cancel)
@@ -506,31 +506,35 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(projectName))
+            try
             {
-                await _messageBoxManager.ShowErrorMessageBox("Project name cannot be empty", View);
+                successCreation = await _projectManager.CreateProjectAsync(View.StorageProvider, projectName.Trim());
+            }
+            catch (ArgumentException e)
+            {
+                await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
                 continue;
             }
 
             break;
         }
 
-        if (await _projectManager.CreateProjectAsync(View.StorageProvider, projectName.Trim()))
+        if (!successCreation)
         {
-            var mainFile = new FileModel
-            {
-                FilePath = PathHelper.Combine(_projectManager.Project.Directory, MainFileName)
-            };
-            await _fileManager.WriteFileAsync(mainFile);
-            _projectManager.AddFileToProject(mainFile.FilePath);
-            _projectManager.SetExecutableFile(mainFile.FilePath);
-            await _projectManager.SaveProjectAsync();
-
-            await OpenProjectFilesAsync();
-            return true;
+            return false;
         }
 
-        return false;
+        var mainFile = new FileModel
+        {
+            FilePath = PathHelper.Combine(_projectManager.Project.Directory, MainFileName)
+        };
+        await _fileManager.WriteFileAsync(mainFile);
+        _projectManager.AddFileToProject(mainFile.FilePath);
+        _projectManager.SetExecutableFile(mainFile.FilePath);
+        await _projectManager.SaveProjectAsync();
+
+        await OpenProjectFilesAsync();
+        return true;
     }
 
     private async Task<bool> OpenProjectAsync(string projectPath = null)
@@ -542,18 +546,25 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
 
         try
         {
-            if (projectPath == null && await _projectManager.OpenProjectAsync(View.StorageProvider))
-            {
-                await OpenProjectFilesAsync();
-                return true;
-            }
-
             if (projectPath != null)
             {
-                await _projectManager.LoadProjectAsync(projectPath);
+                try
+                {
+                    await _projectManager.LoadProjectAsync(projectPath);
+                    await OpenProjectFilesAsync();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
+                }
+            }
+            
+            if (await _projectManager.OpenProjectAsync(View.StorageProvider))
+            {
                 await OpenProjectFilesAsync();
                 return true;
-            }
+            } 
         }
         catch (Exception e)
         {

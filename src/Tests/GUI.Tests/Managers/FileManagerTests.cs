@@ -19,13 +19,13 @@ public class FileManagerTests
         // Arrange
 
         const string filePath = "C:\\c.txt";
-        var fileMock = new Mock<IStorageFile>();
-        fileMock.Setup(m => m.Path).Returns(new Uri(filePath));
+        var file = new Mock<IStorageFile>();
+        file.Setup(m => m.Path).Returns(new Uri(filePath));
 
-        var storageProviderMock = new Mock<IStorageProvider>();
-        storageProviderMock
+        var storageProvider = new Mock<IStorageProvider>();
+        storageProvider
             .Setup(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()))
-            .ReturnsAsync(new[] { fileMock.Object });
+            .ReturnsAsync(new[] { file.Object });
 
         var options = new FilePickerOpenOptions { AllowMultiple = false };
 
@@ -33,13 +33,13 @@ public class FileManagerTests
 
         // Act
 
-        var file = await fileManager.GetFileAsync(storageProviderMock.Object, options);
+        var selectedFile = await fileManager.GetFileAsync(storageProvider.Object, options);
 
         // Assert
 
-        Assert.That(file, Is.EqualTo(filePath));
-        storageProviderMock.Verify(m => m.OpenFilePickerAsync(options), Times.Once);
-        fileMock.Verify(m => m.Path, Times.Once);
+        Assert.That(selectedFile, Is.EqualTo(filePath));
+        storageProvider.Verify(m => m.OpenFilePickerAsync(options), Times.Once);
+        file.Verify(m => m.Path, Times.Once);
     }
 
     [Test]
@@ -48,13 +48,13 @@ public class FileManagerTests
         // Arrange
 
         const string filePath = "C:\\c.txt";
-        var fileMock = new Mock<IStorageFile>();
-        fileMock.Setup(m => m.Path).Returns(new Uri(filePath));
+        var file = new Mock<IStorageFile>();
+        file.Setup(m => m.Path).Returns(new Uri(filePath));
 
-        var storageProviderMock = new Mock<IStorageProvider>();
-        storageProviderMock
+        var storageProvider = new Mock<IStorageProvider>();
+        storageProvider
             .Setup(m => m.SaveFilePickerAsync(It.IsAny<FilePickerSaveOptions>()))
-            .ReturnsAsync(fileMock.Object);
+            .ReturnsAsync(file.Object);
 
         var options = new FilePickerSaveOptions();
 
@@ -62,13 +62,13 @@ public class FileManagerTests
 
         // Act
 
-        var file = await fileManager.GetFileAsync(storageProviderMock.Object, options);
+        var selectedFile = await fileManager.GetFileAsync(storageProvider.Object, options);
 
         // Assert
 
-        Assert.That(file, Is.EqualTo(filePath));
-        storageProviderMock.Verify(m => m.SaveFilePickerAsync(options), Times.Once);
-        fileMock.Verify(m => m.Path, Times.Once);
+        Assert.That(selectedFile, Is.EqualTo(filePath));
+        storageProvider.Verify(m => m.SaveFilePickerAsync(options), Times.Once);
+        file.Verify(m => m.Path, Times.Once);
     }
 
     [Test]
@@ -77,7 +77,7 @@ public class FileManagerTests
     {
         // Arrange
 
-        var storageProviderMock = new Mock<IStorageProvider>();
+        var storageProvider = new Mock<IStorageProvider>();
 
         var manager = new FileManager();
 
@@ -85,7 +85,7 @@ public class FileManagerTests
 
         Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            await manager.GetFileAsync(storageProviderMock.Object, options);
+            await manager.GetFileAsync(storageProvider.Object, options);
         });
     }
 
@@ -94,8 +94,8 @@ public class FileManagerTests
     {
         // Arrange
 
-        var storageProviderMock = new Mock<IStorageProvider>();
-        storageProviderMock
+        var storageProvider = new Mock<IStorageProvider>();
+        storageProvider
             .Setup(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()))
             .ReturnsAsync(Array.Empty<IStorageFile>());
 
@@ -105,12 +105,12 @@ public class FileManagerTests
 
         // Act
 
-        var filePath = await fileManager.GetFileAsync(storageProviderMock.Object, options);
+        var filePath = await fileManager.GetFileAsync(storageProvider.Object, options);
 
         // Assert
 
         Assert.That(filePath, Is.Null);
-        storageProviderMock.Verify(m => m.OpenFilePickerAsync(options), Times.Once);
+        storageProvider.Verify(m => m.OpenFilePickerAsync(options), Times.Once);
     }
 
     [Test]
@@ -118,8 +118,8 @@ public class FileManagerTests
     {
         // Arrange
 
-        var storageProviderMock = new Mock<IStorageProvider>();
-        storageProviderMock
+        var storageProvider = new Mock<IStorageProvider>();
+        storageProvider
             .Setup(m => m.SaveFilePickerAsync(It.IsAny<FilePickerSaveOptions>()))
             .ReturnsAsync(null as IStorageFile);
 
@@ -129,12 +129,12 @@ public class FileManagerTests
 
         // Act
 
-        var filePath = await fileManager.GetFileAsync(storageProviderMock.Object, options);
+        var filePath = await fileManager.GetFileAsync(storageProvider.Object, options);
 
         // Assert
 
         Assert.That(filePath, Is.Null);
-        storageProviderMock.Verify(m => m.SaveFilePickerAsync(options), Times.Once);
+        storageProvider.Verify(m => m.SaveFilePickerAsync(options), Times.Once);
     }
 
     [Test]
@@ -143,31 +143,31 @@ public class FileManagerTests
         // Arrange
 
         var fileName = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}{nameof(CreateFileTest)}.txt";
-        var fileMock = new Mock<IStorageFile>();
-        fileMock.Setup(m => m.Path).Returns(new Uri(fileName));
+        var file = new Mock<IStorageFile>();
+        file.Setup(m => m.Path).Returns(new Uri(fileName));
 
         FilePickerSaveOptions options = null;
-        var storageProviderMock = new Mock<IStorageProvider>();
-        storageProviderMock
+        var storageProvider = new Mock<IStorageProvider>();
+        storageProvider
             .Setup(m => m.SaveFilePickerAsync(It.IsAny<FilePickerSaveOptions>()))
             .Callback<FilePickerSaveOptions>(o => options = o)
-            .ReturnsAsync(fileMock.Object);
+            .ReturnsAsync(file.Object);
 
         var manager = new FileManager();
 
         // Act
 
-        var file = await manager.CreateFile(storageProviderMock.Object, null, fileName);
+        var selectedFile = await manager.CreateFile(storageProvider.Object, null, fileName);
 
         // Assert
 
-        storageProviderMock.Verify(m => m.SaveFilePickerAsync(options), Times.Once);
-        fileMock.Verify(m => m.Path, Times.Once);
+        storageProvider.Verify(m => m.SaveFilePickerAsync(options), Times.Once);
+        file.Verify(m => m.Path, Times.Once);
         Assert.Multiple(() =>
         {
             Assert.That(options.SuggestedFileName, Is.EqualTo(fileName));
-            Assert.That(file.FilePath, Is.EqualTo(fileName));
-            Assert.That(file.Text, Is.Empty);
+            Assert.That(selectedFile.FilePath, Is.EqualTo(fileName));
+            Assert.That(selectedFile.Text, Is.Empty);
             Assert.That(PathHelper.GetPathType(fileName), Is.EqualTo(PathHelper.PathType.File));
         });
     }
@@ -177,8 +177,8 @@ public class FileManagerTests
     {
         // Arrange
 
-        var storageProviderMock = new Mock<IStorageProvider>();
-        storageProviderMock
+        var storageProvider = new Mock<IStorageProvider>();
+        storageProvider
             .Setup(m => m.SaveFilePickerAsync(It.IsAny<FilePickerSaveOptions>()))
             .ReturnsAsync(null as IStorageFile);
 
@@ -186,7 +186,7 @@ public class FileManagerTests
 
         // Act
 
-        var file = await manager.CreateFile(storageProviderMock.Object, null, null);
+        var file = await manager.CreateFile(storageProvider.Object, null, null);
 
         // Assert
 
@@ -214,8 +214,8 @@ public class FileManagerTests
         await File.WriteAllTextAsync(path1, content1);
         await File.WriteAllTextAsync(path2, content2);
 
-        var storageProviderMock = new Mock<IStorageProvider>();
-        storageProviderMock
+        var storageProvider = new Mock<IStorageProvider>();
+        storageProvider
             .Setup(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()))
             .ReturnsAsync(new[] { file1.Object, file2.Object });
 
@@ -223,7 +223,7 @@ public class FileManagerTests
 
         // Act
 
-        var files = await manager.OpenFilesAsync(storageProviderMock.Object);
+        var files = await manager.OpenFilesAsync(storageProvider.Object);
 
         // Assert
 
@@ -236,15 +236,15 @@ public class FileManagerTests
             Assert.That(files.ElementAt(1).Text, Is.EqualTo(content2));
         });
 
-        storageProviderMock.Verify(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()), Times.Once);
+        storageProvider.Verify(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()), Times.Once);
     }
     
     [Test]
     public async Task OpenFilesAbortTest()
     {
         // Arrange
-        var storageProviderMock = new Mock<IStorageProvider>();
-        storageProviderMock
+        var storageProvider = new Mock<IStorageProvider>();
+        storageProvider
             .Setup(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()))
             .ReturnsAsync(Array.Empty<IStorageFile>());
 
@@ -252,12 +252,12 @@ public class FileManagerTests
 
         // Act
 
-        var files = await manager.OpenFilesAsync(storageProviderMock.Object);
+        var files = await manager.OpenFilesAsync(storageProvider.Object);
 
         // Assert
 
         Assert.That(files, Is.Null);
-        storageProviderMock.Verify(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()), Times.Once);
+        storageProvider.Verify(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()), Times.Once);
     }
 
     [Test]

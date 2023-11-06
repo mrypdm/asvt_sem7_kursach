@@ -188,11 +188,10 @@ public class FileTabViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            var selectCommandMock = new Mock<Func<IFileTabViewModel, Task>>();
-            var closeCommandMock = new Mock<Func<IFileTabViewModel, Task>>();
+            var selectCommand = new Mock<Func<IFileTabViewModel, Task>>();
+            var closeCommand = new Mock<Func<IFileTabViewModel, Task>>();
 
-            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile,
-                selectCommandMock.Object, closeCommandMock.Object);
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, selectCommand.Object, closeCommand.Object);
 
             // Act
 
@@ -201,8 +200,8 @@ public class FileTabViewModelTests : GuiTest<App>
 
             // Assert
 
-            selectCommandMock.Verify(m => m(viewModel), Times.Once);
-            closeCommandMock.Verify(m => m(viewModel), Times.Once);
+            selectCommand.Verify(m => m(viewModel), Times.Once);
+            closeCommand.Verify(m => m(viewModel), Times.Once);
         });
     }
 }

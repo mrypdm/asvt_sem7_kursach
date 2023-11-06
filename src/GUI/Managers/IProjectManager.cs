@@ -45,12 +45,6 @@ public interface IProjectManager : INotifyPropertyChanged
     Task ReloadProjectAsync();
 
     /// <summary>
-    /// Closing project
-    /// </summary>
-    /// <remarks>This method will not call <see cref="ProjectManager.SaveProjectAsync"/></remarks>
-    void CloseProject();
-
-    /// <summary>
     /// Saves project to disk and invokes <see cref="PropertyChangedNotifier.PropertyChanged"/>
     /// </summary>
     Task SaveProjectAsync();

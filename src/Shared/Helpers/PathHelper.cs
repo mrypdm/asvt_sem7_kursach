@@ -13,6 +13,9 @@ public static class PathHelper
         Directory,
         UnExisting
     }
+
+    /// <inheritdoc cref="Path.GetFullPath(string)"/>
+    public static string GetFullPath(string path) => Path.GetFullPath(path);
     
     /// <inheritdoc cref="Path.Combine(string?, string?)"/>
     public static string Combine(string path1, string path2) => Path.GetFullPath(Path.Combine(path1, path2));
