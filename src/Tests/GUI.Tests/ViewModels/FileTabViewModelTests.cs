@@ -119,9 +119,7 @@ public class FileTabViewModelTests : GuiTest<App>
                 IsSelected = initSelection
             };
 
-            var propertyName = string.Empty;
-
-            viewModel.PropertyChanged += (_, args) => { propertyName = args.PropertyName; };
+            var propertyAssert = new PropertyChangedAssert(viewModel);
 
             // Act
 
@@ -129,7 +127,7 @@ public class FileTabViewModelTests : GuiTest<App>
 
             // Assert
 
-            Assert.That(propertyName, Is.EqualTo(nameof(viewModel.TabBackground)));
+            propertyAssert.Assert(nameof(viewModel.TabBackground));
         });
     }
 
@@ -142,10 +140,7 @@ public class FileTabViewModelTests : GuiTest<App>
 
             var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
                 _ => Task.CompletedTask);
-
-            var propertyName = string.Empty;
-
-            viewModel.PropertyChanged += (_, args) => { propertyName = args.PropertyName; };
+            var propertyAssert = new PropertyChangedAssert(viewModel);
 
             // Act
 
@@ -153,7 +148,7 @@ public class FileTabViewModelTests : GuiTest<App>
 
             // Assert
 
-            Assert.That(propertyName, Is.EqualTo(nameof(viewModel.TabHeader)));
+            propertyAssert.Assert(nameof(viewModel.TabHeader));
         });
     }
 
@@ -166,10 +161,7 @@ public class FileTabViewModelTests : GuiTest<App>
 
             var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
                 _ => Task.CompletedTask);
-
-            var propertyName = string.Empty;
-
-            viewModel.PropertyChanged += (_, args) => { propertyName = args.PropertyName; };
+            var propertyAssert = new PropertyChangedAssert(viewModel);
 
             // Act
 
@@ -177,7 +169,7 @@ public class FileTabViewModelTests : GuiTest<App>
 
             // Assert
 
-            Assert.That(propertyName, Is.EqualTo(nameof(viewModel.TabForeground)));
+            propertyAssert.Assert(nameof(viewModel.TabForeground));
         });
     }
 

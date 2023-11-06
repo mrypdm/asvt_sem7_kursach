@@ -147,11 +147,9 @@ public class SettingsViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            var property = string.Empty;
             var projectManager = new Mock<IProjectManager>();
             var viewModel = new SettingsViewModel(new SettingsWindow(), projectManager.Object, new FileManager());
-
-            viewModel.PropertyChanged += (_, args) => { property = args.PropertyName; };
+            var propertyAssert = new PropertyChangedAssert(viewModel);
 
             // Act
 
@@ -162,7 +160,7 @@ public class SettingsViewModelTests : GuiTest<App>
             // Assert
 
             projectManager.VerifyAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>(), Times.Once);
-            Assert.That(property, Is.EqualTo(nameof(viewModel.Devices)));
+            propertyAssert.Assert(nameof(viewModel.Devices));
         });
     }
 }
