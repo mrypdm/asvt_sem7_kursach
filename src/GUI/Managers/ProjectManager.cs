@@ -117,7 +117,7 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
         }
 
         Project.Files.Add(Path.GetRelativePath(Project.Directory, filePath));
-        OnPropertyChanged(nameof(Project));
+        OnPropertyChanged(nameof(Project.Files));
     }
 
     /// <inheritdoc />
@@ -131,7 +131,7 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
         }
 
         Project.Files.RemoveAt(index);
-        OnPropertyChanged(nameof(Project));
+        OnPropertyChanged(nameof(Project.Files));
     }
 
     /// <inheritdoc />
@@ -140,7 +140,7 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
         if (Project.ProjectFilesPaths.Contains(filePath))
         {
             Project.Executable = PathHelper.GetRelativePath(Project.Directory, filePath);
-            OnPropertyChanged(nameof(Project));
+            OnPropertyChanged(nameof(Project.Executable));
         }
         else
         {
@@ -157,13 +157,13 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
         }
 
         Project.Devices.Add(filePath);
-        OnPropertyChanged(nameof(Project));
+        OnPropertyChanged(nameof(Project.Devices));
     }
 
     /// <inheritdoc />
     public void RemoveDeviceFromProject(string filePath)
     {
         Project.Devices.Remove(filePath);
-        OnPropertyChanged(nameof(Project));
+        OnPropertyChanged(nameof(Project.Devices));
     }
 }

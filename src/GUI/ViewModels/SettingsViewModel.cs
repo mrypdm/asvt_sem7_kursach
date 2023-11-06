@@ -115,8 +115,11 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
         await _projectManager.SaveProjectAsync();
     }
 
-    private void ProjectPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+    private void ProjectPropertyChanged(object sender, PropertyChangedEventArgs args)
     {
-        this.RaisePropertyChanged(nameof(Devices));
+        if (args.PropertyName is nameof(_projectManager.Project) or nameof(_projectManager.Project.Devices))
+        {
+            this.RaisePropertyChanged(nameof(Devices));
+        }
     }
 }

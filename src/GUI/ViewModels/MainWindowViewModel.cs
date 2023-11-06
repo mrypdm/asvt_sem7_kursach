@@ -65,10 +65,13 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
         _messageBoxManager = messageBoxManager;
 
         _projectManager = projectManager;
-        _projectManager.PropertyChanged += (_, _) =>
+        _projectManager.PropertyChanged += (_, args) =>
         {
-            this.RaisePropertyChanged(nameof(WindowTitle));
-            OnProjectUpdated();
+            if (args.PropertyName == nameof(_projectManager.Project))
+            {
+                this.RaisePropertyChanged(nameof(WindowTitle));
+                OnProjectUpdated();
+            }
         };
 
         _tabManager = tabManager;
@@ -84,7 +87,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
         window.Closing += OnClosingWindow;
         window.Opened += async (_, _) =>
         {
-            if (!await InitProject())
+            if (!await InitProjectAsync())
             {
                 View.Close();
             }
@@ -413,7 +416,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// Create or open project at startup
     /// </summary>
     /// <returns>True if created or opened</returns>
-    private async Task<bool> InitProject()
+    private async Task<bool> InitProjectAsync()
     {
         if (SettingsManager.Instance.CommandLineOptions?.Project != null &&
             await OpenProjectAsync(SettingsManager.Instance.CommandLineOptions.Project))
