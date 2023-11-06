@@ -7,14 +7,14 @@ using GUI.Notifiers;
 namespace GUI.Managers;
 
 /// <summary>
-/// Manager for <see cref="ProjectModel"/>
+/// Manager for <see cref="Project"/>
 /// </summary>
 public interface IProjectManager : INotifyPropertyChanged
 {
     /// <summary>
     /// Current project
     /// </summary>
-    ProjectModel Project { get; }
+    Project Project { get; }
 
     /// <summary>
     /// Is project opened

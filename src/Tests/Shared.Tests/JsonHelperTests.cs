@@ -19,9 +19,9 @@ public class JsonHelperTests
 
     [Test]
     [TestCaseSource(nameof(DeserializeProjectFileTestSource))]
-    public async Task DeserializeProjectFileTest(string path, ProjectModel expected)
+    public async Task DeserializeProjectFileTest(string path, Project expected)
     {
-        var project = await JsonHelper.DeserializeFileAsync<ProjectModel>(path);
+        var project = await JsonHelper.DeserializeFileAsync<Project>(path);
 
         Assert.Multiple(() =>
         {
@@ -62,31 +62,31 @@ public class JsonHelperTests
         {
             "{\"Files\":[\"main.asm\"],\"Executable\": \"main.asm\",\"Devices\":[],\"StackAddressString\":\"0o1000\",\"ProgramAddressString\":\"0o1000\"}",
             true,
-            new ProjectModel()
+            new Project()
         },
         new object[]
         {
             "{\n  \"Files\": [\n    \"main.asm\"\n  ],\n  \"Executable\": \"main.asm\",\n  \"Devices\": [],\n  \"StackAddressString\": \"0o1000\",\n  \"ProgramAddressString\": \"0o1000\"\n}",
             true,
-            new ProjectModel()
+            new Project()
         },
         new object[]
         {
             "{\"Files\":[],\"Executable\": \"\",\"Devices\":[],\"StackAddressString\":\"0o1000\",\"ProgramAddressString\":\"0o1000\"}",
             true,
-            new ProjectModel()
+            new Project()
         },
         new object[]
         {
             "{\"Files\":[\"main.asm\"],\"Executable\": \"main.asm\",\"Devices\":[],\"StackAddressString\":\"0o1000\",\"ProgramAddressString\":\"0o1000\"",
             false,
-            new ProjectModel()
+            new Project()
         },
         new object[]
         {
             "{\"Files\":[]\"Executable\": \"\",\"Devices\":[],\"StackAddressString\":\"0o1000\",\"ProgramAddressString\":\"0o1000\"}",
             false,
-            new ProjectModel()
+            new Project()
         }
     };
 
@@ -95,7 +95,7 @@ public class JsonHelperTests
         new object[]
         {
             "./Jsons/1.json",
-            new ProjectModel
+            new Project
             {
                 Files = new List<string> { "main.asm" },
                 Executable = "main.asm",
@@ -106,7 +106,7 @@ public class JsonHelperTests
         new object[]
         {
             "./Jsons/2.json",
-            new ProjectModel
+            new Project
             {
                 Files = new List<string>(),
                 Executable = string.Empty,
@@ -117,7 +117,7 @@ public class JsonHelperTests
         new object[]
         {
             "./Jsons/3.json",
-            new ProjectModel
+            new Project
             {
                 Files = new List<string>(),
                 Executable = string.Empty,
@@ -128,7 +128,7 @@ public class JsonHelperTests
         new object[]
         {
             "./Jsons/4.json",
-            new ProjectModel
+            new Project
             {
                 Files = new List<string>(),
                 Executable = string.Empty,

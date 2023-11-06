@@ -14,7 +14,7 @@ namespace GUI.Managers;
 public class ProjectManager : PropertyChangedNotifier, IProjectManager
 {
     private readonly IProjectProvider _provider;
-    private ProjectModel _project;
+    private Project _project;
 
     /// <summary>
     /// Creates new instance of <see cref="ProjectManager"/>
@@ -26,7 +26,7 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     }
 
     /// <inheritdoc />
-    public ProjectModel Project
+    public Project Project
     {
         get => _project ?? throw new InvalidOperationException("Project is not opened");
         private set => SetField(ref _project, value);
@@ -59,8 +59,9 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
             return false;
         }
 
-        var filePath = Path.Combine(projectDir[0].Path.LocalPath, $"{projectName}.{ProjectModel.ProjectFileExtension}");
-        var project = new ProjectModel
+        var filePath =
+            PathHelper.Combine(projectDir[0].Path.LocalPath, $"{projectName}.{Project.ProjectFileExtension}");
+        var project = new Project
         {
             ProjectFilePath = filePath
         };
@@ -85,9 +86,9 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
             AllowMultiple = false,
             FileTypeFilter = new[]
             {
-                new FilePickerFileType(ProjectModel.ProjectFileExtension)
+                new FilePickerFileType(Project.ProjectFileExtension)
                 {
-                    Patterns = new[] { $"*.{ProjectModel.ProjectFileExtension}" }
+                    Patterns = new[] { $"*.{Project.ProjectFileExtension}" }
                 }
             }
         });

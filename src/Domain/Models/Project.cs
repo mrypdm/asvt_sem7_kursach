@@ -10,7 +10,7 @@ namespace Domain.Models;
 /// <summary>
 /// Model of project
 /// </summary>
-public class ProjectModel
+public class Project
 {
     public const string ProjectFileExtension = "pdp11proj";
 

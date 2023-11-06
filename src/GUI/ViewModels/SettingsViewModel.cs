@@ -62,7 +62,7 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
     /// <inheritdoc />
     public ObservableCollection<FontFamily> AllFontFamilies { get; }
 
-    /// <inheritdoc cref="ProjectModel.Devices"/>
+    /// <inheritdoc cref="Project.Devices"/>
     public ObservableCollection<string> Devices => new(_projectManager.IsOpened
         ? _projectManager.Project.Devices
         : Array.Empty<string>());

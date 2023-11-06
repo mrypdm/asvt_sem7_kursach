@@ -4,7 +4,7 @@ using Domain.Models;
 namespace Domain.Providers;
 
 /// <summary>
-/// Provider for <see cref="ProjectModel"/>
+/// Provider for <see cref="Project"/>
 /// </summary>
 public interface IProjectProvider
 {
@@ -13,11 +13,11 @@ public interface IProjectProvider
     /// </summary>
     /// <param name="filePath">Path to project file</param>
     /// <returns>Project model</returns>
-    Task<ProjectModel> OpenProjectAsync(string filePath);
+    Task<Project> OpenProjectAsync(string filePath);
 
     /// <summary>
     /// Tries to open project from file
     /// </summary>
     /// <param name="filePath">Path to project file</param>
-    Task<(bool isSuccess, ProjectModel projectModel)> TryOpenProjectAsync(string filePath);
+    Task<(bool isSuccess, Project projectModel)> TryOpenProjectAsync(string filePath);
 }

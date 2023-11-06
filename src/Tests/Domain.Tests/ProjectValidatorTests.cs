@@ -31,7 +31,7 @@ public class ProjectValidatorTests
 
     [Test]
     [TestCaseSource(nameof(ThrowIfModelInvalidTestSource))]
-    public void ThrowIfModelInvalidTest(ProjectModel projectModel, bool invalid, string errorSubstring)
+    public void ThrowIfModelInvalidTest(Project project, bool invalid, string errorSubstring)
     {
         // Arrange
 
@@ -41,12 +41,12 @@ public class ProjectValidatorTests
 
         if (invalid)
         {
-            var error = Assert.Catch<ValidationException>(() => validator.ThrowIfModelInvalid(projectModel));
+            var error = Assert.Catch<ValidationException>(() => validator.ThrowIfModelInvalid(project));
             Assert.That(error!.Message, Does.Contain(errorSubstring));
         }
         else
         {
-            validator.ThrowIfModelInvalid(projectModel);
+            validator.ThrowIfModelInvalid(project);
         }
     }
 
@@ -62,7 +62,7 @@ public class ProjectValidatorTests
     {
         new object[]
         {
-            new ProjectModel
+            new Project
             {
                 Executable = "main.asm",
                 Files = new List<string> { "main.asm" },
@@ -73,7 +73,7 @@ public class ProjectValidatorTests
         },
         new object[]
         {
-            new ProjectModel
+            new Project
             {
                 Executable = "main.asm",
                 Files = new List<string> { "main.asm" }
@@ -83,7 +83,7 @@ public class ProjectValidatorTests
         },
         new object[]
         {
-            new ProjectModel
+            new Project
             {
                 Executable = "main.asm",
                 Files = new List<string> { "main.asm" },
@@ -94,7 +94,7 @@ public class ProjectValidatorTests
         },
         new object[]
         {
-            new ProjectModel
+            new Project
             {
                 Executable = "another.asm",
                 Files = new List<string> { "another.asm" },
@@ -105,7 +105,7 @@ public class ProjectValidatorTests
         },
         new object[]
         {
-            new ProjectModel
+            new Project
             {
                 Files = new List<string> { "../Projects" },
                 ProjectFilePath = "./Projects/1.json"
@@ -115,7 +115,7 @@ public class ProjectValidatorTests
         },
         new object[]
         {
-            new ProjectModel
+            new Project
             {
                 Executable = "  ",
                 Files = new List<string> { "main.asm" },
@@ -126,7 +126,7 @@ public class ProjectValidatorTests
         },
         new object[]
         {
-            new ProjectModel
+            new Project
             {
                 Executable = "main.asm",
                 ProjectFilePath = "./Projects/1.json"
@@ -136,7 +136,7 @@ public class ProjectValidatorTests
         },
         new object[]
         {
-            new ProjectModel
+            new Project
             {
                 Executable = "main.asm",
                 Files = new List<string> { "main.asm" },
@@ -148,7 +148,7 @@ public class ProjectValidatorTests
         },
         new object[]
         {
-            new ProjectModel
+            new Project
             {
                 Executable = "main.asm",
                 Files = new List<string> { "main.asm" },

@@ -10,7 +10,7 @@ public class ProjectProviderTests
 {
     [Test]
     [TestCaseSource(nameof(OpenProjectTestSource))]
-    public async Task OpenProjectTest(string path, ProjectModel expected)
+    public async Task OpenProjectTest(string path, Project expected)
     {
         // Arrange
 
@@ -34,7 +34,7 @@ public class ProjectProviderTests
 
     [Test]
     [TestCaseSource(nameof(OpenProjectTestSource))]
-    public async Task TryOpenProjectTest(string path, ProjectModel expected)
+    public async Task TryOpenProjectTest(string path, Project expected)
     {
         // Arrange
 
@@ -93,7 +93,7 @@ public class ProjectProviderTests
     {
         new object[]
         {
-            "./Projects/1.json", new ProjectModel
+            "./Projects/1.json", new Project
             {
                 Executable = "main.asm",
                 Files = new List<string> { "main.asm" },
@@ -103,7 +103,7 @@ public class ProjectProviderTests
         },
         new object[]
         {
-            "./Projects/2.json", new ProjectModel
+            "./Projects/2.json", new Project
             {
                 Executable = "main.asm",
                 Files = new List<string> { "main.asm", "another.asm" },
@@ -113,7 +113,7 @@ public class ProjectProviderTests
         },
         new object[]
         {
-            "./Projects/3.json", new ProjectModel
+            "./Projects/3.json", new Project
             {
                 Executable = "main.asm",
                 Files = new List<string> { "main.asm" },

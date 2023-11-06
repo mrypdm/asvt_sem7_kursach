@@ -32,19 +32,19 @@ public class ProjectValidator : IProjectValidator
     }
 
     /// <inheritdoc />
-    public void ThrowIfModelInvalid(ProjectModel projectModel)
+    public void ThrowIfModelInvalid(Project project)
     {
-        if (string.IsNullOrWhiteSpace(projectModel.ProjectFilePath))
+        if (string.IsNullOrWhiteSpace(project.ProjectFilePath))
         {
             throw new ValidationException("Project file path is not set");
         }
 
-        if (PathHelper.GetPathType(projectModel.ProjectFilePath) != PathHelper.PathType.File)
+        if (PathHelper.GetPathType(project.ProjectFilePath) != PathHelper.PathType.File)
         {
             throw new ValidationException("Project file does not exist");
         }
 
-        var badFiles = projectModel.ProjectFilesPaths
+        var badFiles = project.ProjectFilesPaths
             .Where(p => PathHelper.GetPathType(p) != PathHelper.PathType.File)
             .ToArray();
         if (badFiles.Any())
@@ -52,7 +52,7 @@ public class ProjectValidator : IProjectValidator
             throw new ValidationException($"These files do not exist on disk: {string.Join("; ", badFiles)}");
         }
 
-        var badDevices = projectModel.Devices
+        var badDevices = project.Devices
             .Where(p => PathHelper.GetPathType(p) != PathHelper.PathType.File)
             .ToArray();
         if (badDevices.Any())
@@ -60,22 +60,22 @@ public class ProjectValidator : IProjectValidator
             throw new ValidationException($"These files do not exist on disk: {string.Join("; ", badDevices)}");
         }
 
-        if (string.IsNullOrWhiteSpace(projectModel.Executable))
+        if (string.IsNullOrWhiteSpace(project.Executable))
         {
             throw new ValidationException("Executable file is not set");
         }
 
-        if (!projectModel.ProjectFilesPaths.Contains(projectModel.ExecutableFilePath))
+        if (!project.ProjectFilesPaths.Contains(project.ExecutableFilePath))
         {
             throw new ValidationException("Executable file is not represented in project files");
         }
 
-        if (string.IsNullOrWhiteSpace(projectModel.ProgramAddressString))
+        if (string.IsNullOrWhiteSpace(project.ProgramAddressString))
         {
             throw new ValidationException("Program start address is not set");
         }
 
-        if (string.IsNullOrWhiteSpace(projectModel.StackAddressString))
+        if (string.IsNullOrWhiteSpace(project.StackAddressString))
         {
             throw new ValidationException("Stack start address is not set");
         }

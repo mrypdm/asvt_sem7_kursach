@@ -5,7 +5,7 @@ using Domain.Models;
 namespace Domain.Validators;
 
 /// <summary>
-/// Validator for <see cref="ProjectModel"/>
+/// Validator for <see cref="Project"/>
 /// </summary>
 public interface IProjectValidator
 {
@@ -19,7 +19,7 @@ public interface IProjectValidator
     /// <summary>
     /// Throws if project model is invalid
     /// </summary>
-    /// <param name="projectModel">Project model</param>
+    /// <param name="project">Project model</param>
     /// <exception cref="ValidationException">If project model is invalid</exception>
-    void ThrowIfModelInvalid(ProjectModel projectModel);
+    void ThrowIfModelInvalid(Project project);
 }
