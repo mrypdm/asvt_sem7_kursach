@@ -5,7 +5,7 @@ using GUI.ViewModels;
 using GUI.Views;
 using Moq;
 
-namespace GUI.Tests;
+namespace GUI.Tests.ViewModels;
 
 public class FileTabViewModelTests : GuiTest<App>
 {

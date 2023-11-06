@@ -4,7 +4,7 @@ using GUI.Exceptions;
 using GUI.Managers;
 using GUI.Models;
 
-namespace GUI.Tests;
+namespace GUI.Tests.Managers;
 
 public class TabManagerTests
 {

@@ -10,7 +10,7 @@ using GUI.ViewModels;
 using GUI.Views;
 using Moq;
 
-namespace GUI.Tests;
+namespace GUI.Tests.ViewModels;
 
 public class SettingsViewModelTests : GuiTest<App>
 {
@@ -54,7 +54,7 @@ public class SettingsViewModelTests : GuiTest<App>
             fileManagerMock
                 .Setup(m => m.GetFileAsync(It.IsAny<IStorageProvider>(), It.IsAny<PickerOptions>()))
                 .Callback<IStorageProvider, PickerOptions>((_, ops) => { options = ops; })
-                .Returns(Task.FromResult(devicePath));
+                .ReturnsAsync(devicePath);
 
             var projectManagerMock = new Mock<IProjectManager>();
             projectManagerMock.Setup(m => m.SaveProjectAsync()).Returns(Task.CompletedTask);

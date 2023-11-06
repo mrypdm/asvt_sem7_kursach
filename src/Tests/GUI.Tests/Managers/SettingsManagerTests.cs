@@ -3,7 +3,7 @@ using GUI.Managers;
 using GUI.Models;
 using Shared.Helpers;
 
-namespace GUI.Tests;
+namespace GUI.Tests.Managers;
 
 public class SettingsManagerTests
 {
