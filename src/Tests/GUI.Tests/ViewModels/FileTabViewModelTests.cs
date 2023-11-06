@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using GUI.Models;
 using GUI.ViewModels;
@@ -9,6 +10,11 @@ namespace GUI.Tests.ViewModels;
 
 public class FileTabViewModelTests : GuiTest<App>
 {
+    private static FileModel DefaultFile => new()
+    {
+        FilePath = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}main.asm"
+    };
+
     [Test]
     public async Task CreationTest()
     {
@@ -42,7 +48,7 @@ public class FileTabViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            var viewModel = new FileTabViewModel(new FileTab(), new FileModel(), _ => Task.CompletedTask,
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
                 _ => Task.CompletedTask)
             {
                 // Act
@@ -62,7 +68,7 @@ public class FileTabViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            var viewModel = new FileTabViewModel(new FileTab(), new FileModel(), _ => Task.CompletedTask,
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
                 _ => Task.CompletedTask)
             {
                 IsSelected = true
@@ -85,8 +91,10 @@ public class FileTabViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            var viewModel = new FileTabViewModel(new FileTab(), new FileModel { IsNeedSave = true },
-                _ => Task.CompletedTask, _ => Task.CompletedTask);
+            var file = DefaultFile;
+            file.IsNeedSave = true;
+
+            var viewModel = new FileTabViewModel(new FileTab(), file, _ => Task.CompletedTask, _ => Task.CompletedTask);
             Assert.That(viewModel.TabForeground, Is.EqualTo(FileTabViewModel.NeedSaveForeground));
 
             // Act
@@ -105,7 +113,7 @@ public class FileTabViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            var viewModel = new FileTabViewModel(new FileTab(), new FileModel(), _ => Task.CompletedTask,
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
                 _ => Task.CompletedTask)
             {
                 IsSelected = initSelection
@@ -132,7 +140,7 @@ public class FileTabViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            var viewModel = new FileTabViewModel(new FileTab(), new FileModel(), _ => Task.CompletedTask,
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
                 _ => Task.CompletedTask);
 
             var propertyName = string.Empty;
@@ -156,7 +164,7 @@ public class FileTabViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            var viewModel = new FileTabViewModel(new FileTab(), new FileModel(), _ => Task.CompletedTask,
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile, _ => Task.CompletedTask,
                 _ => Task.CompletedTask);
 
             var propertyName = string.Empty;
@@ -183,7 +191,7 @@ public class FileTabViewModelTests : GuiTest<App>
             var selectCommandMock = new Mock<Func<IFileTabViewModel, Task>>();
             var closeCommandMock = new Mock<Func<IFileTabViewModel, Task>>();
 
-            var viewModel = new FileTabViewModel(new FileTab(), new FileModel(),
+            var viewModel = new FileTabViewModel(new FileTab(), DefaultFile,
                 selectCommandMock.Object, closeCommandMock.Object);
 
             // Act
