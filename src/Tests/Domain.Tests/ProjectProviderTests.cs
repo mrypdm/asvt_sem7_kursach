@@ -9,8 +9,8 @@ namespace Domain.Tests;
 public class ProjectProviderTests
 {
     [Test]
-    [TestCaseSource(nameof(OpenProjectAsyncTestSource))]
-    public async Task OpenProjectAsyncTest(string path, ProjectModel expected)
+    [TestCaseSource(nameof(OpenProjectTestSource))]
+    public async Task OpenProjectTest(string path, ProjectModel expected)
     {
         // Arrange
 
@@ -33,8 +33,8 @@ public class ProjectProviderTests
     }
 
     [Test]
-    [TestCaseSource(nameof(OpenProjectAsyncTestSource))]
-    public async Task TryOpenProjectAsyncTest(string path, ProjectModel expected)
+    [TestCaseSource(nameof(OpenProjectTestSource))]
+    public async Task TryOpenProjectTest(string path, ProjectModel expected)
     {
         // Arrange
 
@@ -58,7 +58,7 @@ public class ProjectProviderTests
     }
 
     [Test]
-    public void OpenInvalidProjectAsyncTest()
+    public void OpenInvalidProjectTest()
     {
         // Arrange
 
@@ -70,7 +70,7 @@ public class ProjectProviderTests
     }
 
     [Test]
-    public async Task TryOpenInvalidProjectAsyncTest()
+    public async Task TryOpenInvalidProjectTest()
     {
         // Arrange
 
@@ -89,7 +89,7 @@ public class ProjectProviderTests
         });
     }
 
-    private static readonly object[] OpenProjectAsyncTestSource =
+    private static readonly object[] OpenProjectTestSource =
     {
         new object[]
         {

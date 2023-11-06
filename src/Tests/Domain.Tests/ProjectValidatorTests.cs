@@ -10,8 +10,8 @@ namespace Domain.Tests;
 public class ProjectValidatorTests
 {
     [Test]
-    [TestCaseSource(nameof(ThrowIfFileInvalidAsyncTestSource))]
-    public async Task ThrowIfFileInvalidAsyncTest(string path, bool invalid)
+    [TestCaseSource(nameof(ThrowIfFileInvalidTestSource))]
+    public async Task ThrowIfFileInvalidTest(string path, bool invalid)
     {
         // Arrange
 
@@ -50,7 +50,7 @@ public class ProjectValidatorTests
         }
     }
 
-    private static readonly object[] ThrowIfFileInvalidAsyncTestSource =
+    private static readonly object[] ThrowIfFileInvalidTestSource =
     {
         new object[] { "./Projects/1.json", false },
         new object[] { "./Projects/2.json", false },

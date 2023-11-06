@@ -10,16 +10,16 @@ namespace Shared.Tests;
 public class JsonHelperTests
 {
     [Test]
-    [TestCaseSource(nameof(ValidateJsonAsyncSource))]
-    public async Task ValidateJsonAsync<TType>(string json, bool isValid, TType type)
+    [TestCaseSource(nameof(ValidateJsonSource))]
+    public async Task ValidateJson<TType>(string json, bool isValid, TType type)
     {
         var res = await JsonHelper.ValidateJsonAsync<TType>(json);
         Assert.That(res, isValid ? Is.Null : Is.Not.Null);
     }
 
     [Test]
-    [TestCaseSource(nameof(DeserializeProjectFileAsyncTestSource))]
-    public async Task DeserializeProjectFileAsyncTest(string path, ProjectModel expected)
+    [TestCaseSource(nameof(DeserializeProjectFileTestSource))]
+    public async Task DeserializeProjectFileTest(string path, ProjectModel expected)
     {
         var project = await JsonHelper.DeserializeFileAsync<ProjectModel>(path);
 
@@ -34,12 +34,12 @@ public class JsonHelperTests
     }
 
     [Test]
-    [TestCaseSource(nameof(SerializeToFileAsyncTestSource))]
-    public async Task SerializeToFileAsyncTest(object obj, string pathToExpected)
+    [TestCaseSource(nameof(SerializeToFileTestSource))]
+    public async Task SerializeToFileTest(object obj, string pathToExpected)
     {
         // Arrange
 
-        const string testFile = $"./Jsons/{nameof(SerializeToFileAsyncTest)}.json";
+        const string testFile = $"./Jsons/{nameof(SerializeToFileTest)}.json";
 
         // Act
 
@@ -56,7 +56,7 @@ public class JsonHelperTests
         Assert.That(actual, Is.EqualTo(expected));
     }
 
-    private static readonly object[] ValidateJsonAsyncSource =
+    private static readonly object[] ValidateJsonSource =
     {
         new object[]
         {
@@ -90,7 +90,7 @@ public class JsonHelperTests
         }
     };
 
-    private static readonly object[] DeserializeProjectFileAsyncTestSource =
+    private static readonly object[] DeserializeProjectFileTestSource =
     {
         new object[]
         {
@@ -139,8 +139,8 @@ public class JsonHelperTests
         }
     };
 
-    private static readonly object[] SerializeToFileAsyncTestSource =
-        DeserializeProjectFileAsyncTestSource
+    private static readonly object[] SerializeToFileTestSource =
+        DeserializeProjectFileTestSource
             .Select(obj => new[] { ((object[])obj)[1], ((object[])obj)[0] })
             .Union(
                 new object[]
