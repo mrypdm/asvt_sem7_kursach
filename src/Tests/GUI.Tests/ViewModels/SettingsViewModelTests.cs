@@ -21,9 +21,9 @@ public class SettingsViewModelTests : GuiTest<App>
     }
 
     [Test]
-    public async Task CreationTest()
+    public void CreationTest()
     {
-        await RunTest(() =>
+        RunTest(() =>
         {
             // Act
             var viewModel = new SettingsViewModel(new SettingsWindow(), new ProjectManager(new ProjectProvider()),
@@ -41,9 +41,9 @@ public class SettingsViewModelTests : GuiTest<App>
     }
 
     [Test]
-    public async Task AddDeviceTest()
+    public void AddDeviceTest()
     {
-        await RunTest(() =>
+        RunTest(() =>
         {
             // Arrange
 
@@ -85,9 +85,9 @@ public class SettingsViewModelTests : GuiTest<App>
     }
 
     [Test]
-    public async Task DeleteDevicesTest()
+    public void DeleteDevicesTest()
     {
-        await RunTest(() =>
+        RunTest(() =>
         {
             // Arrange
 
@@ -114,9 +114,9 @@ public class SettingsViewModelTests : GuiTest<App>
     }
 
     [Test]
-    public async Task ChangeFontTest()
+    public void ChangeFontTest()
     {
-        await RunTest(() =>
+        RunTest(() =>
         {
             // Arrange
 
@@ -141,9 +141,9 @@ public class SettingsViewModelTests : GuiTest<App>
     }
 
     [Test]
-    public async Task DeviceChangedEvent()
+    public void DeviceChangedEvent()
     {
-        await RunAsyncTest(async () =>
+        RunAsyncTest(async () =>
         {
             // Arrange
 

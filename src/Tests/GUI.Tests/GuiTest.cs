@@ -11,15 +11,29 @@ namespace GUI.Tests;
 /// <typeparam name="TApp">Heir of <see cref="Application"/></typeparam>
 public abstract class GuiTest<TApp>
 {
-    protected async Task RunTest(Action testMethod)
+    private HeadlessUnitTestSession _session;
+    
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
     {
-        using var session = HeadlessUnitTestSession.StartNew(typeof(TApp));
-        await session.Dispatch(testMethod, default);
+        _session = HeadlessUnitTestSession.StartNew(typeof(TApp));
     }
     
-    protected async Task RunAsyncTest(Func<Task> testMethod)
+    protected void RunTest(Action testMethod)
     {
-        using var session = HeadlessUnitTestSession.StartNew(typeof(TApp));
-        await session.Dispatch(testMethod, default);
+        //using var session = HeadlessUnitTestSession.StartNew(typeof(TApp));
+        _session.Dispatch(testMethod, default).Wait();
+    }
+    
+    protected void RunAsyncTest(Func<Task> testMethod)
+    {
+        //using var session = HeadlessUnitTestSession.StartNew(typeof(TApp));
+        _session.Dispatch(testMethod, default).Wait();
+    }
+
+    [OneTimeTearDown]
+    public void OneTimeTearDown()
+    {
+        _session.Dispose();
     }
 }
