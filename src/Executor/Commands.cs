@@ -11,12 +11,12 @@ namespace Executor{
 
 
         public ushort GetRegister(ushort word){
-            return (ushort)((word & RegisterMask) >> 5);
+            return (ushort)((word & RegisterMask) >> 6);
         }
         public ushort GetOffset(ushort word){
             return (ushort)(word & OffsetMask);
         }
-        public ushort GetOpcode(ushort word){
+        public ushort GetOpcodeByMask(ushort word){
             return (ushort)(word & OpcodeMask);
         }
 
@@ -27,6 +27,10 @@ namespace Executor{
         }
         public void Execute (IArgument[] arguments){
             return;
+        }
+
+        public ushort GetOpcode(){
+            return 0b0111_1110_0000_0000;
         }
 
         public SOB(State state, Memory memory){
@@ -49,6 +53,11 @@ namespace Executor{
         public override void Execute (IArgument[] arguments){
             return;
         }
+
+        public ushort GetOpcode(){
+            return 0b1_0000_0000_0000;
+        }
+
 
     }
 }
