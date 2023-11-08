@@ -47,7 +47,7 @@ namespace Executor{
         private ushort Register2Mask = 0b0000_0000_0000_0111;
 
 
-        ublic ushort GetRegister1(ushort word){
+        public ushort GetRegister1(ushort word){
             return (ushort)((word & Register1Mask) >> 6);
         }
 
@@ -95,7 +95,6 @@ namespace Executor{
         }
 
         public override ushort Opcode => 0b1_0000_0000_0000;
-
 
     }
 
