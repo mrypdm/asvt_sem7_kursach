@@ -19,7 +19,7 @@ public class Memory: IMemory{
         public ushort GetWord(ushort address) {
             ushort value = 0;
             if (address % 2 == 1){
-                throw new InvalidOperationException("Address is not odd. Only odd addresses allowed when setting word");
+                throw new InvalidOperationException("Address is not odd. Only odd addresses allowed when getting word");
             }
             value |= (ushort)(RawMemory[address] << 8);
             value |= RawMemory[address+1];
