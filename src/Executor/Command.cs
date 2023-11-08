@@ -6,7 +6,7 @@ namespace Executor{
         
         IArgument[] GetArguments(ushort word);
 
-        ushort GetOpcode();
+        ushort Opcode = {get;}
     }
     
     public abstract class TwoOperands : ICommand{
@@ -37,8 +37,7 @@ namespace Executor{
 
         public abstract IArgument[] GetArguments(ushort word);
 
-        public abstract ushort GetOpcode();
-
+        public abstract ushort Opcode { get; }
         public TwoOperands (State state, Memory memory){
             this.state = state;
             this.memory = memory;
@@ -66,7 +65,7 @@ namespace Executor{
 
         public abstract IArgument[] GetArguments(ushort word);
 
-        public abstract ushort GetOpcode();
+        public abstract ushort Opcode { get; }
 
         public OneOperand (State state, Memory memory){
             this.state = state;
@@ -90,7 +89,7 @@ namespace Executor{
 
         public abstract IArgument[] GetArguments(ushort word);
 
-        public abstract ushort GetOpcode();
+        public abstract ushort Opcode { get; }
         
         public BranchOperationC(State state, Memory memory){
             this.state = state;
@@ -115,7 +114,7 @@ namespace Executor{
 
         public abstract IArgument[] GetArguments(ushort word);
 
-        public abstract ushort GetOpcode();
+        public abstract ushort Opcode { get; }
         
         public FloatingInstructionSet(State state, Memory memory){
             this.state = state;
@@ -139,7 +138,7 @@ namespace Executor{
 
         public abstract IArgument[] GetArguments(ushort word);
 
-        public abstract ushort GetOpcode();
+        public abstract ushort Opcode { get; }
 
         public ConditionCode(State state, Memory memory){
             this.state = state;
@@ -147,7 +146,7 @@ namespace Executor{
         }
     }
 
-     public abstract class BitOperations: ICommand{
+    public abstract class BitOperations: ICommand{
         private Memory memory;
         private State state;
 
@@ -160,7 +159,6 @@ namespace Executor{
         public ushort GetRegister1(ushort word){
             return (ushort)((word & Register1Mask) >> 6);
         }
-
 
         public ushort GetRegister2(ushort word){
             return (ushort)((word & Register2Mask));
@@ -176,9 +174,57 @@ namespace Executor{
 
         public abstract IArgument[] GetArguments(ushort word);
 
-        public abstract ushort GetOpcode();
+        public abstract ushort Opcode { get; }
 
         public BitOperations(State state, Memory memory){
+            this.state = state;
+            this.memory = memory;
+        }
+    }
+
+    public abstract class TrapReturn: ICommand{
+        private Memory memory;
+        private State state;
+
+        private ushort OpcodeMask = 0b1111_1111_1111_1111;
+
+        public ushort GetOpcode(ushort word){
+            return (ushort)(word & OpcodeMask);
+        }
+        public abstract void Execute (IArgument[] arguments);
+
+        public abstract IArgument[] GetArguments(ushort word);
+
+        public abstract ushort Opcode { get; }
+
+        public TrapReturn(State state, Memory memory){
+            this.state = state;
+            this.memory = memory;
+        }
+    }
+
+    public abstract class TrapInstruction: ICommand{
+        private Memory memory;
+        private State state;
+
+        private ushort OpcodeMask = 0b1111_1111_0000_0000;
+
+        private ushort OperationCodeMask = 0b0000_0000_1111_1111;
+
+        public ushort GetOpcode(ushort word){
+            return (ushort)(word & OpcodeMask);
+        }
+
+        public ushort GetOperationCode(ushort word){
+            return (ushort)(word & OperationCodeMask);
+        }
+        public abstract void Execute (IArgument[] arguments);
+
+        public abstract IArgument[] GetArguments(ushort word);
+
+        public abstract ushort Opcode { get; }
+
+        public TrapInstruction(State state, Memory memory){
             this.state = state;
             this.memory = memory;
         }
