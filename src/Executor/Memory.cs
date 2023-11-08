@@ -10,34 +10,33 @@ interface IMemory {
 }
 
 public class Memory: IMemory{
-        private ushort[] RawMemory;
+        private ushort[] RawMemory = new ushort[65026];
 
         public byte GetByte(ushort address){
-            if (address % 2 == 0){
-                return (byte)(RawMemory[address] >> 8);
-            }
-            return (byte)(RawMemory[address] & 255);
+            return (byte)(RawMemory[address]);
         }
 
-        public ushort GetWord(ushort address) => RawMemory[address];
-
+        public ushort GetWord(ushort address) {
+            ushort value = 0;
+            if (address % 2 == 1){
+                throw new InvalidOperationException("Address is not odd. Only odd addresses allowed when setting word");
+            }
+            value |= (ushort)(RawMemory[address] << 8);
+            value |= RawMemory[address+1];
+            return value;
+        }
         public void SetByte(ushort address, byte value){
-            if (address % 2 == 0){
-                RawMemory[address] &= 255;
-                RawMemory[address] |= (ushort)(value << 8);
-                return;
-            }
-            RawMemory[address] &= (ushort)(255 << 8);
-            RawMemory[address] |= value;
-        }
-
-        public byte SetWord(ushort address, ushort value){
             RawMemory[address] = value;
         }
 
-        Memory(){
-            RawMemory = new ushort[32513];
+        public void SetWord(ushort address, ushort value){
+            if (address % 2 == 1){
+                throw new InvalidOperationException("Address is not odd. Only odd addresses allowed when setting word");
+            }
+            RawMemory[address+1] = (byte)(value & 255);
+            RawMemory[address+1] = (byte)(value >> 8);
         }
+
                
 }
 
