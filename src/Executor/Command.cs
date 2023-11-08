@@ -6,7 +6,7 @@ namespace Executor{
         
         IArgument[] GetArguments(ushort word);
 
-        ushort Opcode = { get; }
+        ushort Opcode { get; }
     }
     
     public abstract class TwoOperands : ICommand{

@@ -102,7 +102,7 @@ namespace Executor{
             return;
         }
 
-        public JSRnBITArg(ushort Register, State state, Memory memory){
+        public RTSArg(ushort Register, State state, Memory memory){
             this.memory = memory;
             this.state = state;
             this.Register = Register;

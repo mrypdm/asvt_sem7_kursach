@@ -114,8 +114,8 @@ namespace Executor{
         }
 
         public IArgument[] GetArguments(ushort word){
-            IArgument[] args = new SOBArg[1];
-            args[0] = new SOBArg(GetRegister(word), GetOffset(word), state, memory);
+            IArgument[] args = new RTSArg[1];
+            args[0] = new RTSArg(GetRegister(word), state, memory);
             return args;
         }
         public void Execute (IArgument[] arguments){
@@ -124,7 +124,7 @@ namespace Executor{
 
         public ushort Opcode => 0b0000_0000_1000_0000;
 
-        public SOB(State state, Memory memory){
+        public RTS(State state, Memory memory){
             this.memory = memory;
             this.state = state;
         }
