@@ -44,6 +44,32 @@ namespace Executor{
             }
         }
 
+        public int GetFlag(Flag flag, byte value){
+            int FlagValue;
+
+            if (value >= 1){
+                throw new OverflowExeption("Value should 0 or 1");
+            }
+            switch(flag){
+                case Flag.Z:
+                    FlagValue = (ProcessorStateWord & 0b1111_1111_1111_1011) >> 2;
+                    break;
+                case Flag.T:
+                    FlagValue = (ProcessorStateWord & 0b1111_1111_1110_1111) >> 4;
+                    break;
+                case Flag.N:
+                    FlagValue = (ProcessorStateWord & 0b1111_1111_1111_0111) >> 3;
+                    break;
+                case Flag.V:
+                    FlagValue = (ProcessorStateWord & 0b1111_1111_1111_1101) >> 1;
+                    break;
+                case Flag.C:
+                    FlagValue = (ProcessorStateWord & 0b1111_1111_1111_1110);
+                                    
+            }
+            return FlagValue;
+        }
+
         public State(){
             Array.Fill(this.R, (ushort)0);
             ProcessorStateWord = 0;
