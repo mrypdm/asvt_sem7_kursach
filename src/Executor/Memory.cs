@@ -22,11 +22,17 @@ public class Memory: IMemory{
         public ushort GetWord(ushort address) => RawMemory[address];
 
         public void SetByte(ushort address, byte value){
-            RawMemory[address] = value;
+            if (address % 2 == 0){
+                RawMemory[address] &= 255;
+                RawMemory[address] |= (ushort)(value << 8);
+                return;
+            }
+            RawMemory[address] &= (ushort)(255 << 8);
+            RawMemory[address] |= value;
         }
 
         public byte SetWord(ushort address, ushort value){
-            return;
+            RawMemory[address] = value;
         }
 
         Memory(){
