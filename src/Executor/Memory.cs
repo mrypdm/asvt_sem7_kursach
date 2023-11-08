@@ -34,7 +34,7 @@ public class Memory: IMemory{
                 throw new InvalidOperationException("Address is not odd. Only odd addresses allowed when setting word");
             }
             RawMemory[address+1] = (byte)(value & 255);
-            RawMemory[address+1] = (byte)(value >> 8);
+            RawMemory[address] = (byte)(value >> 8);
         }
 
                
