@@ -2,7 +2,7 @@ using System;
 
 namespace Executor{
 
-    enum Flag{
+    public enum Flag{
         Z,
         T,
         N,
@@ -15,56 +15,56 @@ namespace Executor{
         public ushort ProcessorStateWord; // flags
         public ushort MemoryAddressRegister; // РАП
         public ushort[] R = new ushort[8];
-
+        
         public void SetFlag(Flag flag, byte value){
-            if (value >= 1){
-                throw new OverflowExeption("Value should 0 or 1");
+            if (value > 2 || value < 0){
+                throw new InvalidOperationException("Value should be 0 or 1");
             }
             switch(flag){
                 case Flag.Z:
                     ProcessorStateWord &=0b1111_1111_1111_1011;
-                    ProcessorStateWord |=(ushort)(value << 2)
+                    ProcessorStateWord |=(ushort)(value << 2);
                     break;
                 case Flag.T:
                     ProcessorStateWord &=0b1111_1111_1110_1111;
-                    ProcessorStateWord |=(ushort)(value << 4)
+                    ProcessorStateWord |=(ushort)(value << 4);
                     break;
                 case Flag.N:
                     ProcessorStateWord &=0b1111_1111_1111_0111;
-                    ProcessorStateWord |=(ushort)(value << 3)
+                    ProcessorStateWord |=(ushort)(value << 3);
                     break;
                 case Flag.V:
                     ProcessorStateWord &=0b1111_1111_1111_1101;
-                    ProcessorStateWord |=(ushort)(value << 1 )
+                    ProcessorStateWord |=(ushort)(value << 1 );
                     break;
                 case Flag.C:
                     ProcessorStateWord &=0b1111_1111_1111_1110;
-                    ProcessorStateWord |=(ushort)(value)
+                    ProcessorStateWord |=(ushort)(value);
                     break;                
             }
+            Console.WriteLine($"PSW {ProcessorStateWord}.");
+        
         }
 
-        public int GetFlag(Flag flag, byte value){
-            int FlagValue;
+        public int GetFlag(Flag flag){
+            int FlagValue = -1;
 
-            if (value >= 1){
-                throw new OverflowExeption("Value should 0 or 1");
-            }
             switch(flag){
                 case Flag.Z:
-                    FlagValue = (ProcessorStateWord & 0b1111_1111_1111_1011) >> 2;
+                    FlagValue = (ProcessorStateWord & (~0b1111_1111_1111_1011)) >> 2;
                     break;
                 case Flag.T:
-                    FlagValue = (ProcessorStateWord & 0b1111_1111_1110_1111) >> 4;
+                    FlagValue = (ProcessorStateWord & (~0b1111_1111_1110_1111)) >> 4;
                     break;
                 case Flag.N:
-                    FlagValue = (ProcessorStateWord & 0b1111_1111_1111_0111) >> 3;
+                    FlagValue = (ProcessorStateWord & (~0b1111_1111_1111_0111)) >> 3;
                     break;
                 case Flag.V:
-                    FlagValue = (ProcessorStateWord & 0b1111_1111_1111_1101) >> 1;
+                    FlagValue = (ProcessorStateWord & (~0b1111_1111_1111_1101)) >> 1;
                     break;
                 case Flag.C:
-                    FlagValue = (ProcessorStateWord & 0b1111_1111_1111_1110);
+                    FlagValue = (ProcessorStateWord & (~0b1111_1111_1111_1110));
+                    break;
                                     
             }
             return FlagValue;

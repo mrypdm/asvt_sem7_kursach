@@ -20,9 +20,9 @@ public class MemoryTest
     public void TestSetGetWord()
     {   
         Memory memory = new Memory();
-        memory.SetWord(4, 43);
+        memory.SetWord(4, 258);
         memory.SetWord(8, 8);
-        Assert.AreEqual(memory.GetWord(4), 43, "Wrong word at addr 4");
+        Assert.AreEqual(memory.GetWord(4), 258, "Wrong word at addr 4");
         Assert.AreEqual(memory.GetWord(8), 8, "Wrong word at addr 8");
     }
 }
