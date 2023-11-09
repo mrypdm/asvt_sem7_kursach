@@ -3,19 +3,27 @@ using System;
 namespace Executor{
     public class OpcodeIndentifyer {
         private OpcodeIndentifyer Instance;
-        private ushort[] Masks = {65472, 61440, 65024, 65024, 65535, 65520, 65280, 65528, 65528, 65472};
+        private ushort[] Masks = {0b1111_0000_0000_0000, 
+                                  0b1111_1111_1100_0000, 
+                                  0b1111_1111_0000_0000, 
+                                  0b1111_1111_1111_1000, 
+                                  0b1111_1111_1111_0000, 
+                                  0b1111_1110_0000_0000, 
+                                  0b1111_1111_1111_1111};
+
+        private List<ICommand> Opcodes;
+
+        private Dictionary<ushort, ICommand> OpcodesDictionary;
         
-        public OpcodeIndentifyer GetInstance(){
-            if (Instance == null){
-                Instance = new OpcodeIndentifyer();
-            }
-            return Instance;
-        }
-        private OpcodeIndentifyer(){
-            
+        public OpcodeIndentifyer(State state, Memory memory){
+            Opcodes.Add(new MOV(state, memory));
+            Opcodes.Add(new SOB(state, memory));
+            Opcodes.Add(new JSR(state, memory));
+            Opcodes.Add(new RTS(state, memory));
+            OpcodesDictionary = Opcodes.ToDictionary(command => command.Opcode, command  => command);
         }
         public string GetCommandName(ushort Word){
-            throw new InvalidOperationException("Invalid Operation!");
+            throw new InvalidOperationException("Invalid Operation Opcode!");
         }
     }
 
