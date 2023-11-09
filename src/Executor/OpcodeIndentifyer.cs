@@ -1,30 +1,32 @@
 using System;
 
-namespace Executor{
-    public class OpcodeIndentifyer {
-        private OpcodeIndentifyer Instance;
-        private ushort[] Masks = {0b1111_0000_0000_0000, 
-                                  0b1111_1111_1100_0000, 
-                                  0b1111_1111_0000_0000, 
-                                  0b1111_1111_1111_1000, 
-                                  0b1111_1111_1111_0000, 
-                                  0b1111_1110_0000_0000, 
-                                  0b1111_1111_1111_1111};
+namespace Executor {
+  public class OpcodeIndentifyer {
+    private OpcodeIndentifyer Instance;
+    private ushort[] Masks = {
+      0b1111_0000_0000_0000,
+      0b1111_1111_1100_0000,
+      0b1111_1111_0000_0000,
+      0b1111_1111_1111_1000,
+      0b1111_1111_1111_0000,
+      0b1111_1110_0000_0000,
+      0b1111_1111_1111_1111
+    };
 
-        private List<ICommand> Opcodes;
+    private List < ICommand > Opcodes;
 
-        private Dictionary<ushort, ICommand> OpcodesDictionary;
-        
-        public OpcodeIndentifyer(State state, Memory memory){
-            Opcodes.Add(new MOV(state, memory));
-            Opcodes.Add(new SOB(state, memory));
-            Opcodes.Add(new JSR(state, memory));
-            Opcodes.Add(new RTS(state, memory));
-            OpcodesDictionary = Opcodes.ToDictionary(command => command.Opcode, command  => command);
-        }
-        public string GetCommandName(ushort Word){
-            throw new InvalidOperationException("Invalid Operation Opcode!");
-        }
+    private Dictionary < ushort, ICommand > OpcodesDictionary;
+
+    public OpcodeIndentifyer(State state, Memory memory) {
+      Opcodes.Add(new MOV(state, memory));
+      Opcodes.Add(new SOB(state, memory));
+      Opcodes.Add(new JSR(state, memory));
+      Opcodes.Add(new RTS(state, memory));
+      OpcodesDictionary = Opcodes.ToDictionary(command => command.Opcode, command => command);
     }
+    public string GetCommandName(ushort Word) {
+      throw new InvalidOperationException("Invalid Operation Opcode!");
+    }
+  }
 
 }

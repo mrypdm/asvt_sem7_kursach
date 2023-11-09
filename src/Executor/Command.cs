@@ -1,233 +1,249 @@
 using System;
 
-namespace Executor{
-    public interface ICommand{
-        void Execute (IArgument[] arguments);
-        
-        IArgument[] GetArguments(ushort word);
+namespace Executor {
+  public interface ICommand {
+    void Execute(IArgument[] arguments);
 
-        ushort Opcode { get; }
+    IArgument[] GetArguments(ushort word);
+
+    ushort Opcode {
+      get;
     }
-    
-    public abstract class TwoOperands : ICommand{
-        private Memory memory;
-        private State state;
-        private ushort OpcodeMask = 0b1111_0000_0000_0000;
-        private ushort SourceMask1 = 0b0000_1110_0000_0000;
-        private ushort SourceMask2 = 0b0000_0000_0011_1000;
-        private ushort RegisterMask1 = 0b0000_0001_1100_0000;
-        private ushort RegisterMask2 = 0b0000_0000_0000_0111;
+  }
 
-        public ushort GetRegister1(ushort word){
-            return (ushort)((word & RegisterMask1) >> 6);
-        }
-        public ushort GetRegister2(ushort word){
-            return (ushort)(word & RegisterMask2);
-        }
-        public ushort GetMode2(ushort word){
-            return (ushort)((word & SourceMask2) >> 3);
-        }
-        public ushort GetMode1(ushort word){
-            return (ushort)((word & SourceMask1) >> 9);
-        }
-        public ushort GetOpcodeByMask(ushort word){
-            return (ushort)(word & OpcodeMask);
-        }
-        public abstract void Execute (IArgument[] arguments);
+  public abstract class TwoOperands: ICommand {
+    private Memory memory;
+    private State state;
+    private ushort OpcodeMask = 0b1111_0000_0000_0000;
+    private ushort SourceMask1 = 0b0000_1110_0000_0000;
+    private ushort SourceMask2 = 0b0000_0000_0011_1000;
+    private ushort RegisterMask1 = 0b0000_0001_1100_0000;
+    private ushort RegisterMask2 = 0b0000_0000_0000_0111;
 
-        public abstract IArgument[] GetArguments(ushort word);
-
-        public abstract ushort Opcode { get; }
-        public TwoOperands (State state, Memory memory){
-            this.state = state;
-            this.memory = memory;
-        }
-
+    public ushort GetRegister1(ushort word) {
+      return (ushort)((word & RegisterMask1) >> 6);
     }
+    public ushort GetRegister2(ushort word) {
+      return (ushort)(word & RegisterMask2);
+    }
+    public ushort GetMode2(ushort word) {
+      return (ushort)((word & SourceMask2) >> 3);
+    }
+    public ushort GetMode1(ushort word) {
+      return (ushort)((word & SourceMask1) >> 9);
+    }
+    public ushort GetOpcodeByMask(ushort word) {
+      return (ushort)(word & OpcodeMask);
+    }
+    public abstract void Execute(IArgument[] arguments);
 
-    public abstract class OneOperand : ICommand{
-        private Memory memory;
-        private State state;
-        private ushort OpcodeMask = 0b1111_1111_1100_0000;
-        private ushort SourceMask = 0b0000_0000_0011_1000;
-        private ushort RegisterMask =  0b0000_0000_0000_0111;
+    public abstract IArgument[] GetArguments(ushort word);
 
-        public ushort GetRegister(ushort word){
-            return (ushort)(word & RegisterMask);
-        }
-        public ushort GetMode(ushort word){
-            return (ushort)((word & SourceMask) >> 3);
-        }
-        public ushort GetOpcodeByMask(ushort word){
-            return (ushort)(word & OpcodeMask);
-        }
-        public abstract void Execute (IArgument[] arguments);
-
-        public abstract IArgument[] GetArguments(ushort word);
-
-        public abstract ushort Opcode { get; }
-
-        public OneOperand (State state, Memory memory){
-            this.state = state;
-            this.memory = memory;
-        }
+    public abstract ushort Opcode {
+      get;
+    }
+    public TwoOperands(State state, Memory memory) {
+      this.state = state;
+      this.memory = memory;
     }
 
-    public abstract class BranchOperationC : ICommand{
-        private Memory memory;
-        private State state;
-        private ushort OpcodeMask = 0b1111_1111_0000_0000;
-        private ushort OffsetMask = 0b0000_0000_1111_1111;
+  }
 
-        public ushort GetOffset(ushort word){
-            return (ushort)(word & OffsetMask);
-        }
-        public ushort GetOpcodeByMask(ushort word){
-            return (ushort)(word & OpcodeMask);
-        }
-        public abstract void Execute (IArgument[] arguments);
+  public abstract class OneOperand: ICommand {
+    private Memory memory;
+    private State state;
+    private ushort OpcodeMask = 0b1111_1111_1100_0000;
+    private ushort SourceMask = 0b0000_0000_0011_1000;
+    private ushort RegisterMask = 0b0000_0000_0000_0111;
 
-        public abstract IArgument[] GetArguments(ushort word);
+    public ushort GetRegister(ushort word) {
+      return (ushort)(word & RegisterMask);
+    }
+    public ushort GetMode(ushort word) {
+      return (ushort)((word & SourceMask) >> 3);
+    }
+    public ushort GetOpcodeByMask(ushort word) {
+      return (ushort)(word & OpcodeMask);
+    }
+    public abstract void Execute(IArgument[] arguments);
 
-        public abstract ushort Opcode { get; }
-        
-        public BranchOperationC(State state, Memory memory){
-            this.state = state;
-            this.memory = memory;
-        }
+    public abstract IArgument[] GetArguments(ushort word);
+
+    public abstract ushort Opcode {
+      get;
     }
 
-
-    public abstract class FloatingInstructionSet: ICommand{
-        private Memory memory;
-        private State state;
-        private ushort OpcodeMask = 0b1111_1111_1111_1000;
-        private ushort RegisterMask = 0b0000_0000_0000_0111;
-
-        public ushort GetRegister(ushort word){
-            return (ushort)(word & RegisterMask);
-        }
-        public ushort GetOpcodeByMask(ushort word){
-            return (ushort)(word & OpcodeMask);
-        }
-        public abstract void Execute (IArgument[] arguments);
-
-        public abstract IArgument[] GetArguments(ushort word);
-
-        public abstract ushort Opcode { get; }
-        
-        public FloatingInstructionSet(State state, Memory memory){
-            this.state = state;
-            this.memory = memory;
-        }
+    public OneOperand(State state, Memory memory) {
+      this.state = state;
+      this.memory = memory;
     }
-    
-    public abstract class ConditionCode: ICommand{
-        private Memory memory;
-        private State state;
-        private ushort OpcodeMask = 0b1111_1111_1111_0000;
-        private ushort FlagMask = 0b0000_0000_0000_1111;
+  }
 
-        public ushort GetRegister(ushort word){
-            return (ushort)(word & FlagMask);
-        }
-        public ushort GetOpcodeByMask(ushort word){
-            return (ushort)(word & OpcodeMask);
-        }
-        public abstract void Execute (IArgument[] arguments);
+  public abstract class BranchOperationC: ICommand {
+    private Memory memory;
+    private State state;
+    private ushort OpcodeMask = 0b1111_1111_0000_0000;
+    private ushort OffsetMask = 0b0000_0000_1111_1111;
 
-        public abstract IArgument[] GetArguments(ushort word);
+    public ushort GetOffset(ushort word) {
+      return (ushort)(word & OffsetMask);
+    }
+    public ushort GetOpcodeByMask(ushort word) {
+      return (ushort)(word & OpcodeMask);
+    }
+    public abstract void Execute(IArgument[] arguments);
 
-        public abstract ushort Opcode { get; }
+    public abstract IArgument[] GetArguments(ushort word);
 
-        public ConditionCode(State state, Memory memory){
-            this.state = state;
-            this.memory = memory;
-        }
+    public abstract ushort Opcode {
+      get;
     }
 
-    public abstract class BitOperations: ICommand{
-        private Memory memory;
-        private State state;
+    public BranchOperationC(State state, Memory memory) {
+      this.state = state;
+      this.memory = memory;
+    }
+  }
 
-        private ushort OpcodeMask = 0b1111_1110_0000_0000;
-        private ushort Register1Mask = 0b0000_0001_1100_0000;
-        private ushort ModeMask = 0b0000_0000_0011_1000;
-        private ushort Register2Mask = 0b0000_0000_0000_0111;
+  public abstract class FloatingInstructionSet: ICommand {
+    private Memory memory;
+    private State state;
+    private ushort OpcodeMask = 0b1111_1111_1111_1000;
+    private ushort RegisterMask = 0b0000_0000_0000_0111;
 
+    public ushort GetRegister(ushort word) {
+      return (ushort)(word & RegisterMask);
+    }
+    public ushort GetOpcodeByMask(ushort word) {
+      return (ushort)(word & OpcodeMask);
+    }
+    public abstract void Execute(IArgument[] arguments);
 
-        public ushort GetRegister1(ushort word){
-            return (ushort)((word & Register1Mask) >> 6);
-        }
+    public abstract IArgument[] GetArguments(ushort word);
 
-        public ushort GetRegister2(ushort word){
-            return (ushort)((word & Register2Mask));
-        }
-
-        public ushort GetMode(ushort word){
-            return (ushort)(word & ModeMask);
-        }
-        public ushort GetOpcode(ushort word){
-            return (ushort)(word & OpcodeMask);
-        }
-        public abstract void Execute (IArgument[] arguments);
-
-        public abstract IArgument[] GetArguments(ushort word);
-
-        public abstract ushort Opcode { get; }
-
-        public BitOperations(State state, Memory memory){
-            this.state = state;
-            this.memory = memory;
-        }
+    public abstract ushort Opcode {
+      get;
     }
 
-    public abstract class TrapReturn: ICommand{
-        private Memory memory;
-        private State state;
+    public FloatingInstructionSet(State state, Memory memory) {
+      this.state = state;
+      this.memory = memory;
+    }
+  }
 
-        private ushort OpcodeMask = 0b1111_1111_1111_1111;
+  public abstract class ConditionCode: ICommand {
+    private Memory memory;
+    private State state;
+    private ushort OpcodeMask = 0b1111_1111_1111_0000;
+    private ushort FlagMask = 0b0000_0000_0000_1111;
 
-        public ushort GetOpcode(ushort word){
-            return (ushort)(word & OpcodeMask);
-        }
-        public abstract void Execute (IArgument[] arguments);
+    public ushort GetRegister(ushort word) {
+      return (ushort)(word & FlagMask);
+    }
+    public ushort GetOpcodeByMask(ushort word) {
+      return (ushort)(word & OpcodeMask);
+    }
+    public abstract void Execute(IArgument[] arguments);
 
-        public abstract IArgument[] GetArguments(ushort word);
+    public abstract IArgument[] GetArguments(ushort word);
 
-        public abstract ushort Opcode { get; }
-
-        public TrapReturn(State state, Memory memory){
-            this.state = state;
-            this.memory = memory;
-        }
+    public abstract ushort Opcode {
+      get;
     }
 
-    public abstract class TrapInstruction: ICommand{
-        private Memory memory;
-        private State state;
-
-        private ushort OpcodeMask = 0b1111_1111_0000_0000;
-
-        private ushort OperationCodeMask = 0b0000_0000_1111_1111;
-
-        public ushort GetOpcode(ushort word){
-            return (ushort)(word & OpcodeMask);
-        }
-
-        public ushort GetOperationCode(ushort word){
-            return (ushort)(word & OperationCodeMask);
-        }
-        public abstract void Execute (IArgument[] arguments);
-
-        public abstract IArgument[] GetArguments(ushort word);
-
-        public abstract ushort Opcode { get; }
-
-        public TrapInstruction(State state, Memory memory){
-            this.state = state;
-            this.memory = memory;
-        }
+    public ConditionCode(State state, Memory memory) {
+      this.state = state;
+      this.memory = memory;
     }
+  }
+
+  public abstract class BitOperations: ICommand {
+    private Memory memory;
+    private State state;
+
+    private ushort OpcodeMask = 0b1111_1110_0000_0000;
+    private ushort Register1Mask = 0b0000_0001_1100_0000;
+    private ushort ModeMask = 0b0000_0000_0011_1000;
+    private ushort Register2Mask = 0b0000_0000_0000_0111;
+
+    public ushort GetRegister1(ushort word) {
+      return (ushort)((word & Register1Mask) >> 6);
+    }
+
+    public ushort GetRegister2(ushort word) {
+      return (ushort)((word & Register2Mask));
+    }
+
+    public ushort GetMode(ushort word) {
+      return (ushort)(word & ModeMask);
+    }
+    public ushort GetOpcode(ushort word) {
+      return (ushort)(word & OpcodeMask);
+    }
+    public abstract void Execute(IArgument[] arguments);
+
+    public abstract IArgument[] GetArguments(ushort word);
+
+    public abstract ushort Opcode {
+      get;
+    }
+
+    public BitOperations(State state, Memory memory) {
+      this.state = state;
+      this.memory = memory;
+    }
+  }
+
+  public abstract class TrapReturn: ICommand {
+    private Memory memory;
+    private State state;
+
+    private ushort OpcodeMask = 0b1111_1111_1111_1111;
+
+    public ushort GetOpcode(ushort word) {
+      return (ushort)(word & OpcodeMask);
+    }
+    public abstract void Execute(IArgument[] arguments);
+
+    public abstract IArgument[] GetArguments(ushort word);
+
+    public abstract ushort Opcode {
+      get;
+    }
+
+    public TrapReturn(State state, Memory memory) {
+      this.state = state;
+      this.memory = memory;
+    }
+  }
+
+  public abstract class TrapInstruction: ICommand {
+    private Memory memory;
+    private State state;
+
+    private ushort OpcodeMask = 0b1111_1111_0000_0000;
+
+    private ushort OperationCodeMask = 0b0000_0000_1111_1111;
+
+    public ushort GetOpcode(ushort word) {
+      return (ushort)(word & OpcodeMask);
+    }
+
+    public ushort GetOperationCode(ushort word) {
+      return (ushort)(word & OperationCodeMask);
+    }
+    public abstract void Execute(IArgument[] arguments);
+
+    public abstract IArgument[] GetArguments(ushort word);
+
+    public abstract ushort Opcode {
+      get;
+    }
+
+    public TrapInstruction(State state, Memory memory) {
+      this.state = state;
+      this.memory = memory;
+    }
+  }
 
 }
