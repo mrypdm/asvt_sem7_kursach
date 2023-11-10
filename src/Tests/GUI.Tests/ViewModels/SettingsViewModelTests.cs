@@ -154,7 +154,7 @@ public class SettingsViewModelTests : GuiTest<App>
 
             await projectManager.RaiseAsync(m => m.PropertyChanged += null,
                 projectManager.Object,
-                new PropertyChangedEventArgs("Project"));
+                new PropertyChangedEventArgs(nameof(projectManager.Object.Project)));
 
             // Assert
 
