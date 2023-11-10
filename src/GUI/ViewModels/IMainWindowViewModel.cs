@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.Reactive;
 using Avalonia.Media;
 using GUI.Managers;
 using GUI.Views;
+using ReactiveUI;
 
 namespace GUI.ViewModels;
 
@@ -14,42 +15,42 @@ public interface IMainWindowViewModel : IWindowViewModel<MainWindow>
     /// <summary>
     /// Command for creating file
     /// </summary>
-    ICommand CreateFileCommand { get; }
+    ReactiveCommand<Unit, Unit> CreateFileCommand { get; }
 
     /// <summary>
     /// Command for opening file
     /// </summary>
-    ICommand OpenFileCommand { get; }
+    ReactiveCommand<Unit, Unit> OpenFileCommand { get; }
 
     /// <summary>
     /// Command for saving file
     /// </summary>
-    ICommand SaveFileCommand { get; }
+    ReactiveCommand<bool, Unit> SaveFileCommand { get; }
 
     /// <summary>
     /// Command for saving all files
     /// </summary>
-    ICommand SaveAllFilesCommand { get; }
+    ReactiveCommand<Unit, Unit> SaveAllFilesCommand { get; }
 
     /// <summary>
     /// Command for deleting file
     /// </summary>
-    ICommand DeleteFileCommand { get; }
+    ReactiveCommand<Unit, Unit> DeleteFileCommand { get; }
 
     /// <summary>
     /// Command for creating project
     /// </summary>
-    ICommand CreateProjectCommand { get; }
+    ReactiveCommand<Unit, Unit> CreateProjectCommand { get; }
 
     /// <summary>
     /// Command for opening project
     /// </summary>
-    ICommand OpenProjectCommand { get; }
+    ReactiveCommand<Unit, Unit> OpenProjectCommand { get; }
 
     /// <summary>
     /// Command for opening <see cref="SettingsWindow"/>
     /// </summary>
-    ICommand OpenSettingsWindowCommand { get; }
+    ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
 
     /// <summary>
     /// Main window header

@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
@@ -45,7 +46,7 @@ public class SettingsViewModelTests : GuiTest<App>
     [Test]
     public async Task AddDeviceTest()
     {
-        await RunTest(() =>
+        await RunAsyncTest(async () =>
         {
             // Arrange
 
@@ -65,7 +66,7 @@ public class SettingsViewModelTests : GuiTest<App>
 
             // Act
 
-            viewModel.AddDeviceCommand.Execute(null);
+            await viewModel.AddDeviceCommand.Execute();
 
             // Assert
 
@@ -88,7 +89,7 @@ public class SettingsViewModelTests : GuiTest<App>
     [Test]
     public async Task DeleteDevicesTest()
     {
-        await RunTest(() =>
+        await RunAsyncTest(async () =>
         {
             // Arrange
 
@@ -102,7 +103,7 @@ public class SettingsViewModelTests : GuiTest<App>
 
             // Act
 
-            viewModel.DeleteDeviceCommand.Execute(null);
+            await viewModel.DeleteDeviceCommand.Execute();
 
             // Assert
 

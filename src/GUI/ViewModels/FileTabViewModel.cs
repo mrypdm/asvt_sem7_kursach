@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Reactive;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Avalonia.Media;
 using GUI.Models;
 using GUI.Views;
@@ -68,10 +68,10 @@ public class FileTabViewModel : BaseViewModel<FileTab>, IFileTabViewModel
     }
 
     /// <inheritdoc />
-    public ICommand SelectTabCommand { get; }
+    public ReactiveCommand<Unit, Unit> SelectTabCommand { get; }
 
     /// <inheritdoc />
-    public ICommand CloseTabCommand { get; }
+    public ReactiveCommand<Unit, Unit> CloseTabCommand { get; }
 
     /// <summary>
     /// Notifies that header is changed

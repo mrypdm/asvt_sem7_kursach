@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.Reactive;
 using Avalonia.Media;
 using GUI.Managers;
 using GUI.Views;
+using ReactiveUI;
 
 namespace GUI.ViewModels;
 
@@ -14,12 +15,12 @@ public interface ISettingsViewModel : IWindowViewModel<SettingsWindow>
     /// <summary>
     /// Command for adding devices
     /// </summary>
-    ICommand AddDeviceCommand { get; }
+    ReactiveCommand<Unit, Unit> AddDeviceCommand { get; }
     
     /// <summary>
     /// Command for deleting devices
     /// </summary>
-    ICommand DeleteDeviceCommand { get; }
+    ReactiveCommand<Unit, Unit> DeleteDeviceCommand { get; }
     
     /// <summary>
     /// Collection of added devices

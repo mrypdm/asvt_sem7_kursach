@@ -2,8 +2,8 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Domain.Models;
@@ -54,10 +54,10 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
     }
 
     /// <inheritdoc />
-    public ICommand AddDeviceCommand { get; }
+    public ReactiveCommand<Unit, Unit> AddDeviceCommand { get; }
 
     /// <inheritdoc />
-    public ICommand DeleteDeviceCommand { get; }
+    public ReactiveCommand<Unit, Unit> DeleteDeviceCommand { get; }
 
     /// <inheritdoc />
     public ObservableCollection<FontFamily> AllFontFamilies { get; }

@@ -1,7 +1,8 @@
-﻿using System.Windows.Input;
+﻿using System.Reactive;
 using Avalonia.Media;
 using GUI.Models;
 using GUI.Views;
+using ReactiveUI;
 
 namespace GUI.ViewModels;
 
@@ -38,10 +39,10 @@ public interface IFileTabViewModel : IViewModel<FileTab>
     /// <summary>
     /// Command for select tab
     /// </summary>
-    ICommand SelectTabCommand { get; }
+    ReactiveCommand<Unit, Unit> SelectTabCommand { get; }
 
     /// <summary>
     /// Command for closing tab
     /// </summary>
-    ICommand CloseTabCommand { get; }
+    ReactiveCommand<Unit, Unit> CloseTabCommand { get; }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using GUI.Models;
 using GUI.ViewModels;
@@ -167,7 +168,7 @@ public class FileTabViewModelTests : GuiTest<App>
     [Test]
     public async Task CommandsTest()
     {
-        await RunTest(() =>
+        await RunAsyncTest(async () =>
         {
             // Arrange
 
@@ -178,8 +179,8 @@ public class FileTabViewModelTests : GuiTest<App>
 
             // Act
 
-            viewModel.SelectTabCommand.Execute(null);
-            viewModel.CloseTabCommand.Execute(null);
+            await viewModel.SelectTabCommand.Execute();
+            await viewModel.CloseTabCommand.Execute();
 
             // Assert
 

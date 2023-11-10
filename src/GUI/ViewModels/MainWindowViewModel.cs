@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
@@ -102,28 +102,28 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     }
 
     /// <inheritdoc />
-    public ICommand CreateFileCommand { get; }
+    public ReactiveCommand<Unit, Unit> CreateFileCommand { get; }
 
     /// <inheritdoc />
-    public ICommand OpenFileCommand { get; }
+    public ReactiveCommand<Unit, Unit> OpenFileCommand { get; }
 
     /// <inheritdoc />
-    public ICommand SaveFileCommand { get; }
+    public ReactiveCommand<bool, Unit> SaveFileCommand { get; }
 
     /// <inheritdoc />
-    public ICommand SaveAllFilesCommand { get; }
+    public ReactiveCommand<Unit, Unit> SaveAllFilesCommand { get; }
 
     /// <inheritdoc />
-    public ICommand DeleteFileCommand { get; }
+    public ReactiveCommand<Unit, Unit> DeleteFileCommand { get; }
 
     /// <inheritdoc />
-    public ICommand CreateProjectCommand { get; }
+    public ReactiveCommand<Unit, Unit> CreateProjectCommand { get; }
 
     /// <inheritdoc />
-    public ICommand OpenProjectCommand { get; }
+    public ReactiveCommand<Unit, Unit> OpenProjectCommand { get; }
 
     /// <inheritdoc />
-    public ICommand OpenSettingsWindowCommand { get; }
+    public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
 
     public string WindowTitle => _projectManager?.IsOpened == true
         ? $"{DefaultWindowTitle} - {_projectManager.Project.ProjectName}"
@@ -299,8 +299,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
                 return await SaveProjectFile(file);
             }
 
-            await _messageBoxManager.ShowMessageBoxAsync("Warning", "This feature is not available for project file",
-                ButtonEnum.Ok, Icon.Warning, View);
+            await _messageBoxManager.ShowErrorMessageBox("This feature is not available for project file", View);
             return false;
         }
 
