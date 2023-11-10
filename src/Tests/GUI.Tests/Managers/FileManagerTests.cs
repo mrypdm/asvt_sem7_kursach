@@ -256,7 +256,7 @@ public class FileManagerTests
 
         // Assert
 
-        Assert.That(files, Is.Null);
+        Assert.That(files, Is.Empty);
         storageProvider.Verify(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()), Times.Once);
     }
 

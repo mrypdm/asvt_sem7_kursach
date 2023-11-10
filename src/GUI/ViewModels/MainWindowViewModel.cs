@@ -192,7 +192,10 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
             }
         }
 
-        _tabManager.SelectTab(tab);
+        if (tab != null)
+        {
+            _tabManager.SelectTab(tab);
+        }
     }
 
     /// <summary>
@@ -217,11 +220,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     private async Task OpenFileAsync()
     {
         var files = await _fileManager.OpenFilesAsync(View.StorageProvider);
-
-        if (files != null)
-        {
-            await CreateTabForFiles(files);
-        }
+        await CreateTabForFiles(files);
     }
 
     /// <summary>

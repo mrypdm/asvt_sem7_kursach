@@ -87,7 +87,7 @@ public class FileManager : IFileManager
 
         if (!files.Any())
         {
-            return null;
+            return Array.Empty<FileModel>();
         }
 
         var filesList = new List<FileModel>();
