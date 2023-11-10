@@ -29,8 +29,7 @@ public class SettingsViewModelTests : GuiTest<App>
         await RunTest(() =>
         {
             // Act
-            var viewModel = new SettingsViewModel(new SettingsWindow(), new ProjectManager(new ProjectProvider()),
-                new FileManager());
+            var viewModel = CreateViewModel();
 
             // Assert
 
@@ -62,8 +61,7 @@ public class SettingsViewModelTests : GuiTest<App>
             var projectManager = new Mock<IProjectManager>();
             projectManager.Setup(m => m.SaveProjectAsync()).Returns(Task.CompletedTask);
 
-            var viewModel =
-                new SettingsViewModel(new SettingsWindow(), projectManager.Object, fileManager.Object);
+            var viewModel = CreateViewModel(projectManager.Object, fileManager.Object);
 
             // Act
 
@@ -99,10 +97,8 @@ public class SettingsViewModelTests : GuiTest<App>
             var projectManager = new Mock<IProjectManager>();
             projectManager.Setup(m => m.SaveProjectAsync()).Returns(Task.CompletedTask);
 
-            var viewModel = new SettingsViewModel(new SettingsWindow(), projectManager.Object, null)
-            {
-                SelectedDevices = new ObservableCollection<string>(devices)
-            };
+            var viewModel = CreateViewModel(projectManager.Object);
+            viewModel.SelectedDevices = new ObservableCollection<string>(devices);
 
             // Act
 
@@ -126,12 +122,11 @@ public class SettingsViewModelTests : GuiTest<App>
             var fontFamily = new FontFamily("Font");
             const int fontSize = 16;
 
-            var viewModel = new SettingsViewModel(new SettingsWindow(), new ProjectManager(new ProjectProvider()), null)
-            {
-                // Act
-                FontFamily = fontFamily,
-                FontSize = fontSize
-            };
+            var viewModel = CreateViewModel();
+
+            // Act
+            viewModel.FontFamily = fontFamily;
+            viewModel.FontSize = fontSize;
 
             // Assert
 
@@ -151,7 +146,7 @@ public class SettingsViewModelTests : GuiTest<App>
             // Arrange
 
             var projectManager = new Mock<IProjectManager>();
-            var viewModel = new SettingsViewModel(new SettingsWindow(), projectManager.Object, new FileManager());
+            var viewModel = CreateViewModel(projectManager.Object);
             var propertyAssert = new PropertyChangedAssert(viewModel);
 
             // Act
@@ -178,8 +173,7 @@ public class SettingsViewModelTests : GuiTest<App>
 
             File.Delete(settingsFile);
 
-            var viewModel =
-                new SettingsViewModel(new SettingsWindow(), new ProjectManager(new ProjectProvider()), null);
+            var viewModel = CreateViewModel();
 
             // Act
 
@@ -197,4 +191,10 @@ public class SettingsViewModelTests : GuiTest<App>
             });
         });
     }
+
+    private static SettingsViewModel CreateViewModel(IProjectManager projectManager = null,
+        IFileManager fileManager = null) =>
+        new(new SettingsWindow(),
+            projectManager ?? new ProjectManager(new ProjectProvider()),
+            fileManager ?? new FileManager());
 }
