@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
@@ -9,6 +11,7 @@ using GUI.Models;
 using GUI.ViewModels;
 using GUI.Views;
 using Moq;
+using Shared.Helpers;
 
 namespace GUI.Tests.ViewModels;
 
@@ -161,6 +164,37 @@ public class SettingsViewModelTests : GuiTest<App>
 
             projectManager.VerifyAdd(m => m.PropertyChanged += It.IsAny<PropertyChangedEventHandler>(), Times.Once);
             propertyAssert.Assert(nameof(viewModel.Devices));
+        });
+    }
+
+    [Test]
+    public async Task SaveOnClosing()
+    {
+        await RunAsyncTest(async () =>
+        {
+            // Arrange
+
+            const string settingsFile = "appsettings.json";
+
+            File.Delete(settingsFile);
+
+            var viewModel =
+                new SettingsViewModel(new SettingsWindow(), new ProjectManager(new ProjectProvider()), null);
+
+            // Act
+
+            viewModel.View.Close();
+
+            // Assert
+
+            await TaskHelper.WaitForCondition(() => File.Exists(settingsFile), TimeSpan.FromSeconds(10));
+
+            var options = await JsonHelper.DeserializeFileAsync<EditorOptions>(settingsFile);
+            Assert.Multiple(() =>
+            {
+                Assert.That(options.FontFamily, Is.EqualTo(SettingsManager.Instance.FontFamily.Name));
+                Assert.That(options.FontSize, Is.EqualTo(SettingsManager.Instance.FontSize));
+            });
         });
     }
 }

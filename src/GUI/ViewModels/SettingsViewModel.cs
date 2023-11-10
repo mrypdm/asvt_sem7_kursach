@@ -44,7 +44,7 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
 
         projectManager.PropertyChanged += ProjectPropertyChanged;
 
-        window.Closing += async (_, _) =>
+        window.Closed += async (_, _) =>
         {
             projectManager.PropertyChanged -= ProjectPropertyChanged;
             await SettingsManager.Instance.SaveGlobalSettingsAsync();

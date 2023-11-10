@@ -345,6 +345,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
         if (res == ButtonResult.Yes)
         {
+            await CloseTabAsync(_tabManager.Tab, true);
             _projectManager.RemoveFileFromProject(File.FilePath);
             await _projectManager.SaveProjectAsync();
             await _fileManager.DeleteAsync(File);
@@ -603,13 +604,11 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
             return;
         }
 
-        var projectTab =
-            _tabManager.Tabs.SingleOrDefault(t => t.File.FilePath == _projectManager.Project.ProjectFile);
+        var projectTab = _tabManager.Tabs.SingleOrDefault(t => t.File.FilePath == _projectManager.Project.ProjectFile);
         if (projectTab != null)
         {
             var fileOnDisk = await _fileManager.OpenFileAsync(projectTab.File.FilePath);
             projectTab.File.Text = fileOnDisk.Text;
-            this.RaisePropertyChanged(nameof(Tabs));
             this.RaisePropertyChanged(nameof(FileContent));
         }
     }
