@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using GUI.Converters;
 
-namespace GUI.Tests;
+namespace GUI.Tests.Converters;
 
 public class StringDoubleConverterTests
 {

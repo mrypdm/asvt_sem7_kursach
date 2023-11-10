@@ -5,7 +5,7 @@ using Domain.Models;
 using Domain.Providers;
 using Domain.Validators;
 
-namespace Domain.Tests;
+namespace Domain.Tests.Validators;
 
 public class ProjectValidatorTests
 {

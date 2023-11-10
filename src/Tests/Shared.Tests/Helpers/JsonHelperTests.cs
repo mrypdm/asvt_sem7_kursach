@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Domain.Models;
 using Shared.Helpers;
 
-namespace Shared.Tests;
+namespace Shared.Tests.Helpers;
 
 public class JsonHelperTests
 {

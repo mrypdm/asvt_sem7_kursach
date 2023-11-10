@@ -1,7 +1,7 @@
 ﻿using System;
 using Shared.Converters;
 
-namespace Shared.Tests;
+namespace Shared.Tests.Converters;
 
 /// <summary>
 /// Tests for <see cref="NumberStringConverter"/>

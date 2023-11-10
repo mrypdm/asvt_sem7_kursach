@@ -2,7 +2,7 @@
 using CommandLine;
 using Shared.Helpers;
 
-namespace Shared.Tests;
+namespace Shared.Tests.Helpers;
 
 public class CommandLineHelperTests
 {

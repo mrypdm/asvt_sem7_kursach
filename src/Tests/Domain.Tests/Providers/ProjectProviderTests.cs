@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Domain.Models;
 using Domain.Providers;
 
-namespace Domain.Tests;
+namespace Domain.Tests.Providers;
 
 public class ProjectProviderTests
 {

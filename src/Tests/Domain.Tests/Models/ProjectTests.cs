@@ -5,7 +5,7 @@ using Domain.Extensions;
 using Domain.Models;
 using Shared.Helpers;
 
-namespace Domain.Tests;
+namespace Domain.Tests.Models;
 
 public class ProjectTests
 {

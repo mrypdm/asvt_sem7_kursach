@@ -2,7 +2,7 @@
 using System.IO;
 using Shared.Helpers;
 
-namespace Shared.Tests;
+namespace Shared.Tests.Helpers;
 
 /// <summary>
 /// Tests for <see cref="PathHelper"/>
