@@ -284,6 +284,17 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     }
 
     /// <summary>
+    /// Is tab represents the project file
+    /// </summary>
+    private bool IsProjectTab(IFileTabViewModel tab) => IsProjectFile(tab.File);
+
+    /// <summary>
+    /// Is file the project file
+    /// </summary>
+    private bool IsProjectFile(FileModel file) =>
+        _projectManager.IsOpened && file.FilePath == _projectManager.Project.ProjectFile;
+
+    /// <summary>
     /// Saves file
     /// </summary>
     /// <param name="file">File info</param>
@@ -291,8 +302,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// <returns>True if file was saved</returns>
     private async Task<bool> SaveFileAsync(FileModel file, bool saveAs)
     {
-        if (file.FilePath ==
-            (_projectManager.IsOpened ? _projectManager.Project.ProjectFile : null))
+        if (IsProjectFile(file))
         {
             if (!saveAs)
             {
@@ -337,13 +347,18 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// </summary>
     private async Task DeleteFileAsync()
     {
+        if (IsProjectTab(_tabManager.Tab))
+        {
+            await _messageBoxManager.ShowErrorMessageBox("Cannot delete project file", View);
+            return;
+        }
+
         var res = await _messageBoxManager
             .ShowMessageBoxAsync("Confirmation", $"Are you sure you want to delete the file '{File.FileName}'?",
                 ButtonEnum.YesNo, Icon.Question, View);
 
         if (res == ButtonResult.Yes)
         {
-            await CloseTabAsync(_tabManager.Tab, true);
             _projectManager.RemoveFileFromProject(File.FilePath);
             await _projectManager.SaveProjectAsync();
             await _fileManager.DeleteAsync(File);
@@ -356,7 +371,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// </summary>
     private async Task CloseTabAsync(IFileTabViewModel tab, bool isUi)
     {
-        if (tab.File.FilePath == _projectManager.Project.ProjectFile && isUi)
+        if (IsProjectTab(tab) && isUi)
         {
             await _messageBoxManager.ShowErrorMessageBox("Cannot close project file", View);
             return;
@@ -602,7 +617,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
             return;
         }
 
-        var projectTab = _tabManager.Tabs.SingleOrDefault(t => t.File.FilePath == _projectManager.Project.ProjectFile);
+        var projectTab = _tabManager.Tabs.SingleOrDefault(IsProjectTab);
         if (projectTab != null)
         {
             var fileOnDisk = await _fileManager.OpenFileAsync(projectTab.File.FilePath);
