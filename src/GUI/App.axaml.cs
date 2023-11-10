@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Domain.Providers;
 using GUI.Managers;
 using GUI.MessageBoxes;
+using GUI.Providers;
 using GUI.ViewModels;
 using GUI.Views;
 
@@ -25,7 +26,8 @@ public class App : Application
                 new TabManager(),
                 new ProjectManager(new ProjectProvider()),
                 new FileManager(),
-                new MessageBoxManager());
+                new MessageBoxManager(),
+                new SettingsWindowProvider());
             desktop.MainWindow = viewModel.View;
         }
 

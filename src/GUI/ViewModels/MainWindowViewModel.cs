@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
@@ -17,19 +17,19 @@ using ReactiveUI;
 using Shared.Helpers;
 using Domain.Models;
 using GUI.MessageBoxes;
+using GUI.Providers;
 
 namespace GUI.ViewModels;
 
-/// <summary>
-/// View model for <see cref="MainWindow"/>
-/// </summary>
-public class MainWindowViewModel : WindowViewModel<MainWindow>
+/// <inheritdoc cref="IMainWindowViewModel"/>
+public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewModel
 {
     private const string DefaultWindowTitle = "PDP-11 Simulator";
     private const string MainFileName = "main.asm";
 
     private readonly IFileManager _fileManager;
     private readonly IMessageBoxManager _messageBoxManager;
+    private readonly IWindowProvider<SettingsWindow> _settingsWindowProvider;
     private readonly ITabManager _tabManager;
     private readonly IProjectManager _projectManager;
 
@@ -48,8 +48,10 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// <param name="fileManager">File manager</param>
     /// <param name="tabManager">Tab manager</param>
     /// <param name="messageBoxManager">Message box manager</param>
+    /// <param name="settingsWindowProvider">Provider for windows</param>
     public MainWindowViewModel(MainWindow window, ITabManager tabManager, IProjectManager projectManager,
-        IFileManager fileManager, IMessageBoxManager messageBoxManager) : base(window)
+        IFileManager fileManager, IMessageBoxManager messageBoxManager,
+        IWindowProvider<SettingsWindow> settingsWindowProvider) : base(window)
     {
         CreateFileCommand = ReactiveCommand.CreateFromTask(CreateFileAsync);
         OpenFileCommand = ReactiveCommand.CreateFromTask(OpenFileAsync);
@@ -63,6 +65,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
 
         _fileManager = fileManager;
         _messageBoxManager = messageBoxManager;
+        _settingsWindowProvider = settingsWindowProvider;
 
         _projectManager = projectManager;
         _projectManager.PropertyChanged += (_, args) =>
@@ -98,58 +101,38 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
         InitContext();
     }
 
-    /// <summary>
-    /// Command for creating file
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> CreateFileCommand { get; }
+    /// <inheritdoc />
+    public ICommand CreateFileCommand { get; }
 
-    /// <summary>
-    /// Command for opening file
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> OpenFileCommand { get; }
+    /// <inheritdoc />
+    public ICommand OpenFileCommand { get; }
 
-    /// <summary>
-    /// Command for saving file
-    /// </summary>
-    public ReactiveCommand<bool, Unit> SaveFileCommand { get; }
+    /// <inheritdoc />
+    public ICommand SaveFileCommand { get; }
 
-    /// <summary>
-    /// Command for saving all files
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> SaveAllFilesCommand { get; }
+    /// <inheritdoc />
+    public ICommand SaveAllFilesCommand { get; }
 
-    /// <summary>
-    /// Command for deleting file
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> DeleteFileCommand { get; }
+    /// <inheritdoc />
+    public ICommand DeleteFileCommand { get; }
 
-    /// <summary>
-    /// Command for creating project
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> CreateProjectCommand { get; }
+    /// <inheritdoc />
+    public ICommand CreateProjectCommand { get; }
 
-    /// <summary>
-    /// Command for opening project
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> OpenProjectCommand { get; }
+    /// <inheritdoc />
+    public ICommand OpenProjectCommand { get; }
 
-    /// <summary>
-    /// Command for opening <see cref="SettingsWindow"/>
-    /// </summary>
-    public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
+    /// <inheritdoc />
+    public ICommand OpenSettingsWindowCommand { get; }
 
     public string WindowTitle => _projectManager?.IsOpened == true
         ? $"{DefaultWindowTitle} - {_projectManager.Project.ProjectName}"
         : DefaultWindowTitle;
 
-    /// <summary>
-    /// Collection of tabs
-    /// </summary>
+    /// <inheritdoc />
     public ObservableCollection<FileTab> Tabs => new(_tabManager.Tabs.Select(t => t.View));
 
-    /// <summary>
-    /// Current text of <see cref="MainWindow.SourceCodeTextBox"/>
-    /// </summary>
+    /// <inheritdoc />
     public string FileContent
     {
         get => File.Text;
@@ -559,12 +542,12 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
                     await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
                 }
             }
-            
+
             if (await _projectManager.OpenProjectAsync(View.StorageProvider))
             {
                 await OpenProjectFilesAsync();
                 return true;
-            } 
+            }
         }
         catch (Exception e)
         {
@@ -582,7 +565,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>
     /// </summary>
     private async Task OpenSettingsWindow()
     {
-        var viewModel = new SettingsViewModel(new SettingsWindow(), _projectManager, _fileManager);
+        var viewModel = _settingsWindowProvider.CreateWindow<SettingsViewModel>(_projectManager, _fileManager);
         await viewModel.ShowDialog(View);
     }
 

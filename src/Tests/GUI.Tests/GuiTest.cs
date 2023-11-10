@@ -9,7 +9,7 @@ namespace GUI.Tests;
 /// Base class for testing GUI elements
 /// </summary>
 /// <typeparam name="TApp">Heir of <see cref="Application"/></typeparam>
-public abstract class GuiTest<TApp>
+public abstract class GuiTest<TApp> where TApp : Application
 {
     private HeadlessUnitTestSession _session;
 
