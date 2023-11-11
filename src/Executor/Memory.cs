@@ -21,8 +21,8 @@ public class Memory: IMemory {
     if (address % 2 == 1) {
       throw new InvalidOperationException("Address is not odd. Only odd addresses allowed when getting word");
     }
-    value |= (ushort)(RawMemory[address] << 8);
-    value |= RawMemory[address + 1];
+    value |= (ushort)(RawMemory[address + 1] << 8);
+    value |= RawMemory[address];
     return value;
   }
   public void SetByte(ushort address, byte value) {
@@ -33,8 +33,8 @@ public class Memory: IMemory {
     if (address % 2 == 1) {
       throw new InvalidOperationException("Address is not odd. Only odd addresses allowed when setting word");
     }
-    RawMemory[address + 1] = (byte)(value & 255);
-    RawMemory[address] = (byte)(value >> 8);
+    RawMemory[address] = (byte)(value & 255);
+    RawMemory[address + 1] = (byte)(value >> 8);
   }
 
 }
