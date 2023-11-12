@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AssemblerLib;
@@ -8,7 +9,7 @@ namespace AssemblerLib;
 /// </summary>
 internal record CommandLine
 {
-    private string _mark;
+    private HashSet<string> _marks;
     private string _instructionMnemonics;
     private List<string> _args;
 
@@ -39,9 +40,9 @@ internal record CommandLine
     /// <param name="mark">Symbol mark of line</param>
     /// <param name="instruction">Instruction to execute</param>
     /// <param name="args">Arguments of instruction</param>
-    public CommandLine(string mark, string instructionMnemonics, IEnumerable<string> args)
+    public CommandLine(IEnumerable<string> marks, string instructionMnemonics, IEnumerable<string> args)
     {
-        _mark = mark;
+        _marks = marks.ToHashSet();
         _instructionMnemonics = instructionMnemonics;
         _args = args.ToList();
 
@@ -51,7 +52,7 @@ internal record CommandLine
     /// <summary>
     /// Symbol mark for line
     /// </summary>
-    public string Mark => _mark;
+    public HashSet<string> Marks => _marks;
 
     /// <summary>
     /// Instruction to execute

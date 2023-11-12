@@ -33,6 +33,7 @@ internal class Parser
         string line;
 
         using var reader = new StreamReader(filePath);
+        var marksSet = new HashSet<string>();
 
         while ((line = await reader.ReadLineAsync()) != null)
         {
@@ -55,12 +56,14 @@ internal class Parser
             var match = _regexMaskCommandLine.Match(line);
 
             var mark = match.Groups[1].Value.Trim().Trim(BadSymbols).ToLower();
+            marksSet.Add(mark);
             var instruction = match.Groups[2].Value.Trim(BadSymbols).ToLower();
+            if (instruction == "") { continue; }
             var arguments = match.Groups[3].Captures.Select(c => c.Value.Trim(BadSymbols).ToLower());
 
-            var command = new CommandLine(mark, instruction, arguments);
-
+            var command = new CommandLine(marksSet, instruction, arguments);
             res.Add(command);
+            marksSet.Clear();
         }
 
         return res;
