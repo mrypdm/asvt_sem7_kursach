@@ -18,7 +18,7 @@ internal record CommandLine
         {
             if (!Instruction.INSTRUCTIONS.ContainsKey(_instructionMnemonics))
             {
-                throw new System.Exception($"Unexisting instruction: {_instructionMnemonics}");
+                throw new System.Exception($"Unexisting instruction: {_instructionMnemonics}.");
             }
 
             if (_args.Count() != Instruction.INSTRUCTIONS[_instructionMnemonics].NumVariables)
