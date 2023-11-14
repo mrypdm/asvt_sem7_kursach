@@ -9,27 +9,32 @@ namespace AssemblerLib;
 /// </summary>
 internal record CommandLine
 {
+    private const string RegexPatternMarkValidation = @"^\s*[a-zA-Z]+([^:;]\w)*(?=:)";
+    
     private HashSet<string> _marks;
     private string _instructionMnemonics;
     private List<string> _args;
 
-    private bool _CommandLineValidation()
+    private bool CommandLineValidation()
     {
-        if (_instructionMnemonics != "")
+        // Mnemonics validation
+        if (!string.IsNullOrWhiteSpace(_instructionMnemonics))
         {
-            if (!Instruction.INSTRUCTIONS.ContainsKey(_instructionMnemonics))
+            if (!Instruction.instructions.ContainsKey(_instructionMnemonics))
             {
                 throw new System.Exception($"Unexisting instruction: {_instructionMnemonics}.");
             }
 
-            if (_args.Count() != Instruction.INSTRUCTIONS[_instructionMnemonics].NumVariables)
+            if (_args.Count() != Instruction.instructions[_instructionMnemonics].ArgumentsCount)
             {
                 throw new System.Exception(
-                    $"Incorrect number of argumants: {_instructionMnemonics}." +
-                    $"Must be {Instruction.INSTRUCTIONS[_instructionMnemonics].NumVariables}." +
+                    $"Incorrect number of argumants: {_instructionMnemonics}. " +
+                    $"Must be {Instruction.instructions[_instructionMnemonics].ArgumentsCount}. " +
                     $"Given: {_args.Count()}.");
             }
         }
+
+        // Mark validation
 
         return true;
     }
@@ -46,7 +51,7 @@ internal record CommandLine
         _instructionMnemonics = instructionMnemonics;
         _args = args.ToList();
 
-        //_CommandLineValidation();
+        CommandLineValidation();
     }
 
     /// <summary>

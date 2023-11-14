@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,10 +9,10 @@ namespace AssemblerLib;
 
 internal class Parser
 {
-    private const string _RegexPatternCommandLine = @"^\s*([^\s,:]+:\s*)?(\S+)?\s*([^\s,]+\s*,?\s*){0,}$";
-    private const string _RegexPatternRemovingComment = @"^[^;.]+(?=;?)";
-    private const string _RegexPatternMarkExistence = @"^\s*[^;]*:";
-    private const string _RegexPatternMarkValidation = @"^\s*[a-zA-Z]+([^:;]\w)*(?=:)";
+    private const string RegexPatternCommandLine = @"^\s*([^\s,:]+:\s*)?(\S+)?\s*([^\s,]+\s*,?\s*){0,}$";
+    private const string RegexPatternRemovingComment = @"^[^;.]+(?=;?)";
+    private const string RegexPatternMarkExistence = @"^\s*[^;]*:";
+    private const string RegexPatternMarkValidation = @"^\s*[a-zA-Z]+([^:;]\w)*(?=:)";
     private readonly char[] BadSymbols = { ' ', '\t', ',', ':' };
 
     private readonly Regex _regexMaskCommandLine;
@@ -21,10 +22,10 @@ internal class Parser
 
     public Parser()
     {
-        _regexMaskCommandLine = new Regex(_RegexPatternCommandLine, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        _regexMaskRemovingComment = new Regex(_RegexPatternRemovingComment, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        _regexMaskMarkExistence = new Regex(_RegexPatternMarkExistence, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        _regexMaskMarkValidation = new Regex(_RegexPatternMarkValidation, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        _regexMaskCommandLine = new Regex(RegexPatternCommandLine, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        _regexMaskRemovingComment = new Regex(RegexPatternRemovingComment, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        _regexMaskMarkExistence = new Regex(RegexPatternMarkExistence, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        _regexMaskMarkValidation = new Regex(RegexPatternMarkValidation, RegexOptions.IgnoreCase | RegexOptions.Singleline);
     }
 
     public async Task<List<CommandLine>> Parse(string filePath)
@@ -38,8 +39,8 @@ internal class Parser
         while ((line = await reader.ReadLineAsync()) != null)
         {
             // Removing comment
-            line = line.Split(new char[] { ';' })[0];
-            if (line.Replace(" ", "") == "") { continue; }
+            line = line.Split(';', StringSplitOptions.TrimEntries)[0];
+            if (string.IsNullOrWhiteSpace(line)) { continue; }
 
             // Marks validation
             var markExistence = _regexMaskMarkExistence.Match(line).Groups[0].Value;

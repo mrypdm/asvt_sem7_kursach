@@ -10,9 +10,9 @@ namespace AssemblerLib
     {
         private string _mnemonics;
         private string _code;
-        private byte _num_variables;
+        private byte _numVariables;
         
-        public static readonly Dictionary<string, Instruction> INSTRUCTIONS = new Dictionary<string, Instruction>()
+        public static readonly Dictionary<string, Instruction> instructions = new Dictionary<string, Instruction>()
         {
             {"asr", new Instruction("asr", "062{0}", 1)},
             {"mov", new Instruction("mov", "01{0}{1}", 2)},
@@ -24,11 +24,11 @@ namespace AssemblerLib
         {
             _mnemonics = mnemonics;
             _code = code;
-            _num_variables = num_variables;
+            _numVariables = num_variables;
         }
 
         public string Code => _code;
 
-        public byte NumVariables => _num_variables;
+        public byte ArgumentsCount => _numVariables;
     }
 }
