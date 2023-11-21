@@ -13,23 +13,25 @@ namespace Executor {
       0b1111_1111_1111_1111
     };
 
-    private List < ICommand > Opcodes;
+    private List<ICommand> Opcodes;
 
     private Dictionary < ushort, ICommand > OpcodesDictionary;
 
     public OpcodeIndentifyer(State state, Memory memory) {
-      Opcodes.Add(new MOV(state, memory));
-      Opcodes.Add(new SOB(state, memory));
-      Opcodes.Add(new JSR(state, memory));
-      Opcodes.Add(new RTS(state, memory));
+      Opcodes = new List<ICommand>{
+        new MOV(state, memory),
+        new SOB(state, memory),
+        new JSR(state, memory),
+        new RTS(state, memory)
+      };
       OpcodesDictionary = Opcodes.ToDictionary(command => command.Opcode, command => command);
     }
-    public ICommand GetCommandName(ushort Word) {
+    public ICommand GetCommand(ushort Word) {
       ushort opcode;
       ICommand command;
       foreach(ushort mask in Masks){
         opcode = (ushort)(Word & mask);
-        if (OpcodesDictionary.TryGetValue(opcode, command)){
+        if (OpcodesDictionary.TryGetValue(opcode, out command)){
           return command;
         }
       }
