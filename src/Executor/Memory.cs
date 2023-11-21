@@ -12,7 +12,7 @@ interface IMemory {
 public class Memory: IMemory {
   private ushort[] RawMemory = new ushort[65026];
 
-  public byte GetByte(ushort address) {
+  public byte GetByte(ushort address) {  // address - ushort => отрицательный адрес передать нельзя
     return (byte)(RawMemory[address]);
   }
 

@@ -24,7 +24,15 @@ namespace Executor {
       Opcodes.Add(new RTS(state, memory));
       OpcodesDictionary = Opcodes.ToDictionary(command => command.Opcode, command => command);
     }
-    public string GetCommandName(ushort Word) {
+    public ICommand GetCommandName(ushort Word) {
+      ushort opcode;
+      ICommand command;
+      foreach(ushort mask in Masks){
+        opcode = (ushort)(Word & mask);
+        if (OpcodesDictionary.TryGetValue(opcode, command)){
+          return command;
+        }
+      }
       throw new InvalidOperationException("Invalid Operation Opcode!");
     }
   }
