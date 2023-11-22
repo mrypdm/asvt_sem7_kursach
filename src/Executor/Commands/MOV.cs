@@ -6,9 +6,9 @@ public class MOV: TwoOperands {
     public MOV(State state, Memory memory): base(state, memory) {}
 
     public override IArgument[] GetArguments(ushort word) {
-      IArgument[] args = new TwoOperandsArg[2];
-      args[0] = new TwoOperandsArg(GetMode1(word), GetRegister1(word), state, memory);
-      args[1] = new TwoOperandsArg(GetMode2(word), GetRegister2(word), state, memory);
+      IArgument[] args = new TwoOperandsArgW[2];
+      args[0] = new TwoOperandsArgW(GetMode1(word), GetRegister1(word), state, memory);
+      args[1] = new TwoOperandsArgW(GetMode2(word), GetRegister2(word), state, memory);
       return args;
     }
     public override void Execute(IArgument[] arguments) {
