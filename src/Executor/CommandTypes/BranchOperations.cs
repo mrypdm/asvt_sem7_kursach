@@ -1,27 +1,18 @@
-namespace Executor;
+using Executor.Memories;
+using Executor.States;
 
-public abstract class BranchOperationC: ICommand {
-    private Memory memory;
-    private State state;
-    private ushort OpcodeMask = 0b1111_1111_0000_0000;
-    private ushort OffsetMask = 0b0000_0000_1111_1111;
+namespace Executor.CommandTypes;
 
-    public ushort GetOffset(ushort word) {
-      return (ushort)(word & OffsetMask);
+public abstract class BranchOperationC : BaseCommand
+{
+    private const ushort OpcodeMask = 0b1111_1111_0000_0000;
+    private const ushort OffsetMask = 0b0000_0000_1111_1111;
+
+    protected ushort GetOffset(ushort word) => (ushort)(word & OffsetMask);
+
+    protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
+
+    protected BranchOperationC(IMemory memory, IState state) : base(memory, state)
+    {
     }
-    public ushort GetOpcodeByMask(ushort word) {
-      return (ushort)(word & OpcodeMask);
-    }
-    public abstract void Execute(IArgument[] arguments);
-
-    public abstract IArgument[] GetArguments(ushort word);
-
-    public abstract ushort Opcode {
-      get;
-    }
-
-    public BranchOperationC(State state, Memory memory) {
-      this.state = state;
-      this.memory = memory;
-    }
-  }
+}

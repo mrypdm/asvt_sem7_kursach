@@ -1,38 +1,35 @@
-using System;
+using Executor.States;
 
-namespace Executor{
+namespace Executor;
 
-    public class Executor {
-        
-        private static Executor Instance;
+public class Executor
+{
+    private readonly IState _state;
 
-        public static Executor GetInstance(State state){
-            if (Instance == null){
-                Instance = new Executor(state);
-            }
-            return Instance;
-        }
-        private Executor(State NewState){
-            CurrentState = NewState;
-        }
+    public Executor()
+    {
+        _state = new State();
+    }
 
-        private State CurrentState;
-        
-        public int ExecuteProgram(){
-            return 0;
-        }
+    public int ExecuteProgram()
+    {
+        return 0;
+    }
 
-        private int ReadCommand(ushort addr){
-            return 0;
-        }
-        public int ExecuteNextInstruction(){
-            CurrentState.MemoryAddressRegister = CurrentState.R[7];
-            CurrentState.R[7] += 2;
-            ReadCommand(CurrentState.R[7]);
-            return 0;
-        }
-        public int LoadProgram(string filename){
-            return 0;
-        }
+    private int ReadCommand(ushort addr)
+    {
+        return 0;
+    }
+
+    public int ExecuteNextInstruction()
+    {
+        _state.Registers[7] += 2;
+        ReadCommand(_state.Registers[7]);
+        return 0;
+    }
+
+    public int LoadProgram(string filename)
+    {
+        return 0;
     }
 }

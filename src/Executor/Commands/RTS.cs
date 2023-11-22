@@ -1,32 +1,31 @@
-namespace Executor;
+using Executor.Arguments;
+using Executor.CommandTypes;
+using Executor.Memories;
+using Executor.States;
 
-public class RTS: ICommand {
+namespace Executor.Commands;
 
-    private Memory memory;
-    private State state;
-    private ushort OpcodeMask = 0b1111_1111_1111_1000;
-    private ushort RegisterMask = 0b0000_0000_0000_0111;
+public class RTS : BaseCommand
+{
+    private const ushort OpcodeMask = 0b1111_1111_1111_1000;
+    private const ushort RegisterMask = 0b0000_0000_0000_0111;
 
-    public ushort GetRegister(ushort word) {
-      return (ushort)((word & RegisterMask));
-    }
-    public ushort GetOpcodeByMask(ushort word) {
-      return (ushort)(word & OpcodeMask);
-    }
-
-    public IArgument[] GetArguments(ushort word) {
-      IArgument[] args = new RTSArg[1];
-      args[0] = new RTSArg(GetRegister(word), state, memory);
-      return args;
-    }
-    public void Execute(IArgument[] arguments) {
-      return;
+    public RTS(IMemory memory, IState state) : base(memory, state)
+    {
     }
 
-    public ushort Opcode => 0b0000_0000_1000_0000;
+    protected ushort GetRegister(ushort word) => (ushort)(word & RegisterMask);
 
-    public RTS(State state, Memory memory) {
-      this.memory = memory;
-      this.state = state;
+    protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
+
+    public override IArgument[] GetArguments(ushort word)
+    {
+        return new IArgument[] { new RTSArg(Memory, State, GetRegister(word)) };
     }
+
+    public override void Execute(IArgument[] arguments)
+    {
+    }
+
+    public override ushort Opcode => 0b0000_0000_1000_0000;
 }

@@ -1,6 +1,8 @@
-namespace Executor;
+namespace Executor.Arguments;
 
-public interface IArgument {
+public interface IArgument
+{
     ushort GetValue();
+
     void SetValue(ushort word);
-  }
+}

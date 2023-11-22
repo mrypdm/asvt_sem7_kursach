@@ -1,30 +1,18 @@
-namespace Executor;
+using Executor.Memories;
+using Executor.States;
 
-public abstract class TrapInstruction: ICommand {
-    private Memory memory;
-    private State state;
+namespace Executor.CommandTypes;
 
-    private ushort OpcodeMask = 0b1111_1111_0000_0000;
+public abstract class TrapInstruction : BaseCommand
+{
+    private const ushort OpcodeMask = 0b1111_1111_0000_0000;
+    private const ushort OperationCodeMask = 0b0000_0000_1111_1111;
 
-    private ushort OperationCodeMask = 0b0000_0000_1111_1111;
+    protected ushort GetOpcode(ushort word) => (ushort)(word & OpcodeMask);
 
-    public ushort GetOpcode(ushort word) {
-      return (ushort)(word & OpcodeMask);
-    }
+    protected ushort GetOperationCode(ushort word) => (ushort)(word & OperationCodeMask);
 
-    public ushort GetOperationCode(ushort word) {
-      return (ushort)(word & OperationCodeMask);
-    }
-    public abstract void Execute(IArgument[] arguments);
-
-    public abstract IArgument[] GetArguments(ushort word);
-
-    public abstract ushort Opcode {
-      get;
-    }
-
-    public TrapInstruction(State state, Memory memory) {
-      this.state = state;
-      this.memory = memory;
+    protected TrapInstruction(IMemory memory, IState state) : base(memory, state)
+    {
     }
 }

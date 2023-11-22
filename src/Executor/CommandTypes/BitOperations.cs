@@ -1,38 +1,24 @@
-namespace Executor;
+using Executor.Memories;
+using Executor.States;
 
-public abstract class BitOperations: ICommand {
-    private Memory memory;
-    private State state;
+namespace Executor.CommandTypes;
 
-    private ushort OpcodeMask = 0b1111_1110_0000_0000;
-    private ushort Register1Mask = 0b0000_0001_1100_0000;
-    private ushort ModeMask = 0b0000_0000_0011_1000;
-    private ushort Register2Mask = 0b0000_0000_0000_0111;
+public abstract class BitOperations : BaseCommand
+{
+    private const ushort OpcodeMask = 0b1111_1110_0000_0000;
+    private const ushort Register1Mask = 0b0000_0001_1100_0000;
+    private const ushort ModeMask = 0b0000_0000_0011_1000;
+    private const ushort Register2Mask = 0b0000_0000_0000_0111;
 
-    public ushort GetRegister1(ushort word) {
-      return (ushort)((word & Register1Mask) >> 6);
-    }
+    protected ushort GetRegister1(ushort word) => (ushort)((word & Register1Mask) >> 6);
 
-    public ushort GetRegister2(ushort word) {
-      return (ushort)((word & Register2Mask));
-    }
+    protected ushort GetRegister2(ushort word) => (ushort)(word & Register2Mask);
 
-    public ushort GetMode(ushort word) {
-      return (ushort)(word & ModeMask);
-    }
-    public ushort GetOpcode(ushort word) {
-      return (ushort)(word & OpcodeMask);
-    }
-    public abstract void Execute(IArgument[] arguments);
+    protected ushort GetMode(ushort word) => (ushort)(word & ModeMask);
 
-    public abstract IArgument[] GetArguments(ushort word);
+    protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
-    public abstract ushort Opcode {
-      get;
-    }
-
-    public BitOperations(State state, Memory memory) {
-      this.state = state;
-      this.memory = memory;
+    protected BitOperations(IMemory memory, IState state) : base(memory, state)
+    {
     }
 }

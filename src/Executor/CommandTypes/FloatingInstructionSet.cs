@@ -1,27 +1,18 @@
-namespace Executor;
+using Executor.Memories;
+using Executor.States;
 
-public abstract class FloatingInstructionSet: ICommand {
-    private Memory memory;
-    private State state;
-    private ushort OpcodeMask = 0b1111_1111_1111_1000;
-    private ushort RegisterMask = 0b0000_0000_0000_0111;
+namespace Executor.CommandTypes;
 
-    public ushort GetRegister(ushort word) {
-      return (ushort)(word & RegisterMask);
+public abstract class FloatingInstructionSet : BaseCommand
+{
+    private const ushort OpcodeMask = 0b1111_1111_1111_1000;
+    private const ushort RegisterMask = 0b0000_0000_0000_0111;
+
+    protected ushort GetRegister(ushort word) => (ushort)(word & RegisterMask);
+
+    protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
+
+    protected FloatingInstructionSet(IMemory memory, IState state) : base(memory, state)
+    {
     }
-    public ushort GetOpcodeByMask(ushort word) {
-      return (ushort)(word & OpcodeMask);
-    }
-    public abstract void Execute(IArgument[] arguments);
-
-    public abstract IArgument[] GetArguments(ushort word);
-
-    public abstract ushort Opcode {
-      get;
-    }
-
-    public FloatingInstructionSet(State state, Memory memory) {
-      this.state = state;
-      this.memory = memory;
-    }
-  }
+}

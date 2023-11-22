@@ -1,11 +1,12 @@
-namespace Executor;
+using Executor.Arguments;
 
-public interface ICommand {
+namespace Executor.CommandTypes;
+
+public interface ICommand
+{
     void Execute(IArgument[] arguments);
 
     IArgument[] GetArguments(ushort word);
 
-    ushort Opcode {
-      get;
-    }
+    ushort Opcode { get; }
 }

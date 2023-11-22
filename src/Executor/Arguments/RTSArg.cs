@@ -1,22 +1,23 @@
-namespace Executor;
+using Executor.Memories;
+using Executor.States;
 
-class RTSArg: IArgument {
+namespace Executor.Arguments;
 
-    private ushort _Register;
-    private State _state;
-    private Memory _memory;
+class RTSArg : BaseArgument
+{
+    private ushort _register;
 
-    public ushort GetValue() {
-      return 0;
+    public override ushort GetValue()
+    {
+        return 0;
     }
 
-    public void SetValue(ushort word) {
-      return;
+    public override void SetValue(ushort word)
+    {
     }
 
-    public RTSArg(ushort Register, State state, Memory memory) {
-      this._memory = memory;
-      this._state = state;
-      this._Register = Register;
+    public RTSArg(IMemory memory, IState state, ushort register) : base(memory, state)
+    {
+        _register = register;
     }
 }

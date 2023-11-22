@@ -1,8 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Executor", "Executor\Executor.csproj", "{7747CB7A-BFC1-498F-B035-4F12CB87807C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{47B633B4-A40A-4634-9D47-F4F81379EC1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Executor.Tests", "Tests\Executor.Tests\Executor.Tests.csproj", "{75376E10-165B-4A3A-A817-8EF4BC1D9480}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7747CB7A-BFC1-498F-B035-4F12CB87807C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7747CB7A-BFC1-498F-B035-4F12CB87807C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7747CB7A-BFC1-498F-B035-4F12CB87807C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7747CB7A-BFC1-498F-B035-4F12CB87807C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75376E10-165B-4A3A-A817-8EF4BC1D9480}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75376E10-165B-4A3A-A817-8EF4BC1D9480}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75376E10-165B-4A3A-A817-8EF4BC1D9480}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75376E10-165B-4A3A-A817-8EF4BC1D9480}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{75376E10-165B-4A3A-A817-8EF4BC1D9480} = {47B633B4-A40A-4634-9D47-F4F81379EC1A}
 	EndGlobalSection
 EndGlobal

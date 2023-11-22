@@ -1,24 +1,15 @@
-namespace Executor;
+using Executor.Memories;
+using Executor.States;
 
-public abstract class TrapReturn: ICommand {
-    private Memory memory;
-    private State state;
+namespace Executor.CommandTypes;
 
-    private ushort OpcodeMask = 0b1111_1111_1111_1111;
+public abstract class TrapReturn : BaseCommand
+{
+    private const ushort OpcodeMask = 0b1111_1111_1111_1111;
 
-    public ushort GetOpcode(ushort word) {
-      return (ushort)(word & OpcodeMask);
-    }
-    public abstract void Execute(IArgument[] arguments);
+    protected ushort GetOpcode(ushort word) => (ushort)(word & OpcodeMask);
 
-    public abstract IArgument[] GetArguments(ushort word);
-
-    public abstract ushort Opcode {
-      get;
-    }
-
-    public TrapReturn(State state, Memory memory) {
-      this.state = state;
-      this.memory = memory;
+    protected TrapReturn(IMemory memory, IState state) : base(memory, state)
+    {
     }
 }

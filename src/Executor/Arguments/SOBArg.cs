@@ -1,21 +1,25 @@
-namespace Executor;
+using Executor.Memories;
+using Executor.States;
 
-class SOBArg: IArgument {
+namespace Executor.Arguments;
 
-    private ushort _Offset;
-    private ushort _Register;
-    private State _state;
-    private Memory _memory;
-    public ushort GetValue() {
-      return 0;
+class SOBArg : BaseArgument
+{
+    private ushort _offset;
+    private ushort _register;
+
+    public override ushort GetValue()
+    {
+        return 0;
     }
-    public void SetValue(ushort word) {
-      return;
+
+    public override void SetValue(ushort word)
+    {
     }
-    public SOBArg(ushort Register, ushort Offset, State state, Memory memory) {
-      this._memory = memory;
-      this._state = state;
-      this._Register = Register;
-      this._Offset = Offset;
+
+    public SOBArg(IMemory memory, IState state, ushort register, ushort offset) : base(memory, state)
+    {
+        _register = register;
+        _offset = offset;
     }
-  }
+}

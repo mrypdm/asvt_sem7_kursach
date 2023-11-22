@@ -1,42 +1,40 @@
-namespace Executor;
+using Executor.Arguments;
+using Executor.CommandTypes;
+using Executor.Memories;
+using Executor.States;
 
-public class JSR: ICommand {
+namespace Executor.Commands;
 
-    private Memory memory;
-    private State state;
-    private ushort OpcodeMask = 0b1111_1110_0000_0000;
-    private ushort Register1Mask = 0b0000_0001_1100_0000;
-    private ushort ModeMask = 0b0000_0000_0011_1000;
-    private ushort Register2Mask = 0b0000_0000_0000_0111;
+public class JSR : BaseCommand
+{
+    private const ushort OpcodeMask = 0b1111_1110_0000_0000;
+    private const ushort Register1Mask = 0b0000_0001_1100_0000;
+    private const ushort ModeMask = 0b0000_0000_0011_1000;
+    private const ushort Register2Mask = 0b0000_0000_0000_0111;
 
-    public ushort GetRegister1(ushort word) {
-      return (ushort)((word & Register1Mask) >> 6);
+    public JSR(IMemory memory, IState state) : base(memory, state)
+    {
     }
 
-    public ushort GetRegister2(ushort word) {
-      return (ushort)((word & Register2Mask));
+    protected ushort GetRegister1(ushort word) => (ushort)((word & Register1Mask) >> 6);
+
+    protected ushort GetRegister2(ushort word) => (ushort)(word & Register2Mask);
+
+    protected ushort GetMode(ushort word) => (ushort)(word & ModeMask);
+
+    public ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
+
+    public override IArgument[] GetArguments(ushort word)
+    {
+        return new IArgument[]
+        {
+            new JSRnBITArg(Memory, State, GetRegister1(word), GetMode(word), GetRegister2(word))
+        };
     }
 
-    public ushort GetMode(ushort word) {
-      return (ushort)(word & ModeMask);
-    }
-    public ushort GetOpcode(ushort word) {
-      return (ushort)(word & OpcodeMask);
+    public override void Execute(IArgument[] arguments)
+    {
     }
 
-    public IArgument[] GetArguments(ushort word) {
-      IArgument[] args = new JSRnBITArg[1];
-      args[0] = new JSRnBITArg(GetRegister1(word), GetMode(word), GetRegister2(word), state, memory);
-      return args;
-    }
-    public void Execute(IArgument[] arguments) {
-      return;
-    }
-
-    public ushort Opcode => 0b0000_1000_0000_0000;
-
-    public JSR(State state, Memory memory) {
-      this.memory = memory;
-      this.state = state;
-    }
+    public override ushort Opcode => 0b0000_1000_0000_0000;
 }

@@ -1,26 +1,27 @@
-namespace Executor;
+using Executor.Memories;
+using Executor.States;
 
-class JSRnBITArg: IArgument {
+namespace Executor.Arguments;
 
-    private ushort _Mode;
-    private ushort _Register1;
-    private ushort _Register2;
-    private State _state;
-    private Memory _memory;
+class JSRnBITArg : BaseArgument
+{
+    private ushort _mode;
+    private ushort _register1;
+    private ushort _register2;
 
-    public ushort GetValue() {
-      return 0;
+    public override ushort GetValue()
+    {
+        return 0;
     }
 
-    public void SetValue(ushort word) {
-      return;
+    public override void SetValue(ushort word)
+    {
     }
 
-    public JSRnBITArg(ushort Register1, ushort Mode, ushort Register2, State state, Memory memory) {
-      this._memory = memory;
-      this._state = state;
-      this._Register1 = Register1;
-      this._Register2 = Register2;
-      this._Mode = Mode;
+    public JSRnBITArg(IMemory memory, IState state, ushort register1, ushort mode, ushort register2) : base(memory, state)
+    {
+        _register1 = register1;
+        _register2 = register2;
+        _mode = mode;
     }
 }
