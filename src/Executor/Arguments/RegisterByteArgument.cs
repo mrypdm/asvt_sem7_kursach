@@ -22,7 +22,7 @@ public class RegisterByteArgument : BaseArgument
         switch (Mode)
         {
             case 0:
-                return (byte)State.Registers[Register];
+                return State.Registers[Register];
             case 1:
                 return Memory.GetByte(State.Registers[Register]);
             case 2:

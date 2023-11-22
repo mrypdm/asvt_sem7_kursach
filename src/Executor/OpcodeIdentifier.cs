@@ -27,6 +27,9 @@ public class OpcodeIdentifier
             new MOV(memory, state),
             new MOVB(memory, state),
             new ADD(memory, state),
+            new INC(memory, state),
+            new INCB(memory, state),
+            new SUB(memory, state),
             new SOB(memory, state),
             new JSR(memory, state),
             new RTS(memory, state)
