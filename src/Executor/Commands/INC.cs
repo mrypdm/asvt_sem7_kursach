@@ -22,7 +22,7 @@ public class INC : OneOperand
     public override void Execute(IArgument[] arguments)
     {
         var value = arguments[0].GetValue();
-        arguments[0].SetValue(value+1);
+        arguments[0].SetValue((ushort)(value+1));
     }
 
     public override ushort Opcode => 0b1010_1000_0000;

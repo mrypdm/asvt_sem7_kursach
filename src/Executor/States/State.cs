@@ -45,5 +45,5 @@ public class State : IState
         };
     }
 
-    public ushort[] Registers { get; } = new ushort[8];
+    public ushort[] Registers { get; set; } = new ushort[8];
 }

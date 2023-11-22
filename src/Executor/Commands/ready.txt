@@ -1,0 +1,5 @@
+MOV
+MOVB
+INC
+INCB
+ADD
