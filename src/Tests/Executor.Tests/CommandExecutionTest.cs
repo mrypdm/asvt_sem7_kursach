@@ -44,6 +44,6 @@ public class CommandExecutionTest
 
         // Assert
 
-        Assert.AreEqual(89, state.Registers[2], "Wrong sum");
+        Assert.That(state.Registers[2], Is.EqualTo(89));
     }
 }
