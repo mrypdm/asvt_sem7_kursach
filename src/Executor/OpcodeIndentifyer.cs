@@ -20,6 +20,8 @@ namespace Executor {
     public OpcodeIndentifyer(State state, Memory memory) {
       Opcodes = new List<ICommand>{
         new MOV(state, memory),
+        new MOVB(state, memory),
+        new ADD(state, memory),
         new SOB(state, memory),
         new JSR(state, memory),
         new RTS(state, memory)

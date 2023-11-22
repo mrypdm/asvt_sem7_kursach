@@ -1,10 +1,10 @@
 namespace Executor;
 
-public class MOV : TwoOperands
+public class MOVB : TwoOperands
 {
     private Memory memory;
     private State state;
-    public MOV(State state, Memory memory) : base(state, memory) { }
+    public MOVB(State state, Memory memory) : base(state, memory) { }
 
     public override IArgument[] GetArguments(ushort word)
     {
@@ -20,6 +20,6 @@ public class MOV : TwoOperands
         return;
     }
 
-    public override ushort Opcode => 0b1_0000_0000_0000;
+    public override ushort Opcode => 0b1001_0000_0000_0000;
 
 }

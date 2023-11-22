@@ -12,7 +12,7 @@ public class ADD: TwoOperands {
       return args;
     }
     public override void Execute(IArgument[] arguments) {
-      
+        arguments[1].SetValue((ushort)(arguments[1].GetValue() + arguments[0].GetValue()));
     }
 
     public override ushort Opcode => 0b110_0000_0000_0000;

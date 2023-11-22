@@ -13,7 +13,7 @@ namespace Executor{
         
         public ushort ProcessorStateWord; // flags
         public ushort MemoryAddressRegister; // РАП
-        public ushort[] R = new ushort[8];
+        public ushort[] R;
         
         public void SetFlag(Flag flag, bool val){
             int value = val ? 1 : 0; 
@@ -62,6 +62,7 @@ namespace Executor{
         }
 
         public State(){
+            this.R = new ushort[8];
             Array.Fill(this.R, (ushort)0);
             ProcessorStateWord = 0;
             MemoryAddressRegister = 0;
