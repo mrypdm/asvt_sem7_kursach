@@ -59,10 +59,11 @@ internal class Parser
             var mark = match.Groups[1].Value.Trim().Trim(BadSymbols).ToLower();
             marksSet.Add(mark);
             var instruction = match.Groups[2].Value.Trim(BadSymbols).ToLower();
-            if (instruction == "") { continue; }
+            if (string.IsNullOrWhiteSpace(instruction)) { continue; }
             var arguments = match.Groups[3].Captures.Select(c => c.Value.Trim(BadSymbols).ToLower());
 
             var command = new CommandLine(marksSet, instruction, arguments);
+            command.ThrowIfInvalid();
             res.Add(command);
             marksSet.Clear();
         }

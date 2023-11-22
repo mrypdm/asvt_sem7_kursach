@@ -12,7 +12,7 @@ namespace AssemblerLib
         private string _code;
         private byte _numVariables;
         
-        public static readonly Dictionary<string, Instruction> instructions = new Dictionary<string, Instruction>()
+        public static readonly Dictionary<string, Instruction> Instructions = new Dictionary<string, Instruction>()
         {
             {"asr", new Instruction("asr", "062{0}", 1)},
             {"mov", new Instruction("mov", "01{0}{1}", 2)},

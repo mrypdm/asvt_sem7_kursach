@@ -11,33 +11,9 @@ internal record CommandLine
 {
     private const string RegexPatternMarkValidation = @"^\s*[a-zA-Z]+([^:;]\w)*(?=:)";
     
-    private HashSet<string> _marks;
+    private IReadOnlySet<string> _marks;
     private string _instructionMnemonics;
     private List<string> _args;
-
-    private bool CommandLineValidation()
-    {
-        // Mnemonics validation
-        if (!string.IsNullOrWhiteSpace(_instructionMnemonics))
-        {
-            if (!Instruction.instructions.ContainsKey(_instructionMnemonics))
-            {
-                throw new System.Exception($"Unexisting instruction: {_instructionMnemonics}.");
-            }
-
-            if (_args.Count() != Instruction.instructions[_instructionMnemonics].ArgumentsCount)
-            {
-                throw new System.Exception(
-                    $"Incorrect number of argumants: {_instructionMnemonics}. " +
-                    $"Must be {Instruction.instructions[_instructionMnemonics].ArgumentsCount}. " +
-                    $"Given: {_args.Count()}.");
-            }
-        }
-
-        // Mark validation
-
-        return true;
-    }
 
     /// <summary>
     /// Creates new instance of command line
@@ -50,14 +26,36 @@ internal record CommandLine
         _marks = marks.ToHashSet();
         _instructionMnemonics = instructionMnemonics;
         _args = args.ToList();
+    }
 
-        CommandLineValidation();
+    public bool ThrowIfInvalid()
+    {
+        // Mnemonics validation
+        if (!string.IsNullOrWhiteSpace(_instructionMnemonics))
+        {
+            if (!Instruction.Instructions.ContainsKey(_instructionMnemonics))
+            {
+                throw new System.Exception($"Unexisting instruction: {_instructionMnemonics}.");
+            }
+
+            if (_args.Count() != Instruction.Instructions[_instructionMnemonics].ArgumentsCount)
+            {
+                throw new System.Exception(
+                    $"Incorrect number of argumants: {_instructionMnemonics}. " +
+                    $"Must be {Instruction.Instructions[_instructionMnemonics].ArgumentsCount}. " +
+                    $"Given: {_args.Count()}.");
+            }
+        }
+
+        // Mark validation
+
+        return true;
     }
 
     /// <summary>
     /// Symbol mark for line
     /// </summary>
-    public HashSet<string> Marks => _marks;
+    public IReadOnlySet<string> Marks => _marks;
 
     /// <summary>
     /// Instruction to execute
