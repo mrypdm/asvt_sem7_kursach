@@ -922,7 +922,7 @@ public class MainWindowViewModelTests : GuiTest<App>
             projectManager.Verify(m => m.AddFileToProject(mainFile), Times.Once);
             projectManager.Verify(m => m.SetExecutableFile(mainFile), Times.Once);
             projectManager.Verify(m => m.SaveProjectAsync(), Times.Once);
-            
+
             fileManager.Verify(m => m.WriteFileAsync(It.Is<FileModel>(f => f.FilePath == mainFile)), Times.Once);
             fileManager.Verify(m => m.OpenFileAsync(projectFile), Times.Once);
             fileManager.Verify(m => m.OpenFileAsync(mainFile), Times.Once);
@@ -986,9 +986,9 @@ public class MainWindowViewModelTests : GuiTest<App>
             fileManager.Verify(m => m.OpenFileAsync(mainFile), Times.Once);
         });
     }
-    
+
     [Test]
-    public async Task InitWindowOpenProjectFromParamsTest()
+    public async Task InitWindowOpenProjectFromParamTest()
     {
         await RunAsyncTest(async () =>
         {
@@ -1033,6 +1033,234 @@ public class MainWindowViewModelTests : GuiTest<App>
             projectManager.Verify(m => m.LoadProjectAsync(projectFile), Times.Once);
             fileManager.Verify(m => m.OpenFileAsync(projectFile), Times.Once);
             fileManager.Verify(m => m.OpenFileAsync(mainFile), Times.Once);
+        });
+    }
+
+    [Test]
+    public async Task OpenProjectConfirmForClosingTabs()
+    {
+        await NewProjectConfirmClosingTabsTest(async viewModel => await viewModel.OpenProjectCommand.Execute());
+    }
+
+    [Test]
+    public async Task CreateProjectConfirmForClosingTabs()
+    {
+        await NewProjectConfirmClosingTabsTest(async viewModel => await viewModel.CreateProjectCommand.Execute());
+    }
+
+    [Test]
+    public async Task InitWindowOpenProjectFromInvalidParamTest()
+    {
+        await RunAsyncTest(async () =>
+        {
+            // Arrange
+
+            SettingsManager.Instance.CommandLineOptions.Project = string.Empty;
+
+            var fileManager = new Mock<IFileManager>();
+            fileManager
+                .Setup(m => m.OpenFileAsync(It.IsAny<string>()))
+                .ReturnsAsync(new FileModel { FilePath = $"{Guid.NewGuid()}" });
+
+            var projectManager = new Mock<IProjectManager>();
+            projectManager
+                .Setup(m => m.LoadProjectAsync(It.IsAny<string>()))
+                .Throws(() => new InvalidOperationException("invalid"));
+            projectManager
+                .Setup(m => m.OpenProjectAsync(It.IsAny<IStorageProvider>()))
+                .Throws<InvalidOperationException>();
+
+            var messageBoxManager = new Mock<IMessageBoxManager>();
+
+            var viewModel = CreateViewModel(null, projectManager.Object, fileManager.Object, messageBoxManager.Object);
+
+            // Act
+
+            var isShown = false;
+            viewModel.Show();
+            viewModel.View.Opened += (_, _) => { isShown = true; };
+
+            // Assert
+
+            await TaskHelper.WaitForCondition(() => isShown, TimeSpan.FromSeconds(10));
+
+            projectManager.Verify(m => m.LoadProjectAsync(string.Empty), Times.Once);
+            projectManager.Verify(m => m.OpenProjectAsync(viewModel.View.StorageProvider), Times.Once);
+            messageBoxManager.Verify(m => m.ShowErrorMessageBox("invalid", viewModel.View), Times.Once);
+        });
+    }
+
+    [Test]
+    public async Task DoNotOpenProjectIfCancelPickerTest()
+    {
+        await RunAsyncTest(async () =>
+        {
+            // Arrange
+
+            var fileManager = new Mock<IFileManager>();
+
+            var projectManager = new Mock<IProjectManager>();
+            projectManager
+                .Setup(m => m.OpenProjectAsync(It.IsAny<IStorageProvider>()))
+                .ReturnsAsync(false);
+
+            var messageBoxManager = new Mock<IMessageBoxManager>();
+
+            var viewModel = CreateViewModel(null, projectManager.Object, fileManager.Object, messageBoxManager.Object);
+
+            // Act
+
+            await viewModel.OpenProjectCommand.Execute();
+
+            // Assert
+
+            projectManager.Verify(m => m.OpenProjectAsync(viewModel.View.StorageProvider), Times.Once);
+            fileManager.Verify(m => m.OpenFileAsync(It.IsAny<string>()), Times.Never);
+        });
+    }
+
+    [Test]
+    public async Task DoNotCreateProjectIfCancelNameInputTest()
+    {
+        await RunAsyncTest(async () =>
+        {
+            // Arrange
+
+            var fileManager = new Mock<IFileManager>();
+
+            var projectManager = new Mock<IProjectManager>();
+
+            var messageBoxManager = new Mock<IMessageBoxManager>();
+            messageBoxManager
+                .Setup(m => m.ShowInputMessageBoxAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ButtonEnum>(),
+                    It.IsAny<Icon>(), It.IsAny<Window>(), It.IsAny<string>()))
+                .ReturnsAsync((ButtonResult.Cancel, ""));
+
+            var viewModel = CreateViewModel(null, projectManager.Object, fileManager.Object, messageBoxManager.Object);
+
+            // Act
+
+            await viewModel.CreateProjectCommand.Execute();
+
+            // Assert
+
+            messageBoxManager
+                .Verify(
+                    m => m.ShowInputMessageBoxAsync("Create project", "Enter project name", ButtonEnum.OkCancel,
+                        Icon.Setting, viewModel.View, "Project name"),
+                    Times.Once);
+            projectManager.Verify(m => m.CreateProjectAsync(It.IsAny<IStorageProvider>(), It.IsAny<string>()),
+                Times.Never);
+            fileManager.Verify(m => m.OpenFileAsync(It.IsAny<string>()), Times.Never);
+        });
+    }
+
+    [Test]
+    public async Task DoNotCreateProjectIfCancelPickerTest()
+    {
+        await RunAsyncTest(async () =>
+        {
+            // Arrange
+
+            var fileManager = new Mock<IFileManager>();
+
+            var projectManager = new Mock<IProjectManager>();
+            projectManager
+                .Setup(m => m.CreateProjectAsync(It.IsAny<IStorageProvider>(), It.IsAny<string>()))
+                .ReturnsAsync(false);
+
+            var messageBoxManager = new Mock<IMessageBoxManager>();
+            messageBoxManager
+                .Setup(m => m.ShowInputMessageBoxAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ButtonEnum>(),
+                    It.IsAny<Icon>(), It.IsAny<Window>(), It.IsAny<string>()))
+                .ReturnsAsync((ButtonResult.Ok, ""));
+
+            var viewModel = CreateViewModel(null, projectManager.Object, fileManager.Object, messageBoxManager.Object);
+
+            // Act
+
+            await viewModel.CreateProjectCommand.Execute();
+
+            // Assert
+
+            messageBoxManager
+                .Verify(
+                    m => m.ShowInputMessageBoxAsync("Create project", "Enter project name", ButtonEnum.OkCancel,
+                        Icon.Setting, viewModel.View, "Project name"),
+                    Times.Once);
+            projectManager.Verify(m => m.CreateProjectAsync(viewModel.View.StorageProvider, ""), Times.Once);
+            fileManager.Verify(m => m.OpenFileAsync(It.IsAny<string>()), Times.Never);
+        });
+    }
+
+    [Test]
+    public async Task RepeatNameInputIfInvalidTest()
+    {
+        await RunAsyncTest(async () =>
+        {
+            // Arrange
+
+            var fileManager = new Mock<IFileManager>();
+
+            var projectManager = new Mock<IProjectManager>();
+            projectManager
+                .Setup(m => m.CreateProjectAsync(It.IsAny<IStorageProvider>(), It.IsAny<string>()))
+                .Throws<ArgumentException>();
+
+            var results = new[] { (ButtonResult.Ok, ""), (ButtonResult.Cancel, "") };
+            var count = 0;
+            var messageBoxManager = new Mock<IMessageBoxManager>();
+            messageBoxManager
+                .Setup(m => m.ShowInputMessageBoxAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ButtonEnum>(),
+                    It.IsAny<Icon>(), It.IsAny<Window>(), It.IsAny<string>()))
+                .ReturnsAsync(() => results[count++]);
+
+            var viewModel = CreateViewModel(null, projectManager.Object, fileManager.Object, messageBoxManager.Object);
+
+            // Act
+
+            await viewModel.CreateProjectCommand.Execute();
+
+            // Assert
+
+            messageBoxManager
+                .Verify(
+                    m => m.ShowInputMessageBoxAsync("Create project", "Enter project name", ButtonEnum.OkCancel,
+                        Icon.Setting, viewModel.View, "Project name"),
+                    Times.Exactly(2));
+            messageBoxManager.Verify(m => m.ShowErrorMessageBox(It.IsAny<string>(), viewModel.View), Times.Once);
+            projectManager.Verify(m => m.CreateProjectAsync(It.IsAny<IStorageProvider>(), It.IsAny<string>()),
+                Times.Once);
+            fileManager.Verify(m => m.OpenFileAsync(It.IsAny<string>()), Times.Never);
+        });
+    }
+
+    private Task NewProjectConfirmClosingTabsTest(Func<IMainWindowViewModel, Task> action)
+    {
+        return RunTest(() =>
+        {
+            // Arrange
+
+            var tabManager = new Mock<ITabManager>();
+            tabManager
+                .Setup(m => m.Tabs)
+                .Returns(new ObservableCollection<IFileTabViewModel>(new[] { Mock.Of<IFileTabViewModel>() }));
+
+            var messageBoxManager = new Mock<IMessageBoxManager>();
+            messageBoxManager
+                .Setup(m => m.ShowMessageBoxAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ButtonEnum>(),
+                    It.IsAny<Icon>(), It.IsAny<Window>()))
+                .Throws<InvalidOperationException>();
+
+            var viewModel = CreateViewModel(tabManager.Object, null, null, messageBoxManager.Object);
+
+            // Act & Assert
+
+            var ex = Assert.CatchAsync<UnhandledErrorException>(async () => await action(viewModel));
+            Assert.That(ex!.InnerException, Is.TypeOf<InvalidOperationException>());
+            messageBoxManager
+                .Verify(m => m.ShowMessageBoxAsync("Warning", "This action closes current project and all tabs",
+                    ButtonEnum.OkAbort, Icon.Warning, viewModel.View), Times.Once);
         });
     }
 
