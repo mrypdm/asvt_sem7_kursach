@@ -11,7 +11,7 @@ public class SUB : TwoOperands
     {
     }
 
-    public override IArgument[] GetArguments(ushort word)
+    public override IArgument[] GetArguments(ushort word) // Исключение
     {
         return new IArgument[]
         {
@@ -25,5 +25,5 @@ public class SUB : TwoOperands
         arguments[1].SetValue((ushort)(arguments[1].GetValue() - arguments[0].GetValue()));
     }
 
-    public override ushort Opcode => 0b1110_0000_0000_0000;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("160000", 8);;
 }

@@ -29,9 +29,18 @@ public class OpcodeIdentifier
             new ADD(memory, state),
             new INC(memory, state),
             new INCB(memory, state),
+            new BNE(memory, state),
+            new BEQ(memory, state),
+            new DEC(memory, state),
+            new DECB(memory, state),
+            new CLR(memory, state),
+            new CLRB(memory, state),
+            new BVC(memory, state),
+            new BVS(memory, state),
             new SUB(memory, state),
             new SOB(memory, state),
             new JSR(memory, state),
+            new JMP(memory, state),
             new RTS(memory, state)
         }.ToDictionary(command => command.Opcode, command => command);
     }

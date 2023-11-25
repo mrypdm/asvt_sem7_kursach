@@ -5,17 +5,17 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class MOVB : TwoOperands
+public class DECB : OneOperand
 {
-    public MOVB(IMemory memory, IState state) : base(memory, state)
+    public DECB(IMemory memory, IState state) : base(memory, state)
     {
     }
 
     public override void Execute(IArgument[] arguments)
     {
         var value = arguments[0].GetValue();
-        arguments[1].SetValue(value);
+        arguments[0].SetValue((ushort)(value - 1));
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("110000", 8);;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("105300", 8);;
 }

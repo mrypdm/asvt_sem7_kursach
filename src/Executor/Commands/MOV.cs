@@ -11,20 +11,11 @@ public class MOV : TwoOperands
     {
     }
 
-    public override IArgument[] GetArguments(ushort word)
-    {
-        return new IArgument[]
-        {
-            new RegisterWordArgument(Memory, State, GetMode1(word), GetRegister1(word)),
-            new RegisterWordArgument(Memory, State, GetMode2(word), GetRegister2(word))
-        };
-    }
-
     public override void Execute(IArgument[] arguments)
     {
         var value = arguments[0].GetValue();
         arguments[1].SetValue(value);
     }
 
-    public override ushort Opcode => 0b1_0000_0000_0000;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("010000", 8);;
 }

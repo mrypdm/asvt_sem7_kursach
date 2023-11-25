@@ -25,5 +25,5 @@ public class ADD : TwoOperands
         arguments[1].SetValue((ushort)(arguments[1].GetValue() + arguments[0].GetValue()));
     }
 
-    public override ushort Opcode => 0b110_0000_0000_0000;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("060000", 8);;
 }

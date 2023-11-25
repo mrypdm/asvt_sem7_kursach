@@ -11,13 +11,6 @@ public class INCB : OneOperand
     {
     }
 
-    public override IArgument[] GetArguments(ushort word)
-    {
-        return new IArgument[]
-        {
-            new RegisterByteArgument(Memory, State, GetMode(word), GetRegister(word))
-        };
-    }
 
     public override void Execute(IArgument[] arguments)
     {
@@ -25,5 +18,5 @@ public class INCB : OneOperand
         arguments[0].SetValue((ushort)(value+1));
     }
 
-    public override ushort Opcode => 0b1000_1010_1000_0000;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("105200", 8);;
 }

@@ -15,6 +15,7 @@ class SOBArg : BaseArgument
 
     public override void SetValue(ushort word)
     {
+        throw new InvalidOperationException("Can't set value for this argument!");
     }
 
     public SOBArg(IMemory memory, IState state, ushort register, ushort offset) : base(memory, state)

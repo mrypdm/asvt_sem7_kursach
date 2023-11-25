@@ -21,6 +21,23 @@ public abstract class TwoOperands : BaseCommand
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
+    public override IArgument[] GetArguments(ushort word)
+    {
+        if (Opcode & 0b1000_0000_0000_0000 > 0)
+        {
+            return new IArgument[]
+            {
+            new RegisterByteArgument(Memory, State, GetMode1(word), GetRegister1(word)),
+            new RegisterByteArgument(Memory, State, GetMode2(word), GetRegister2(word))
+            };
+        }
+        return new IArgument[]
+        {
+            new RegisterWordArgument(Memory, State, GetMode1(word), GetRegister1(word)),
+            new RegisterWordArgument(Memory, State, GetMode2(word), GetRegister2(word))
+        };
+    }
+
     protected TwoOperands(IMemory memory, IState state) : base(memory, state)
     {
     }

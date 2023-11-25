@@ -14,6 +14,7 @@ class RTSArg : BaseArgument
 
     public override void SetValue(ushort word)
     {
+        throw new InvalidOperationException("Can't set value for this argument!");
     }
 
     public RTSArg(IMemory memory, IState state, ushort register) : base(memory, state)

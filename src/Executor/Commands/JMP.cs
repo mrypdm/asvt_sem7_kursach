@@ -5,17 +5,17 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class MOVB : TwoOperands
+public class JMP : OneOperand
 {
-    public MOVB(IMemory memory, IState state) : base(memory, state)
+    public JMP(IMemory memory, IState state) : base(memory, state)
     {
     }
 
     public override void Execute(IArgument[] arguments)
     {
         var value = arguments[0].GetValue();
-        arguments[1].SetValue(value);
+        _state.Registers[7] = value;
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("110000", 8);;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("000100", 8);;
 }

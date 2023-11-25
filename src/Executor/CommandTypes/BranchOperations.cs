@@ -3,7 +3,7 @@ using Executor.States;
 
 namespace Executor.CommandTypes;
 
-public abstract class BranchOperationC : BaseCommand
+public abstract class BranchOperation : BaseCommand
 {
     private const ushort OpcodeMask = 0b1111_1111_0000_0000;
     private const ushort OffsetMask = 0b0000_0000_1111_1111;
@@ -12,7 +12,15 @@ public abstract class BranchOperationC : BaseCommand
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
-    protected BranchOperationC(IMemory memory, IState state) : base(memory, state)
+    protected BranchOperation(IMemory memory, IState state) : base(memory, state)
     {
+    }
+
+    public override IArgument[] GetArguments(ushort word)
+    {
+        return new IArgument[]
+        {
+            new BranchArg(Memory, State, GetOffset(word))
+        };
     }
 }

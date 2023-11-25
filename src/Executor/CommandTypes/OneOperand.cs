@@ -15,6 +15,21 @@ public abstract class OneOperand : BaseCommand
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
+    public override IArgument[] GetArguments(ushort word)
+    {
+        if (Opcode & 0b1000_0000_0000_0000 > 0)
+        {
+            return new IArgument[]
+            {
+            new RegisterByteArgument(Memory, State, GetMode(word), GetRegister(word))
+            };
+        }
+        return new IArgument[]
+        {
+            new RegisterWordArgument(Memory, State, GetMode(word), GetRegister(word))
+        };
+    }
+
     protected OneOperand(IMemory memory, IState state) : base(memory, state)
     {
     }

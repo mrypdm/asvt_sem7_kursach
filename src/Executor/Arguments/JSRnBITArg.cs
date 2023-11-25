@@ -3,7 +3,7 @@ using Executor.States;
 
 namespace Executor.Arguments;
 
-class JSRnBITArg : BaseArgument
+class JSRnBITArg : BaseArgument // Надо разделить
 {
     private ushort _mode;
     private ushort _register1;
