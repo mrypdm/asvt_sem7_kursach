@@ -31,5 +31,4 @@ public class SOB : BaseCommand
     }
 
     public override ushort Opcode => (ushort)Convert.ToUInt16("077000", 8);
-};
 }

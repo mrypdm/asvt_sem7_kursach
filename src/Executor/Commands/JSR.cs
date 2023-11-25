@@ -37,5 +37,4 @@ public class JSR : BaseCommand
     }
 
     public override ushort Opcode => (ushort)Convert.ToUInt16("004000", 8);
-};
 }

@@ -28,5 +28,4 @@ public class RTS : BaseCommand
     }
 
     public override ushort Opcode => (ushort)Convert.ToUInt16("000200", 8);
-};
 }
