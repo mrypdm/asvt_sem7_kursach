@@ -1,5 +1,6 @@
 using Executor.Memories;
 using Executor.States;
+using Executor.Arguments;
 
 namespace Executor.CommandTypes;
 
@@ -20,7 +21,7 @@ public abstract class BranchOperation : BaseCommand
     {
         return new IArgument[]
         {
-            new BranchArg(Memory, State, GetOffset(word))
+            new BranchArg(_memory, _state, GetOffset(word))
         };
     }
 }

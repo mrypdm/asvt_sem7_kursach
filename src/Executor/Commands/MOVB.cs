@@ -17,5 +17,5 @@ public class MOVB : TwoOperands
         arguments[1].SetValue(value);
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("110000", 8);;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("110000", 8);
 }

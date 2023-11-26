@@ -6,9 +6,9 @@ namespace Executor.CommandTypes;
 
 public abstract class BaseCommand : ICommand
 {
-    protected IMemory Memory { get; }
+    protected IMemory _memory { get; }
     
-    protected IState State { get; }
+    protected IState _state { get; }
     
     public abstract void Execute(IArgument[] arguments);
 
@@ -18,7 +18,7 @@ public abstract class BaseCommand : ICommand
 
     protected BaseCommand(IMemory memory, IState state)
     {
-        Memory = memory;
-        State = state;
+        _memory = memory;
+        _state = state;
     }
 }

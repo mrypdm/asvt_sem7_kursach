@@ -18,5 +18,5 @@ public class INCB : OneOperand
         arguments[0].SetValue((ushort)(value+1));
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("105200", 8);;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("105200", 8);
 }

@@ -17,5 +17,5 @@ public class DEC : OneOperand
 		arguments[0].SetValue((ushort)(value - 1));
 	}
 
-	public override ushort Opcode => (ushort)Convert.ToUInt16("005300", 8);;
+	public override ushort Opcode => (ushort)Convert.ToUInt16("005300", 8);
 }

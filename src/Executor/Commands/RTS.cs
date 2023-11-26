@@ -20,7 +20,7 @@ public class RTS : BaseCommand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        return new IArgument[] { new RTSArg(Memory, State, GetRegister(word)) };
+        return new IArgument[] { new RTSArg(_memory, _state, GetRegister(word)) };
     }
 
     public override void Execute(IArgument[] arguments)

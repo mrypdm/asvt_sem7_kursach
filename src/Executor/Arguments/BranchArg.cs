@@ -15,7 +15,7 @@ class BranchArg : BaseArgument
 
     public override void SetValue(ushort word)
     {
-        throw new InvalidOperationException("Can't set value for this argument!")
+        throw new InvalidOperationException("Can't set value for this argument!");
     }
 
     public BranchArg(IMemory memory, IState state, ushort offset) : base(memory, state)

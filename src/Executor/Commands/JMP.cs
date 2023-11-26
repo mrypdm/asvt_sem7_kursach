@@ -17,5 +17,5 @@ public class JMP : OneOperand
         _state.Registers[7] = value;
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("000100", 8);;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("000100", 8);
 }

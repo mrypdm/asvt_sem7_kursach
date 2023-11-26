@@ -16,5 +16,5 @@ public class CLRB : OneOperand
         arguments[0].SetValue(0);
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("105000", 8);;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("105000", 8);
 }

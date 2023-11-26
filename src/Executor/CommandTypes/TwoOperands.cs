@@ -1,5 +1,6 @@
 using Executor.Memories;
 using Executor.States;
+using Executor.Arguments;
 
 namespace Executor.CommandTypes;
 
@@ -23,18 +24,18 @@ public abstract class TwoOperands : BaseCommand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        if (Opcode & 0b1000_0000_0000_0000 > 0)
+        if ((this.Opcode & 0b1000_0000_0000_0000) > 0)
         {
             return new IArgument[]
             {
-            new RegisterByteArgument(Memory, State, GetMode1(word), GetRegister1(word)),
-            new RegisterByteArgument(Memory, State, GetMode2(word), GetRegister2(word))
+            new RegisterByteArgument(_memory, _state, GetMode1(word), GetRegister1(word)),
+            new RegisterByteArgument(_memory, _state, GetMode2(word), GetRegister2(word))
             };
         }
         return new IArgument[]
         {
-            new RegisterWordArgument(Memory, State, GetMode1(word), GetRegister1(word)),
-            new RegisterWordArgument(Memory, State, GetMode2(word), GetRegister2(word))
+            new RegisterWordArgument(_memory, _state, GetMode1(word), GetRegister1(word)),
+            new RegisterWordArgument(_memory, _state, GetMode2(word), GetRegister2(word))
         };
     }
 

@@ -11,19 +11,10 @@ public class ADD : TwoOperands
     {
     }
 
-    public override IArgument[] GetArguments(ushort word)
-    {
-        return new IArgument[]
-        {
-            new RegisterWordArgument(Memory, State, GetMode1(word), GetRegister1(word)),
-            new RegisterWordArgument(Memory, State, GetMode2(word), GetRegister2(word))
-        };
-    }
-
     public override void Execute(IArgument[] arguments)
     {
         arguments[1].SetValue((ushort)(arguments[1].GetValue() + arguments[0].GetValue()));
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("060000", 8);;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("060000", 8);
 }

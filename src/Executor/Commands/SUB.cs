@@ -15,8 +15,8 @@ public class SUB : TwoOperands
     {
         return new IArgument[]
         {
-            new RegisterWordArgument(Memory, State, GetMode1(word), GetRegister1(word)),
-            new RegisterWordArgument(Memory, State, GetMode2(word), GetRegister2(word))
+            new RegisterWordArgument(_memory, _state, GetMode1(word), GetRegister1(word)),
+            new RegisterWordArgument(_memory, _state, GetMode2(word), GetRegister2(word))
         };
     }
 
@@ -25,5 +25,5 @@ public class SUB : TwoOperands
         arguments[1].SetValue((ushort)(arguments[1].GetValue() - arguments[0].GetValue()));
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("160000", 8);;
+    public override ushort Opcode => (ushort)Convert.ToUInt16("160000", 8);
 }
