@@ -65,5 +65,5 @@ internal record CommandLine
     /// <summary>
     /// Arguments for instruction
     /// </summary>
-    public IEnumerable<string> Arguments => _args;
+    public List<string> Arguments => _args;
 }

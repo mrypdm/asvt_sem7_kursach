@@ -14,9 +14,15 @@ namespace AssemblerLib
         
         public static readonly Dictionary<string, Instruction> Instructions = new Dictionary<string, Instruction>()
         {
-            {"asr", new Instruction("asr", "062{0}", 1)},
-            {"mov", new Instruction("mov", "01{0}{1}", 2)},
-            {"add", new Instruction("add", "06{0}{1}", 2)},
+            {"sob", new Instruction("sob", "007", 2)},
+            {"mark", new Instruction("mark", "0064", 1)},
+            {"rts", new Instruction("rts", "00020", 1)},
+            {"br", new Instruction("br", "0001", 1)},
+            {"bne", new Instruction("br", "0010", 1)},
+            {"xor", new Instruction("xor", "074", 2)},
+            {"asr", new Instruction("asr", "0062", 1)},
+            {"mov", new Instruction("mov", "01", 2)},
+            {"add", new Instruction("add", "06", 2)},
             {"halt", new Instruction("halt", "000000", 0)}
         };
 
