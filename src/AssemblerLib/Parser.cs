@@ -12,7 +12,7 @@ internal class Parser
     private const string RegexPatternCommandLine = @"^\s*([^\s,:]+:\s*)?(\S+)?\s*([^\s,]+\s*,?\s*){0,}$";
     private const string RegexPatternRemovingComment = @"^[^;.]+(?=;?)";
     private const string RegexPatternMarkExistence = @"^\s*[^;]*:";
-    private const string RegexPatternMarkValidation = @"^\s*[a-zA-Z]+([^:;]\w)*(?=:)";
+    private const string RegexPatternMarkValidation = @"^\s*[a-zA-Z]+[a-zA-Z0-9_]+([^:;]\w)*(?=:)"; //^\s*[a-zA-Z]+([^:;]\w)*(?=:)
     private readonly char[] BadSymbols = { ' ', '\t', ',', ':' };
 
     private readonly Regex _regexMaskCommandLine;

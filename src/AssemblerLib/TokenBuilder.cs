@@ -16,11 +16,16 @@ namespace AssemblerLib
         private const string RegexPatternAddrType4 = @"^-\(r([0-7])\)$";
         private const string RegexPatternAddrType5 = @"^@-\(r([0-7])\)$";
         private const string RegexPatternAddrType6 = @"^([0-1]*[0-7]{1,5})\(r([0-7])\)$";
+        private const string RegexPatternAddrType6Mark = @"^([a-z]+[_a-z0-9]*)([\+-][0-1]*[0-7]{1,5})?\(r([0-7])\)$";
         private const string RegexPatternAddrType7 = @"^@([0-1]*[0-7]{1,5})\(r([0-7])\)$";
+        private const string RegexPatternAddrType7Mark = @"^@([a-z]+[_a-z0-9]*)([\+-][0-1]*[0-7]{1,5})?\(r([0-7])\)$";
         private const string RegexPatternAddrType21 = @"^#([0-1]*[0-7]{1,5})$";
+        private const string RegexPatternAddrType21Mark = @"^#([a-z]+[_a-z0-9]*)$";
         private const string RegexPatternAddrType31 = @"^@#([0-1]*[0-7]{1,5})$";
+        private const string RegexPatternAddrType31Mark = @"^@#([a-z]+[_a-z0-9]*)$";
         private const string RegexPatternAddrType61 = @"^([a-z]+[_a-z0-9]*)$";
         private const string RegexPatternAddrType71 = @"^@([a-z]+[_a-z0-9]*)$";
+
         private readonly Regex _regexMaskAddrType0;
         private readonly Regex _regexMaskAddrType1;
         private readonly Regex _regexMaskAddrType2;
@@ -28,9 +33,13 @@ namespace AssemblerLib
         private readonly Regex _regexMaskAddrType4;
         private readonly Regex _regexMaskAddrType5;
         private readonly Regex _regexMaskAddrType6;
+        private readonly Regex _regexMaskAddrType6Mark;
         private readonly Regex _regexMaskAddrType7;
+        private readonly Regex _regexMaskAddrType7Mark;
         private readonly Regex _regexMaskAddrType21;
+        private readonly Regex _regexMaskAddrType21Mark;
         private readonly Regex _regexMaskAddrType31;
+        private readonly Regex _regexMaskAddrType31Mark;
         private readonly Regex _regexMaskAddrType61;
         private readonly Regex _regexMaskAddrType71;
 
@@ -74,12 +83,28 @@ namespace AssemblerLib
                 string extraWord = _regexMaskAddrType6.Match(arg).Groups[1].Value.PadLeft(6, '0');
                 extraTokens.Add(new RawToken(extraWord));
             }
+            else if (_regexMaskAddrType6Mark.IsMatch(arg))
+            {
+                instArgMC += "6" + _regexMaskAddrType6Mark.Match(arg).Groups[3].Value;
+                // Generation extra token
+                var mark = _regexMaskAddrType6Mark.Match(arg).Groups[1].Value;
+                var num = _regexMaskAddrType6Mark.Match(arg).Groups[2].Value;
+                extraTokens.Add(new MarkRelocToken(mark ,num));
+            }
             else if (_regexMaskAddrType7.IsMatch(arg))
             {
                 instArgMC += "7" + _regexMaskAddrType6.Match(arg).Groups[2].Value;
                 // Generation extra token
                 string extraWord = _regexMaskAddrType6.Match(arg).Groups[1].Value.PadLeft(6, '0');
                 extraTokens.Add(new RawToken(extraWord));
+            }
+            else if (_regexMaskAddrType7Mark.IsMatch(arg))
+            {
+                instArgMC += "7" + _regexMaskAddrType7Mark.Match(arg).Groups[3].Value;
+                // Generation extra token
+                var mark = _regexMaskAddrType7Mark.Match(arg).Groups[1].Value;
+                var num = _regexMaskAddrType7Mark.Match(arg).Groups[2].Value;
+                extraTokens.Add(new MarkRelocToken(mark, num));
             }
             else if (_regexMaskAddrType21.IsMatch(arg))
             {
@@ -88,12 +113,26 @@ namespace AssemblerLib
                 string extraWord = _regexMaskAddrType21.Match(arg).Groups[1].Value.PadLeft(6, '0');
                 extraTokens.Add(new RawToken(extraWord));
             }
+            else if (_regexMaskAddrType21Mark.IsMatch(arg))
+            {
+                instArgMC += "27";
+                // Generation extra token
+                var mark = _regexMaskAddrType21Mark.Match(arg).Groups[1].Value;
+                extraTokens.Add(new MarkRelocToken(mark, ""));
+            }
             else if (_regexMaskAddrType31.IsMatch(arg))
             {
                 instArgMC += "37";
                 // Generation extra token
                 string extraWord = _regexMaskAddrType31.Match(arg).Groups[1].Value.PadLeft(6, '0');
                 extraTokens.Add(new RawToken(extraWord));
+            }
+            else if (_regexMaskAddrType31Mark.IsMatch(arg))
+            {
+                instArgMC += "37";
+                // Generation extra token
+                var mark = _regexMaskAddrType31Mark.Match(arg).Groups[1].Value;
+                extraTokens.Add(new MarkRelocToken(mark, ""));
             }
             else if (_regexMaskAddrType61.IsMatch(arg))
             {
@@ -285,9 +324,13 @@ namespace AssemblerLib
             _regexMaskAddrType4 = new Regex(RegexPatternAddrType4, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             _regexMaskAddrType5 = new Regex(RegexPatternAddrType5, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             _regexMaskAddrType6 = new Regex(RegexPatternAddrType6, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            _regexMaskAddrType6Mark = new Regex(RegexPatternAddrType6Mark, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             _regexMaskAddrType7 = new Regex(RegexPatternAddrType7, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            _regexMaskAddrType7Mark = new Regex(RegexPatternAddrType7Mark, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             _regexMaskAddrType21 = new Regex(RegexPatternAddrType21, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            _regexMaskAddrType21Mark = new Regex(RegexPatternAddrType21Mark, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             _regexMaskAddrType31 = new Regex(RegexPatternAddrType31, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            _regexMaskAddrType31Mark = new Regex(RegexPatternAddrType31Mark, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             _regexMaskAddrType61 = new Regex(RegexPatternAddrType61, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             _regexMaskAddrType71 = new Regex(RegexPatternAddrType71, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             _regexMaskArgNN = new Regex(RegexPatternArgNN, RegexOptions.IgnoreCase | RegexOptions.Singleline);
