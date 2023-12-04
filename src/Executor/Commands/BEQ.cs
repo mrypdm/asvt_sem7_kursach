@@ -13,11 +13,13 @@ public class BEQ : BranchOperation
 
     public override void Execute(IArgument[] arguments)
     {
-        if (!_state.GetFlag(Flag.Z))
+        if (_state.GetFlag(Flag.Z))
         {
-            _state.Registers[7] = (ushort)(_state.Registers[7] + 2 * arguments[0].GetValue());
+            int value = (int)(arguments[0].GetValue());
+            value = (value & 128) > 0 ? -(127 & value) : value;
+            _state.Registers[7] = (ushort)(_state.Registers[7] + 2 * value);
         }
     }
 
-    public override ushort Opcode => Convert.ToUInt16("001200", 8);
+    public override ushort Opcode => Convert.ToUInt16("001400", 8);
 }

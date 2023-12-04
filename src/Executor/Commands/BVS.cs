@@ -15,9 +15,11 @@ public class BVS : BranchOperation
     {
         if (_state.GetFlag(Flag.V))
         {
-            _state.Registers[7] = (ushort)(_state.Registers[7] + 2 * arguments[0].GetValue());
+            int value = (int)(arguments[0].GetValue());
+            value = (value & 128) > 0 ? -(127 & value) : value;
+            _state.Registers[7] = (ushort)(_state.Registers[7] + 2 * value);
         }
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("102200", 8);
+    public override ushort Opcode => (ushort)Convert.ToUInt16("102400", 8);
 }
