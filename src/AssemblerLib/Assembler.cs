@@ -39,7 +39,7 @@ public class Assembler
         var address = 0;
         foreach (var mCode in _machineCode)
         {
-            Console.WriteLine($"{Convert.ToString(address).PadLeft(6, '0')} {mCode}");
+            Console.WriteLine($"{Convert.ToString(address, 8).PadLeft(6, '0')} {mCode}");
             address += 2;
         }
 

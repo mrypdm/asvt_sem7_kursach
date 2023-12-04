@@ -8,11 +8,10 @@ namespace AssemblerLib
 {
     internal class OPShiftToken : IToken
     {
-        // The last character of the _machineCode is bit, not a 8-number!
-        private string _machineCode;
+        private int _machineCode;
         private string _mark;
 
-        public OPShiftToken(string machineCode, string mark)
+        public OPShiftToken(int machineCode, string mark)
         {
             _machineCode = machineCode;
             _mark = mark;
@@ -27,14 +26,9 @@ namespace AssemblerLib
                 throw new Exception($"The distance to the mark ({_mark}) is too large. {delta}");
             }
 
-            var shiftDec = delta / 2 - 1;
-            if (_machineCode.EndsWith('1'))
-            {
-                shiftDec += 256;
-            }
-            var shiftOct = Convert.ToString(shiftDec, 8);
+            var shiftValue = delta / 2 - 1;
 
-            return new List<string>() { _machineCode.Substring(0, _machineCode.Length-1) + shiftOct };
+            return new List<string>() { Convert.ToString(_machineCode | shiftValue, 8).PadLeft(6, '0') };
         }
     }
 }

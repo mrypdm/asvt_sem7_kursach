@@ -8,16 +8,16 @@ namespace AssemblerLib
 {
     internal class RawToken : IToken
     {
-        private string _machineCode;
+        private int _machineCode;
 
-        public RawToken(string machineCode)
+        public RawToken(int machineCode)
         {
             _machineCode = machineCode;
         }
 
         public List<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
         {
-            return new List<string>() { _machineCode };
+            return new List<string>() { Convert.ToString(_machineCode, 8).PadLeft(6, '0') };
         }
     }
 }
