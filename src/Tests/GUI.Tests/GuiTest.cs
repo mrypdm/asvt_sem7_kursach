@@ -9,6 +9,7 @@ namespace GUI.Tests;
 /// Base class for testing GUI elements
 /// </summary>
 /// <typeparam name="TApp">Heir of <see cref="Application"/></typeparam>
+/// <remarks><see cref="HeadlessUnitTestSession"/> is unstable, so tests can flak</remarks>
 public abstract class GuiTest<TApp> where TApp : Application
 {
     private HeadlessUnitTestSession _session;
