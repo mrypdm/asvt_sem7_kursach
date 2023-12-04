@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using Devices.Providers;
+using Shared.Exceptions;
 
 namespace Devices.Validators;
 

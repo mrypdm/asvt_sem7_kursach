@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Domain.Models;
 using Domain.Providers;
+using Shared.Exceptions;
 using Shared.Helpers;
 
 namespace Domain.Validators;

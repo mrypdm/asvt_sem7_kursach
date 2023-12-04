@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\sdk\DeviceSdk\DeviceSdk.csproj" />
+      <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 
 </Project>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -18,6 +17,7 @@ using GUI.Models;
 using GUI.ViewModels;
 using GUI.Views;
 using Moq;
+using Shared.Exceptions;
 using Shared.Helpers;
 
 namespace GUI.Tests.ViewModels;
