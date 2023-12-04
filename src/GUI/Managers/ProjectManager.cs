@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using Devices.Validators;
 using Domain.Extensions;
 using Domain.Models;
 using Domain.Providers;
@@ -16,6 +17,7 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     public const string ProjectExtension = "pdp11proj";
 
     private readonly IProjectProvider _provider;
+    private readonly IDeviceValidator _deviceValidator;
     private Project _project;
 
     private Project SafeProject => _project ?? throw new InvalidOperationException("Project is not opened");
@@ -24,9 +26,11 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
     /// Creates new instance of <see cref="ProjectManager"/>
     /// </summary>
     /// <param name="provider">Project provider</param>
-    public ProjectManager(IProjectProvider provider)
+    /// <param name="deviceValidator">Device validator</param>
+    public ProjectManager(IProjectProvider provider, IDeviceValidator deviceValidator)
     {
         _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+        _deviceValidator = deviceValidator ?? throw new ArgumentNullException(nameof(deviceValidator));
     }
 
     /// <inheritdoc />
@@ -173,6 +177,8 @@ public class ProjectManager : PropertyChangedNotifier, IProjectManager
         {
             return;
         }
+        
+        _deviceValidator.ThrowIfInvalid(filePath);
 
         SafeProject.Devices.Add(filePath);
         OnPropertyChanged(nameof(SafeProject.Devices));
