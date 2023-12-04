@@ -18,5 +18,5 @@ public class BR : BranchOperation
         _state.Registers[7] = (ushort)(_state.Registers[7] + 2 * value);
     }
 
-    public override ushort Opcode => Convert.ToUInt16("000000", 8);
+    public override ushort Opcode => Convert.ToUInt16("000400", 8);
 }

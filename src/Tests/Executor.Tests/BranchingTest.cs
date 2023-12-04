@@ -17,7 +17,7 @@ public class BranchingTest
             Convert.ToUInt16("102002", 8), // 2 BVC 2
             Convert.ToUInt16("001002", 8), // 4 BNE 2
             Convert.ToUInt16("001402", 8), // 6 BEQ 2
-            Convert.ToUInt16("000002", 8), // 8 BR 2
+            Convert.ToUInt16("000402", 8), // 8 BR 2
         };
 
         var memory = new Memory();
@@ -64,7 +64,7 @@ public class BranchingTest
     [Test]
     public void TestBrNegative()
     {
-        ushort word = Convert.ToUInt16("000234", 8);
+        ushort word = Convert.ToUInt16("000612", 8);
         var memory = new Memory();
         var state = new State();
         state.Registers[7] = 70;
@@ -73,6 +73,6 @@ public class BranchingTest
         var command = opcodeIdentifier.GetCommand(word);
         command.Execute(command.GetArguments(word));
 
-        Assert.That(state.Registers[7], Is.EqualTo(70 - 56));
+        Assert.That(state.Registers[7], Is.EqualTo(70 - 20));
     }
 }

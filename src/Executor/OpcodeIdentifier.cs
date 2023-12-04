@@ -9,13 +9,13 @@ public class OpcodeIdentifier
 {
     private readonly ushort[] _masks =
     {
-        0b1111_0000_0000_0000,
-        0b1111_1111_1100_0000,
-        0b1111_1111_0000_0000,
+        0b1111_1111_1111_1111,
         0b1111_1111_1111_1000,
         0b1111_1111_1111_0000,
+        0b1111_1111_1100_0000,
+        0b1111_1111_0000_0000,
         0b1111_1110_0000_0000,
-        0b1111_1111_1111_1111
+        0b1111_0000_0000_0000
     };
 
     private readonly Dictionary<ushort, ICommand> _opcodesDictionary;
@@ -31,6 +31,7 @@ public class OpcodeIdentifier
             new INCB(memory, state),
             new BNE(memory, state),
             new BEQ(memory, state),
+            new BR(memory, state),
             new DEC(memory, state),
             new DECB(memory, state),
             new CLR(memory, state),
