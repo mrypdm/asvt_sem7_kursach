@@ -6,8 +6,10 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Devices.Validators;
 using Domain.Models;
 using GUI.Managers;
+using GUI.MessageBoxes;
 using GUI.Views;
 using ReactiveUI;
 
@@ -18,6 +20,8 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
 {
     private readonly IProjectManager _projectManager;
     private readonly IFileManager _fileManager;
+    private readonly IDeviceValidator _deviceValidator;
+    private readonly IMessageBoxManager _messageBoxManager;
 
     /// <summary>
     /// Empty constructor for designer
@@ -32,15 +36,21 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
     /// <param name="window">Reference to <see cref="SettingsWindow"/></param>
     /// <param name="projectManager">Project manager</param>
     /// <param name="fileManager">File manager</param>
-    public SettingsViewModel(SettingsWindow window, IProjectManager projectManager, IFileManager fileManager) :
+    /// <param name="deviceValidator">Device validator</param>
+    /// <param name="messageBoxManager">Message box manager</param>
+    public SettingsViewModel(SettingsWindow window, IProjectManager projectManager, IFileManager fileManager,
+        IDeviceValidator deviceValidator, IMessageBoxManager messageBoxManager) :
         base(window)
     {
         _projectManager = projectManager;
         _fileManager = fileManager;
+        _deviceValidator = deviceValidator;
+        _messageBoxManager = messageBoxManager;
         AllFontFamilies = new ObservableCollection<FontFamily>(FontManager.Current.SystemFonts);
 
         AddDeviceCommand = ReactiveCommand.CreateFromTask(AddDeviceAsync);
         DeleteDeviceCommand = ReactiveCommand.CreateFromTask(DeleteDevices);
+        ValidateDevicesCommand = ReactiveCommand.CreateFromTask(ValidateDevices);
 
         projectManager.PropertyChanged += ProjectPropertyChanged;
 
@@ -58,6 +68,9 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
 
     /// <inheritdoc />
     public ReactiveCommand<Unit, Unit> DeleteDeviceCommand { get; }
+
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> ValidateDevicesCommand { get; }
 
     /// <inheritdoc />
     public ObservableCollection<FontFamily> AllFontFamilies { get; }
@@ -100,8 +113,15 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
             return;
         }
 
-        _projectManager.AddDeviceToProject(file);
-        await _projectManager.SaveProjectAsync();
+        try
+        {
+            _projectManager.AddDeviceToProject(file);
+            await _projectManager.SaveProjectAsync();
+        }
+        catch (Exception e)
+        {
+            await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
+        }
     }
 
     private async Task DeleteDevices()
@@ -113,6 +133,21 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
         }
 
         await _projectManager.SaveProjectAsync();
+    }
+
+    private async Task ValidateDevices()
+    {
+        foreach (var device in Devices)
+        {
+            try
+            {
+                _deviceValidator.ThrowIfInvalid(device);
+            }
+            catch (Exception e)
+            {
+                await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
+            }
+        }
     }
 
     private void ProjectPropertyChanged(object sender, PropertyChangedEventArgs args)
