@@ -42,4 +42,9 @@ public interface IDevice : IDisposable
     /// </summary>
     /// <returns>Result code</returns>
     int Init();
+
+    /// <summary>
+    /// Method for executor to accept interrupt;
+    /// </summary>
+    void AcceptInterrupt();
 }

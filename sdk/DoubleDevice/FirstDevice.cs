@@ -32,6 +32,10 @@ public sealed class FirstDevice : IDevice
         return 0;
     }
 
+    public void AcceptInterrupt()
+    {
+    }
+
     /// <inheritdoc />
     public void Dispose()
     {

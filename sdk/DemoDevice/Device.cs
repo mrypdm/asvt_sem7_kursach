@@ -35,6 +35,10 @@ public sealed class Device : IDevice
         return 0;
     }
 
+    public void AcceptInterrupt()
+    {
+    }
+
     /// <inheritdoc />
     public void Dispose()
     {
