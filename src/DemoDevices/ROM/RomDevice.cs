@@ -125,7 +125,7 @@ public sealed class RomDevice : IDevice
         {
             _control = (ushort)((_control & ~ReadyMask) | ((value ? 1 : 0) << 7));
 
-            if (IsInterruptEnabled)
+            if (IsInterruptEnabled && value)
             {
                 HasInterrupt = true;
             }

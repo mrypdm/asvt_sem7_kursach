@@ -194,6 +194,50 @@ public class RomTests
         Assert.That(GetError(device), Is.EqualTo(Error.OddAddress));
     }
 
+    [Test]
+    public async Task InterruptTest()
+    {
+        // Arrange
+
+        const ushort address = 14;
+        const byte low = 0xA1;
+        const byte high = 0xFD;
+        const ushort expected = high << 8 | low;
+
+        var device = new RomDevice();
+        device.Init();
+
+        // Act
+
+        device.BufferRegisterValue = address;
+        device.ControlRegisterValue = 0b1_00011_1; // set address
+        await WaitForInterrupt(device);
+        device.AcceptInterrupt();
+
+        device.BufferRegisterValue = expected;
+        device.ControlRegisterValue = 0b1_00100_1; // set value
+        await WaitForInterrupt(device);
+        device.AcceptInterrupt();
+
+        device.ControlRegisterValue = 0b1_00010_1; // write
+        await WaitForInterrupt(device);
+        device.AcceptInterrupt();
+
+        device.Dispose(); // manually because we need access to file
+
+        var file = await File.ReadAllBytesAsync("memory.bin");
+
+        var actual = file[address + 1] << 8 | file[address];
+
+        // Assert
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(actual, Is.EqualTo(expected));
+            Assert.That(GetError(device), Is.EqualTo(Error.NoError));
+        });
+    }
+
     private static Error GetError(IDevice device) => (Error)((device.ControlRegisterValue & 0xF000) >> 12);
 
     private static Task WaitForReady(IDevice device) =>
