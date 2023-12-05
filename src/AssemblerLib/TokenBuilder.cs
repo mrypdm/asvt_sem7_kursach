@@ -48,120 +48,94 @@ namespace AssemblerLib
 
         private readonly Dictionary<string, Func<CommandLine, List<IToken>>> _instructions;
 
-        private int ConvertOctToInt(string codeOct)
-        {
-            int resIntCode = 0;
-            foreach (var ch in codeOct)
-            {
-                resIntCode = resIntCode << 3;
-                resIntCode = resIntCode | (ch - '0');
-            }
-            
-            return resIntCode;
-        }
-
         private int ArgumentHandler(string arg, List<IToken> extraTokens)
         {
             int instArgCode = 0;
 
             if (_regexMaskAddrType0.IsMatch(arg))
             {
-                instArgCode = 0;
-                instArgCode = instArgCode << 3;
+                instArgCode = 0b000_000;
                 instArgCode = instArgCode | int.Parse(_regexMaskAddrType0.Match(arg).Groups[1].Value);
             }
             else if (_regexMaskAddrType1.IsMatch(arg))
             {
-                instArgCode = 1;
-                instArgCode = instArgCode << 3;
+                instArgCode = 0b001_000;
                 instArgCode = instArgCode | int.Parse(_regexMaskAddrType1.Match(arg).Groups[1].Value);
             }
             else if (_regexMaskAddrType2.IsMatch(arg))
             {
-                instArgCode = 2;
-                instArgCode = instArgCode << 3;
+                instArgCode = 0b010_000;
                 instArgCode = instArgCode | int.Parse(_regexMaskAddrType2.Match(arg).Groups[1].Value);
             }
             else if (_regexMaskAddrType3.IsMatch(arg))
             {
-                instArgCode = 3;
-                instArgCode = instArgCode << 3;
+                instArgCode = 0b011_000;
                 instArgCode = instArgCode | int.Parse(_regexMaskAddrType3.Match(arg).Groups[1].Value);
             }
             else if (_regexMaskAddrType4.IsMatch(arg))
             {
-                instArgCode = 4;
-                instArgCode = instArgCode << 3;
+                instArgCode = 0b100_000;
                 instArgCode = instArgCode | int.Parse(_regexMaskAddrType4.Match(arg).Groups[1].Value);
             }
             else if (_regexMaskAddrType5.IsMatch(arg))
             {
-                instArgCode = 5;
-                instArgCode = instArgCode << 3;
+                instArgCode = 0b101_000;
                 instArgCode = instArgCode | int.Parse(_regexMaskAddrType5.Match(arg).Groups[1].Value);
             }
             else if (_regexMaskAddrType6.IsMatch(arg))
             {
-                instArgCode = 6;
-                instArgCode = instArgCode << 3;
+                instArgCode = 0b110_000;
                 instArgCode = instArgCode | int.Parse(_regexMaskAddrType6.Match(arg).Groups[2].Value);
 
                 // Generation extra token
-                int extraWordCode = ConvertOctToInt(_regexMaskAddrType6.Match(arg).Groups[1].Value);
+                int extraWordCode = Convert.ToInt32(_regexMaskAddrType6.Match(arg).Groups[1].Value, 8);
                 string extraWord = _regexMaskAddrType6.Match(arg).Groups[1].Value.PadLeft(6, '0');
                 extraTokens.Add(new RawToken(extraWordCode));
             }
             else if (_regexMaskAddrType6Mark.IsMatch(arg))
             {
-                instArgCode = 6;
-                instArgCode = instArgCode << 3;
+                instArgCode = 0b110_000;
                 instArgCode = instArgCode | int.Parse(_regexMaskAddrType6Mark.Match(arg).Groups[5].Value);
 
                 // Generation extra token
                 var mark = _regexMaskAddrType6Mark.Match(arg).Groups[1].Value;
-                var num = ConvertOctToInt(_regexMaskAddrType6Mark.Match(arg).Groups[4].Value);
+                var num = Convert.ToInt32(_regexMaskAddrType6Mark.Match(arg).Groups[4].Value, 8);
                 var opSign = _regexMaskAddrType6Mark.Match(arg).Groups[3].Value;
                 extraTokens.Add(new MarkRelocToken(mark, num, opSign == "+" ? true: false));
             }
             else if (_regexMaskAddrType7.IsMatch(arg))
             {
-                instArgCode = 7;
-                instArgCode = instArgCode << 3;
+                instArgCode = 0b111_000;
                 instArgCode = instArgCode | int.Parse(_regexMaskAddrType7.Match(arg).Groups[2].Value);
 
                 // Generation extra token
-                int extraWordCode = ConvertOctToInt(_regexMaskAddrType7.Match(arg).Groups[1].Value);
+                int extraWordCode = Convert.ToInt32(_regexMaskAddrType7.Match(arg).Groups[1].Value, 8);
                 string extraWord = _regexMaskAddrType7.Match(arg).Groups[1].Value.PadLeft(6, '0');
                 extraTokens.Add(new RawToken(extraWordCode));
             }
             else if (_regexMaskAddrType7Mark.IsMatch(arg))
             {
-                instArgCode = 7;
-                instArgCode = instArgCode << 3;
+                instArgCode = 0b111_000;
                 instArgCode = instArgCode | int.Parse(_regexMaskAddrType7Mark.Match(arg).Groups[5].Value);
 
                 // Generation extra token
                 var mark = _regexMaskAddrType7Mark.Match(arg).Groups[1].Value;
-                var num = ConvertOctToInt(_regexMaskAddrType7Mark.Match(arg).Groups[4].Value);
+                var num = Convert.ToInt32(_regexMaskAddrType7Mark.Match(arg).Groups[4].Value, 8);
                 var opSign = _regexMaskAddrType7Mark.Match(arg).Groups[3].Value;
                 extraTokens.Add(new MarkRelocToken(mark, num, opSign == "+" ? true : false));
             }
             else if (_regexMaskAddrType21.IsMatch(arg))
             {
-                instArgCode = 2;
-                instArgCode = instArgCode << 3;
-                instArgCode = instArgCode | 7;
+                instArgCode = 0b010_111;
 
                 // Generation extra token
-                int extraWordCode = ConvertOctToInt(_regexMaskAddrType21.Match(arg).Groups[1].Value);
+                int extraWordCode = Convert.ToInt32(_regexMaskAddrType21.Match(arg).Groups[1].Value, 8);
                 string extraWord = _regexMaskAddrType21.Match(arg).Groups[1].Value.PadLeft(6, '0');
                 extraTokens.Add(new RawToken(extraWordCode));
             }
             else if (_regexMaskAddrType21Mark.IsMatch(arg))
             {
-                instArgCode = 2;
-                instArgCode = instArgCode << 3;
-                instArgCode = instArgCode | 7;
+                instArgCode = 0b010_111;
 
                 // Generation extra token
                 var mark = _regexMaskAddrType21Mark.Match(arg).Groups[1].Value;
@@ -169,20 +143,16 @@ namespace AssemblerLib
             }
             else if (_regexMaskAddrType31.IsMatch(arg))
             {
-                instArgCode = 3;
-                instArgCode = instArgCode << 3;
-                instArgCode = instArgCode | 7;
+                instArgCode = 0b011_111;
 
                 // Generation extra token
-                int extraWordCode = ConvertOctToInt(_regexMaskAddrType31.Match(arg).Groups[1].Value);
+                int extraWordCode = Convert.ToInt32(_regexMaskAddrType31.Match(arg).Groups[1].Value, 8);
                 string extraWord = _regexMaskAddrType31.Match(arg).Groups[1].Value.PadLeft(6, '0');
                 extraTokens.Add(new RawToken(extraWordCode));
             }
             else if (_regexMaskAddrType31Mark.IsMatch(arg))
             {
-                instArgCode = 3;
-                instArgCode = instArgCode << 3;
-                instArgCode = instArgCode | 7;
+                instArgCode = 0b011_111;
 
                 // Generation extra token
                 var mark = _regexMaskAddrType31Mark.Match(arg).Groups[1].Value;
@@ -190,18 +160,14 @@ namespace AssemblerLib
             }
             else if (_regexMaskAddrType61.IsMatch(arg))
             {
-                instArgCode = 6;
-                instArgCode = instArgCode << 3;
-                instArgCode = instArgCode | 7;
+                instArgCode = 0b110_111;
 
                 // Generation extra token
                 extraTokens.Add(new MarkRDToken(_regexMaskAddrType61.Match(arg).Groups[1].Value));
             }
             else if (_regexMaskAddrType71.IsMatch(arg))
             {
-                instArgCode = 7;
-                instArgCode = instArgCode << 3;
-                instArgCode = instArgCode | 7;
+                instArgCode = 0b111_111;
 
                 // Generation extra token
                 extraTokens.Add(new MarkRDToken(_regexMaskAddrType61.Match(arg).Groups[1].Value));
@@ -261,7 +227,7 @@ namespace AssemblerLib
 
             if (_regexMaskAddrType0.IsMatch(cmdLine.Arguments[0]))
             {
-                instArgCode = ConvertOctToInt(_regexMaskAddrType0.Match(cmdLine.Arguments[0]).Groups[1].Value);
+                instArgCode = Convert.ToInt32(_regexMaskAddrType0.Match(cmdLine.Arguments[0]).Groups[1].Value, 8);
             }
             else
             {
@@ -281,7 +247,7 @@ namespace AssemblerLib
 
             if (_regexMaskAddrType0.IsMatch(cmdLine.Arguments[0]))
             {
-                instArgCode = ConvertOctToInt(_regexMaskAddrType0.Match(cmdLine.Arguments[0]).Groups[1].Value);
+                instArgCode = Convert.ToInt32(_regexMaskAddrType0.Match(cmdLine.Arguments[0]).Groups[1].Value, 8);
                 instArgCode = instArgCode << 6;
             }
             else
@@ -304,7 +270,7 @@ namespace AssemblerLib
 
             if (_regexMaskArgNN.IsMatch(cmdLine.Arguments[0]))
             {
-                instArgCode = ConvertOctToInt(_regexMaskArgNN.Match(cmdLine.Arguments[0]).Groups[1].Value);
+                instArgCode = Convert.ToInt32(_regexMaskArgNN.Match(cmdLine.Arguments[0]).Groups[1].Value, 8);
             }
             else
             {
@@ -323,7 +289,7 @@ namespace AssemblerLib
             // The handling of the firct argument
             if (_regexMaskAddrType0.IsMatch(cmdLine.Arguments[0]))
             {
-                instArgCode = ConvertOctToInt(_regexMaskAddrType0.Match(cmdLine.Arguments[0]).Groups[1].Value);
+                instArgCode = Convert.ToInt32(_regexMaskAddrType0.Match(cmdLine.Arguments[0]).Groups[1].Value, 8);
                 instArgCode = instArgCode << 6;
             }
             else
@@ -334,7 +300,7 @@ namespace AssemblerLib
             // The handling of the second argument
             if (_regexMaskArgNN.IsMatch(cmdLine.Arguments[1]))
             {
-                instArgCode = instArgCode | ConvertOctToInt(_regexMaskArgNN.Match(cmdLine.Arguments[1]).Groups[1].Value);
+                instArgCode = instArgCode | Convert.ToInt32(_regexMaskArgNN.Match(cmdLine.Arguments[1]).Groups[1].Value, 8);
             }
             else
             {
