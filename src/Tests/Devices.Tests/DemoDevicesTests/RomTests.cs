@@ -243,4 +243,7 @@ public class RomTests
     private static Task WaitForReady(IDevice device) =>
         TaskHelper.WaitForCondition(() => (device.ControlRegisterValue & 0x80) != 0,
             period: TimeSpan.FromMilliseconds(50));
+
+    private static Task WaitForInterrupt(IDevice device) =>
+        TaskHelper.WaitForCondition(() => device.HasInterrupt, period: TimeSpan.FromMilliseconds(50));
 }
