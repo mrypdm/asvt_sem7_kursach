@@ -17,7 +17,7 @@ public static class TaskHelper
     /// <param name="period">Period of checks</param>
     public static async Task WaitForCondition(Func<bool> condition, TimeSpan? timeout = null, TimeSpan? period = null)
     {
-        timeout ??= TimeSpan.MaxValue;
+        timeout ??= TimeSpan.FromMilliseconds(int.MaxValue);
         period ??= TimeSpan.FromMilliseconds(500);
 
         using var cancel = new CancellationTokenSource(timeout.Value);
