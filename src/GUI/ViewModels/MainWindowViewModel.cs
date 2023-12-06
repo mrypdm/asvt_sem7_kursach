@@ -29,7 +29,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
     private readonly IFileManager _fileManager;
     private readonly IMessageBoxManager _messageBoxManager;
-    private readonly IWindowProvider<SettingsWindow> _settingsWindowProvider;
+    private readonly IWindowProvider _windowProvider;
     private readonly ITabManager _tabManager;
     private readonly IProjectManager _projectManager;
 
@@ -48,10 +48,10 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// <param name="fileManager">File manager</param>
     /// <param name="tabManager">Tab manager</param>
     /// <param name="messageBoxManager">Message box manager</param>
-    /// <param name="settingsWindowProvider">Provider for windows</param>
+    /// <param name="windowProvider">Window provider</param>
     public MainWindowViewModel(MainWindow window, ITabManager tabManager, IProjectManager projectManager,
         IFileManager fileManager, IMessageBoxManager messageBoxManager,
-        IWindowProvider<SettingsWindow> settingsWindowProvider) : base(window)
+        IWindowProvider windowProvider) : base(window)
     {
         CreateFileCommand = ReactiveCommand.CreateFromTask(CreateFileAsync);
         OpenFileCommand = ReactiveCommand.CreateFromTask(OpenFileAsync);
@@ -61,11 +61,12 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         DeleteFileCommand = ReactiveCommand.CreateFromTask(DeleteFileAsync);
         CreateProjectCommand = ReactiveCommand.CreateFromTask(async () => { await CreateProjectAsync(); });
         OpenProjectCommand = ReactiveCommand.CreateFromTask(async () => { await OpenProjectAsync(); });
-        OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindow);
+        OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindowAsync);
+        OpenExecutorWindowCommand = ReactiveCommand.CreateFromTask(OpenExecutorWindowAsync);
 
         _fileManager = fileManager;
         _messageBoxManager = messageBoxManager;
-        _settingsWindowProvider = settingsWindowProvider;
+        _windowProvider = windowProvider;
 
         _projectManager = projectManager;
         _projectManager.PropertyChanged += (_, args) =>
@@ -124,6 +125,9 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
     /// <inheritdoc />
     public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
+
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> OpenExecutorWindowCommand { get; }
 
     public string WindowTitle => _projectManager?.IsOpened == true
         ? $"{DefaultWindowTitle} - {_projectManager.Project.ProjectName}"
@@ -577,9 +581,18 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// <summary>
     /// Opens <see cref="SettingsWindow"/>
     /// </summary>
-    private async Task OpenSettingsWindow()
+    private async Task OpenSettingsWindowAsync()
     {
-        var viewModel = _settingsWindowProvider.CreateWindow<SettingsViewModel>(_projectManager, _fileManager);
+        var viewModel = _windowProvider.CreateWindow<SettingsWindow, SettingsViewModel>(_projectManager, _fileManager);
+        await viewModel.ShowDialog(View);
+    }
+
+    /// <summary>
+    /// Opens <see cref="ExecutorWindow"/>
+    /// </summary>
+    private async Task OpenExecutorWindowAsync()
+    {
+        var viewModel = _windowProvider.CreateWindow<ExecutorWindow, ExecutorViewModel>();
         await viewModel.ShowDialog(View);
     }
 

@@ -23,6 +23,8 @@
         <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAllFilesCommand}" />
         <KeyBinding Gesture="Ctrl+Alt+S" Command="{Binding OpenSettingsWindowCommand}" />
 
+        <KeyBinding Gesture="F5" Command="{Binding OpenExecutorWindowCommand}" />
+
         <KeyBinding Gesture="Ctrl+Shift+N" Command="{Binding CreateProjectCommand}" />
         <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding OpenProjectCommand}" />
     </Window.KeyBindings>
@@ -50,7 +52,7 @@
                 <MenuItem Header="Open" InputGesture="Ctrl+Shift+O" Command="{Binding OpenProjectCommand}" />
             </MenuItem>
             <MenuItem Header="Build" Margin="5,0,5,0" />
-            <MenuItem Header="Run" Margin="5,0,5,0" />
+            <MenuItem Header="Run" Margin="5,0,5,0" ToolTip.Tip="F5" Command="{Binding OpenExecutorWindowCommand}" />
             <MenuItem Header="Settings" Margin="5,0,5,0" ToolTip.Tip="Ctrl+Alt+S"
                       Command="{Binding OpenSettingsWindowCommand}" />
             <MenuItem Header="Help" Margin="5,0,5,0">
