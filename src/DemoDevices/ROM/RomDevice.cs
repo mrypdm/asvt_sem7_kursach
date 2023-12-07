@@ -58,18 +58,19 @@ public sealed class RomDevice : IDevice
     /// </remarks>
     /// <remarks>
     ///     <b>Functions</b>:<br/>
-    ///     00000 - read from address
-    ///     00001 - write to address
-    ///     00010 - set address
-    ///     00011 - set data
+    ///     00000 - 
+    ///     00001 - read from address
+    ///     00010 - write to address
+    ///     00011 - set address
+    ///     01000 - set data
     /// </remarks>
     /// <remarks>
     ///     <b>Errors</b>:<br/>
-    ///     000 - no error
-    ///     001 - odd address
-    ///     010 - invalid function
-    ///     011 - no address provided
-    ///     100 - no value provided 
+    ///     0000 - no error
+    ///     0001 - odd address
+    ///     0010 - invalid function
+    ///     0011 - no address provided
+    ///     0100 - no value provided 
     /// </remarks>
     public ushort ControlRegisterValue
     {
