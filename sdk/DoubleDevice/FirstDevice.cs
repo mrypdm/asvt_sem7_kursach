@@ -7,11 +7,14 @@ namespace DoubleDevice;
 public sealed class FirstDevice : IDevice
 {
     /// <inheritdoc />
+    public string Name => GetType().Name;
+
+    /// <inheritdoc />
     public ushort BufferRegisterAddress => Convert.ToUInt16("177562", 8);
-    
+
     /// <inheritdoc />
     public ushort ControlRegisterAddress => Convert.ToUInt16("177560", 8);
-    
+
     /// <inheritdoc />
     public ushort InterruptVectorAddress => Convert.ToUInt16("60", 8);
 

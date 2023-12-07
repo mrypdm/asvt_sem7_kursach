@@ -28,6 +28,9 @@ public sealed class RomDevice : IDevice
     private Task _workingTask;
 
     /// <inheritdoc />
+    public string Name => GetType().Name;
+
+    /// <inheritdoc />
     public ushort BufferRegisterAddress { get; } = Convert.ToUInt16("177000", 8);
 
     /// <inheritdoc />

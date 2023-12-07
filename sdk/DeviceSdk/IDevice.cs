@@ -8,6 +8,11 @@ namespace DeviceSdk;
 public interface IDevice : IDisposable
 {
     /// <summary>
+    /// Name of device
+    /// </summary>
+    string Name { get; }
+    
+    /// <summary>
     /// Address of buffer register
     /// </summary>
     ushort BufferRegisterAddress { get; }
