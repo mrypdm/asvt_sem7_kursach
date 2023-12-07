@@ -13,15 +13,6 @@ using Shared.Converters;
 
 namespace GUI.ViewModels;
 
-public static class ExecutorTabs
-{
-    public const string State = nameof(State);
-
-    public const string Memory = nameof(Memory);
-
-    public const string Devices = nameof(Devices);
-}
-
 public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindowViewModel
 {
     private readonly IMessageBoxManager _messageBoxManager;
