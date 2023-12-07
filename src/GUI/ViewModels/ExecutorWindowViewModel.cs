@@ -30,8 +30,6 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
 
     private ObservableCollection<IMemoryModel> _memory;
 
-    private byte[] _testMemory = new byte[ushort.MaxValue + 1];
-
     /// <summary>
     /// Constructor for designer
     /// </summary>
@@ -46,9 +44,6 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     /// <param name="messageBoxManager">Message box manager</param>
     public ExecutorViewModel(ExecutorWindow view, IMessageBoxManager messageBoxManager) : base(view)
     {
-        var random = new Random();
-        random.NextBytes(_testMemory);
-
         _messageBoxManager = messageBoxManager;
 
         StartExecutionCommand = ReactiveCommand.CreateFromTask(RunAsync);
@@ -61,8 +56,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         Tabs = Enum.GetValues<Tab>().ToObservableCollection();
         Registers = Array.Empty<RegisterModel>().ToObservableCollection();
         ProcessorStateWord = Array.Empty<ProcessorStateWordModel>().ToObservableCollection();
-        //Memory = Array.Empty<IMemoryModel>().ToObservableCollection();
-        Memory = _testMemory.Select((m, i) => new ByteModel((ushort)i, m) as IMemoryModel).ToObservableCollection();
+        Memory = Array.Empty<IMemoryModel>().ToObservableCollection();
         Devices = Array.Empty<Device>().ToObservableCollection();
         CodeLines = Array.Empty<CodeModel>().ToObservableCollection();
 
@@ -87,12 +81,15 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     /// <inheritdoc />
     public ReactiveCommand<string, Unit> FindAddressCommand { get; }
 
+    // TODO
     /// <inheritdoc />
     public ObservableCollection<RegisterModel> Registers { get; }
 
+    // TODO
     /// <inheritdoc />
     public ObservableCollection<ProcessorStateWordModel> ProcessorStateWord { get; }
 
+    // TODO
     /// <inheritdoc />
     public ObservableCollection<IMemoryModel> Memory
     {
@@ -100,9 +97,11 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         set => this.RaiseAndSetIfChanged(ref _memory, value);
     }
 
+    // TODO
     /// <inheritdoc />
     public ObservableCollection<Device> Devices { get; }
 
+    // TODO
     /// <inheritdoc />
     public ObservableCollection<CodeModel> CodeLines { get; }
 
@@ -134,42 +133,30 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     /// <inheritdoc />
     public bool IsDevicesVisible => CurrentTab == Tab.Devices;
 
-    private async Task MakeStepAsync()
-    {
-    }
+    // TODO
+    private Task MakeStepAsync() => Task.CompletedTask;
 
-    private async Task RunAsync()
-    {
-    }
+    // TODO
+    private Task RunAsync() => Task.CompletedTask;
 
-    private async Task PauseAsync()
-    {
-    }
+    // TODO
+    private Task PauseAsync() => Task.CompletedTask;
 
-    private async Task ResetExecutorAsync()
-    {
-    }
+    // TODO
+    private Task ResetExecutorAsync() => Task.CompletedTask;
 
     private void ChangeMemoryMode()
     {
         _memoryAsWord = !_memoryAsWord;
         this.RaisePropertyChanged(nameof(ChangeMemoryModeCommandHeader));
-
-        Memory = _memoryAsWord
-            ? AsWords().ToObservableCollection()
-            : _testMemory.Select((m, i) => new ByteModel((ushort)i, m) as IMemoryModel).ToObservableCollection();
+        Memory = _memoryAsWord ? AsWords().ToObservableCollection() : AsBytes().ToObservableCollection();
     }
 
-    private IEnumerable<IMemoryModel> AsWords()
-    {
-        for (var i = 0; i < _testMemory.Length; i += 2)
-        {
-            var low = _testMemory[i];
-            var high = _testMemory[i + 1];
-            var word = (high << 8) | low;
-            yield return new WordModel((ushort)i, (ushort)word);
-        }
-    }
+    // TODO
+    private IEnumerable<IMemoryModel> AsWords() => Array.Empty<IMemoryModel>();
+
+    // TODO
+    private IEnumerable<IMemoryModel> AsBytes() => Array.Empty<IMemoryModel>();
 
     private async Task FindAddressAsync(string text)
     {
