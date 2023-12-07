@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Domain.Models;
 using Domain.Providers;
 using Domain.Validators;
+using Shared.Exceptions;
 
 namespace Domain.Tests.Validators;
 

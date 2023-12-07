@@ -23,6 +23,11 @@ public interface ISettingsViewModel : IWindowViewModel<SettingsWindow>
     ReactiveCommand<Unit, Unit> DeleteDeviceCommand { get; }
     
     /// <summary>
+    /// Command for validating devices
+    /// </summary>
+    ReactiveCommand<Unit, Unit> ValidateDevicesCommand { get; }
+
+    /// <summary>
     /// Collection of added devices
     /// </summary>
     ObservableCollection<string> Devices { get; }

@@ -1,4 +1,6 @@
-﻿using Devices.Providers;
+﻿using System;
+using Devices.Providers;
+using Shared.Exceptions;
 
 namespace Devices.Validators;
 
@@ -13,10 +15,31 @@ public class DeviceValidator : IDeviceValidator
     }
     
     /// <inheritdoc />
-    public bool Validate(string path)
+    public bool Validate(string path, out string errorMessage)
     {
-        var res = _provider.TryLoad(path, out var device);
-        device?.Dispose();
-        return res;
+        try
+        {
+            _provider.Load(path);
+            errorMessage = null;
+            return true;
+        }
+        catch (Exception e)
+        {
+            errorMessage = e.Message;
+            return false;
+        }
+    }
+
+    /// <inheritdoc />
+    public void ThrowIfInvalid(string path)
+    {
+        try
+        {
+            _provider.Load(path);
+        }
+        catch (Exception e)
+        {
+            throw new ValidationException($"Device [{path}] is invalid. Error: {e.Message}", e);
+        }
     }
 }

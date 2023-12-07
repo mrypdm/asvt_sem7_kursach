@@ -37,7 +37,7 @@ public class DeviceProvider : IDeviceProvider
 
         if (!types.Any())
         {
-            throw new InvalidOperationException("Cannot find devices.");
+            throw new InvalidOperationException("Cannot find devices");
         }
 
         var devices = types

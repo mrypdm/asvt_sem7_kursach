@@ -13,11 +13,11 @@ public interface IProjectProvider
     /// </summary>
     /// <param name="filePath">Path to project file</param>
     /// <returns>Project model</returns>
-    Task<Project> OpenProjectAsync(string filePath);
+    Task<IProject> OpenProjectAsync(string filePath);
 
     /// <summary>
     /// Tries to open project from file
     /// </summary>
     /// <param name="filePath">Path to project file</param>
-    Task<(bool isSuccess, Project projectModel)> TryOpenProjectAsync(string filePath);
+    Task<(bool isSuccess, IProject projectModel)> TryOpenProjectAsync(string filePath);
 }

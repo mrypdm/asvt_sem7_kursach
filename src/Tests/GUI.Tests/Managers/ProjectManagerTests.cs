@@ -3,6 +3,8 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using Devices.Providers;
+using Devices.Validators;
 using Domain.Extensions;
 using Domain.Models;
 using Domain.Providers;
@@ -19,7 +21,7 @@ public class ProjectManagerTests
     {
         // Act
 
-        var manager = new ProjectManager(new ProjectProvider());
+        var manager = new ProjectManager(new ProjectProvider(), new DeviceValidator(new DeviceProvider()));
 
         // Assert
 
@@ -35,7 +37,7 @@ public class ProjectManagerTests
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
-            var _ = new ProjectManager(null);
+            var _ = new ProjectManager(null, null);
         });
     }
 
@@ -57,7 +59,7 @@ public class ProjectManagerTests
             .Setup(m => m.OpenFolderPickerAsync(It.IsAny<FolderPickerOpenOptions>()))
             .ReturnsAsync(new[] { directory.Object });
 
-        var manager = new ProjectManager(new ProjectProvider());
+        var manager = new ProjectManager(new ProjectProvider(), new DeviceValidator(new DeviceProvider()));
         var propertyChangedAssert = new PropertyChangedAssert(manager);
 
         // Act
@@ -84,7 +86,7 @@ public class ProjectManagerTests
             .Setup(m => m.OpenFolderPickerAsync(It.IsAny<FolderPickerOpenOptions>()))
             .ReturnsAsync(Array.Empty<IStorageFolder>());
 
-        var manager = new ProjectManager(new ProjectProvider());
+        var manager = new ProjectManager(new ProjectProvider(), new DeviceValidator(new DeviceProvider()));
 
         // Act
 
@@ -103,7 +105,7 @@ public class ProjectManagerTests
         // Arrange
 
         var storageProvider = new Mock<IStorageProvider>();
-        var manager = new ProjectManager(new ProjectProvider());
+        var manager = new ProjectManager(new ProjectProvider(), new DeviceValidator(new DeviceProvider()));
 
         // Act & Assert
 
@@ -141,7 +143,7 @@ public class ProjectManagerTests
             .Setup(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()))
             .ReturnsAsync(new[] { file.Object });
 
-        var manager = new ProjectManager(projectProvider.Object);
+        var manager = new ProjectManager(projectProvider.Object, new DeviceValidator(new DeviceProvider()));
         var propertyChangedAssert = new PropertyChangedAssert(manager);
 
         // Act
@@ -167,7 +169,7 @@ public class ProjectManagerTests
             .Setup(m => m.OpenFilePickerAsync(It.IsAny<FilePickerOpenOptions>()))
             .ReturnsAsync(Array.Empty<IStorageFile>());
 
-        var manager = new ProjectManager(new ProjectProvider());
+        var manager = new ProjectManager(new ProjectProvider(), new DeviceValidator(new DeviceProvider()));
 
         // Act
 
@@ -184,7 +186,11 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, projectProvider, project) = await InitMockManager();
+        var provider = new Mock<IProjectProvider>();
+        var (manager, project) = await InitManager(provider: provider.Object);
+        provider
+            .Setup(m => m.OpenProjectAsync(It.IsAny<string>()))
+            .ReturnsAsync(project);
         var propertyChangedAssert = new PropertyChangedAssert(manager);
 
         // Act
@@ -195,7 +201,7 @@ public class ProjectManagerTests
 
         Assert.That(manager.IsOpened, Is.True);
         Assert.That(manager.Project.ProjectFile, Is.EqualTo(project.ProjectFile));
-        projectProvider.Verify(m => m.OpenProjectAsync(project.ProjectFile), Times.Once);
+        provider.Verify(m => m.OpenProjectAsync(project.ProjectFile), Times.Once);
         propertyChangedAssert.Assert(nameof(manager.Project));
     }
 
@@ -204,7 +210,7 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, _, project) = await InitManager();
+        var (manager, project) = await InitManager();
         await manager.LoadProjectAsync(project.ProjectFile);
         var propertyChangedAssert = new PropertyChangedAssert(manager);
 
@@ -230,7 +236,8 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, provider, project) = await InitManager();
+        var provider = new ProjectProvider();
+        var (manager, project) = await InitManager(provider: provider);
         await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         var propertyChangedAssert = new PropertyChangedAssert(manager);
@@ -243,7 +250,7 @@ public class ProjectManagerTests
         // Assert
 
         project = await provider.OpenProjectAsync(project.ProjectFile);
-        
+
         Assert.That(project.Files, Has.Exactly(1).Matches<string>(s => s.Contains(expectedFile)));
         propertyChangedAssert.Assert(nameof(manager.Project));
     }
@@ -253,7 +260,7 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, _, project) = await InitManager();
+        var (manager, project) = await InitManager();
         await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         var propertyChangedAssert = new PropertyChangedAssert(manager);
@@ -273,7 +280,7 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, _, project) = await InitManager();
+        var (manager, project) = await InitManager();
         await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         manager.AddFileToProject(expectedFile);
@@ -292,7 +299,7 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, _, project) = await InitManager();
+        var (manager, project) = await InitManager();
         await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         manager.AddFileToProject(expectedFile);
@@ -313,7 +320,7 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, _, project) = await InitManager();
+        var (manager, project) = await InitManager();
         await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
 
@@ -331,9 +338,11 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, _, project) = await InitManager();
+        var validator = new Mock<IDeviceValidator>();
+        
+        var (manager, project) = await InitManager(validator: validator.Object);
         await manager.LoadProjectAsync(project.ProjectFile);
-        const string expectedFile = "main.asm";
+        const string expectedFile = "main.dll";
         var propertyChangedAssert = new PropertyChangedAssert(manager);
 
         // Act
@@ -344,16 +353,19 @@ public class ProjectManagerTests
 
         Assert.That(manager.Project.Devices, Does.Contain(PathHelper.GetFullPath(expectedFile)));
         propertyChangedAssert.Assert(nameof(project.Devices));
+        validator.Verify(m => m.ThrowIfInvalid(It.Is<string>(s => s.Contains(expectedFile))), Times.Once);
     }
 
     [Test]
     public async Task AddDuplicateDeviceTest()
     {
         // Arrange
+        
+        var validator = new Mock<IDeviceValidator>();
 
-        var (manager, _, project) = await InitManager();
+        var (manager, project) = await InitManager(validator: validator.Object);
         await manager.LoadProjectAsync(project.ProjectFile);
-        const string expectedFile = "main.asm";
+        const string expectedFile = "main.dll";
         manager.AddDeviceToProject(expectedFile);
 
         // Act
@@ -364,6 +376,7 @@ public class ProjectManagerTests
 
         Assert.That(manager.Project.Devices,
             Has.Exactly(1).Matches<string>(s => s == PathHelper.GetFullPath(expectedFile)));
+        validator.Verify(m => m.ThrowIfInvalid(It.Is<string>(s => s.Contains(expectedFile))), Times.Once);
     }
 
     [Test]
@@ -371,7 +384,9 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, _, project) = await InitManager();
+        var validator = new Mock<IDeviceValidator>();
+
+        var (manager, project) = await InitManager(validator: validator.Object);
         await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
         manager.AddDeviceToProject(expectedFile);
@@ -392,7 +407,7 @@ public class ProjectManagerTests
     {
         // Arrange
 
-        var (manager, _, project) = await InitManager();
+        var (manager, project) = await InitManager();
         await manager.LoadProjectAsync(project.ProjectFile);
         const string expectedFile = "main.asm";
 
@@ -421,27 +436,15 @@ public class ProjectManagerTests
         return project;
     }
 
-    private static async Task<(IProjectManager, IProjectProvider, IProject)> InitManager(
-        [CallerMemberName] string name = null)
+    private static async Task<(IProjectManager, IProject)> InitManager(
+        [CallerMemberName] string name = null, IProjectProvider provider = null,
+        IDeviceValidator validator = null)
     {
         var project = await InitProject(name);
-        var provider = new ProjectProvider();
-        var manager = new ProjectManager(provider);
-        return (manager, provider, project);
-    }
-
-    private static async Task<(IProjectManager, Mock<IProjectProvider>, IProject)> InitMockManager(
-        [CallerMemberName] string name = null)
-    {
-        var project = await InitProject(name);
+        provider ??= new ProjectProvider();
+        validator ??= new DeviceValidator(new DeviceProvider());
         
-        var projectProvider = new Mock<IProjectProvider>();
-        projectProvider
-            .Setup(m => m.OpenProjectAsync(It.IsAny<string>()))
-            .ReturnsAsync(project);
-
-        var manager = new ProjectManager(projectProvider.Object);
-
-        return (manager, projectProvider, project);
+        var manager = new ProjectManager(provider, validator);
+        return (manager, project);
     }
 }

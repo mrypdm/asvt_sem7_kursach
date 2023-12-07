@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -6,12 +7,17 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Devices.Providers;
+using Devices.Validators;
+using Domain.Models;
 using Domain.Providers;
 using GUI.Managers;
+using GUI.MessageBoxes;
 using GUI.Models;
 using GUI.ViewModels;
 using GUI.Views;
 using Moq;
+using Shared.Exceptions;
 using Shared.Helpers;
 
 namespace GUI.Tests.ViewModels;
@@ -159,9 +165,51 @@ public class SettingsViewModelTests : GuiTest<App>
         });
     }
 
+    [Test]
+    public async Task ValidateDevices()
+    {
+        await RunAsyncTest(async () =>
+        {
+            // Arrange
+
+            const string badDevice = "badDevice.dll";
+            const string goodDevice = "goodDevice.dll";
+
+            var project = new Mock<IProject>();
+            project
+                .Setup(m => m.Devices)
+                .Returns(new List<string> { goodDevice, badDevice });
+
+            var projectManager = new Mock<IProjectManager>();
+            projectManager
+                .Setup(m => m.Project)
+                .Returns(project.Object);
+
+            var validator = new Mock<IDeviceValidator>();
+            validator.Setup(m => m.ThrowIfInvalid(badDevice)).Throws(() => new ValidationException(badDevice));
+
+            var messageBoxManager = new Mock<IMessageBoxManager>();
+
+            var viewModel = CreateViewModel(projectManager.Object, null, validator.Object, messageBoxManager.Object);
+
+            // Act
+
+            await viewModel.ValidateDevicesCommand.Execute();
+
+            // Assert
+
+            validator.Verify(m => m.ThrowIfInvalid(goodDevice), Times.Once);
+            validator.Verify(m => m.ThrowIfInvalid(badDevice), Times.Once);
+            messageBoxManager.Verify(m => m.ShowErrorMessageBox(badDevice, viewModel.View), Times.Once);
+        });
+    }
+
     private static SettingsViewModel CreateViewModel(IProjectManager projectManager = null,
-        IFileManager fileManager = null) =>
+        IFileManager fileManager = null, IDeviceValidator validator = null,
+        IMessageBoxManager messageBoxManager = null) =>
         new(new SettingsWindow(),
-            projectManager ?? new ProjectManager(new ProjectProvider()),
-            fileManager ?? new FileManager());
+            projectManager ?? new ProjectManager(new ProjectProvider(), new DeviceValidator(new DeviceProvider())),
+            fileManager ?? new FileManager(),
+            validator ?? new DeviceValidator(new DeviceProvider()),
+            messageBoxManager ?? new MessageBoxManager());
 }

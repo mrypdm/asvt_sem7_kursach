@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Devices.Providers;
+using Devices.Validators;
 using GUI.Exceptions;
 using GUI.Managers;
 using GUI.Models;
@@ -573,7 +575,9 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// </summary>
     private async Task OpenSettingsWindow()
     {
-        var viewModel = _settingsWindowProvider.CreateWindow<SettingsViewModel>(_projectManager, _fileManager);
+        var viewModel = _settingsWindowProvider.CreateWindow<SettingsViewModel>(_projectManager, _fileManager,
+            new DeviceValidator(new DeviceProvider()), _messageBoxManager);
+
         await viewModel.ShowDialog(View);
     }
 
