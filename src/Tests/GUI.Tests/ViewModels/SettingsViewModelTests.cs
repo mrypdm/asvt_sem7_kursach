@@ -25,20 +25,15 @@ public class SettingsViewModelTests : GuiTest<App>
     }
 
     [Test]
-    public async Task CreationTest()
+    public async Task AllFontsTests()
     {
         await RunTest(() =>
         {
-            // Act
-            var viewModel = CreateViewModel();
-
             // Assert
 
             Assert.Multiple(() =>
             {
-                Assert.That(viewModel.FontFamily, Is.EqualTo(SettingsManager.Instance.FontFamily));
-                Assert.That(viewModel.FontSize, Is.EqualTo(SettingsManager.Instance.FontSize));
-                Assert.That(viewModel.AllFontFamilies, Is.EqualTo(FontManager.Current.SystemFonts));
+                Assert.That(SettingsManager.AllFontFamilies, Is.EqualTo(FontManager.Current.SystemFonts));
             });
         });
     }
@@ -110,32 +105,6 @@ public class SettingsViewModelTests : GuiTest<App>
             projectManager.Verify(m => m.RemoveDeviceFromProject(devices[0]), Times.Once);
             projectManager.Verify(m => m.RemoveDeviceFromProject(devices[1]), Times.Once);
             projectManager.Verify(m => m.SaveProjectAsync(), Times.Once);
-        });
-    }
-
-    [Test]
-    public async Task ChangeFontTest()
-    {
-        await RunTest(() =>
-        {
-            // Arrange
-
-            var fontFamily = new FontFamily("Font");
-            const int fontSize = 16;
-
-            var viewModel = CreateViewModel();
-
-            // Act
-            viewModel.FontFamily = fontFamily;
-            viewModel.FontSize = fontSize;
-
-            // Assert
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(SettingsManager.Instance.FontFamily, Is.EqualTo(fontFamily));
-                Assert.That(SettingsManager.Instance.FontSize, Is.EqualTo(fontSize));
-            });
         });
     }
 

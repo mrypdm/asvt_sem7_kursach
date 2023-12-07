@@ -3,95 +3,86 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:GUI.ViewModels"
+        xmlns:managers="clr-namespace:GUI.Managers"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="GUI.Views.ExecutorWindow" x:DataType="vm:ExecutorViewModel"
-        Title="Executor" Icon="/Assets/icon.ico">
+        Title="Executor" Icon="/Assets/icon.ico"
+        FontFamily="Century Gothic" FontSize="14">
     <Design.DataContext>
         <vm:ExecutorViewModel />
     </Design.DataContext>
 
+    <Window.Styles>
+        <Style Selector="DataGridCell">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="DataGrid">
+            <Setter Property="CanUserReorderColumns" Value="False" />
+            <Setter Property="CanUserResizeColumns" Value="False" />
+            <Setter Property="CanUserSortColumns" Value="False" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="GridLinesVisibility" Value="All" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="AutoGenerateColumns" Value="True" />
+            <Setter Property="RowBackground" Value="White" />
+            <Setter Property="FontFamily"
+                    Value="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontFamily}" />
+            <Setter Property="FontSize"
+                    Value="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontSize}" />
+        </Style>
+    </Window.Styles>
+
     <DockPanel LastChildFill="True">
-        <StackPanel Orientation="Horizontal" Margin="5,5,5,0" DockPanel.Dock="Top">
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" Margin="5" DockPanel.Dock="Top">
             <Button Content="Run" MinWidth="100" />
             <Button Content="Step" MinWidth="100" Margin="5,0,0,0" />
+            <Button Content="Pause" MinWidth="100" Margin="5,0,0,0" />
             <Button Content="Reset" MinWidth="100" Margin="5,0,0,0" />
         </StackPanel>
 
-        <DockPanel Margin="5,5,5,5" DockPanel.Dock="Right" LastChildFill="True" MaxWidth="600">
-            <DataGrid Margin="0,0,0,5" DockPanel.Dock="Top"
-                      IsReadOnly="True" ItemsSource="{Binding Registers}" AutoGenerateColumns="True"
-                      CanUserResizeColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False"
-                      GridLinesVisibility="All" BorderThickness="1" BorderBrush="Gray"
-                      RowBackground="White" FontFamily="Courier New" FontSize="14">
-                <DataGrid.Styles>
-                    <Style Selector="DataGridCell">
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    </Style>
-                    <Style Selector="DataGridColumnHeader">
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    </Style>
-                </DataGrid.Styles>
-            </DataGrid>
+        <!-- State -->
+        <DockPanel Margin="5" DockPanel.Dock="Right" LastChildFill="True" MaxWidth="600" MinWidth="300">
+            <ComboBox DockPanel.Dock="Top" ItemsSource="{Binding Tabs}" SelectedItem="{Binding CurrentTab}" />
 
-            <DataGrid Margin="0,0,0,5" DockPanel.Dock="Top"
-                      IsReadOnly="True" ItemsSource="{Binding PswTokens}" AutoGenerateColumns="True"
-                      CanUserResizeColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False"
-                      GridLinesVisibility="All" BorderThickness="1" BorderBrush="Gray"
-                      RowBackground="White" FontFamily="Courier New" FontSize="14"
-                      HorizontalScrollBarVisibility="Hidden">
-                <DataGrid.Styles>
-                    <Style Selector="DataGridCell">
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    </Style>
-                    <Style Selector="DataGridColumnHeader">
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    </Style>
-                </DataGrid.Styles>
-            </DataGrid>
+            <Separator Height="2" DockPanel.Dock="Top" />
 
-            <TextBox x:Name="AddressInput" Margin="0,0,0,5" DockPanel.Dock="Top">
+            <!-- Registers -->
+            <DataGrid Margin="0,0,0,5" DockPanel.Dock="Top" ItemsSource="{Binding Registers}"
+                      IsVisible="{Binding IsRegistersVisible}" />
+
+            <!-- PSW -->
+            <DataGrid Margin="0,0,0,5" DockPanel.Dock="Top" HorizontalScrollBarVisibility="Hidden"
+                      ItemsSource="{Binding PswTokens}" IsVisible="{Binding IsRegistersVisible}" />
+
+            <!-- Memory -->
+            <TextBox Name="AddressInput" Margin="0,0,0,5" DockPanel.Dock="Top" IsVisible="{Binding IsMemoryVisible}">
                 <TextBox.KeyBindings>
-                    <KeyBinding Gesture="Enter" Command="{Binding GotoAddressCommand}"
+                    <KeyBinding Gesture="Enter" Command="{Binding FindAddressCommand}"
                                 CommandParameter="{Binding Text, ElementName=AddressInput}" />
                 </TextBox.KeyBindings>
             </TextBox>
-            <DataGrid x:Name="MemoryGrid" Margin="0,0,0,5" DockPanel.Dock="Top"
-                      IsReadOnly="True" ItemsSource="{Binding Memory}" AutoGenerateColumns="True"
-                      CanUserResizeColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False"
-                      GridLinesVisibility="All" BorderThickness="1" BorderBrush="Gray"
-                      RowBackground="White" FontFamily="Courier New" FontSize="14"
-                      VerticalScrollBarVisibility="Auto">
+            <DataGrid x:Name="MemoryGrid" Margin="0,0,0,5" DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto"
+                      ItemsSource="{Binding Memory}" IsVisible="{Binding IsMemoryVisible}">
                 <DataGrid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="{Binding MemoryVisibilityState}" Command="{Binding ChangeVisibilityCommand}" />
+                        <MenuItem Header="{Binding MemoryVisibilityState}"
+                                  Command="{Binding ChangeVisibilityCommand}" />
                     </ContextMenu>
                 </DataGrid.ContextMenu>
-                <DataGrid.Styles>
-                    <Style Selector="DataGridCell">
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    </Style>
-                    <Style Selector="DataGridColumnHeader">
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    </Style>
-                </DataGrid.Styles>
             </DataGrid>
+
+            <!-- Devices -->
+            <DataGrid Margin="0,0,0,5" DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto"
+                      IsVisible="{Binding IsDevicesVisible}" ItemsSource="{Binding Devices}" />
         </DockPanel>
 
-        <DataGrid x:Name="SourceCodeGrid" Margin="5,5,5,5" DockPanel.Dock="Top"
-                  ItemsSource="{Binding SourceCode}" IsReadOnly="True" AutoGenerateColumns="True"
-                  CanUserResizeColumns="True" CanUserSortColumns="False" CanUserReorderColumns="False"
-                  GridLinesVisibility="All" BorderThickness="1" BorderBrush="Gray"
-                  RowBackground="White" FontFamily="Courier New" FontSize="14"
-                  VerticalScrollBarVisibility="Auto" SelectionMode="Single">
-            <DataGrid.Styles>
-                <Style Selector="DataGridCell">
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                </Style>
-                <Style Selector="DataGridColumnHeader">
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                </Style>
-            </DataGrid.Styles>
-        </DataGrid>
-
+        <!-- Code -->
+        <DataGrid Margin="5" DockPanel.Dock="Top" CanUserResizeColumns="True" VerticalScrollBarVisibility="Auto"
+                  SelectionMode="Single" ItemsSource="{Binding SourceCode}" />
     </DockPanel>
 </Window>

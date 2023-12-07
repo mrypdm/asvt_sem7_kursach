@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using GUI.Views;
 using ReactiveUI;
+using Shared.Converters;
 
 namespace GUI.ViewModels;
 
@@ -124,6 +125,40 @@ public class SourceCodeLine
     }
 }
 
+public class Device
+{
+    public string Name { get; set; }
+    
+    public string Control { get; set; }
+
+    public string Buffer { get; set; }
+
+    public string Interrupt { get; set; }
+    
+    public string HasInterrupt { get; set; }
+    
+    public string Path { get; set; }
+
+    public Device(string name, string path, string buffer, string control, string interrupt, string hasInterrupt)
+    {
+        Name = name;
+        Path = path;
+        Buffer = buffer;
+        Control = control;
+        Interrupt = interrupt;
+        HasInterrupt = hasInterrupt;
+    }
+}
+
+public static class ExecutorTabs
+{
+    public const string Registers = nameof(Registers);
+
+    public const string Memory = nameof(Memory);
+
+    public const string Devices = nameof(Devices);
+}
+
 public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorViewModel
 {
     /// <summary>
@@ -156,12 +191,9 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorViewM
             this.RaisePropertyChanged(nameof(Memory));
         });
 
-        GotoAddressCommand = ReactiveCommand.Create<string>(text =>
+        FindAddressCommand = ReactiveCommand.Create<string>(text =>
         {
-            if (!int.TryParse(text, out var address))
-            {
-                return;
-            }
+            var address = new NumberStringConverter().Convert(text);
 
             if (_memoryAsWords)
             {
@@ -189,6 +221,8 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorViewM
             new("", "0o000004", "0o000016"),
         });
 
+        CurrentTab = ExecutorTabs.Registers;
+
         var rnd = new Random();
         _memory = new byte[ushort.MaxValue + 1];
         rnd.NextBytes(_memory);
@@ -196,22 +230,49 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorViewM
         InitContext();
     }
 
+
+    public ReactiveCommand<Unit, Unit> ChangeVisibilityCommand { get; }
+
+    public ReactiveCommand<string, Unit> FindAddressCommand { get; }
+
     public ObservableCollection<RegisterModel> Registers { get; }
 
     public ObservableCollection<PswModel> PswTokens { get; }
+
+    public ObservableCollection<IMemoryModel> Memory => new(_memoryAsWords ? GetWordMemory() : GetByteMemory());
+
+    public ObservableCollection<SourceCodeLine> SourceCode { get; }
+
+    public ObservableCollection<string> Tabs { get; } =
+        new(new[] { ExecutorTabs.Registers, ExecutorTabs.Memory, ExecutorTabs.Devices });
+
+    public ObservableCollection<Device> Devices => new(new Device[]
+    {
+        new("ROM", "C:\\rom.dll", "0o177560", "0o177562", "0o000010", "0")
+    });
+
+    private string _currentTab;
+
+    public string CurrentTab
+    {
+        get => _currentTab;
+        set
+        {
+            _currentTab = value;
+            this.RaisePropertyChanged(nameof(IsRegistersVisible));
+            this.RaisePropertyChanged(nameof(IsMemoryVisible));
+            this.RaisePropertyChanged(nameof(IsDevicesVisible));
+        }
+    }
+
+    public bool IsRegistersVisible => CurrentTab == ExecutorTabs.Registers;
+    public bool IsMemoryVisible => CurrentTab == ExecutorTabs.Memory;
+    public bool IsDevicesVisible => CurrentTab == ExecutorTabs.Devices;
 
     private bool _memoryAsWords = true;
     public string MemoryVisibilityState => _memoryAsWords ? "As Bytes" : "As Words";
 
     private readonly byte[] _memory;
-
-    public ReactiveCommand<Unit, Unit> ChangeVisibilityCommand { get; }
-
-    public ReactiveCommand<string, Unit> GotoAddressCommand { get; }
-
-    public ObservableCollection<IMemoryModel> Memory => new(_memoryAsWords ? GetWordMemory() : GetByteMemory());
-
-    public ObservableCollection<SourceCodeLine> SourceCode { get; }
 
     private IEnumerable<IMemoryModel> GetByteMemory() => _memory.Select((t, i) => new ByteModel((ushort)i, t));
 
