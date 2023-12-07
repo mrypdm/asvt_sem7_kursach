@@ -3,164 +3,35 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Threading.Tasks;
+using GUI.Extensions;
+using GUI.MessageBoxes;
+using GUI.Models.Executor;
 using GUI.Views;
 using ReactiveUI;
 using Shared.Converters;
 
 namespace GUI.ViewModels;
 
-public class RegisterModel
-{
-    public string Register { get; set; }
-
-    public string Value { get; set; }
-
-    public RegisterModel(string name, string value)
-    {
-        Register = name;
-        Value = value;
-    }
-}
-
-public class PswModel
-{
-    private readonly int _psw;
-
-    public PswModel(int psw)
-    {
-        _psw = psw;
-    }
-
-    // ReSharper disable once InconsistentNaming
-    /// <summary>
-    /// Value of processor sate word
-    /// </summary>
-    private string PSW => $"0b{Convert.ToString(_psw, 2).PadLeft(16, '0')}";
-
-    /// <summary>
-    /// Priority
-    /// </summary>
-    public int Priority => (_psw & 0xE0) >> 5;
-
-    /// <summary>
-    /// Trace flag
-    /// </summary>
-    public int T => (_psw & 16) >> 4;
-
-    /// <summary>
-    /// Negative flag
-    /// </summary>
-    public int N => (_psw & 8) >> 4;
-
-    /// <summary>
-    /// Zero flag
-    /// </summary>
-    public int Z => (_psw & 4) >> 2;
-
-    /// <summary>
-    /// Overflow flag
-    /// </summary>
-    public int V => (_psw & 2) >> 1;
-
-    /// <summary>
-    /// Carry flag
-    /// </summary>
-    public int C => (_psw & 1) >> 0;
-}
-
-public interface IMemoryModel
-{
-    public string Address { get; }
-
-    public string Value { get; }
-}
-
-public class WordModel : IMemoryModel
-{
-    private readonly ushort _address;
-
-    private readonly ushort _value;
-
-    public WordModel(ushort address, ushort value)
-    {
-        _address = address;
-        _value = value;
-    }
-
-    public string Address => $"0o{Convert.ToString(_address, 8).PadLeft(6, '0')}";
-
-    public string Value => $"0o{Convert.ToString(_value, 8).PadLeft(6, '0')}";
-}
-
-public class ByteModel : IMemoryModel
-{
-    private readonly ushort _address;
-
-    private readonly byte _value;
-
-    public ByteModel(ushort address, byte value)
-    {
-        _address = address;
-        _value = value;
-    }
-
-    public string Address => $"0o{Convert.ToString(_address, 8).PadLeft(5, '0')}";
-
-    public string Value => $"0o{Convert.ToString(_value, 8).PadLeft(3, '0')}";
-}
-
-public class SourceCodeLine
-{
-    public string Address { get; set; }
-
-    public string Code { get; set; }
-
-    public string Text { get; set; }
-
-    public SourceCodeLine(string text, string code, string address)
-    {
-        Text = text;
-        Address = address;
-        Code = code;
-    }
-}
-
-public class Device
-{
-    public string Name { get; set; }
-    
-    public string Control { get; set; }
-
-    public string Buffer { get; set; }
-
-    public string Interrupt { get; set; }
-    
-    public string HasInterrupt { get; set; }
-    
-    public string Path { get; set; }
-
-    public Device(string name, string path, string buffer, string control, string interrupt, string hasInterrupt)
-    {
-        Name = name;
-        Path = path;
-        Buffer = buffer;
-        Control = control;
-        Interrupt = interrupt;
-        HasInterrupt = hasInterrupt;
-    }
-}
-
 public static class ExecutorTabs
 {
-    public const string Registers = nameof(Registers);
+    public const string State = nameof(State);
 
     public const string Memory = nameof(Memory);
 
     public const string Devices = nameof(Devices);
 }
 
-public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorViewModel
+public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindowViewModel
 {
+    private readonly IMessageBoxManager _messageBoxManager;
+    private bool _memoryAsWord = true;
+    private Tab _currentTab = Tab.State;
+
+    private ObservableCollection<IMemoryModel> _memory;
+
+    private byte[] _testMemory = new byte[ushort.MaxValue + 1];
+
     /// <summary>
     /// Constructor for designer
     /// </summary>
@@ -168,122 +39,155 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorViewM
     {
     }
 
-    public ExecutorViewModel(ExecutorWindow view) : base(view)
+    /// <summary>
+    /// Creates new instance of <see cref="ExecutorViewModel"/>
+    /// </summary>
+    /// <param name="view">Executor window</param>
+    /// <param name="messageBoxManager">Message box manager</param>
+    public ExecutorViewModel(ExecutorWindow view, IMessageBoxManager messageBoxManager) : base(view)
     {
-        Registers = new ObservableCollection<RegisterModel>(new RegisterModel[]
-        {
-            new("R0", "0o177520"),
-            new("R1", "0o177520"),
-            new("R2", "0o177520"),
-            new("R3", "0o177520"),
-            new("R4", "0o177520"),
-            new("R5", "0o177520"),
-            new("SP", "0o177520"),
-            new("PC", "0o177520"),
-        });
+        var random = new Random();
+        random.NextBytes(_testMemory);
 
-        PswTokens = new ObservableCollection<PswModel>(new[] { new PswModel(7) });
+        _messageBoxManager = messageBoxManager;
 
-        ChangeVisibilityCommand = ReactiveCommand.Create(() =>
-        {
-            _memoryAsWords = !_memoryAsWords;
-            this.RaisePropertyChanged(nameof(MemoryVisibilityState));
-            this.RaisePropertyChanged(nameof(Memory));
-        });
+        StartExecutionCommand = ReactiveCommand.CreateFromTask(RunAsync);
+        PauseExecutionCommand = ReactiveCommand.CreateFromTask(PauseAsync);
+        MakeStepCommand = ReactiveCommand.CreateFromTask(MakeStepAsync);
+        ResetExecutorCommand = ReactiveCommand.CreateFromTask(ResetExecutorAsync);
+        ChangeMemoryModeCommand = ReactiveCommand.Create(ChangeMemoryMode);
+        FindAddressCommand = ReactiveCommand.CreateFromTask<string>(FindAddressAsync);
 
-        FindAddressCommand = ReactiveCommand.Create<string>(text =>
-        {
-            var address = new NumberStringConverter().Convert(text);
-
-            if (_memoryAsWords)
-            {
-                if (address % 2 == 1)
-                {
-                    return;
-                }
-
-                address /= 2;
-            }
-
-            View.MemoryGrid.SelectedIndex = address;
-            View.MemoryGrid.ScrollIntoView(View.MemoryGrid.SelectedItem, View.MemoryGrid.Columns.FirstOrDefault());
-        });
-
-        SourceCode = new ObservableCollection<SourceCodeLine>(new SourceCodeLine[]
-        {
-            new("MOV #2, R0", "0o012701", "0o000000"),
-            new("", "0o000002", "0o000002"),
-            new("MOV #4, R5", "0o012705", "0o000004"),
-            new("", "0o000004", "0o000006"),
-            new("MOV #2, R0", "0o012701", "0o000010"),
-            new("", "0o000002", "0o000012"),
-            new("MOV #4, R5", "0o012705", "0o000014"),
-            new("", "0o000004", "0o000016"),
-        });
-
-        CurrentTab = ExecutorTabs.Registers;
-
-        var rnd = new Random();
-        _memory = new byte[ushort.MaxValue + 1];
-        rnd.NextBytes(_memory);
+        Tabs = Enum.GetValues<Tab>().ToObservableCollection();
+        Registers = Array.Empty<RegisterModel>().ToObservableCollection();
+        ProcessorStateWord = Array.Empty<ProcessorStateWordModel>().ToObservableCollection();
+        //Memory = Array.Empty<IMemoryModel>().ToObservableCollection();
+        Memory = _testMemory.Select((m, i) => new ByteModel((ushort)i, m) as IMemoryModel).ToObservableCollection();
+        Devices = Array.Empty<Device>().ToObservableCollection();
+        CodeLines = Array.Empty<CodeModel>().ToObservableCollection();
 
         InitContext();
     }
 
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> StartExecutionCommand { get; }
 
-    public ReactiveCommand<Unit, Unit> ChangeVisibilityCommand { get; }
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> PauseExecutionCommand { get; }
 
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> MakeStepCommand { get; }
+
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> ResetExecutorCommand { get; }
+
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> ChangeMemoryModeCommand { get; }
+
+    /// <inheritdoc />
     public ReactiveCommand<string, Unit> FindAddressCommand { get; }
 
+    /// <inheritdoc />
     public ObservableCollection<RegisterModel> Registers { get; }
 
-    public ObservableCollection<PswModel> PswTokens { get; }
+    /// <inheritdoc />
+    public ObservableCollection<ProcessorStateWordModel> ProcessorStateWord { get; }
 
-    public ObservableCollection<IMemoryModel> Memory => new(_memoryAsWords ? GetWordMemory() : GetByteMemory());
-
-    public ObservableCollection<SourceCodeLine> SourceCode { get; }
-
-    public ObservableCollection<string> Tabs { get; } =
-        new(new[] { ExecutorTabs.Registers, ExecutorTabs.Memory, ExecutorTabs.Devices });
-
-    public ObservableCollection<Device> Devices => new(new Device[]
+    /// <inheritdoc />
+    public ObservableCollection<IMemoryModel> Memory
     {
-        new("ROM", "C:\\rom.dll", "0o177560", "0o177562", "0o000010", "0")
-    });
+        get => _memory;
+        set => this.RaiseAndSetIfChanged(ref _memory, value);
+    }
 
-    private string _currentTab;
+    /// <inheritdoc />
+    public ObservableCollection<Device> Devices { get; }
 
-    public string CurrentTab
+    /// <inheritdoc />
+    public ObservableCollection<CodeModel> CodeLines { get; }
+
+    /// <inheritdoc />
+    public ObservableCollection<Tab> Tabs { get; }
+
+    /// <inheritdoc />
+    public string ChangeMemoryModeCommandHeader => _memoryAsWord ? "As Bytes" : "As Word";
+
+    /// <inheritdoc />
+    public Tab CurrentTab
     {
         get => _currentTab;
         set
         {
             _currentTab = value;
-            this.RaisePropertyChanged(nameof(IsRegistersVisible));
+            this.RaisePropertyChanged(nameof(IsStateVisible));
             this.RaisePropertyChanged(nameof(IsMemoryVisible));
             this.RaisePropertyChanged(nameof(IsDevicesVisible));
         }
     }
 
-    public bool IsRegistersVisible => CurrentTab == ExecutorTabs.Registers;
-    public bool IsMemoryVisible => CurrentTab == ExecutorTabs.Memory;
-    public bool IsDevicesVisible => CurrentTab == ExecutorTabs.Devices;
+    /// <inheritdoc />
+    public bool IsStateVisible => CurrentTab == Tab.State;
 
-    private bool _memoryAsWords = true;
-    public string MemoryVisibilityState => _memoryAsWords ? "As Bytes" : "As Words";
+    /// <inheritdoc />
+    public bool IsMemoryVisible => CurrentTab == Tab.Memory;
 
-    private readonly byte[] _memory;
+    /// <inheritdoc />
+    public bool IsDevicesVisible => CurrentTab == Tab.Devices;
 
-    private IEnumerable<IMemoryModel> GetByteMemory() => _memory.Select((t, i) => new ByteModel((ushort)i, t));
-
-    private IEnumerable<IMemoryModel> GetWordMemory()
+    private async Task MakeStepAsync()
     {
-        for (var i = 0; i < _memory.Length; i += 2)
+    }
+
+    private async Task RunAsync()
+    {
+    }
+
+    private async Task PauseAsync()
+    {
+    }
+
+    private async Task ResetExecutorAsync()
+    {
+    }
+
+    private void ChangeMemoryMode()
+    {
+        _memoryAsWord = !_memoryAsWord;
+        this.RaisePropertyChanged(nameof(ChangeMemoryModeCommandHeader));
+
+        Memory = _memoryAsWord
+            ? AsWords().ToObservableCollection()
+            : _testMemory.Select((m, i) => new ByteModel((ushort)i, m) as IMemoryModel).ToObservableCollection();
+    }
+
+    private IEnumerable<IMemoryModel> AsWords()
+    {
+        for (var i = 0; i < _testMemory.Length; i += 2)
         {
-            var low = _memory[i];
-            var high = _memory[i + 1];
+            var low = _testMemory[i];
+            var high = _testMemory[i + 1];
             var word = (high << 8) | low;
             yield return new WordModel((ushort)i, (ushort)word);
         }
+    }
+
+    private async Task FindAddressAsync(string text)
+    {
+        var converter = new NumberStringConverter();
+        var address = await converter.ConvertAsync(text);
+
+        if (_memoryAsWord)
+        {
+            if (address % 2 == 1)
+            {
+                await _messageBoxManager.ShowErrorMessageBox("Word address must be even", View);
+                return;
+            }
+
+            address /= 2;
+        }
+
+        View.MemoryGrid.SelectedIndex = address;
+        View.MemoryGrid.ScrollIntoView(View.MemoryGrid.SelectedItem, View.MemoryGrid.Columns.FirstOrDefault());
     }
 }

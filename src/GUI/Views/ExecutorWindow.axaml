@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:GUI.ViewModels"
-        xmlns:managers="clr-namespace:GUI.Managers"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="GUI.Views.ExecutorWindow" x:DataType="vm:ExecutorViewModel"
         Title="Executor" Icon="/Assets/icon.ico"
@@ -29,10 +28,8 @@
             <Setter Property="IsReadOnly" Value="True" />
             <Setter Property="AutoGenerateColumns" Value="True" />
             <Setter Property="RowBackground" Value="White" />
-            <Setter Property="FontFamily"
-                    Value="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontFamily}" />
-            <Setter Property="FontSize"
-                    Value="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontSize}" />
+            <Setter Property="FontFamily" Value="Courier New" />
+            <Setter Property="FontSize" Value="14" />
         </Style>
     </Window.Styles>
 
@@ -51,13 +48,15 @@
 
             <Separator Height="2" DockPanel.Dock="Top" />
 
-            <!-- Registers -->
-            <DataGrid Margin="0,0,0,5" DockPanel.Dock="Top" ItemsSource="{Binding Registers}"
-                      IsVisible="{Binding IsRegistersVisible}" />
+            <StackPanel DockPanel.Dock="Top" IsVisible="{Binding IsStateVisible}">
+                <!-- Registers -->
+                <TextBlock Text="Registers" Margin="0,0,0,5" />
+                <DataGrid Margin="0,0,0,5" ItemsSource="{Binding Registers}" />
 
-            <!-- PSW -->
-            <DataGrid Margin="0,0,0,5" DockPanel.Dock="Top" HorizontalScrollBarVisibility="Hidden"
-                      ItemsSource="{Binding PswTokens}" IsVisible="{Binding IsRegistersVisible}" />
+                <!-- PSW -->
+                <TextBlock Text="PSW" Margin="0,0,0,5" />
+                <DataGrid HorizontalScrollBarVisibility="Hidden" ItemsSource="{Binding ProcessorStateWord}" />
+            </StackPanel>
 
             <!-- Memory -->
             <TextBox Name="AddressInput" Margin="0,0,0,5" DockPanel.Dock="Top" IsVisible="{Binding IsMemoryVisible}">
@@ -70,8 +69,8 @@
                       ItemsSource="{Binding Memory}" IsVisible="{Binding IsMemoryVisible}">
                 <DataGrid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="{Binding MemoryVisibilityState}"
-                                  Command="{Binding ChangeVisibilityCommand}" />
+                        <MenuItem Header="{Binding ChangeMemoryModeCommandHeader}"
+                                  Command="{Binding ChangeMemoryModeCommand}" />
                     </ContextMenu>
                 </DataGrid.ContextMenu>
             </DataGrid>
@@ -83,6 +82,6 @@
 
         <!-- Code -->
         <DataGrid Margin="5" DockPanel.Dock="Top" CanUserResizeColumns="True" VerticalScrollBarVisibility="Auto"
-                  SelectionMode="Single" ItemsSource="{Binding SourceCode}" />
+                  SelectionMode="Single" ItemsSource="{Binding CodeLines}" />
     </DockPanel>
 </Window>

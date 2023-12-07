@@ -18,6 +18,7 @@ using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using Shared.Helpers;
 using Domain.Models;
+using GUI.Extensions;
 using GUI.MessageBoxes;
 using GUI.Providers;
 
@@ -136,7 +137,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         : DefaultWindowTitle;
 
     /// <inheritdoc />
-    public ObservableCollection<FileTab> Tabs => new(_tabManager.Tabs.Select(t => t.View));
+    public ObservableCollection<FileTab> Tabs => _tabManager.Tabs.Select(t => t.View).ToObservableCollection();
 
     /// <inheritdoc />
     public string FileContent
@@ -176,10 +177,9 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
             {
                 tab = e.Tab;
 
-                var res = await _messageBoxManager
-                    .ShowCustomMessageBoxAsync(
-                        "Warning", $"File '{file.FileName}' is already open", Icon.Warning, View,
-                        Buttons.ReopenButton, Buttons.SkipButton);
+                var res = await _messageBoxManager.ShowCustomMessageBoxAsync("Warning",
+                    $"File '{file.FileName}' is already open", Icon.Warning, View, Buttons.ReopenButton,
+                    Buttons.SkipButton);
 
                 if (res == Buttons.ReopenButton.Name)
                 {
@@ -353,9 +353,8 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
             return;
         }
 
-        var res = await _messageBoxManager
-            .ShowMessageBoxAsync("Confirmation", $"Are you sure you want to delete the file '{File.FileName}'?",
-                ButtonEnum.YesNo, Icon.Question, View);
+        var res = await _messageBoxManager.ShowMessageBoxAsync("Confirmation",
+            $"Are you sure you want to delete the file '{File.FileName}'?", ButtonEnum.YesNo, Icon.Question, View);
 
         if (res == ButtonResult.Yes)
         {
@@ -379,9 +378,8 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
         if (tab.File.IsNeedSave)
         {
-            var res = await _messageBoxManager
-                .ShowMessageBoxAsync("Confirmation", $"Do you want to save the file '{File.FileName}'?",
-                    ButtonEnum.YesNo, Icon.Question, View);
+            var res = await _messageBoxManager.ShowMessageBoxAsync("Confirmation",
+                $"Do you want to save the file '{File.FileName}'?", ButtonEnum.YesNo, Icon.Question, View);
 
             if (res == ButtonResult.Yes)
             {
@@ -588,7 +586,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// </summary>
     private async Task OpenExecutorWindowAsync()
     {
-        var viewModel = _windowProvider.CreateWindow<ExecutorWindow, ExecutorViewModel>();
+        var viewModel = _windowProvider.CreateWindow<ExecutorWindow, ExecutorViewModel>(_messageBoxManager);
         await viewModel.ShowDialog(View);
     }
 
@@ -600,9 +598,8 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
         if (_tabManager.Tabs.Any(t => t.File.IsNeedSave))
         {
-            var res = await _messageBoxManager
-                .ShowMessageBoxAsync("Warning", "You have unsaved files. Save all of them?",
-                    ButtonEnum.YesNoCancel, Icon.Warning, View);
+            var res = await _messageBoxManager.ShowMessageBoxAsync("Warning",
+                "You have unsaved files. Save all of them?", ButtonEnum.YesNoCancel, Icon.Warning, View);
 
             if (res == ButtonResult.Cancel)
             {
