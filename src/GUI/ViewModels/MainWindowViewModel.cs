@@ -150,12 +150,6 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// </summary>
     private FileModel File => _tabManager.Tab.File;
 
-    /// <inheritdoc cref="SettingsManager.FontFamily"/>
-    public FontFamily FontFamily => SettingsManager.Instance.FontFamily;
-
-    /// <inheritdoc cref="SettingsManager.FontSize"/>
-    public double FontSize => SettingsManager.Instance.FontSize;
-
     #region Tabs and files
 
     private async Task CreateTabForFiles(IEnumerable<FileModel> files)

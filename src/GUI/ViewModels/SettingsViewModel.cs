@@ -37,7 +37,6 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
     {
         _projectManager = projectManager;
         _fileManager = fileManager;
-        AllFontFamilies = new ObservableCollection<FontFamily>(FontManager.Current.SystemFonts);
 
         AddDeviceCommand = ReactiveCommand.CreateFromTask(AddDeviceAsync);
         DeleteDeviceCommand = ReactiveCommand.CreateFromTask(DeleteDevices);
@@ -59,9 +58,6 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
     /// <inheritdoc />
     public ReactiveCommand<Unit, Unit> DeleteDeviceCommand { get; }
 
-    /// <inheritdoc />
-    public ObservableCollection<FontFamily> AllFontFamilies { get; }
-
     /// <inheritdoc cref="Project.Devices"/>
     public ObservableCollection<string> Devices => new(_projectManager.IsOpened
         ? _projectManager.Project.Devices
@@ -69,20 +65,6 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
 
     /// <inheritdoc />
     public ObservableCollection<string> SelectedDevices { get; set; } = new();
-
-    /// <inheritdoc />
-    public FontFamily FontFamily
-    {
-        get => SettingsManager.Instance.FontFamily;
-        set => SettingsManager.Instance.FontFamily = value;
-    }
-
-    /// <inheritdoc />
-    public double FontSize
-    {
-        get => SettingsManager.Instance.FontSize;
-        set => SettingsManager.Instance.FontSize = value;
-    }
 
     private async Task AddDeviceAsync()
     {

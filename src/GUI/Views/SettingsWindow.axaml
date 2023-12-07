@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:GUI.ViewModels"
         xmlns:converter="clr-namespace:GUI.Converters"
+        xmlns:managers="clr-namespace:GUI.Managers"
         mc:Ignorable="d" SizeToContent="WidthAndHeight" MinWidth="500" CanResize="False"
         FontFamily="Century Gothic" FontSize="14"
         x:Class="GUI.Views.SettingsWindow" x:DataType="vm:SettingsViewModel"
@@ -15,20 +16,35 @@
     <Window.Resources>
         <converter:StringDoubleConverter x:Key="StringDoubleConverter" />
     </Window.Resources>
+    
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding AddDeviceCommand}"/>
+    </Window.KeyBindings>
 
     <StackPanel>
         <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Font Family</Label>
-        <ComboBox Margin="5,5,5,0" ItemsSource="{Binding AllFontFamilies}" SelectedItem="{Binding FontFamily}" />
+        <ComboBox Margin="5,5,5,0"
+                  ItemsSource="{Binding Source={x:Static managers:SettingsManager.AllFontFamilies}}"
+                  SelectedItem="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontFamily}" />
 
         <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Font Size</Label>
-        <TextBox Margin="5,0,5,0" Text="{Binding FontSize, Converter={StaticResource StringDoubleConverter}}" />
+        <TextBox Margin="5,0,5,0"
+                 Text="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontSize, Converter={StaticResource StringDoubleConverter}}" />
 
         <Separator Margin="5,5,5,5" Height="2" />
 
-        <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">External Devices</Label>
-        <ListBox Margin="5,0,5,0" MinHeight="150" ItemsSource="{Binding Devices}"
-                 SelectedItems="{Binding SelectedDevices}" />
-        <Button Margin="5,5,5,0" Content="Add" Command="{Binding AddDeviceCommand}" />
-        <Button Margin="5,5,5,5" Content="Remove" Command="{Binding DeleteDeviceCommand}" />
+        <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Devices</Label>
+        <ListBox Margin="5,0,5,5" MinHeight="150" SelectionMode="Multiple"
+                 ItemsSource="{Binding Devices}" SelectedItems="{Binding SelectedDevices}">
+            <ListBox.KeyBindings>
+                <KeyBinding Gesture="Delete" Command="{Binding DeleteDeviceCommand}" />
+            </ListBox.KeyBindings>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add" InputGesture="Ctrl+O" Command="{Binding AddDeviceCommand}"/>
+                    <MenuItem Header="Delete" Command="{Binding DeleteDeviceCommand}"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
     </StackPanel>
 </Window>

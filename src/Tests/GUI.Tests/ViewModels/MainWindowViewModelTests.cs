@@ -818,46 +818,6 @@ public class MainWindowViewModelTests : GuiTest<App>
     }
 
     [Test]
-    public async Task FontSizeChangedTest()
-    {
-        await RunTest(() =>
-        {
-            // Arrange
-
-            var viewModel = CreateViewModel();
-            var propertyChangedAssert = new PropertyChangedAssert(viewModel);
-
-            // Act
-
-            SettingsManager.Instance.FontSize = 18;
-
-            // Assert
-
-            propertyChangedAssert.Assert(nameof(viewModel.FontSize));
-        });
-    }
-
-    [Test]
-    public async Task FontFamilyChangedTest()
-    {
-        await RunTest(() =>
-        {
-            // Arrange
-
-            var viewModel = CreateViewModel();
-            var propertyChangedAssert = new PropertyChangedAssert(viewModel);
-
-            // Act
-
-            SettingsManager.Instance.FontFamily = new FontFamily("Font");
-
-            // Assert
-
-            propertyChangedAssert.Assert(nameof(viewModel.FontFamily));
-        });
-    }
-
-    [Test]
     public async Task InitWindowCreateProjectTest()
     {
         await RunAsyncTest(async () =>
