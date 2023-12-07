@@ -36,15 +36,4 @@ public interface ISettingsViewModel : IWindowViewModel<SettingsWindow>
     /// Collection of selected devices (see <see cref="SettingsWindow"/>)
     /// </summary>
     ObservableCollection<string> SelectedDevices { get; }
-    
-    /// <summary>
-    /// Collection of all available fonts
-    /// </summary>
-    ObservableCollection<FontFamily> AllFontFamilies { get; }
-    
-    /// <inheritdoc cref="SettingsManager.FontFamily"/>
-    FontFamily FontFamily { get; }
-    
-    /// <inheritdoc cref="SettingsManager.FontSize"/>
-    double FontSize { get; }
 }

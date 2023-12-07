@@ -16,9 +16,4 @@ public partial class SettingsWindow : Window
         this.AttachDevTools();
 #endif
     }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
 }
