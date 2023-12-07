@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using GUI.Models;
@@ -37,6 +38,11 @@ public sealed class SettingsManager : PropertyChangedNotifier
         get => _fontSize;
         set => SetField(ref _fontSize, value);
     }
+
+    /// <summary>
+    /// Collection of all fonts
+    /// </summary>
+    public static ObservableCollection<FontFamily> AllFontFamilies => new(FontManager.Current.SystemFonts);
 
     /// <summary>
     /// Get instance of settings manager

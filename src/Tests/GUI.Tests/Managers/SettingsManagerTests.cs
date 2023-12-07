@@ -1,12 +1,16 @@
 ﻿using System.Threading.Tasks;
 using GUI.Managers;
 using GUI.Models;
+using GUI.Tests.ViewModels;
 using Shared.Helpers;
 
 namespace GUI.Tests.Managers;
 
 public class SettingsManagerTests
 {
+    /// <summary>
+    /// Also see <see cref="SettingsViewModelTests.AllFontsTest"/>
+    /// </summary>
     [Test]
     public void CreationTest()
     {

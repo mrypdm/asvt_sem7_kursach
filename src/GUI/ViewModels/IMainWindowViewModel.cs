@@ -66,10 +66,4 @@ public interface IMainWindowViewModel : IWindowViewModel<MainWindow>
     /// Current text of <see cref="MainWindow.SourceCodeTextBox"/>
     /// </summary>
     string FileContent { get; set; }
-
-    /// <inheritdoc cref="SettingsManager.FontFamily"/>
-    FontFamily FontFamily { get; }
-
-    /// <inheritdoc cref="SettingsManager.FontSize"/>
-    double FontSize { get; }
 }
