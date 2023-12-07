@@ -5,8 +5,10 @@ using GUI.ViewModels;
 
 namespace GUI.Providers;
 
+/// <inheritdoc />
 public class WindowProvider : IWindowProvider
 {
+    /// <inheritdoc />
     public IWindowViewModel<TWindow> CreateWindow<TWindow, TViewModel>(params object[] args)
         where TWindow : Window, new()
         where TViewModel : IWindowViewModel<TWindow>

@@ -17,9 +17,9 @@ public partial class MainWindow : Window
 #endif
     }
 
-    private void TextBoxResult_OnTextChanged(object sender, TextChangedEventArgs e)
+    private void SourceCodeTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
     {
         var linesNumber = SourceCodeTextBox.Text!.Split('\n').Length;
-        SourceCodeNumerationBox.Text = $"{string.Join("\n", Enumerable.Range(1, linesNumber))}\n";
+        SourceCodeNumbersBox.Text = string.Join("\n", Enumerable.Range(1, linesNumber));
     }
 }

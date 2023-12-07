@@ -73,21 +73,19 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
         </ScrollViewer>
-
-        <ScrollViewer DockPanel.Dock="Top">
-            <DockPanel Margin="5,0,5,5" LastChildFill="True">
-                <TextBox x:Name="SourceCodeNumerationBox" DockPanel.Dock="Left" MinWidth="50" BorderThickness="1,1,0,1"
-                         TextAlignment="Right" IsReadOnly="True" IsEnabled="False"
-                         Background="LightGray"
+        
+        <ScrollViewer Margin="5" DockPanel.Dock="Top">
+            <DockPanel LastChildFill="True">
+                <TextBox Name="SourceCodeNumbersBox" DockPanel.Dock="Left" IsEnabled="False" IsReadOnly="True" 
                          FontFamily="{Binding FontFamily}" FontSize="{Binding FontSize}"
-                         HorizontalAlignment="Left"/>
-                <TextBox x:Name="SourceCodeTextBox" DockPanel.Dock="Left"
-                         Text="{Binding FileContent}"
-                         FontFamily="{Binding FontFamily}" FontSize="{Binding FontSize}" TextAlignment="Left"
+                         Background="LightGray" MinWidth="50" BorderThickness="0"
+                         TextAlignment="Right"/>
+                <TextBox Name="SourceCodeTextBox"
                          AcceptsReturn="True" AcceptsTab="True"
-                         TextChanged="TextBoxResult_OnTextChanged"/>
+                         FontFamily="{Binding FontFamily}" FontSize="{Binding FontSize}"
+                         Text="{Binding FileContent}" DockPanel.Dock="Left"
+                         TextChanged="SourceCodeTextBox_OnTextChanged"/>
             </DockPanel>
         </ScrollViewer>
-
     </DockPanel>
 </Window>
