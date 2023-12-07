@@ -12,6 +12,7 @@ using GUI.Managers;
 using GUI.MessageBoxes;
 using GUI.Views;
 using ReactiveUI;
+using Shared.Exceptions;
 
 namespace GUI.ViewModels;
 
@@ -101,7 +102,7 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
             _projectManager.AddDeviceToProject(file);
             await _projectManager.SaveProjectAsync();
         }
-        catch (Exception e)
+        catch (ValidationException e)
         {
             await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
         }
@@ -126,7 +127,7 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
             {
                 _deviceValidator.ThrowIfInvalid(device);
             }
-            catch (Exception e)
+            catch (ValidationException e)
             {
                 await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
             }
