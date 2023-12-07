@@ -17,6 +17,11 @@
         <converter:StringDoubleConverter x:Key="StringDoubleConverter" />
     </Window.Resources>
 
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding AddDeviceCommand}" />
+        <KeyBinding Gesture="Alt+V" Command="{Binding ValidateDevicesCommand}" />
+    </Window.KeyBindings>
+
     <StackPanel>
         <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Font Family</Label>
         <ComboBox Margin="5,5,5,0"
@@ -29,10 +34,19 @@
 
         <Separator Margin="5,5,5,5" Height="2" />
 
-        <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">External Devices</Label>
-        <ListBox Margin="5,0,5,0" MinHeight="150" ItemsSource="{Binding Devices}"
-                 SelectedItems="{Binding SelectedDevices}" />
-        <Button Margin="5,5,5,0" Content="Add" Command="{Binding AddDeviceCommand}" />
-        <Button Margin="5,5,5,5" Content="Remove" Command="{Binding DeleteDeviceCommand}" />
+        <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Devices</Label>
+        <ListBox Margin="5,0,5,5" MinHeight="150" SelectionMode="Multiple"
+                 ItemsSource="{Binding Devices}" SelectedItems="{Binding SelectedDevices}">
+            <ListBox.KeyBindings>
+                <KeyBinding Gesture="Delete" Command="{Binding DeleteDeviceCommand}" />
+            </ListBox.KeyBindings>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add" InputGesture="Ctrl+O" Command="{Binding AddDeviceCommand}" />
+                    <MenuItem Header="Validate" InputGesture="Alt+V" Command="{Binding ValidateDevicesCommand}" />
+                    <MenuItem Header="Delete" Command="{Binding DeleteDeviceCommand}" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
     </StackPanel>
 </Window>

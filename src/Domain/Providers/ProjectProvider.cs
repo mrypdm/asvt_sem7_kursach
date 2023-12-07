@@ -10,7 +10,7 @@ namespace Domain.Providers;
 public class ProjectProvider : IProjectProvider
 {
     /// <inheritdoc />
-    public async Task<Project> OpenProjectAsync(string filePath)
+    public async Task<IProject> OpenProjectAsync(string filePath)
     {
         filePath = PathHelper.Combine(Directory.GetCurrentDirectory(), filePath);
         var project = await JsonHelper.DeserializeFileAsync<ProjectDto>(filePath);
@@ -18,7 +18,7 @@ public class ProjectProvider : IProjectProvider
     }
 
     /// <inheritdoc />
-    public async Task<(bool isSuccess, Project projectModel)> TryOpenProjectAsync(string filePath)
+    public async Task<(bool isSuccess, IProject projectModel)> TryOpenProjectAsync(string filePath)
     {
         try
         {

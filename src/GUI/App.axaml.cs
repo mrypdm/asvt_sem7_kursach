@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Devices.Providers;
+using Devices.Validators;
 using Domain.Providers;
 using GUI.Managers;
 using GUI.MessageBoxes;
@@ -24,7 +26,7 @@ public class App : Application
             var viewModel = new MainWindowViewModel(
                 new MainWindow(),
                 new TabManager(),
-                new ProjectManager(new ProjectProvider()),
+                new ProjectManager(new ProjectProvider(), new DeviceValidator(new DeviceProvider())),
                 new FileManager(),
                 new MessageBoxManager(),
                 new WindowProvider());

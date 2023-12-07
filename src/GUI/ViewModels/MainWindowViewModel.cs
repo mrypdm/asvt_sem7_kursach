@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Devices.Providers;
+using Devices.Validators;
 using GUI.Exceptions;
 using GUI.Managers;
 using GUI.Models;

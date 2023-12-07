@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Devices.Providers;
+using Devices.Validators;
 using Domain.Models;
 using Domain.Providers;
 using GUI.Exceptions;
@@ -1229,7 +1231,7 @@ public class MainWindowViewModelTests : GuiTest<App>
         IMessageBoxManager messageBoxManager = null, IWindowProvider windowProvider = null) =>
         new(new MainWindow(),
             tabManager ?? new TabManager(),
-            projectManager ?? new ProjectManager(new ProjectProvider()),
+            projectManager ?? new ProjectManager(new ProjectProvider(), new DeviceValidator(new DeviceProvider())),
             fileManager ?? new FileManager(),
             messageBoxManager ?? new MessageBoxManager(),
             windowProvider ?? new WindowProvider()

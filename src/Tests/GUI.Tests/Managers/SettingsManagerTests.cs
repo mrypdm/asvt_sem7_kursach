@@ -9,7 +9,7 @@ namespace GUI.Tests.Managers;
 public class SettingsManagerTests
 {
     /// <summary>
-    /// Also see <see cref="SettingsViewModelTests.AllFontsTests"/>
+    /// Also see <see cref="SettingsViewModelTests.AllFontsTest"/>
     /// </summary>
     [Test]
     public void CreationTest()

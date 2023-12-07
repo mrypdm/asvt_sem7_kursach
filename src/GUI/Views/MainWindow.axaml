@@ -74,12 +74,12 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
         </ScrollViewer>
-
+        
         <ScrollViewer Margin="5" DockPanel.Dock="Top"
                       FontFamily="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontFamily}"
                       FontSize="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontSize}">
             <DockPanel LastChildFill="True">
-                <TextBox Name="SourceCodeNumbersBox" DockPanel.Dock="Left" IsEnabled="False" IsReadOnly="True"
+                <TextBox Name="SourceCodeNumbersBox" DockPanel.Dock="Left" IsEnabled="False" IsReadOnly="True" 
                          Background="LightGray" MinWidth="50" BorderThickness="0"
                          TextAlignment="Right" />
                 <TextBox Name="SourceCodeTextBox"
