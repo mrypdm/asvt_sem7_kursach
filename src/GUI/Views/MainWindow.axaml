@@ -84,9 +84,6 @@
                          Text="{Binding FileContent}" DockPanel.Dock="Left"
                          TextChanged="SourceCodeTextBox_OnTextChanged"/>
             </DockPanel>
-            
         </ScrollViewer>
-
-        
     </DockPanel>
 </Window>
