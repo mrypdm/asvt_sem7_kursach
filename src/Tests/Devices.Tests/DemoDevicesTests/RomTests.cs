@@ -28,10 +28,11 @@ public class RomTests
 
         // Assert
 
+        var file = new FileInfo("memory.bin");
         Assert.Multiple(() =>
         {
-            Assert.That(File.Exists("memory.bin"), Is.True);
-            Assert.That(new FileInfo("memory.bin"), Has.Length.EqualTo(ushort.MaxValue));
+            Assert.That(file.Exists, Is.True);
+            Assert.That(file, Has.Length.EqualTo(ushort.MaxValue + 1));
             Assert.That(device.ControlRegisterValue & 128, Is.Not.Zero);
         });
     }

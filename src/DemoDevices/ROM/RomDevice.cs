@@ -80,7 +80,7 @@ public sealed class RomDevice : IDevice
         try
         {
             _stream = File.Open("memory.bin", FileMode.OpenOrCreate);
-            _stream.SetLength(ushort.MaxValue);
+            _stream.SetLength(ushort.MaxValue + 1);
             IsReady = true;
             return 0;
         }
