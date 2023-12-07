@@ -25,6 +25,8 @@ namespace AssemblerLib
         private const string RegexPatternAddrType31Mark = @"^@#([a-z]+[_a-z0-9]*)$";
         private const string RegexPatternAddrType61 = @"^([a-z]+[_a-z0-9]*)$";
         private const string RegexPatternAddrType71 = @"^@([a-z]+[_a-z0-9]*)$";
+        private const string RegexPatternArgWORD = @"^([-]?[0-9]+)([.]?)$";
+        private const string RegexPatternArgBLKW = @"^([0-9]+)$";
 
         private readonly Regex _regexMaskAddrType0;
         private readonly Regex _regexMaskAddrType1;
@@ -42,6 +44,8 @@ namespace AssemblerLib
         private readonly Regex _regexMaskAddrType31Mark;
         private readonly Regex _regexMaskAddrType61;
         private readonly Regex _regexMaskAddrType71;
+        private readonly Regex _regexMaskArgWORD;
+        private readonly Regex _regexMaskArgBLKW;
 
         private const string RegexPatternArgNN = @"^([0-7]{1,2})$";
         private readonly Regex _regexMaskArgNN;
@@ -333,6 +337,94 @@ namespace AssemblerLib
             return resultTokens;
         }
 
+        private List<IToken> PseudoInstructionWORD(CommandLine cmdLine)
+        {
+            var resultTokens = new List<IToken>();
+
+            if (_regexMaskArgWORD.IsMatch(cmdLine.Arguments[0]))
+            {
+                var value = _regexMaskArgWORD.Match(cmdLine.Arguments[0]).Groups[1].Value;
+                int valueDec = 0;
+                string valueOct = "";
+
+                if (string.IsNullOrEmpty(_regexMaskArgWORD.Match(cmdLine.Arguments[0]).Groups[2].Value))
+                {
+                    // .WORD N - oct-num
+
+                    if ((value.Length > 6) || (value.Contains('8')) || (value.Contains('9')))
+                    {
+                        throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
+                    }
+
+                    if (value.StartsWith('-'))
+                    {
+                        valueDec = Convert.ToInt32(value.Substring(1, value.Length - 1), 8);
+                        valueDec = (0 - valueDec) & 0b11111111_11111111;
+                        valueOct = Convert.ToString(valueDec, 8);
+
+                        resultTokens.Add(new RawToken(Convert.ToInt32(valueOct, 8)));
+                    }
+                    else
+                    {
+                        resultTokens.Add(new RawToken(Convert.ToInt32(value, 8)));
+                    }
+                }
+                else
+                {
+                    // .WORD N. - dec-num
+                    valueDec = Convert.ToInt32(value) & 0b11111111_11111111;
+                    if (valueDec > 262143)
+                    {
+                        throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
+                    }
+
+                    resultTokens.Add(new RawToken(Convert.ToInt32(Convert.ToString(valueDec, 8), 8)));
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
+            }
+
+            return resultTokens;
+        }
+
+        private List<IToken> PseudoInstructionBLKW(CommandLine cmdLine)
+        {
+            var resultTokens = new List<IToken>();
+
+            if (_regexMaskArgBLKW.IsMatch(cmdLine.Arguments[0]))
+            {
+                var valueDec = Convert.ToInt32(_regexMaskArgBLKW.Match(cmdLine.Arguments[0]).Groups[1].Value);
+                for (var i = 0; i < valueDec; i++)
+                {
+                    resultTokens.Add(new RawToken(0));
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
+            }
+
+            return resultTokens;
+        }
+
+        private List<IToken> PseudoInstructionEND(CommandLine cmdLine)
+        {
+            var resultTokens = new List<IToken>();
+
+            if (_regexMaskAddrType61.IsMatch(cmdLine.Arguments[0]))
+            {
+                resultTokens.Add(new MarkRelocToken(_regexMaskAddrType61.Match(cmdLine.Arguments[0]).Groups[1].Value, 0, true));
+            }
+            else
+            {
+                throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
+            }
+
+            return resultTokens;
+        }
+
         public TokenBuilder()
         {
             _instructions = new Dictionary<string, Func<CommandLine, List<IToken>>>()
@@ -412,7 +504,12 @@ namespace AssemblerLib
                 {"rtt", InstructionArgsNull},
                 {"halt", InstructionArgsNull},
                 {"wait", InstructionArgsNull},
-                {"reset", InstructionArgsNull}
+                {"reset", InstructionArgsNull},
+
+                // Pseudo instructions
+                {".word", PseudoInstructionWORD},
+                {".blkw", PseudoInstructionBLKW},
+                {".end", PseudoInstructionEND}
             };
 
             _regexMaskAddrType0 = new Regex(RegexPatternAddrType0, RegexOptions.IgnoreCase | RegexOptions.Singleline);
@@ -432,6 +529,9 @@ namespace AssemblerLib
             _regexMaskAddrType61 = new Regex(RegexPatternAddrType61, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             _regexMaskAddrType71 = new Regex(RegexPatternAddrType71, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             _regexMaskArgNN = new Regex(RegexPatternArgNN, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+            _regexMaskArgWORD = new Regex(RegexPatternArgWORD, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            _regexMaskArgBLKW = new Regex(RegexPatternArgBLKW, RegexOptions.IgnoreCase | RegexOptions.Singleline);
         }
 
         public List<IToken> Build(CommandLine cmdLine)

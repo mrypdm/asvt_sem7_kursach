@@ -85,7 +85,12 @@ namespace AssemblerLib
             {"rtt", new Instruction("rtt", 0b0_000_000_000_000_110, 0)},
             {"halt", new Instruction("halt", 0b0_000_000_000_000_000, 0)},
             {"wait", new Instruction("wait", 0b0_000_000_000_000_001, 0)},
-            {"reset", new Instruction("reset", 0b0_000_000_000_000_101, 0)}
+            {"reset", new Instruction("reset", 0b0_000_000_000_000_101, 0)},
+
+            // Pseudo instructions
+            {".word", new Instruction(".word", 0b0, 1)},
+            {".blkw", new Instruction(".blkw", 0b0, 1)},
+            {".end", new Instruction(".end", 0b0, 1)}
         };
 
         public Instruction(string mnemonics, int code, byte num_variables)
