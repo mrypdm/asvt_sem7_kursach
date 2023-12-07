@@ -42,7 +42,7 @@ namespace AssemblerLib
                 return new List<string>() { word };
             }
 
-            word = Convert.ToString(_addValue, 8).PadLeft(6, '0') + "\'";
+            word = Convert.ToString(marksDict[_mark], 8).PadLeft(6, '0') + "\'";
             return new List<string>() { word };
         }
     }

@@ -99,7 +99,8 @@ namespace AssemblerLib
 
                 // Generation extra token
                 var mark = _regexMaskAddrType6Mark.Match(arg).Groups[1].Value;
-                var num = Convert.ToInt32(_regexMaskAddrType6Mark.Match(arg).Groups[4].Value, 8);
+                var parseValue = _regexMaskAddrType6Mark.Match(arg).Groups[4].Value;
+                var num = string.IsNullOrEmpty(parseValue) ? 0 : Convert.ToInt32(parseValue, 8);
                 var opSign = _regexMaskAddrType6Mark.Match(arg).Groups[3].Value;
                 extraTokens.Add(new MarkRelocToken(mark, num, opSign == "+" ? true: false));
             }
@@ -120,7 +121,8 @@ namespace AssemblerLib
 
                 // Generation extra token
                 var mark = _regexMaskAddrType7Mark.Match(arg).Groups[1].Value;
-                var num = Convert.ToInt32(_regexMaskAddrType7Mark.Match(arg).Groups[4].Value, 8);
+                var parseValue = _regexMaskAddrType7Mark.Match(arg).Groups[4].Value;
+                var num = string.IsNullOrEmpty(parseValue) ? 0 : Convert.ToInt32(parseValue, 8);
                 var opSign = _regexMaskAddrType7Mark.Match(arg).Groups[3].Value;
                 extraTokens.Add(new MarkRelocToken(mark, num, opSign == "+" ? true : false));
             }
@@ -335,14 +337,82 @@ namespace AssemblerLib
         {
             _instructions = new Dictionary<string, Func<CommandLine, List<IToken>>>()
             {
-                {"sob", InstructionArgsRNN},
-                {"mark", InstructionArgsNN},
-                {"rts", InstructionArgsR},
-                {"br", InstructionArgsShift},
-                {"xor", InstructionArgsRDD},
-                {"mov", InstructionArgsSSDD},
+                {"clr", InstructionArgsDD},
+                {"clrb", InstructionArgsDD},
+                {"com", InstructionArgsDD},
+                {"comb", InstructionArgsDD},
+                {"inc", InstructionArgsDD},
+                {"incb", InstructionArgsDD},
+                {"dec", InstructionArgsDD},
+                {"decb", InstructionArgsDD},
+                {"neg", InstructionArgsDD},
+                {"negb", InstructionArgsDD},
+                {"tst", InstructionArgsDD},
+                {"tstb", InstructionArgsDD},
                 {"asr", InstructionArgsDD},
-                {"halt", InstructionArgsNull}
+                {"asrb", InstructionArgsDD},
+                {"asl", InstructionArgsDD},
+                {"aslb", InstructionArgsDD},
+                {"ror", InstructionArgsDD},
+                {"rorb", InstructionArgsDD},
+                {"rol", InstructionArgsDD},
+                {"rolb", InstructionArgsDD},
+                {"swab", InstructionArgsDD},
+                {"adc", InstructionArgsDD},
+                {"adcb", InstructionArgsDD},
+                {"sbc", InstructionArgsDD},
+                {"sbcb", InstructionArgsDD},
+                {"sxt", InstructionArgsDD},
+                {"mfps", InstructionArgsDD},
+                {"mtps", InstructionArgsDD},
+
+                {"mov", InstructionArgsSSDD},
+                {"movb", InstructionArgsSSDD},
+                {"cmp", InstructionArgsSSDD},
+                {"cmpb", InstructionArgsSSDD},
+                {"add", InstructionArgsSSDD},
+                {"sub", InstructionArgsSSDD},
+                {"bit", InstructionArgsSSDD},
+                {"bitb", InstructionArgsSSDD},
+                {"bic", InstructionArgsSSDD},
+                {"bicb", InstructionArgsSSDD},
+                {"bis", InstructionArgsSSDD},
+                {"bisb", InstructionArgsSSDD},
+
+                {"xor", InstructionArgsRDD},
+
+                {"br", InstructionArgsShift},
+                {"bne", InstructionArgsShift},
+                {"beq", InstructionArgsShift},
+                {"bpl", InstructionArgsShift},
+                {"bmi", InstructionArgsShift},
+                {"bvc", InstructionArgsShift},
+                {"bvs", InstructionArgsShift},
+                {"bcc", InstructionArgsShift},
+                {"bcs", InstructionArgsShift},
+                {"bge", InstructionArgsShift},
+                {"blt", InstructionArgsShift},
+                {"bgt", InstructionArgsShift},
+                {"ble", InstructionArgsShift},
+                {"bhi", InstructionArgsShift},
+                {"blos", InstructionArgsShift},
+                {"bhis", InstructionArgsShift},
+                {"blo", InstructionArgsShift},
+
+                {"jmp", InstructionArgsDD},
+                {"jsr", InstructionArgsRDD},
+                {"rts", InstructionArgsR},
+
+                //{"mark", InstructionArgsNN},
+                //{"sob", InstructionArgsRNN},
+
+                {"bpt", InstructionArgsNull},
+                {"iot", InstructionArgsNull},
+                {"rti", InstructionArgsNull},
+                {"rtt", InstructionArgsNull},
+                {"halt", InstructionArgsNull},
+                {"wait", InstructionArgsNull},
+                {"reset", InstructionArgsNull}
             };
 
             _regexMaskAddrType0 = new Regex(RegexPatternAddrType0, RegexOptions.IgnoreCase | RegexOptions.Singleline);

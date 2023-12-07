@@ -19,7 +19,16 @@ namespace AssemblerLib
 
         public List<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
         {
-            var delta = marksDict[_mark] - currentAddr;
+            int delta;
+            if (marksDict.TryGetValue(_mark, out delta))
+            {
+                delta = delta - currentAddr;
+            }
+            else
+            {
+                throw new Exception($"The mark ({_mark}) is not determined.");
+            }
+
             // 3 77 oct = 255 dec
             if (delta > 255)
             {
