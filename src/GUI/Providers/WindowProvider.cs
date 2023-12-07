@@ -12,7 +12,7 @@ public class SettingsWindowProvider : IWindowProvider<SettingsWindow>
     public IWindowViewModel<SettingsWindow> CreateWindow<TViewModel>(params object[] args)
         where TViewModel : IWindowViewModel<SettingsWindow>
     {
-        args = args.Union(new[] { new SettingsWindow() }).ToArray();
+        args = new[] { new SettingsWindow() }.Union(args).ToArray();
         return Activator.CreateInstance(typeof(TViewModel), args) as IWindowViewModel<SettingsWindow>;
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 
@@ -14,5 +15,13 @@ public partial class MainWindow : Window
 #if DEBUG
         this.AttachDevTools();
 #endif
+    }
+
+    private void SourceCodeTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        var linesNumber = SourceCodeTextBox.Text!.Split('\n').Length;
+        SourceCodeNumbersBox.Text =
+            string.Join("\n",
+                Enumerable.Range(1, linesNumber)); //$"{string.Join("\n", Enumerable.Range(1, linesNumber))}\n";
     }
 }
