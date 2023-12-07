@@ -16,9 +16,10 @@
     <Window.Resources>
         <converter:StringDoubleConverter x:Key="StringDoubleConverter" />
     </Window.Resources>
-    
+
     <Window.KeyBindings>
-        <KeyBinding Gesture="Ctrl+O" Command="{Binding AddDeviceCommand}"/>
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding AddDeviceCommand}" />
+        <KeyBinding Gesture="Alt+V" Command="{Binding ValidateDevicesCommand}" />
     </Window.KeyBindings>
 
     <StackPanel>
@@ -41,11 +42,11 @@
             </ListBox.KeyBindings>
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Add" InputGesture="Ctrl+O" Command="{Binding AddDeviceCommand}"/>
-                    <MenuItem Header="Delete" Command="{Binding DeleteDeviceCommand}"/>
+                    <MenuItem Header="Add" InputGesture="Ctrl+O" Command="{Binding AddDeviceCommand}" />
+                    <MenuItem Header="Validate" InputGesture="Alt+V" Command="{Binding ValidateDevicesCommand}" />
+                    <MenuItem Header="Delete" Command="{Binding DeleteDeviceCommand}" />
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
-        <Button Margin="5,5,5,5" Content="Validate" Command="{Binding ValidateDevicesCommand}" />
     </StackPanel>
 </Window>

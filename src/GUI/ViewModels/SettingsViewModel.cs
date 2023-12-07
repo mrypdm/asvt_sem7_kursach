@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -48,7 +49,8 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
 
         AddDeviceCommand = ReactiveCommand.CreateFromTask(AddDeviceAsync);
         DeleteDeviceCommand = ReactiveCommand.CreateFromTask(DeleteDevices);
-        ValidateDevicesCommand = ReactiveCommand.CreateFromTask(ValidateDevices);
+        ValidateDevicesCommand =
+            ReactiveCommand.CreateFromTask(() => ValidateDevices(SelectedDevices.Any() ? SelectedDevices : Devices));
 
         projectManager.PropertyChanged += ProjectPropertyChanged;
 
@@ -116,9 +118,9 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
         await _projectManager.SaveProjectAsync();
     }
 
-    private async Task ValidateDevices()
+    private async Task ValidateDevices(IEnumerable<string> devices)
     {
-        foreach (var device in Devices)
+        foreach (var device in devices)
         {
             try
             {
