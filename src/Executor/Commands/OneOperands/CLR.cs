@@ -18,10 +18,10 @@ public class CLR : OneOperand
         var (source, destination) = validatedArgument.GetSourceAndDestination();
         
         destination(0);
-        _state.SetFlag(Flag.Z, true);
-        _state.SetFlag(Flag.V, false);
-        _state.SetFlag(Flag.C, false);
-        _state.SetFlag(Flag.N, false);
+        _state.Z = true;
+        _state.V = false;
+        _state.C = false;
+        _state.N = false;
     }
 
     public override ushort Opcode => Convert.ToUInt16("005000", 8);

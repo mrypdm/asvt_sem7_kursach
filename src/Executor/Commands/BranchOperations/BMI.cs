@@ -13,7 +13,7 @@ public class BMI : BranchOperation
 
     public override void Execute(IArgument[] arguments)
     {
-        if (_state.GetFlag(Flag.N))
+        if (_state.N)
         {
             int value = (int)(arguments[0].GetValue());
             value = (value & 128) > 0 ? -(127 & value) : value;

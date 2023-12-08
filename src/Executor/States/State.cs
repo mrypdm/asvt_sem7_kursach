@@ -2,47 +2,38 @@ namespace Executor.States;
 
 public class State : IState
 {
-    private ushort _processorStateWord;
+    public ushort ProcessorStateWord { get; set; }
 
-    public void SetFlag(Flag flag, bool val)
+    public bool C
     {
-        var value = val ? 1 : 0;
-
-        switch (flag)
-        {
-            case Flag.Z:
-                _processorStateWord &= 0b1111_1111_1111_1011;
-                _processorStateWord |= (ushort)(value << 2);
-                break;
-            case Flag.N:
-                _processorStateWord &= 0b1111_1111_1111_0111;
-                _processorStateWord |= (ushort)(value << 3);
-                break;
-            case Flag.V:
-                _processorStateWord &= 0b1111_1111_1111_1101;
-                _processorStateWord |= (ushort)(value << 1);
-                break;
-            case Flag.C:
-                _processorStateWord &= 0b1111_1111_1111_1110;
-                _processorStateWord |= (ushort)value;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(flag), flag, null);
-        }
-
-        Console.WriteLine($"PSW {_processorStateWord}.");
+        get => (ProcessorStateWord & 1) != 0;
+        set => ProcessorStateWord = (ushort)((ProcessorStateWord & 0b1111_1111_1111_1110) | (value ? 1 : 0));
     }
 
-    public bool GetFlag(Flag flag)
+    public bool V
     {
-        return flag switch
-        {
-            Flag.Z => (_processorStateWord & 0b100) >> 2 == 1,
-            Flag.N => (_processorStateWord & 0b1000) >> 3 == 1,
-            Flag.V => (_processorStateWord & 0b10) >> 1 == 1,
-            Flag.C => (_processorStateWord & 0b1) == 1,
-            _ => throw new ArgumentOutOfRangeException(nameof(flag), flag, null)
-        };
+        get => (ProcessorStateWord & 2) != 0;
+        set => ProcessorStateWord = (ushort)((ProcessorStateWord & 0b1111_1111_1111_1101) | ((value ? 1 : 0) << 1));
+    }
+
+    public bool Z
+    {
+        get => (ProcessorStateWord & 4) != 0;
+        set => ProcessorStateWord = (ushort)((ProcessorStateWord & 0b1111_1111_1111_1011) | ((value ? 1 : 0) << 2));
+    }
+
+    public bool N
+    {
+        get => (ProcessorStateWord & 8) != 0;
+        set => ProcessorStateWord = (ushort)((ProcessorStateWord & 0b1111_1111_1111_0111) | ((value ? 1 : 0) << 3));
+    }
+
+    public bool T => (ProcessorStateWord & 16) != 0;
+
+    public int Priority
+    {
+        get => (ProcessorStateWord & 0xE0) >> 5;
+        set => ProcessorStateWord = (ushort)((ProcessorStateWord & 0b1111_1111_0001_1111) | (value << 5));
     }
 
     public ushort[] Registers { get; set; } = new ushort[8];

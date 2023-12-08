@@ -13,7 +13,7 @@ public class BHI : BranchOperation
 
     public override void Execute(IArgument[] arguments)
     {
-        if (!_state.GetFlag(Flag.C) && !_state.GetFlag(Flag.Z))
+        if (!_state.C && !_state.Z)
         {
             int value = (int)(arguments[0].GetValue());
             value = (value & 128) > 0 ? -(127 & value) : value;

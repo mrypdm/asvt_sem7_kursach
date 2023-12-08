@@ -13,7 +13,7 @@ public class BNE : BranchOperation
 
     public override void Execute(IArgument[] arguments)
     {
-        if (!_state.GetFlag(Flag.Z))
+        if (!_state.Z)
         {
             int value = (int)(arguments[0].GetValue());
             value = (value & 128) > 0 ? -(127 & value) : value;

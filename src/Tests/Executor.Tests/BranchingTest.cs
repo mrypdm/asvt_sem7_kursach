@@ -30,8 +30,8 @@ public class BranchingTest
         }
 
         // Act
-        state.SetFlag(Flag.Z, true);
-        state.SetFlag(Flag.V, true);
+        state.Z = true;
+        state.V = true;
 
         for (var i = 0;i < 10; i+=2) 
         {
@@ -45,8 +45,8 @@ public class BranchingTest
 
         Assert.That(state.Registers[7], Is.EqualTo(12));
 
-        state.SetFlag(Flag.Z, false);
-        state.SetFlag(Flag.V, false);
+        state.Z = false;
+        state.V = false;
 
 
         for (var i = 0; i < 10; i += 2)

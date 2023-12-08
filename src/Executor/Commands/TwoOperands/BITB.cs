@@ -19,9 +19,9 @@ public class BITB : TwoOperand
 
         var value = (ushort)(source0() & source1());
 
-        _state.SetFlag(Flag.Z, value == 0);
-        _state.SetFlag(Flag.N, (value & 0b1000_0000) != 0);
-        _state.SetFlag(Flag.V, false);
+        _state.Z = value == 0;
+        _state.N = (value & 0b1000_0000) != 0;
+        _state.V = false;
     }
 
     public override ushort Opcode => Convert.ToUInt16("130000", 8);

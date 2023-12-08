@@ -36,9 +36,9 @@ public class SUB : TwoOperand
         var sign = ((value1 ^ value0) & 0b1000_0000_0000_0000) != 0;
 
         destination1(value);
-        _state.SetFlag(Flag.Z, value == 0);
-        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
-        _state.SetFlag(Flag.V, sign && _state.GetFlag(Flag.N) != (value & 0b1000_0000_0000_0000) < 0);
+        _state.Z = value == 0;
+        _state.N = (value & 0b1000_0000_0000_0000) > 0;
+        _state.V = sign && _state.N != (value & 0b1000_0000_0000_0000) < 0;
         // TODO carry
     }
 
