@@ -36,6 +36,8 @@ public class OpcodeIdentifier
             new BNE(memory, state),
             new BEQ(memory, state),
             new BR(memory, state),
+            new BITB(memory, state),
+            new BIT(memory, state),
             new DEC(memory, state),
             new DECB(memory, state),
             new CLR(memory, state),
