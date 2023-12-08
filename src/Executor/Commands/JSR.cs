@@ -27,12 +27,16 @@ public class JSR : BaseCommand
 
     public override IArgument[] GetArguments(ushort word)
     {
+        if (GetMode(word) == 0)
+        {
+            throw new InvalidOperationException("Can't address with mode 0!");
+        }
         return new IArgument[]
         {
             new JSRnBITArg(_memory, _state, GetRegister1(word), GetMode(word), GetRegister2(word))
         };
     }
-
+    
     public override void Execute(IArgument[] arguments)
     {
     }

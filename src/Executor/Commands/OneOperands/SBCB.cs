@@ -16,8 +16,13 @@ public class SDCB : OneOperand
     {
         var validatedArgument = ValidateArgument<IByteRegisterArgument>(arguments[0]);
         var delta = _state.GetFlag(Flag.C) ? 1 : 0;
-        var value = validatedArgument.GetByte() - delta;
-        validatedArgument.SetByte((byte)value);
+        var value = (byte)(validatedArgument.GetByte() - delta);
+
+        validatedArgument.SetByte(value);
+        _state.SetFlag(Flag.Z, value == 0);
+        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
+        _state.SetFlag(Flag.V, value == 0b1000_0000_0000_0000);
+        _state.SetFlag(Flag.C, value == 0 && delta == 1);
     }
 
     public override ushort Opcode => Convert.ToUInt16("105600", 8);

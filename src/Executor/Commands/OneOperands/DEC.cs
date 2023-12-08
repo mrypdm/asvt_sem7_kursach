@@ -7,16 +7,20 @@ namespace Executor.Commands.OneOperands;
 
 public class DEC : OneOperand
 {
-	public DEC(IMemory memory, IState state) : base(memory, state)
-	{
-	}
+    public DEC(IMemory memory, IState state) : base(memory, state)
+    {
+    }
 
-	public override void Execute(IArgument[] arguments)
-	{
-		var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments[0]);
-		var value = validatedArgument.GetWord() - 1;
-		validatedArgument.SetWord((ushort)value);
-	}
+    public override void Execute(IArgument[] arguments)
+    {
+        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments[0]);
+        var value = (ushort)(validatedArgument.GetWord() - 1);
 
-	public override ushort Opcode => Convert.ToUInt16("005300", 8);
+        validatedArgument.SetWord(value);
+        _state.SetFlag(Flag.Z, value == 0);
+        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
+        _state.SetFlag(Flag.V, value == Convert.ToUInt16("100000", 8));
+    }
+
+    public override ushort Opcode => Convert.ToUInt16("005300", 8);
 }

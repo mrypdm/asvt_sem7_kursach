@@ -24,7 +24,19 @@ public class SUB : TwoOperand
     public override void Execute(IArgument[] arguments)
     {
         var validatedArguments = ValidateArguments<IWordRegisterArgument>(arguments);
-        validatedArguments[1].SetWord(validatedArguments[0].GetWord());
+
+        var value0 = validatedArguments[0].GetWord();
+        var value1 = validatedArguments[1].GetWord();
+
+        var carry = value1 - value0 > 0b1111111111111111;
+        var sign = ((value1 ^ value0) & 0b1000_0000_0000_0000) != 0;
+
+        var value = (ushort)(value1 - value0);
+        
+        validatedArguments[1].SetWord(value);
+        _state.SetFlag(Flag.Z, value == 0);
+        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
+        _state.SetFlag(Flag.V, sign && _state.GetFlag(Flag.N) != (value & 0b1000_0000_0000_0000) < 0);
     }
 
     public override ushort Opcode => Convert.ToUInt16("160000", 8);

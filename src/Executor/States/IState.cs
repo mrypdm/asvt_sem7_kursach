@@ -7,4 +7,6 @@ public interface IState
     bool GetFlag(Flag flag);
 
     ushort[] Registers { get; set; }
+
+    bool Stop { get; set; }
 }

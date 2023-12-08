@@ -3,6 +3,8 @@ namespace Executor.States;
 public class State : IState
 {
     private ushort _processorStateWord;
+    
+    public bool Stop { get; set; } = false;
 
     public void SetFlag(Flag flag, bool val)
     {

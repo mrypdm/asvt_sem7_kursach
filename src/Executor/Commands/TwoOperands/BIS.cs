@@ -14,7 +14,12 @@ public class BIS : TwoOperand
     public override void Execute(IArgument[] arguments)
     {
         var validatedArguments = ValidateArguments<IWordRegisterArgument>(arguments);
-        validatedArguments[1].SetWord((ushort)(validatedArguments[0].GetWord() | validatedArguments[1].GetWord()));
+        var value = (ushort)(validatedArguments[0].GetWord() | validatedArguments[1].GetWord());
+
+        validatedArguments[1].SetWord(value);
+        _state.SetFlag(Flag.Z, value == 0);
+        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) != 0);
+        _state.SetFlag(Flag.V, false);
     }
 
     public override ushort Opcode => Convert.ToUInt16("050000", 8);
