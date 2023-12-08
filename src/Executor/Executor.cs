@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Devices.Managers;
+using Devices.Providers;
 using Domain.Models;
 using Executor.States;
 using Executor.Memories;
@@ -12,6 +14,9 @@ public class Executor
 {
     private readonly IState _state;
     private readonly IMemory _memory;
+    private readonly IDevicesManager _devicesManager;
+    private readonly IMemory _bus;
+    
     private readonly OpcodeIdentifier _opcodeIdentifier;
 
     public IReadOnlyMemory Memory => _memory;
@@ -28,7 +33,9 @@ public class Executor
     {
         _state = new State();
         _memory = new Memory();
-        _opcodeIdentifier = new OpcodeIdentifier(_state, _memory);
+        _devicesManager = new DevicesManager(new DeviceProvider());
+        _bus = new Bus(_memory, _devicesManager);
+        _opcodeIdentifier = new OpcodeIdentifier(_state, _bus);
     }
 
     public int ExecuteProgram()

@@ -1,11 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Devices.Managers;
 using Executor.Exceptions;
-using Executor.Memories;
 
-namespace Executor.Buses;
+namespace Executor.Memories;
 
-public class Bus : IBus
+public class Bus : IMemory
 {
     private readonly IMemory _memory;
     private readonly IDevicesManager _deviceManager;
@@ -15,6 +15,8 @@ public class Bus : IBus
         _memory = memory;
         _deviceManager = deviceManager;
     }
+
+    public IReadOnlyCollection<byte> Data => _memory.Data;
 
     public ushort GetWord(ushort address)
     {
