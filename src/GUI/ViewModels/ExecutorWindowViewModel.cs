@@ -5,10 +5,12 @@ using System.Linq;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
+using Executor.Exceptions;
 using GUI.Extensions;
 using GUI.MessageBoxes;
 using GUI.Models.Executor;
 using GUI.Views;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using Shared.Converters;
 
@@ -47,7 +49,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
 
         StartExecutionCommand = ReactiveCommand.CreateFromTask(RunAsync);
         PauseExecutionCommand = ReactiveCommand.Create(PauseAsync);
-        MakeStepCommand = ReactiveCommand.CreateFromTask(async () => { await MakeStepAsync(); });
+        MakeStepCommand = ReactiveCommand.CreateFromTask(MakeStepAsync);
         ResetExecutorCommand = ReactiveCommand.CreateFromTask(ResetExecutorAsync);
         ChangeMemoryModeCommand = ReactiveCommand.Create(ChangeMemoryMode);
         FindAddressCommand = ReactiveCommand.CreateFromTask<string>(FindAddressAsync);
@@ -55,9 +57,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         Tabs = Enum.GetValues<Tab>().ToObservableCollection();
         Memory = AsWords().ToObservableCollection();
         Devices = Array.Empty<Device>().ToObservableCollection();
-        CodeLines = Array.Empty<CodeModel>().ToObservableCollection();
-
-        InitCode();
+        CodeLines = InitCode().ToObservableCollection();
 
         InitContext();
 
@@ -140,29 +140,25 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     /// <inheritdoc />
     public bool IsDevicesVisible => CurrentTab == Tab.Devices;
 
+    private Task FastStep() => Task.Run(() => _executor.ExecuteNextInstruction());
+
     // TODO
-    private async Task<bool> MakeStepAsync()
+    private async Task MakeStepAsync()
     {
         try
         {
-            await Task.Run(() => _executor.ExecuteNextInstruction());
-            this.RaisePropertyChanged(nameof(Memory));
-            this.RaisePropertyChanged(nameof(CodeLines));
-            this.RaisePropertyChanged(nameof(Registers));
-            this.RaisePropertyChanged(nameof(ProcessorStateWord));
-
-            var line = CodeLines.First(m => m.Address == Convert.ToString(_executor.Registers.ElementAt(7), 8));
-            var index = CodeLines.IndexOf(line);
-
-            View.CodeGrid.SelectedIndex = index;
+            await FastStep();
+            UpdateState();
+        }
+        catch (HaltException e) when (e.IsExpected)
+        {
+            await _messageBoxManager.ShowMessageBoxAsync("Execute", "HALT is executed", ButtonEnum.Ok, Icon.Info,
+                View);
         }
         catch (Exception e)
         {
             await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
-            return false;
         }
-
-        return true;
     }
 
     // TODO
@@ -170,24 +166,39 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     {
         _cancelRunToken = new CancellationTokenSource();
 
-        while (!_cancelRunToken.IsCancellationRequested && await MakeStepAsync())
+        while (!_cancelRunToken.IsCancellationRequested)
         {
+            try
+            {
+                await FastStep();
+            }
+            catch (HaltException e) when (e.IsExpected)
+            {
+                await _messageBoxManager.ShowMessageBoxAsync("Execute", "HALT is executed", ButtonEnum.Ok, Icon.Info,
+                    View);
+                break;
+            }
+            catch (Exception e)
+            {
+                await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
+            }
         }
-
-        this.RaisePropertyChanged(nameof(Memory));
-        this.RaisePropertyChanged(nameof(CodeLines));
-        this.RaisePropertyChanged(nameof(Registers));
-        this.RaisePropertyChanged(nameof(ProcessorStateWord));
 
         _cancelRunToken.Dispose();
         _cancelRunToken = null;
+
+        UpdateState();
     }
 
     // TODO
     private void PauseAsync() => _cancelRunToken?.Cancel();
 
     // TODO
-    private Task ResetExecutorAsync() => Task.CompletedTask;
+    private async Task ResetExecutorAsync()
+    {
+        await _executor.Reload();
+        UpdateState();
+    }
 
     private void ChangeMemoryMode()
     {
@@ -230,15 +241,34 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         View.MemoryGrid.ScrollIntoView(View.MemoryGrid.SelectedItem, View.MemoryGrid.Columns.FirstOrDefault());
     }
 
-    private void InitCode()
+    private IEnumerable<CodeModel> InitCode()
     {
-        CodeLines = new ObservableCollection<CodeModel>();
         var start = _executor.StartProgramAddress;
         var count = _executor.LengthOfProgram;
 
         for (var i = start; i <= start + count; i += 2)
         {
-            CodeLines.Add(new CodeModel(i, _executor.Memory.GetWord(i), string.Empty));
+            yield return new CodeModel(i, _executor.Memory.GetWord(i), string.Empty);
+        }
+    }
+
+    private void UpdateState()
+    {
+        CodeLines = InitCode().ToObservableCollection();
+        Memory = _memoryAsWord ? AsWords().ToObservableCollection() : AsBytes().ToObservableCollection();
+        this.RaisePropertyChanged(nameof(Registers));
+        this.RaisePropertyChanged(nameof(ProcessorStateWord));
+        var line = CodeLines.FirstOrDefault(m =>
+            Convert.ToUInt16(m.Address, 8) == _executor.Registers.ElementAt(7));
+        if (line != null)
+        {
+            var index = CodeLines.IndexOf(line);
+
+            View.CodeGrid.SelectedIndex = index;
+        }
+        else
+        {
+            View.CodeGrid.SelectedIndex = -1;
         }
     }
 }

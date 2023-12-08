@@ -94,9 +94,9 @@ public class Compiler
                 }
             }
 
-            var cmdTokens = _tokenBuilder.Build(cmdLine);
+            var cmdTokens = _tokenBuilder.Build(cmdLine).ToArray();
             tokens.AddRange(cmdTokens);
-            currentAddr += cmdTokens.Count() * 2;
+            currentAddr += cmdTokens.Length * 2;
         }
 
         // The third assembly cycle
