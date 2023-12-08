@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia.Media;
+using GUI.Extensions;
 using GUI.Models;
 using GUI.Notifiers;
 using Shared.Helpers;
@@ -42,7 +43,8 @@ public sealed class SettingsManager : PropertyChangedNotifier
     /// <summary>
     /// Collection of all fonts
     /// </summary>
-    public static ObservableCollection<FontFamily> AllFontFamilies => new(FontManager.Current.SystemFonts);
+    public static ObservableCollection<FontFamily> AllFontFamilies =>
+        FontManager.Current.SystemFonts.ToObservableCollection();
 
     /// <summary>
     /// Get instance of settings manager
@@ -51,7 +53,7 @@ public sealed class SettingsManager : PropertyChangedNotifier
 
     private SettingsManager(EditorOptions options, CommandLineOptions commandLineOptions)
     {
-        FontFamily = options.FontFamily;
+        FontFamily = new FontFamily(options.FontFamily);
         FontSize = options.FontSize;
         CommandLineOptions = commandLineOptions;
     }

@@ -723,9 +723,9 @@ public class MainWindowViewModelTests : GuiTest<App>
         {
             // Arrange
 
-            var windowProvider = new Mock<IWindowProvider<SettingsWindow>>();
+            var windowProvider = new Mock<IWindowProvider>();
 
-            var viewModel = CreateViewModel(settingsWindowProvider: windowProvider.Object);
+            var viewModel = CreateViewModel(windowProvider: windowProvider.Object);
 
             // Act
 
@@ -734,7 +734,8 @@ public class MainWindowViewModelTests : GuiTest<App>
             // Assert
 
             windowProvider.Verify(
-                m => m.CreateWindow<SettingsViewModel>(It.IsAny<ProjectManager>(), It.IsAny<FileManager>()),
+                m => m.CreateWindow<SettingsWindow, SettingsViewModel>(It.IsAny<ProjectManager>(),
+                    It.IsAny<FileManager>(), It.IsAny<DeviceValidator>(), It.IsAny<IMessageBoxManager>()),
                 Times.Once);
         });
     }
@@ -1228,12 +1229,12 @@ public class MainWindowViewModelTests : GuiTest<App>
 
     private static MainWindowViewModel CreateViewModel(ITabManager tabManager = null,
         IProjectManager projectManager = null, IFileManager fileManager = null,
-        IMessageBoxManager messageBoxManager = null, IWindowProvider<SettingsWindow> settingsWindowProvider = null) =>
+        IMessageBoxManager messageBoxManager = null, IWindowProvider windowProvider = null) =>
         new(new MainWindow(),
             tabManager ?? new TabManager(),
             projectManager ?? new ProjectManager(new ProjectProvider(), new DeviceValidator(new DeviceProvider())),
             fileManager ?? new FileManager(),
             messageBoxManager ?? new MessageBoxManager(),
-            settingsWindowProvider ?? new SettingsWindowProvider()
+            windowProvider ?? new WindowProvider()
         );
 }

@@ -6,7 +6,7 @@ namespace GUI.Providers;
 /// <summary>
 /// Provider for <see cref="Window"/>
 /// </summary>
-public interface IWindowProvider<TWindow> where TWindow : Window
+public interface IWindowProvider
 {
     /// <summary>
     /// Creates new window view model
@@ -15,6 +15,7 @@ public interface IWindowProvider<TWindow> where TWindow : Window
     /// <typeparam name="TWindow">Window to create</typeparam>
     /// <typeparam name="TViewModel">ViewModel of window</typeparam>
     /// <returns>View model of window</returns>
-    IWindowViewModel<TWindow> CreateWindow<TViewModel>(params object[] args)
+    IWindowViewModel<TWindow> CreateWindow<TWindow, TViewModel>(params object[] args)
+        where TWindow : Window, new()
         where TViewModel : IWindowViewModel<TWindow>;
 }
