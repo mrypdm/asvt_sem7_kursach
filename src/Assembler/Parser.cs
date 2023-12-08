@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace AssemblerLib;
+namespace Assembler;
 
 internal class Parser
 {
@@ -13,7 +13,7 @@ internal class Parser
     private const string RegexPatternRemovingComment = @"^[^;.]+(?=;?)";
     private const string RegexPatternMarkExistence = @"^\s*[^;]*:";
     private const string RegexPatternMarkValidation = @"^\s*[a-zA-Z]+[a-zA-Z0-9_]*([^:;]\w)*(?=:)"; //^\s*[a-zA-Z]+([^:;]\w)*(?=:)
-    private readonly char[] BadSymbols = { ' ', '\t', ',', ':' };
+    private static readonly char[] BadSymbols = { ' ', '\t', ',', ':' };
 
     private readonly Regex _regexMaskCommandLine;
     private readonly Regex _regexMaskRemovingComment;

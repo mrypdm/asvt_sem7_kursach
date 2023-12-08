@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Assembler.Tokens;
 
-namespace AssemblerLib;
+namespace Assembler;
 
-public class Assembler
+public class Compiler
 {
     private string _mainFilePath;
     private List<string> _linkedFilesPaths;
@@ -50,7 +51,7 @@ public class Assembler
         }
     }
 
-    public Assembler(string mainFilePath, IEnumerable<string> linkedFilesPaths)
+    public Compiler(string mainFilePath, IEnumerable<string> linkedFilesPaths)
     {
         _mainFilePath = mainFilePath;
         _linkedFilesPaths = linkedFilesPaths.ToList();

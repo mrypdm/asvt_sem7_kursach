@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace AssemblerLib;
+namespace Assembler;
 
 /// <summary>
 /// Line of assembler text
@@ -55,7 +54,7 @@ internal record CommandLine
     /// <summary>
     /// Symbol mark for line
     /// </summary>
-    public IReadOnlySet<string> Marks => _marks;
+    public IEnumerable<string> Marks => _marks;
 
     /// <summary>
     /// Instruction to execute

@@ -1,8 +1,10 @@
-﻿using AssemblerLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Assembler;
 
-class Program
+namespace AssemblerApp;
+
+internal static class Program
 {
     static void Main(string[] args)
     {
@@ -10,7 +12,7 @@ class Program
         //var linkedAsmFiles = new List<string> { @"D:\Университет\7 семестр\Курсовая работы\macro.asm" };
         var linkedAsmFiles = new List<string>();
 
-        var asm = new Assembler(mainAsmFile, linkedAsmFiles);
+        var asm = new Compiler(mainAsmFile, linkedAsmFiles);
         try
         {
             asm.Assemble().Wait();

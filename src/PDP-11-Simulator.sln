@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devices.Tests", "Tests\Devi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceSdk", "..\sdk\DeviceSdk\DeviceSdk.csproj", "{F1909088-F09F-448B-9CC1-59519646C275}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembler", "Assembler\Assembler.csproj", "{49855F30-92D5-409F-BB2B-2CD3BB39E1E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblerApp", "AssemblerApp\AssemblerApp.csproj", "{E74F7B28-8295-44E9-B086-354C5B56D706}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +66,14 @@ Global
 		{F1909088-F09F-448B-9CC1-59519646C275}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1909088-F09F-448B-9CC1-59519646C275}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1909088-F09F-448B-9CC1-59519646C275}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49855F30-92D5-409F-BB2B-2CD3BB39E1E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49855F30-92D5-409F-BB2B-2CD3BB39E1E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49855F30-92D5-409F-BB2B-2CD3BB39E1E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49855F30-92D5-409F-BB2B-2CD3BB39E1E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E74F7B28-8295-44E9-B086-354C5B56D706}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E74F7B28-8295-44E9-B086-354C5B56D706}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E74F7B28-8295-44E9-B086-354C5B56D706}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E74F7B28-8295-44E9-B086-354C5B56D706}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1DC57910-C5FF-443E-948A-494140300A2F} = {18242AB7-26AE-4024-A3CA-1F5364B1E67F}
