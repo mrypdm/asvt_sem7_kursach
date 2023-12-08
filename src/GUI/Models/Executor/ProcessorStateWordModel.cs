@@ -9,7 +9,7 @@ public class ProcessorStateWordModel
     {
         Priority = (value & 0xE0) >> 5;
         T = (value & 16) >> 4;
-        N = (value & 8) >> 4;
+        N = (value & 8) >> 3;
         Z = (value & 4) >> 2;
         V = (value & 2) >> 1;
         C = (value & 1) >> 0;
