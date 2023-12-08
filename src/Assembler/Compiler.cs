@@ -111,6 +111,7 @@ public class Compiler
         // Printing of final machine code
         PrintMachineCode(codes, marks);
         
+        // Writing result machine code in file
         await File.WriteAllLinesAsync(outputFile, codes);
     }
 }

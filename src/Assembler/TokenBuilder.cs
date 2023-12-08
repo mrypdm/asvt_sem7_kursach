@@ -373,7 +373,7 @@ internal class TokenBuilder
 
         if (_regexMaskArgBLKW.IsMatch(cmdLine.Arguments[0]))
         {
-            var valueDec = Convert.ToInt32(_regexMaskArgBLKW.Match(cmdLine.Arguments[0]).Groups[1].Value);
+            var valueDec = Convert.ToInt32(_regexMaskArgBLKW.Match(cmdLine.Arguments[0]).Groups[1].Value, 8);
             for (var i = 0; i < valueDec; i++)
             {
                 resultTokens.Add(new RawToken(0));
