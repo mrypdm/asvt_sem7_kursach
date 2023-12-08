@@ -1,9 +1,9 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.BranchOperations;
 
 public class BVC : BranchOperation
 {
@@ -21,5 +21,5 @@ public class BVC : BranchOperation
         }
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("102000", 8);
+    public override ushort Opcode => Convert.ToUInt16("102000", 8);
 }

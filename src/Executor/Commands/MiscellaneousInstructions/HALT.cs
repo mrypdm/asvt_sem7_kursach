@@ -1,9 +1,10 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Exceptions;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.MiscellaneousInstructions;
 
 public class HALT : BaseCommand
 {
@@ -11,15 +12,12 @@ public class HALT : BaseCommand
     {
     }
 
-    public override IArgument[] GetArguments(ushort word)
-    {
-        return new IArgument[] {};
-    }
+    public override IArgument[] GetArguments(ushort word) => Array.Empty<IArgument>();
 
     public override void Execute(IArgument[] arguments)
     {
-        _state.Stop = true;
+        throw new HaltException(true);
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("000000", 8);
+    public override ushort Opcode => Convert.ToUInt16("000000", 8);
 }

@@ -1,4 +1,8 @@
 using Executor.Commands;
+using Executor.Commands.BranchOperations;
+using Executor.Commands.MiscellaneousInstructions;
+using Executor.Commands.OneOperands;
+using Executor.Commands.TwoOperands;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;

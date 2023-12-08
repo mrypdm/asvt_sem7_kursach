@@ -1,4 +1,5 @@
-﻿using Executor.Memories;
+﻿using Executor.Arguments.Abstraction;
+using Executor.Memories;
 using Executor.States;
 
 namespace Executor.Arguments;
@@ -9,9 +10,9 @@ public abstract class BaseArgument : IArgument
 
     protected IState State { get; }
 
-    public abstract ushort GetValue();
+    public abstract object GetValue();
 
-    public abstract void SetValue(ushort word);
+    public abstract void SetValue(object value);
 
     protected BaseArgument(IMemory memory, IState state)
     {

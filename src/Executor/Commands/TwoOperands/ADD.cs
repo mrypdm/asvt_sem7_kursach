@@ -1,18 +1,19 @@
 using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.TwoOperands;
 
-public class ADD : TwoOperands
+public class ADD : TwoOperand
 {
     public ADD(IMemory memory, IState state) : base(memory, state)
     {
     }
 
 
-    public override IArgument[] GetArguments(ushort word) // Исключение
+    public override IArgument[] GetArguments(ushort word)
     {
         return new IArgument[]
         {
@@ -23,15 +24,24 @@ public class ADD : TwoOperands
 
     public override void Execute(IArgument[] arguments)
     {
-        var carry = (arguments[1].GetValue() + arguments[0].GetValue()) > 0b1111111111111111;
-        var sign = ((arguments[1].GetValue() ^ arguments[0].GetValue()) & 0b1000_0000_0000_0000) == 0;
-        arguments[1].SetValue((ushort)(arguments[1].GetValue() + arguments[0].GetValue()));
-        _state.SetFlag(Flag.Z, arguments[1].GetValue() == 0);
-        _state.SetFlag(Flag.N, (arguments[1].GetValue() & 0b1000_0000_0000_0000) > 0);
-        _state.SetFlag(Flag.V, sign && (_state.GetFlag(Flag.N) != (arguments[0].GetValue() & 0b1000_0000_0000_0000) < 0));
+        var validatedArguments = ValidateArguments<IRegisterArgument<ushort>>(arguments);
+        var (source0, destination0) = validatedArguments[0].GetSourceAndDestination();
+        var (source1, destination1) = validatedArguments[1].GetSourceAndDestination();
+        
+        var value0 = source0();
+        var value1 = source1();
+
+        var carry = value1 + value0 > 0b1111111111111111;
+        var sign = ((value1 ^ value0) & 0b1000_0000_0000_0000) == 0;
+
+        var value = (ushort)(value1 + value0);
+        
+        destination1(value);
+        _state.SetFlag(Flag.Z, value == 0);
+        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
+        _state.SetFlag(Flag.V, sign && _state.GetFlag(Flag.N) != (value & 0b1000_0000_0000_0000) < 0);
         _state.SetFlag(Flag.C, carry);
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("060000", 8);
-
+    public override ushort Opcode => Convert.ToUInt16("060000", 8);
 }

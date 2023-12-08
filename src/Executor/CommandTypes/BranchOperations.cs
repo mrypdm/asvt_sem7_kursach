@@ -1,6 +1,7 @@
+using Executor.Arguments;
 using Executor.Memories;
 using Executor.States;
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 
 namespace Executor.CommandTypes;
 
@@ -9,7 +10,7 @@ public abstract class BranchOperation : BaseCommand
     private const ushort OpcodeMask = 0b1111_1111_0000_0000;
     private const ushort OffsetMask = 0b0000_0000_1111_1111;
 
-    protected ushort GetOffset(ushort word) => (ushort)(word & OffsetMask);
+    private byte GetOffset(ushort word) => (byte)(word & OffsetMask);
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
@@ -21,7 +22,7 @@ public abstract class BranchOperation : BaseCommand
     {
         return new IArgument[]
         {
-            new BranchArg(_memory, _state, GetOffset(word))
+            new OffsetArgument(_memory, _state, GetOffset(word))
         };
     }
 }

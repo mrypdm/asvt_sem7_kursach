@@ -1,5 +1,7 @@
 using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Exceptions;
 using Executor.Memories;
 using Executor.States;
 
@@ -26,19 +28,16 @@ public class JSR : BaseCommand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        if (GetMode(word) == 0)
-        {
-            throw new InvalidOperationException("Can't address with mode 0!");
-        }
         return new IArgument[]
         {
             new JSRnBITArg(_memory, _state, GetRegister1(word), GetMode(word), GetRegister2(word))
         };
     }
-    
+
     public override void Execute(IArgument[] arguments)
     {
+        // throw if addressing mode is 0
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("004000", 8);
+    public override ushort Opcode => Convert.ToUInt16("004000", 8);
 }

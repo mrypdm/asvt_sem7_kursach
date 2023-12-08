@@ -1,9 +1,9 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.BranchOperations;
 
 public class BR : BranchOperation
 {

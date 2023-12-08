@@ -1,6 +1,8 @@
+using Executor.Arguments;
 using Executor.Memories;
 using Executor.States;
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
+using Executor.Exceptions;
 
 namespace Executor.CommandTypes;
 
@@ -18,17 +20,33 @@ public abstract class OneOperand : BaseCommand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        if ((this.Opcode & 0b1000_0000_0000_0000) > 0)
+        if ((Opcode & 0b1000_0000_0000_0000) > 0)
         {
             return new IArgument[]
             {
-            new RegisterByteArgument(_memory, _state, GetMode(word), GetRegister(word))
+                new RegisterByteArgument(_memory, _state, GetMode(word), GetRegister(word))
             };
         }
+
         return new IArgument[]
         {
             new RegisterWordArgument(_memory, _state, GetMode(word), GetRegister(word))
         };
+    }
+
+    protected TType ValidateArgument<TType>(IArgument[] arguments) where TType : class
+    {
+        if (arguments.Length != 1)
+        {
+            throw new ArgumentException("Count of arguments must be 1", nameof(arguments));
+        }
+        
+        if (arguments[0].GetType() != typeof(TType))
+        {
+            throw new InvalidArgumentTypeException(new[] { typeof(TType) }, new[] { arguments[0].GetType() });
+        }
+
+        return (TType)arguments[0];
     }
 
     protected OneOperand(IMemory memory, IState state) : base(memory, state)

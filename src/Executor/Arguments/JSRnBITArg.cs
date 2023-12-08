@@ -3,18 +3,18 @@ using Executor.States;
 
 namespace Executor.Arguments;
 
-class JSRnBITArg : BaseArgument // Надо разделить
+public class JSRnBITArg : BaseArgument // РќР°РґРѕ СЂР°Р·РґРµР»РёС‚СЊ
 {
     private ushort _mode;
     private ushort _register1;
     private ushort _register2;
 
-    public override ushort GetValue()
+    public override object GetValue()
     {
         return 0;
     }
 
-    public override void SetValue(ushort word)
+    public override void SetValue(object obj)
     {
     }
 

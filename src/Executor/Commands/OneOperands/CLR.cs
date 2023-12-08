@@ -1,9 +1,9 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.OneOperands;
 
 public class CLR : OneOperand
 {
@@ -14,12 +14,15 @@ public class CLR : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        arguments[0].SetValue(0);
+        var validatedArgument = ValidateArgument<IRegisterArgument<ushort>>(arguments);
+        var (source, destination) = validatedArgument.GetSourceAndDestination();
+        
+        destination(0);
         _state.SetFlag(Flag.Z, true);
         _state.SetFlag(Flag.V, false);
         _state.SetFlag(Flag.C, false);
         _state.SetFlag(Flag.N, false);
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("005000", 8);
+    public override ushort Opcode => Convert.ToUInt16("005000", 8);
 }

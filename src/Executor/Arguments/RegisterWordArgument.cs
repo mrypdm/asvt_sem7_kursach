@@ -1,104 +1,85 @@
+using Executor.Arguments.Abstraction;
 using Executor.Memories;
 using Executor.States;
 
 namespace Executor.Arguments;
 
-public class RegisterWordArgument : BaseArgument
+public class RegisterWordArgument : BaseArgument, IRegisterArgument<ushort>
 {
     public RegisterWordArgument(IMemory memory, IState state, ushort mode, ushort register) : base(memory, state)
     {
         Register = register;
         Mode = mode;
     }
-    
+
     public ushort Mode { get; }
-    
+
     public ushort Register { get; }
 
-    public override ushort GetValue()
+    public override object GetValue() => throw new InvalidOperationException();
+
+    public override void SetValue(object obj) => throw new InvalidOperationException();
+
+    public (Func<ushort>, Action<ushort>) GetSourceAndDestination()
     {
-        ushort word;
         ushort addr;
         ushort offset;
+
+        Func<ushort> src;
+        Action<ushort> dst;
+
         switch (Mode)
         {
             case 0:
-                return State.Registers[Register];
+                src = () => State.Registers[Register];
+                dst = value => State.Registers[Register] = value;
+                break;
             case 1:
-                return Memory.GetWord(State.Registers[Register]);
+                src = () => Memory.GetWord(State.Registers[Register]);
+                dst = value => Memory.SetWord(State.Registers[Register], value);
+                break;
             case 2:
-                word = Memory.GetWord(State.Registers[Register]);
+                addr = State.Registers[Register];
+                src = () => Memory.GetWord(addr);
+                dst = value => Memory.SetWord(addr, value);
                 State.Registers[Register] += 2;
-                return word;
+                break;
             case 3:
                 addr = Memory.GetWord(State.Registers[Register]);
-                word = Memory.GetWord(addr);
+                src = () => Memory.GetWord(addr);
+                dst = value => Memory.SetWord(addr, value);
                 State.Registers[Register] += 2;
-                return word;
+                break;
             case 4:
                 State.Registers[Register] -= 2;
-                return Memory.GetWord(State.Registers[Register]);
+                addr = State.Registers[Register];
+                src = () => Memory.GetWord(addr);
+                dst = value => Memory.SetWord(addr, value);
+                break;
             case 5:
                 State.Registers[Register] -= 2;
                 addr = Memory.GetWord(State.Registers[Register]);
-                return Memory.GetWord(State.Registers[addr]);
+                src = () => Memory.GetWord(addr);
+                dst = value => Memory.SetWord(addr, value);
+                break;
             case 6:
                 offset = Memory.GetWord(State.Registers[7]);
                 State.Registers[7] += 2;
-                return Memory.GetWord((ushort)(State.Registers[Register] + offset));
+                addr = (ushort)(State.Registers[Register] + offset);
+                src = () => Memory.GetWord(addr);
+                dst = value => Memory.SetWord(addr, value);
+                break;
             case 7:
                 offset = Memory.GetWord(State.Registers[7]);
                 State.Registers[7] += 2;
                 addr = Memory.GetWord((ushort)(State.Registers[Register] + offset));
-                return Memory.GetWord(State.Registers[addr]);
+                src = () => Memory.GetWord(addr);
+                dst = value => Memory.SetWord(addr, value);
+                break;
+            default:
+                throw new InvalidOperationException("Invalid addressing mode");
         }
 
-        throw new InvalidOperationException("Invalid Mode!");
-    }
-
-    public override void SetValue(ushort word)
-    {
-        ushort addr;
-        ushort offset;
-        switch (Mode)
-        {
-            case 0:
-                State.Registers[Register] = word;
-                return;
-            case 1:
-                Memory.SetWord(State.Registers[Register], word);
-                return;
-            case 2:
-                Memory.SetWord(State.Registers[Register], word);
-                State.Registers[Register] += 2;
-                return;
-            case 3:
-                addr = Memory.GetWord(State.Registers[Register]);
-                Memory.SetWord(addr, word);
-                State.Registers[Register] += 2;
-                return;
-            case 4:
-                State.Registers[Register] -= 2;
-                Memory.SetWord(State.Registers[Register], word);
-                return;
-            case 5:
-                State.Registers[Register] -= 2;
-                addr = Memory.GetWord(State.Registers[Register]);
-                Memory.SetWord(State.Registers[addr], word);
-                return;
-            case 6:
-                State.Registers[7] += 2;
-                offset = Memory.GetWord(State.Registers[7]);
-                Memory.SetWord((ushort)(State.Registers[Register] + offset), word);
-                return;
-            case 7:
-                State.Registers[7] += 2;
-                offset = Memory.GetWord(State.Registers[7]);
-                addr = Memory.GetWord((ushort)(State.Registers[Register] + offset));
-                Memory.SetWord(State.Registers[addr], word);
-                return;
-        }
-
-        throw new InvalidOperationException("Invalid Mode!");
+        return (src, dst);
     }
 }
