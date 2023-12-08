@@ -22,7 +22,12 @@ public class SUB : TwoOperands
 
     public override void Execute(IArgument[] arguments)
     {
+        var carry = (arguments[1].GetValue() - arguments[0].GetValue()) > 0b1111111111111111;
+        var sign = ((arguments[1].GetValue() ^ arguments[0].GetValue()) & 0b1000_0000_0000_0000) == 1;
         arguments[1].SetValue((ushort)(arguments[1].GetValue() - arguments[0].GetValue()));
+        _state.SetFlag(Flag.Z, arguments[1].GetValue() == 0);
+        _state.SetFlag(Flag.N, (arguments[1].GetValue() & 0b1000_0000_0000_0000) > 0);
+        _state.SetFlag(Flag.V, sign && (_state.GetFlag(Flag.N) != (arguments[0].GetValue() & 0b1000_0000_0000_0000) < 0));
     }
 
     public override ushort Opcode => (ushort)Convert.ToUInt16("160000", 8);

@@ -13,8 +13,11 @@ public class BISB : TwoOperands
 
 	public override void Execute(IArgument[] arguments)
 	{
-		arguments[1].SetValue((ushort)(arguments[1].GetValue() | arguments[0].GetValue()));
-	}
+		arguments[1].SetValue((ushort)(arguments[1].GetValue() ^ arguments[0].GetValue()));
+        _state.SetFlag(Flag.Z, arguments[1].GetValue() == 0);
+        _state.SetFlag(Flag.N, (arguments[1].GetValue() & 0b1000_0000_0000_0000) > 0);
+        _state.SetFlag(Flag.V, false);
+    }
 
 	public override ushort Opcode => (ushort)Convert.ToUInt16("150000", 8);
 }

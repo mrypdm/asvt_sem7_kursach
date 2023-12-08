@@ -13,9 +13,12 @@ public class DEC : OneOperand
 
 	public override void Execute(IArgument[] arguments)
 	{
-		var value = arguments[0].GetValue();
-		arguments[0].SetValue((ushort)(value - 1));
-	}
+        var value = arguments[0].GetValue();
+        arguments[0].SetValue((ushort)(value - 1));
+        _state.SetFlag(Flag.Z, arguments[0].GetValue() == 0);
+        _state.SetFlag(Flag.N, (arguments[0].GetValue() & 0b1000_0000_0000_0000) > 0);
+        _state.SetFlag(Flag.V, arguments[0].GetValue() == Convert.ToUInt16("100000", 8));
+    }
 
 	public override ushort Opcode => (ushort)Convert.ToUInt16("005300", 8);
 }

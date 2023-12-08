@@ -42,6 +42,7 @@ public class OpcodeIdentifier
             new BPL(memory, state),
             new BVC(memory, state),
             new BVS(memory, state),
+            new HALT(memory, state),
             new BIS(memory, state),
             new BISB(memory, state),
             new BIC(memory, state),
