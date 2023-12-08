@@ -1,0 +1,52 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:GUI.ViewModels"
+        xmlns:converter="clr-namespace:GUI.Converters"
+        xmlns:managers="clr-namespace:GUI.Managers"
+        mc:Ignorable="d" SizeToContent="WidthAndHeight" MinWidth="500" CanResize="False"
+        FontFamily="Century Gothic" FontSize="14"
+        x:Class="GUI.Views.SettingsWindow" x:DataType="vm:SettingsViewModel"
+        Title="Settings" Icon="/Assets/icon.ico">
+    <Design.DataContext>
+        <vm:SettingsViewModel />
+    </Design.DataContext>
+
+    <Window.Resources>
+        <converter:StringDoubleConverter x:Key="StringDoubleConverter" />
+    </Window.Resources>
+
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding AddDeviceCommand}" />
+        <KeyBinding Gesture="Alt+V" Command="{Binding ValidateDevicesCommand}" />
+    </Window.KeyBindings>
+
+    <StackPanel>
+        <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Font Family</Label>
+        <ComboBox Margin="5,5,5,0"
+                  ItemsSource="{Binding Source={x:Static managers:SettingsManager.AllFontFamilies}}"
+                  SelectedItem="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontFamily}" />
+
+        <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Font Size</Label>
+        <TextBox Margin="5,0,5,0"
+                 Text="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontSize, Converter={StaticResource StringDoubleConverter}}" />
+
+        <Separator Margin="5,5,5,5" Height="2" />
+
+        <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Devices</Label>
+        <ListBox Margin="5,0,5,5" MinHeight="150" SelectionMode="Multiple"
+                 ItemsSource="{Binding Devices}" SelectedItems="{Binding SelectedDevices}">
+            <ListBox.KeyBindings>
+                <KeyBinding Gesture="Delete" Command="{Binding DeleteDeviceCommand}" />
+            </ListBox.KeyBindings>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add" InputGesture="Ctrl+O" Command="{Binding AddDeviceCommand}" />
+                    <MenuItem Header="Validate" InputGesture="Alt+V" Command="{Binding ValidateDevicesCommand}" />
+                    <MenuItem Header="Delete" Command="{Binding DeleteDeviceCommand}" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
+    </StackPanel>
+</Window>

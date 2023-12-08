@@ -1,0 +1,90 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:vm="clr-namespace:GUI.ViewModels"
+        xmlns:managers="clr-namespace:GUI.Managers"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        FontFamily="Century Gothic" FontSize="14"
+        x:Class="GUI.Views.MainWindow" x:DataType="vm:MainWindowViewModel"
+        Title="{Binding WindowTitle}" Icon="/Assets/icon.ico">
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Ctrl+N" Command="{Binding CreateFileCommand}" />
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFileCommand}" />
+        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveFileCommand}">
+            <KeyBinding.CommandParameter>
+                <sys:Boolean>False</sys:Boolean>
+            </KeyBinding.CommandParameter>
+        </KeyBinding>
+        <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAllFilesCommand}" />
+        <KeyBinding Gesture="Ctrl+Alt+S" Command="{Binding OpenSettingsWindowCommand}" />
+
+        <KeyBinding Gesture="Ctrl+Shift+N" Command="{Binding CreateProjectCommand}" />
+        <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding OpenProjectCommand}" />
+    </Window.KeyBindings>
+
+    <DockPanel LastChildFill="True">
+        <Menu Margin="0,5,0,0" DockPanel.Dock="Top">
+            <MenuItem Header="File" Margin="5,0,5,0">
+                <MenuItem Header="Create" InputGesture="Ctrl+N" Command="{Binding CreateFileCommand}" />
+                <MenuItem Header="Open" InputGesture="Ctrl+O" Command="{Binding OpenFileCommand}" />
+                <MenuItem Header="Save" InputGesture="Ctrl+S" Command="{Binding SaveFileCommand}">
+                    <MenuItem.CommandParameter>
+                        <sys:Boolean>False</sys:Boolean>
+                    </MenuItem.CommandParameter>
+                </MenuItem>
+                <MenuItem Header="Save As" Command="{Binding SaveFileCommand}">
+                    <MenuItem.CommandParameter>
+                        <sys:Boolean>True</sys:Boolean>
+                    </MenuItem.CommandParameter>
+                </MenuItem>
+                <MenuItem Header="Save All" InputGesture="Ctrl+Shift+S" Command="{Binding SaveAllFilesCommand}" />
+                <MenuItem Header="Delete" Command="{Binding DeleteFileCommand}" />
+            </MenuItem>
+            <MenuItem Header="Project" Margin="5,0,5,0">
+                <MenuItem Header="Create" InputGesture="Ctrl+Shift+N" Command="{Binding CreateProjectCommand}" />
+                <MenuItem Header="Open" InputGesture="Ctrl+Shift+O" Command="{Binding OpenProjectCommand}" />
+            </MenuItem>
+            <MenuItem Header="Build" Margin="5,0,5,0" />
+            <MenuItem Header="Run" Margin="5,0,5,0" />
+            <MenuItem Header="Settings" Margin="5,0,5,0" ToolTip.Tip="Ctrl+Alt+S"
+                      Command="{Binding OpenSettingsWindowCommand}" />
+            <MenuItem Header="Help" Margin="5,0,5,0">
+                <MenuItem Header="Tutorials" />
+                <MenuItem Header="About" />
+            </MenuItem>
+        </Menu>
+
+        <Separator Height="2" DockPanel.Dock="Top" />
+
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" DockPanel.Dock="Top">
+            <ItemsControl Name="FileTabsListBox" Margin="5,0,5,5"
+                          ItemsSource="{Binding Tabs}" DockPanel.Dock="Top">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+        
+        <ScrollViewer Margin="5" DockPanel.Dock="Top"
+                      FontFamily="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontFamily}"
+                      FontSize="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontSize}">
+            <DockPanel LastChildFill="True">
+                <TextBox Name="SourceCodeNumbersBox" DockPanel.Dock="Left" IsEnabled="False" IsReadOnly="True" 
+                         Background="LightGray" MinWidth="50" BorderThickness="0"
+                         TextAlignment="Right"/>
+                <TextBox Name="SourceCodeTextBox"
+                         AcceptsReturn="True" AcceptsTab="True"
+                         Text="{Binding FileContent}" DockPanel.Dock="Left"
+                         TextChanged="SourceCodeTextBox_OnTextChanged"/>
+            </DockPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

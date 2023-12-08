@@ -8,4 +8,5 @@ bin/
 obj/
 out/
 publish/
-src/Executor/xxx
+
+*.DotSettings.user
