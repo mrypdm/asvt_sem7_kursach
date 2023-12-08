@@ -14,12 +14,14 @@ public class ADCB : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IByteRegisterArgument>(arguments);
+        var validatedArgument = ValidateArgument<IRegisterArgument<byte>>(arguments);
+        var (source, destination) = validatedArgument.GetSourceAndDestination();
+        
         var delta = _state.GetFlag(Flag.C) ? 1 : 0;
-        var oldValue = validatedArgument.GetByte();
+        var oldValue = source();
         var value = (byte)(oldValue + delta);
 
-        validatedArgument.SetByte(value);
+        destination(value);
         _state.SetFlag(Flag.Z, value == 0);
         // TODO byte?
         _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) != 0);

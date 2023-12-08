@@ -23,14 +23,15 @@ public class JMP : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments);
+        var validatedArgument = ValidateArgument<IRegisterArgument<ushort>>(arguments);
+        var (source, destination) = validatedArgument.GetSourceAndDestination();
 
         if (validatedArgument.Mode == 0)
         {
             throw new InvalidInstructionException("JMP cannot be addressed with mode 0");
         }
         
-        _state.Registers[7] = validatedArgument.GetWord();
+        _state.Registers[7] = source();
     }
 
     public override ushort Opcode => Convert.ToUInt16("000100", 8);

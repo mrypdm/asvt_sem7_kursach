@@ -23,17 +23,19 @@ public class SUB : TwoOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArguments = ValidateArguments<IWordRegisterArgument>(arguments);
+        var validatedArguments = ValidateArguments<IRegisterArgument<ushort>>(arguments);
+        var (source0, destination0) = validatedArguments[0].GetSourceAndDestination();
+        var (source1, destination1) = validatedArguments[1].GetSourceAndDestination();
 
-        var value0 = validatedArguments[0].GetWord();
-        var value1 = validatedArguments[1].GetWord();
-        
+        var value0 = source0();
+        var value1 = source1();
+
         var value = (ushort)(value1 - value0);
 
         var carry = (uint)(value1 - value0) > 0b1111_1111_1111_1111;
         var sign = ((value1 ^ value0) & 0b1000_0000_0000_0000) != 0;
 
-        validatedArguments[1].SetWord(value);
+        destination1(value);
         _state.SetFlag(Flag.Z, value == 0);
         _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
         _state.SetFlag(Flag.V, sign && _state.GetFlag(Flag.N) != (value & 0b1000_0000_0000_0000) < 0);

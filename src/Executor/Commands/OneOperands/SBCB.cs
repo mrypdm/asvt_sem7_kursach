@@ -14,11 +14,13 @@ public class SDCB : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IByteRegisterArgument>(arguments);
-        var delta = _state.GetFlag(Flag.C) ? 1 : 0;
-        var value = (byte)(validatedArgument.GetByte() - delta);
+        var validatedArgument = ValidateArgument<IRegisterArgument<byte>>(arguments);
+        var (source, destination) = validatedArgument.GetSourceAndDestination();
 
-        validatedArgument.SetByte(value);
+        var delta = _state.GetFlag(Flag.C) ? 1 : 0;
+        var value = (byte)(source() - delta);
+
+        destination(value);
         _state.SetFlag(Flag.Z, value == 0);
         // TODO byte?
         _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);

@@ -13,10 +13,12 @@ public class DEC : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments);
-        var value = (ushort)(validatedArgument.GetWord() - 1);
+        var validatedArgument = ValidateArgument<IRegisterArgument<ushort>>(arguments);
+        var (source, destination) = validatedArgument.GetSourceAndDestination();
+        
+        var value = (ushort)(source() - 1);
 
-        validatedArgument.SetWord(value);
+        destination(value);
         _state.SetFlag(Flag.Z, value == 0);
         _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
         _state.SetFlag(Flag.V, value == Convert.ToUInt16("100000", 8));

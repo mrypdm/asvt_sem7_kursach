@@ -14,11 +14,13 @@ public class SDC : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments);
+        var validatedArgument = ValidateArgument<IRegisterArgument<ushort>>(arguments);
+        var (source, destination) = validatedArgument.GetSourceAndDestination();
+
         var delta = _state.GetFlag(Flag.C) ? 1 : 0;
-        var value = (ushort)(validatedArgument.GetWord() - delta);
-        
-        validatedArgument.SetWord(value);
+        var value = (ushort)(source() - delta);
+
+        destination(value);
         _state.SetFlag(Flag.Z, value == 0);
         _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
         _state.SetFlag(Flag.V, value == 0b1000_0000_0000_0000);

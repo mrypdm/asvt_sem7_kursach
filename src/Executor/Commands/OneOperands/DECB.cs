@@ -13,10 +13,12 @@ public class DECB : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IByteRegisterArgument>(arguments);
-        var value = (byte)(validatedArgument.GetByte() - 1);
+        var validatedArgument = ValidateArgument<IRegisterArgument<byte>>(arguments);
+        var (source, destination) = validatedArgument.GetSourceAndDestination();
+        
+        var value = (byte)(source() - 1);
 
-        validatedArgument.SetByte(value);
+        destination(value);
         _state.SetFlag(Flag.Z, value == 0);
         // TODO byte?
         _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);

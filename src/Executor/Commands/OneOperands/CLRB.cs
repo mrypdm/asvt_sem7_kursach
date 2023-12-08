@@ -13,8 +13,10 @@ public class CLRB : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IByteRegisterArgument>(arguments);
-        validatedArgument.SetByte(0);
+        var validatedArgument = ValidateArgument<IRegisterArgument<byte>>(arguments);
+        var (source, destination) = validatedArgument.GetSourceAndDestination();
+        
+        destination(0);
         _state.SetFlag(Flag.Z, true);
         _state.SetFlag(Flag.V, false);
         _state.SetFlag(Flag.C, false);
