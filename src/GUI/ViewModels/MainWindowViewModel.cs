@@ -577,7 +577,8 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// </summary>
     private async Task OpenSettingsWindowAsync()
     {
-        var viewModel = _windowProvider.CreateWindow<SettingsWindow, SettingsViewModel>(_projectManager, _fileManager);
+        var viewModel = _windowProvider.CreateWindow<SettingsWindow, SettingsViewModel>(_projectManager, _fileManager,
+            new DeviceValidator(new DeviceProvider()), _messageBoxManager);
         await viewModel.ShowDialog(View);
     }
 

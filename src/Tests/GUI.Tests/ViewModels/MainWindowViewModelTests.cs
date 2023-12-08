@@ -734,7 +734,8 @@ public class MainWindowViewModelTests : GuiTest<App>
             // Assert
 
             windowProvider.Verify(
-                m => m.CreateWindow<SettingsWindow, SettingsViewModel>(It.IsAny<ProjectManager>(), It.IsAny<FileManager>()),
+                m => m.CreateWindow<SettingsWindow, SettingsViewModel>(It.IsAny<ProjectManager>(),
+                    It.IsAny<FileManager>(), It.IsAny<DeviceValidator>(), It.IsAny<IMessageBoxManager>()),
                 Times.Once);
         });
     }
