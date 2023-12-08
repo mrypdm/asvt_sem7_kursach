@@ -23,8 +23,8 @@ public class SDCB : OneOperand
         destination(value);
         _state.SetFlag(Flag.Z, value == 0);
         // TODO byte?
-        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
-        _state.SetFlag(Flag.V, value == 0b1000_0000_0000_0000);
+        _state.SetFlag(Flag.N, (value & 0b1000_0000) > 0);
+        _state.SetFlag(Flag.V, value == 0b1000_0000);
         _state.SetFlag(Flag.C, value == 0 && delta == 1);
     }
 

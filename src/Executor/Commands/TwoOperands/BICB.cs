@@ -21,7 +21,7 @@ public class BICB : TwoOperand
         
         destination1(value);
         _state.SetFlag(Flag.Z, value == 0);
-        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) != 0);
+        _state.SetFlag(Flag.N, (value & 0b1000_0000) != 0);
         _state.SetFlag(Flag.V, false);
     }
 

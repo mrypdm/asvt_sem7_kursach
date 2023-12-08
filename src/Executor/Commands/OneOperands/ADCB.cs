@@ -24,9 +24,9 @@ public class ADCB : OneOperand
         destination(value);
         _state.SetFlag(Flag.Z, value == 0);
         // TODO byte?
-        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) != 0);
-        _state.SetFlag(Flag.V, oldValue == Convert.ToUInt16("077777", 8) && delta == 1);
-        _state.SetFlag(Flag.C, oldValue == Convert.ToUInt16("177777", 8) && delta == 1);
+        _state.SetFlag(Flag.N, (value & 0b1000_0000) != 0);
+        _state.SetFlag(Flag.V, oldValue == 0b111_1111 && delta == 1);
+        _state.SetFlag(Flag.C, oldValue == 0b1111_1111 && delta == 1);
     }
 
     public override ushort Opcode => Convert.ToUInt16("105500", 8);
