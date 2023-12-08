@@ -1,4 +1,6 @@
-﻿namespace Executor.Memories;
+﻿using System.Collections.Generic;
+
+namespace Executor.Memories;
 
 public interface IMemory : IReadOnlyMemory
 {

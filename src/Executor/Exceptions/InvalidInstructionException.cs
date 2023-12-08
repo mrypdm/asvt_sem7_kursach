@@ -1,4 +1,6 @@
-﻿namespace Executor.Exceptions;
+﻿using System;
+
+namespace Executor.Exceptions;
 
 public class InvalidInstructionException : Exception
 {

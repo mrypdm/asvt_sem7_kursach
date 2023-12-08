@@ -1,4 +1,6 @@
-﻿namespace Executor.Arguments.Abstraction;
+﻿using System;
+
+namespace Executor.Arguments.Abstraction;
 
 public interface IRegisterArgument<TValue> : IArgument
 {
