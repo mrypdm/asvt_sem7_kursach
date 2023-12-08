@@ -17,8 +17,10 @@ public class Executor
 
     public ushort StartProgramAddress { get; private set; }
 
+    public ushort StartStackAddress { get; private set; }
+
     public ushort LengthOfProgram { get; private set; }
-    
+
     public string BinaryFile { get; private set; }
 
     public Executor()
@@ -42,27 +44,15 @@ public class Executor
         return 0;
     }
 
-    public async Task LoadProgram(string filename, ushort initStackAddress, ushort initProgramAddress)
+    public async Task Reload()
     {
-        if (initProgramAddress % 2 == 1)
-        {
-            throw new InvalidOperationException("Start address cannot be odd number");
-        }
-        
-        if (initStackAddress % 2 == 1)
-        {
-            throw new InvalidOperationException("Stack address cannot be odd number");
-        }
-        
-        StartProgramAddress = initProgramAddress;
-        BinaryFile = filename;
+        _state.Registers[6] = StartProgramAddress;
+        _state.Registers[7] = StartStackAddress;
 
-        _state.Registers[6] = initStackAddress;
-        _state.Registers[7] = initProgramAddress;
+        using var reader = new StreamReader(BinaryFile);
 
-        using var reader = new StreamReader(filename);
+        var address = StartProgramAddress;
 
-        var address = initProgramAddress;
         while (await reader.ReadLineAsync() is { } line)
         {
             var word = Convert.ToUInt16(line, 8);
@@ -71,5 +61,24 @@ public class Executor
         }
 
         LengthOfProgram = (ushort)(address - StartProgramAddress);
+    }
+
+    public Task LoadProgram(string filename, ushort initStackAddress, ushort initProgramAddress)
+    {
+        if (initProgramAddress % 2 == 1)
+        {
+            throw new InvalidOperationException("Start address cannot be odd number");
+        }
+
+        if (initStackAddress % 2 == 1)
+        {
+            throw new InvalidOperationException("Stack address cannot be odd number");
+        }
+
+        StartProgramAddress = initProgramAddress;
+        StartStackAddress = initStackAddress;
+        BinaryFile = filename;
+
+        return Reload();
     }
 }
