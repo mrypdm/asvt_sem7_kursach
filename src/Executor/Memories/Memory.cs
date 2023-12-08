@@ -1,3 +1,5 @@
+using Executor.Exceptions;
+
 namespace Executor.Memories;
 
 public class Memory : IMemory
@@ -33,7 +35,7 @@ public class Memory : IMemory
     {
         if (address % 2 == 1)
         {
-            throw new InvalidOperationException("Address is not odd. Address of words must be even");
+            throw new OddAddressException(address);
         }
     }
 }
