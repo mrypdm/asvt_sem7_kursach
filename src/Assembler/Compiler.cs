@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Assembler.Tokens;
@@ -53,7 +54,7 @@ public class Compiler
         _tokenBuilder = new TokenBuilder();
     }
 
-    public async Task Compile(IProject project)
+    public async Task Compile(IProject project, string outputFile)
     {
         var mainFile = project.Executable;
         var linkedFiles = project.Files.Where(m => m != mainFile).ToArray();
@@ -109,5 +110,7 @@ public class Compiler
 
         // Printing of final machine code
         PrintMachineCode(codes, marks);
+        
+        await File.WriteAllLinesAsync(outputFile, codes);
     }
 }

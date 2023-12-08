@@ -22,7 +22,7 @@ internal static class Program
         var asm = new Compiler();
         try
         {
-            asm.Compile(project).Wait();
+            asm.Compile(project, "test.bin").Wait();
         }
         catch (Exception ex)
         {
