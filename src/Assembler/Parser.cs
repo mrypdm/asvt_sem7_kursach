@@ -9,30 +9,19 @@ namespace Assembler;
 
 internal class Parser
 {
-    private const string RegexPatternCommandLine = @"^\s*([^\s,:]+:\s*)?(\S+)?\s*([^\s,]+\s*,?\s*){0,}$";
-    private const string RegexPatternRemovingComment = @"^[^;.]+(?=;?)";
-    private const string RegexPatternMarkExistence = @"^\s*[^;]*:";
-
-    private const string
-        RegexPatternMarkValidation = @"^\s*[a-zA-Z]+[a-zA-Z0-9_]*([^:;]\w)*(?=:)"; //^\s*[a-zA-Z]+([^:;]\w)*(?=:)
-
     private static readonly char[] BadSymbols = { ' ', '\t', ',', ':' };
 
-    private readonly Regex _regexMaskCommandLine;
-    private readonly Regex _regexMaskRemovingComment;
-    private readonly Regex _regexMaskMarkExistence;
-    private readonly Regex _regexMaskMarkValidation;
+    private readonly Regex _regexMaskCommandLine =
+        new(@"^\s*([^\s,:]+:\s*)?(\S+)?\s*([^\s,]+\s*,?\s*){0,}$", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-    public Parser()
-    {
-        _regexMaskCommandLine = new Regex(RegexPatternCommandLine, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        _regexMaskRemovingComment =
-            new Regex(RegexPatternRemovingComment, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        _regexMaskMarkExistence =
-            new Regex(RegexPatternMarkExistence, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        _regexMaskMarkValidation =
-            new Regex(RegexPatternMarkValidation, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-    }
+    private readonly Regex _regexMaskRemovingComment =
+        new(@"^[^;.]+(?=;?)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+    private readonly Regex _regexMaskMarkExistence =
+        new(@"^\s*[^;]*:", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+    private readonly Regex _regexMaskMarkValidation =
+        new(@"^\s*[a-zA-Z]+[a-zA-Z0-9_]*([^:;]\w)*(?=:)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
     public async Task<List<CommandLine>> Parse(string filePath)
     {

@@ -9,60 +9,54 @@ namespace Assembler;
 internal record CommandLine
 {
     private const string RegexPatternMarkValidation = @"^\s*[a-zA-Z]+([^:;]\w)*(?=:)";
-    
-    private IReadOnlySet<string> _marks;
-    private string _instructionMnemonics;
-    private List<string> _args;
 
     /// <summary>
     /// Creates new instance of command line
     /// </summary>
-    /// <param name="mark">Symbol mark of line</param>
-    /// <param name="instruction">Instruction to execute</param>
+    /// <param name="marks">Symbol marks of line</param>
+    /// <param name="instructionMnemonics">Instruction to execute</param>
     /// <param name="args">Arguments of instruction</param>
     public CommandLine(IEnumerable<string> marks, string instructionMnemonics, IEnumerable<string> args)
     {
-        _marks = marks.ToHashSet();
-        _instructionMnemonics = instructionMnemonics;
-        _args = args.ToList();
+        Marks = marks.ToHashSet();
+        InstructionMnemonics = instructionMnemonics;
+        Arguments = args.ToList();
     }
 
-    public bool ThrowIfInvalid()
+    public void ThrowIfInvalid()
     {
         // Mnemonics validation
-        if (!string.IsNullOrWhiteSpace(_instructionMnemonics))
+        if (string.IsNullOrWhiteSpace(InstructionMnemonics))
         {
-            if (!Instruction.Instructions.ContainsKey(_instructionMnemonics))
-            {
-                throw new System.Exception($"Unexisting instruction: {_instructionMnemonics}.");
-            }
-
-            if (_args.Count() != Instruction.Instructions[_instructionMnemonics].ArgumentsCount)
-            {
-                throw new System.Exception(
-                    $"Incorrect number of argumants: {_instructionMnemonics}. " +
-                    $"Must be {Instruction.Instructions[_instructionMnemonics].ArgumentsCount}. " +
-                    $"Given: {_args.Count()}.");
-            }
+            return;
         }
 
-        // Mark validation
+        if (!Instruction.Instructions.ContainsKey(InstructionMnemonics))
+        {
+            throw new System.Exception($"Unexisting instruction: {InstructionMnemonics}.");
+        }
 
-        return true;
+        if (Arguments.Count != Instruction.Instructions[InstructionMnemonics].ArgumentsCount)
+        {
+            throw new System.Exception(
+                $"Incorrect number of arguments: {InstructionMnemonics}. " +
+                $"Must be {Instruction.Instructions[InstructionMnemonics].ArgumentsCount}, " +
+                $"but was: {Arguments.Count}.");
+        }
     }
 
     /// <summary>
     /// Symbol mark for line
     /// </summary>
-    public IEnumerable<string> Marks => _marks;
+    public IEnumerable<string> Marks { get; }
 
     /// <summary>
     /// Instruction to execute
     /// </summary>
-    public string InstructionMnemonics => _instructionMnemonics;
+    public string InstructionMnemonics { get; }
 
     /// <summary>
     /// Arguments for instruction
     /// </summary>
-    public List<string> Arguments => _args;
+    public List<string> Arguments { get; }
 }

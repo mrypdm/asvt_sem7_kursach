@@ -5,7 +5,7 @@ namespace Assembler.Tokens;
 
 internal class RawToken : IToken
 {
-    private int _machineCode;
+    private readonly int _machineCode;
 
     public RawToken(int machineCode)
     {
@@ -14,6 +14,6 @@ internal class RawToken : IToken
 
     public IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
     {
-        return new List<string>() { Convert.ToString(_machineCode, 8).PadLeft(6, '0') };
+        return new[] { Convert.ToString(_machineCode, 8).PadLeft(6, '0') };
     }
 }

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Assembler.Tokens;
 
-internal class OPShiftToken : IToken
+internal class ShiftOperationToken : IToken
 {
-    private int _machineCode;
-    private string _mark;
+    private readonly int _machineCode;
+    private readonly string _mark;
 
-    public OPShiftToken(int machineCode, string mark)
+    public ShiftOperationToken(int machineCode, string mark)
     {
         _machineCode = machineCode;
         _mark = mark;
@@ -16,10 +16,9 @@ internal class OPShiftToken : IToken
 
     public IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
     {
-        int delta;
-        if (marksDict.TryGetValue(_mark, out delta))
+        if (marksDict.TryGetValue(_mark, out var delta))
         {
-            delta = delta - currentAddr;
+            delta -= currentAddr;
         }
         else
         {
@@ -34,6 +33,6 @@ internal class OPShiftToken : IToken
 
         var shiftValue = delta / 2 - 1;
 
-        return new List<string>() { Convert.ToString(_machineCode | shiftValue, 8).PadLeft(6, '0') };
+        return new List<string> { Convert.ToString(_machineCode | shiftValue, 8).PadLeft(6, '0') };
     }
 }

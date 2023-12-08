@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Assembler.Tokens;
 
-internal class MarkRDToken : IToken
+internal class MarkRelatedToken : IToken
 {
-    private string _mark;
+    private readonly string _mark;
 
-    public MarkRDToken(string mark)
+    public MarkRelatedToken(string mark)
     {
         _mark = mark;
     }
@@ -26,9 +26,7 @@ internal class MarkRDToken : IToken
             throw new Exception($"The distance to the mark ({_mark}) is too large. {delta}");
         }
 
-        var relDist = Convert.ToString(Convert.ToInt16(delta - 2), 8);
-        relDist = relDist.PadLeft(6, '0');
-
-        return new List<string>() { relDist };
+        var relDist = Convert.ToString(Convert.ToInt16(delta - 2), 8).PadLeft(6, '0');
+        return new[] { relDist };
     }
 }
