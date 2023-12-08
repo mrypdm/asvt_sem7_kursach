@@ -1,10 +1,8 @@
 ﻿namespace Executor.Memories;
 
-public interface IMemory
+public interface IMemory : IReadOnlyMemory
 {
-    ushort GetWord(ushort address);
-
-    byte GetByte(ushort address);
+    IReadOnlyCollection<byte> Data { get; }
 
     void SetWord(ushort address, ushort value);
 

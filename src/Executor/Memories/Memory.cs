@@ -6,12 +6,14 @@ public class Memory : IMemory
 {
     private readonly byte[] _memory = new byte[65026];
 
+    public IReadOnlyCollection<byte> Data => _memory;
+
     public byte GetByte(ushort address) => _memory[address];
 
     public ushort GetWord(ushort address)
     {
         ThrowIfOdd(address);
-        
+
         var lowByte = (ushort)_memory[address];
         var highByte = (ushort)_memory[address + 1];
 
