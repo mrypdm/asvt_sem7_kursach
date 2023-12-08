@@ -8,12 +8,14 @@ public class Memory : IMemory
 
     public byte GetByte(ushort address) => _memory[address];
 
+    public IReadOnlyCollection<byte> GetMemory() => _memory;
+
     public ushort GetWord(ushort address)
     {
         ThrowIfOdd(address);
-        
-        var lowByte = (ushort)_memory[address];
-        var highByte = (ushort)_memory[address + 1];
+
+        var lowByte = _memory[address];
+        var highByte = _memory[address + 1];
 
         return (ushort)((highByte << 8) | lowByte);
     }

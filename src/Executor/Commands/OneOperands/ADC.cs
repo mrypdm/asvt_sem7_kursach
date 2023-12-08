@@ -17,15 +17,15 @@ public class ADC : OneOperand
         var validatedArgument = ValidateArgument<IRegisterArgument<ushort>>(arguments);
         var (source, destination) = validatedArgument.GetSourceAndDestination();
 
-        var delta = _state.GetFlag(Flag.C) ? 1 : 0;
+        var delta = _state.C ? 1 : 0;
         var oldValue = source();
         var value = (byte)(oldValue + delta);
 
         destination(value);
-        _state.SetFlag(Flag.Z, value == 0);
-        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) != 0);
-        _state.SetFlag(Flag.V, oldValue == Convert.ToUInt16("077777", 8) && delta == 1);
-        _state.SetFlag(Flag.C, oldValue == Convert.ToUInt16("177777", 8) && delta == 1);
+        _state.Z = value == 0;
+        _state.N = (value & 0b1000_0000_0000_0000) != 0;
+        _state.V = oldValue == Convert.ToUInt16("077777", 8) && delta == 1;
+        _state.C = oldValue == Convert.ToUInt16("177777", 8) && delta == 1;
     }
 
     public override ushort Opcode => Convert.ToUInt16("005500", 8);

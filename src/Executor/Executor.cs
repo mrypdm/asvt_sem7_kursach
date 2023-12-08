@@ -1,6 +1,5 @@
 using Executor.States;
 using Executor.Memories;
-using Executor.CommandTypes;
 
 namespace Executor;
 
@@ -9,6 +8,18 @@ public class Executor
     private readonly IState _state;
     private readonly IMemory _memory;
     private readonly OpcodeIdentifier _opcodeIdentifier;
+
+    public ushort PSW => _state.ProcessorStateWord;
+
+    public IReadOnlyCollection<ushort> Registers => _state.Registers;
+
+    public IReadOnlyMemory Memory => _memory;
+
+    public ushort StartProgramAddress { get; private set; }
+
+    public ushort LengthOfProgram { get; private set; }
+    
+    public string BinaryFile { get; private set; }
 
     public Executor()
     {
@@ -33,6 +44,19 @@ public class Executor
 
     public async Task LoadProgram(string filename, ushort initStackAddress, ushort initProgramAddress)
     {
+        if (initProgramAddress % 2 == 1)
+        {
+            throw new InvalidOperationException("Start address cannot be odd number");
+        }
+        
+        if (initStackAddress % 2 == 1)
+        {
+            throw new InvalidOperationException("Stack address cannot be odd number");
+        }
+        
+        StartProgramAddress = initProgramAddress;
+        BinaryFile = filename;
+
         _state.Registers[6] = initStackAddress;
         _state.Registers[7] = initProgramAddress;
 
@@ -45,5 +69,7 @@ public class Executor
             _memory.SetWord(address, word);
             address += 2;
         }
+
+        LengthOfProgram = (ushort)(address - StartProgramAddress);
     }
 }

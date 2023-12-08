@@ -20,10 +20,10 @@ public class INCB : OneOperand
         var value = (byte)(source() + 1);
 
         destination(value);
-        _state.SetFlag(Flag.Z, value == 0);
+        _state.Z = value == 0;
         // TODO byte?
-        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
-        _state.SetFlag(Flag.V, value == Convert.ToUInt16("077777", 8));
+        _state.N = (value & 0b1000_0000_0000_0000) > 0;
+        _state.V = value == Convert.ToUInt16("077777", 8);
     }
 
     public override ushort Opcode => Convert.ToUInt16("105200", 8);

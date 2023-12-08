@@ -14,7 +14,7 @@ public class BMI : BranchOperation
     public override void Execute(IArgument[] arguments)
     {
         var validatedArgument = ValidateArgument<IOffsetArgument>(arguments);
-        if (_state.GetFlag(Flag.N))
+        if (_state.N)
         {
             int value = validatedArgument.GetOffset();;
             value = (value & 128) > 0 ? -(127 & value) : value;

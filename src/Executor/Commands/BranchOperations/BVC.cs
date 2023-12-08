@@ -14,7 +14,7 @@ public class BVC : BranchOperation
     public override void Execute(IArgument[] arguments)
     {
         var validatedArgument = ValidateArgument<IOffsetArgument>(arguments);
-        if (!_state.GetFlag(Flag.V))
+        if (!_state.V)
         {
             int value = validatedArgument.GetOffset();;
             value = (value & 128) > 0 ? -(127 & value) : value;

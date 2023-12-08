@@ -20,9 +20,9 @@ public class BISB : TwoOperand
         var value = (byte)(source0() | source1());
 
         validatedArguments[1].SetValue(value);
-        _state.SetFlag(Flag.Z, value == 0);
-        _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
-        _state.SetFlag(Flag.V, false);
+        _state.Z = value == 0;
+        _state.N = (value & 0b1000_0000_0000_0000) > 0;
+        _state.V = false;
     }
 
     public override ushort Opcode => Convert.ToUInt16("150000", 8);

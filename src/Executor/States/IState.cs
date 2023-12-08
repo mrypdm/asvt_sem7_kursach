@@ -2,9 +2,19 @@
 
 public interface IState
 {
-    void SetFlag(Flag flag, bool val);
+    ushort ProcessorStateWord { get; set; }
+    
+    bool C { get; set; }
+    
+    bool V { get; set; }
+    
+    bool Z { get; set; }
 
-    bool GetFlag(Flag flag);
+    bool N { get; set; }
+    
+    bool T { get; }
+    
+    int Priority { get; set; }
 
-    ushort[] Registers { get; set; }
+    ushort[] Registers { get; }
 }

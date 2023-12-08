@@ -14,7 +14,7 @@ public class BNE : BranchOperation
     public override void Execute(IArgument[] arguments)
     {
         var validatedArgument = ValidateArgument<IOffsetArgument>(arguments);
-        if (!_state.GetFlag(Flag.Z))
+        if (!_state.Z)
         {
             int value = validatedArgument.GetOffset();;
             value = (value & 128) > 0 ? -(127 & value) : value;

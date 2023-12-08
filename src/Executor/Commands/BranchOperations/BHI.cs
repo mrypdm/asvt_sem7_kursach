@@ -14,7 +14,7 @@ public class BHI : BranchOperation
     public override void Execute(IArgument[] arguments)
     {
         var validatedArgument = ValidateArgument<IOffsetArgument>(arguments);
-        if (!_state.GetFlag(Flag.C) && !_state.GetFlag(Flag.Z))
+        if (!_state.C && !_state.Z)
         {
             int value = validatedArgument.GetOffset();;
             value = (value & 128) > 0 ? -(127 & value) : value;
