@@ -1,5 +1,6 @@
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Exceptions;
 using Executor.Memories;
 using Executor.States;
 
@@ -15,7 +16,7 @@ public class HALT : BaseCommand
 
     public override void Execute(IArgument[] arguments)
     {
-        _state.Stop = true;
+        throw new HaltException(true);
     }
 
     public override ushort Opcode => Convert.ToUInt16("000000", 8);
