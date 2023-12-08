@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using Assembler;
 using Avalonia.Controls;
-using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Devices.Providers;
 using Devices.Validators;
@@ -66,6 +66,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         OpenProjectCommand = ReactiveCommand.CreateFromTask(async () => { await OpenProjectAsync(); });
         OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindowAsync);
         OpenExecutorWindowCommand = ReactiveCommand.CreateFromTask(OpenExecutorWindowAsync);
+        BuildProjectCommand = ReactiveCommand.CreateFromTask(BuildProjectAsync);
 
         _fileManager = fileManager;
         _messageBoxManager = messageBoxManager;
@@ -131,6 +132,9 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
     /// <inheritdoc />
     public ReactiveCommand<Unit, Unit> OpenExecutorWindowCommand { get; }
+
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> BuildProjectCommand { get; }
 
     public string WindowTitle => _projectManager?.IsOpened == true
         ? $"{DefaultWindowTitle} - {_projectManager.Project.ProjectName}"
@@ -572,6 +576,8 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
     #endregion
 
+    #region Windows
+
     /// <summary>
     /// Opens <see cref="SettingsWindow"/>
     /// </summary>
@@ -590,6 +596,8 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         var viewModel = _windowProvider.CreateWindow<ExecutorWindow, ExecutorViewModel>(_messageBoxManager);
         await viewModel.ShowDialog(View);
     }
+
+    #endregion
 
     #region Handlers
 
@@ -634,4 +642,24 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     }
 
     #endregion
+
+    private string GetBinPath() =>
+        PathHelper.Combine(_projectManager.Project.ProjectDirectory, $"{_projectManager.Project.ProjectName}.bin");
+
+    private async Task BuildProjectAsync()
+    {
+        await SaveAllFilesAsync();
+
+        var assembler = new Compiler();
+
+        try
+        {
+            await assembler.Compile(_projectManager.Project, GetBinPath());
+            await _messageBoxManager.ShowMessageBoxAsync("Build", "Completed", ButtonEnum.Ok, Icon.Info, View);
+        }
+        catch (Exception e)
+        {
+            await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
+        }
+    }
 }
