@@ -15,11 +15,6 @@ public class JMP : OneOperand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        if (GetMode(word) == 0)
-        {
-            throw new InvalidInstructionException("JMP cannot be addressed with mode 0");
-        }
-
         return new IArgument[]
         {
             new RegisterWordArgument(_memory, _state, GetMode(word), GetRegister(word))
@@ -29,6 +24,12 @@ public class JMP : OneOperand
     public override void Execute(IArgument[] arguments)
     {
         var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments);
+
+        if (validatedArgument.Mode == 0)
+        {
+            throw new InvalidInstructionException("JMP cannot be addressed with mode 0");
+        }
+        
         _state.Registers[7] = validatedArgument.GetWord();
     }
 
