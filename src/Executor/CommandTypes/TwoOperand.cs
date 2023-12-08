@@ -49,7 +49,7 @@ public abstract class TwoOperand : BaseCommand
             throw new ArgumentException("Count of arguments must be 2", nameof(arguments));
         }
         
-        if (arguments[0].GetType() != typeof(TType) || arguments[1].GetType() != typeof(TType))
+        if (arguments[0] is not TType || arguments[1] is not TType)
         {
             throw new InvalidArgumentTypeException(new[] { typeof(TType) },
                 arguments.Select(m => m.GetType()));

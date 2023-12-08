@@ -41,7 +41,7 @@ public abstract class OneOperand : BaseCommand
             throw new ArgumentException("Count of arguments must be 1", nameof(arguments));
         }
         
-        if (arguments[0].GetType() != typeof(TType))
+        if (arguments[0] is not TType)
         {
             throw new InvalidArgumentTypeException(new[] { typeof(TType) }, new[] { arguments[0].GetType() });
         }

@@ -11,12 +11,7 @@ public class BR : BranchOperation
     {
     }
 
-    public override void Execute(IArgument[] arguments)
-    {
-        int value = (int)(arguments[0].GetValue());
-        value = (value & 128) > 0 ? -(127 & value) : value;
-        _state.Registers[7] = (ushort)(_state.Registers[7] + 2 * value);
-    }
+    public override void Execute(IArgument[] arguments) => UpdateProgramCounter(arguments);
 
     public override ushort Opcode => Convert.ToUInt16("000400", 8);
 }
