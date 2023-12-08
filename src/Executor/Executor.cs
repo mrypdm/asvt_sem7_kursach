@@ -29,8 +29,6 @@ public class Executor
 
     public IProject Project { get; private set; }
 
-    public string BinaryFile { get; private set; }
-
     public Executor()
     {
         _state = new State();
@@ -67,7 +65,7 @@ public class Executor
         _state.Registers[6] = Project.StackAddress;
         _state.Registers[7] = Project.ProgramAddress;
 
-        using var reader = new StreamReader(BinaryFile);
+        using var reader = new StreamReader(Project.ProjectBinary);
 
         // file format:
         // 000000 - code section
@@ -102,7 +100,7 @@ public class Executor
         }
     }
 
-    public Task LoadProgram(IProject project, string filename)
+    public Task LoadProgram(IProject project)
     {
         if (project.ProgramAddress % 2 == 1)
         {
@@ -115,7 +113,6 @@ public class Executor
         }
 
         Project = project;
-        BinaryFile = filename;
 
         return Reload();
     }
