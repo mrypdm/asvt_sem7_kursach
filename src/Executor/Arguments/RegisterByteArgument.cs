@@ -1,9 +1,10 @@
+using Executor.Arguments.Abstraction;
 using Executor.Memories;
 using Executor.States;
 
 namespace Executor.Arguments;
 
-public class RegisterByteArgument : BaseArgument
+public class RegisterByteArgument : BaseArgument, IByteRegisterArgument
 {
     public RegisterByteArgument(IMemory memory, IState state, ushort mode, ushort register) : base(memory, state)
     {
@@ -17,7 +18,11 @@ public class RegisterByteArgument : BaseArgument
 
     private ushort Delta => (ushort)(Register < 6 ? 1 : 2);
 
-    public override ushort GetValue()
+    public override object GetValue() => GetByte();
+
+    public override void SetValue(object obj) => SetByte((byte)obj);
+
+    public byte GetByte()
     {
         ushort addr;
         ushort offset;
@@ -25,7 +30,7 @@ public class RegisterByteArgument : BaseArgument
         switch (Mode)
         {
             case 0:
-                return (ushort)(State.Registers[Register] & 0xFF);
+                return (byte)(State.Registers[Register] & 0xFF);
             case 1:
                 return Memory.GetByte(State.Registers[Register]);
             case 2:
@@ -57,10 +62,8 @@ public class RegisterByteArgument : BaseArgument
         }
     }
 
-    public override void SetValue(ushort word)
+    public void SetByte(byte value)
     {
-        var value = (byte)word;
-        
         ushort addr;
         ushort offset;
 

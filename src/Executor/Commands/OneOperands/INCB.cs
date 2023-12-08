@@ -1,4 +1,4 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
@@ -14,8 +14,9 @@ public class INCB : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var value = arguments[0].GetValue();
-        arguments[0].SetValue((ushort)(value+1));
+        var validatedArgument = ValidateArgument<IByteRegisterArgument>(arguments[0]);
+        var value = validatedArgument.GetByte() + 1;
+        validatedArgument.SetByte((byte)value);
     }
 
     public override ushort Opcode => Convert.ToUInt16("105200", 8);

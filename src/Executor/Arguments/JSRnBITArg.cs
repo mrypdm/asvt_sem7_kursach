@@ -9,12 +9,12 @@ public class JSRnBITArg : BaseArgument // Надо разделить
     private ushort _register1;
     private ushort _register2;
 
-    public override ushort GetValue()
+    public override object GetValue()
     {
         return 0;
     }
 
-    public override void SetValue(ushort word)
+    public override void SetValue(object obj)
     {
     }
 

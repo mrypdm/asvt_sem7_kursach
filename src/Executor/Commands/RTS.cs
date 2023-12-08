@@ -1,4 +1,5 @@
 using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
@@ -27,5 +28,5 @@ public class RTS : BaseCommand
     {
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("000200", 8);
+    public override ushort Opcode => Convert.ToUInt16("000200", 8);
 }

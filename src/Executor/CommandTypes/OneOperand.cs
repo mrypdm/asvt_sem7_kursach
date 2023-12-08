@@ -1,6 +1,8 @@
+using Executor.Arguments;
 using Executor.Memories;
 using Executor.States;
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
+using Executor.Exceptions;
 
 namespace Executor.CommandTypes;
 
@@ -22,13 +24,24 @@ public abstract class OneOperand : BaseCommand
         {
             return new IArgument[]
             {
-            new RegisterByteArgument(_memory, _state, GetMode(word), GetRegister(word))
+                new RegisterByteArgument(_memory, _state, GetMode(word), GetRegister(word))
             };
         }
+
         return new IArgument[]
         {
             new RegisterWordArgument(_memory, _state, GetMode(word), GetRegister(word))
         };
+    }
+
+    protected TType ValidateArgument<TType>(IArgument argument) where TType : class
+    {
+        if (argument.GetType() != typeof(TType))
+        {
+            throw new InvalidArgumentTypeException(new[] { typeof(TType) }, new[] { argument.GetType() });
+        }
+
+        return (TType)argument;
     }
 
     protected OneOperand(IMemory memory, IState state) : base(memory, state)

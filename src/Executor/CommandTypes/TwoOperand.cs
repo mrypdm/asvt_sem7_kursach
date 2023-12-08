@@ -1,6 +1,8 @@
+using Executor.Arguments;
 using Executor.Memories;
 using Executor.States;
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
+using Executor.Exceptions;
 
 namespace Executor.CommandTypes;
 
@@ -28,15 +30,27 @@ public abstract class TwoOperand : BaseCommand
         {
             return new IArgument[]
             {
-            new RegisterByteArgument(_memory, _state, GetMode1(word), GetRegister1(word)),
-            new RegisterByteArgument(_memory, _state, GetMode2(word), GetRegister2(word))
+                new RegisterByteArgument(_memory, _state, GetMode1(word), GetRegister1(word)),
+                new RegisterByteArgument(_memory, _state, GetMode2(word), GetRegister2(word))
             };
         }
+
         return new IArgument[]
         {
             new RegisterWordArgument(_memory, _state, GetMode1(word), GetRegister1(word)),
             new RegisterWordArgument(_memory, _state, GetMode2(word), GetRegister2(word))
         };
+    }
+
+    protected TType[] ValidateArguments<TType>(IArgument[] arguments) where TType : class
+    {
+        if (arguments[0].GetType() != typeof(TType) || arguments[1].GetType() != typeof(TType))
+        {
+            throw new InvalidArgumentTypeException(new[] { typeof(TType) },
+                arguments.Select(m => m.GetType()));
+        }
+
+        return arguments.Select(m => (TType)m).ToArray();
     }
 
     protected TwoOperand(IMemory memory, IState state) : base(memory, state)

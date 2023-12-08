@@ -1,4 +1,4 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
@@ -13,7 +13,8 @@ public class CLRB : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        arguments[0].SetValue(0);
+        var validatedArgument = ValidateArgument<IByteRegisterArgument>(arguments[0]);
+        validatedArgument.SetByte(0);
     }
 
     public override ushort Opcode => Convert.ToUInt16("105000", 8);

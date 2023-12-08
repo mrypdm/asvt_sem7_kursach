@@ -1,4 +1,4 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
@@ -14,8 +14,10 @@ public class ADC : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var value = arguments[0].GetValue();
-        arguments[0].SetValue((ushort)(value - (_state.GetFlag(Flag.C) ? 1 : 0)));
+        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments[0]);
+        var delta = _state.GetFlag(Flag.C) ? 1 : 0;
+        var value = validatedArgument.GetWord() + delta;
+        validatedArgument.SetWord((ushort)value);
     }
 
     public override ushort Opcode => Convert.ToUInt16("005500", 8);

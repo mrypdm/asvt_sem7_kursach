@@ -1,4 +1,4 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
@@ -13,8 +13,8 @@ public class JMP : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var value = arguments[0].GetValue();
-        _state.Registers[7] = value;
+        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments[0]);
+        _state.Registers[7] = validatedArgument.GetWord();
     }
 
     public override ushort Opcode => Convert.ToUInt16("000100", 8);

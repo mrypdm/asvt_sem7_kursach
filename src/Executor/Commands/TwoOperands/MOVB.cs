@@ -1,4 +1,4 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
@@ -13,9 +13,9 @@ public class MOVB : TwoOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var value = arguments[0].GetValue();
-        arguments[1].SetValue(value);
+        var validatedArguments = ValidateArguments<IByteRegisterArgument>(arguments);
+        validatedArguments[1].SetByte(validatedArguments[0].GetByte());
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("110000", 8);
+    public override ushort Opcode => Convert.ToUInt16("110000", 8);
 }

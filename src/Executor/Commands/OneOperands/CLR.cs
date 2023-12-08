@@ -1,4 +1,4 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
@@ -14,7 +14,8 @@ public class CLR : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        arguments[0].SetValue(0);
+        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments[0]);
+        validatedArgument.SetWord(0);
     }
 
     public override ushort Opcode => Convert.ToUInt16("005000", 8);

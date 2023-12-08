@@ -1,4 +1,4 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
@@ -21,5 +21,5 @@ public class BHI : BranchOperation
         }
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("101000", 8);
+    public override ushort Opcode => Convert.ToUInt16("101000", 8);
 }

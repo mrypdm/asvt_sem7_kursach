@@ -1,4 +1,5 @@
 using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
@@ -36,5 +37,5 @@ public class JSR : BaseCommand
     {
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("004000", 8);
+    public override ushort Opcode => Convert.ToUInt16("004000", 8);
 }

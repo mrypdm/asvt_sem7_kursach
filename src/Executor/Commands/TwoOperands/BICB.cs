@@ -1,4 +1,4 @@
-using Executor.Arguments;
+using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
@@ -13,8 +13,9 @@ public class BICB : TwoOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        arguments[1].SetValue((ushort)(arguments[1].GetValue() & (ushort)(~arguments[0].GetValue())));
+        var validatedArguments = ValidateArguments<IByteRegisterArgument>(arguments);
+        validatedArguments[1].SetByte((byte)(validatedArguments[0].GetByte() & ~validatedArguments[1].GetByte()));
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("140000", 8);
+    public override ushort Opcode => Convert.ToUInt16("140000", 8);
 }

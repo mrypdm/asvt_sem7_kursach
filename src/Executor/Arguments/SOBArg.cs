@@ -1,3 +1,4 @@
+using Executor.Exceptions;
 using Executor.Memories;
 using Executor.States;
 
@@ -8,15 +9,12 @@ public class SOBArg : BaseArgument
     private ushort _offset;
     private ushort _register;
 
-    public override ushort GetValue()
+    public override object GetValue()
     {
         return 0;
     }
 
-    public override void SetValue(ushort word)
-    {
-        throw new InvalidOperationException("Can't set value for this argument!");
-    }
+    public override void SetValue(object word) => throw new ReadOnlyArgumentException(typeof(SOBArg));
 
     public SOBArg(IMemory memory, IState state, ushort register, ushort offset) : base(memory, state)
     {
