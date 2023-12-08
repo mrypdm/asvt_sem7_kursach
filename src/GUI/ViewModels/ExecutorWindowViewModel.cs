@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Threading;
 using System.Threading.Tasks;
 using GUI.Extensions;
 using GUI.MessageBoxes;
@@ -16,10 +17,14 @@ namespace GUI.ViewModels;
 public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindowViewModel
 {
     private readonly IMessageBoxManager _messageBoxManager;
+    private readonly Executor.Executor _executor;
     private bool _memoryAsWord = true;
     private Tab _currentTab = Tab.State;
 
     private ObservableCollection<IMemoryModel> _memory;
+    private ObservableCollection<CodeModel> _code;
+
+    private CancellationTokenSource _cancelRunToken;
 
     /// <summary>
     /// Constructor for designer
@@ -33,25 +38,30 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     /// </summary>
     /// <param name="view">Executor window</param>
     /// <param name="messageBoxManager">Message box manager</param>
-    public ExecutorViewModel(ExecutorWindow view, IMessageBoxManager messageBoxManager) : base(view)
+    /// <param name="executor">Executor</param>
+    public ExecutorViewModel(ExecutorWindow view, IMessageBoxManager messageBoxManager, Executor.Executor executor) :
+        base(view)
     {
         _messageBoxManager = messageBoxManager;
+        _executor = executor;
 
         StartExecutionCommand = ReactiveCommand.CreateFromTask(RunAsync);
-        PauseExecutionCommand = ReactiveCommand.CreateFromTask(PauseAsync);
-        MakeStepCommand = ReactiveCommand.CreateFromTask(MakeStepAsync);
+        PauseExecutionCommand = ReactiveCommand.Create(PauseAsync);
+        MakeStepCommand = ReactiveCommand.CreateFromTask(async () => { await MakeStepAsync(); });
         ResetExecutorCommand = ReactiveCommand.CreateFromTask(ResetExecutorAsync);
         ChangeMemoryModeCommand = ReactiveCommand.Create(ChangeMemoryMode);
         FindAddressCommand = ReactiveCommand.CreateFromTask<string>(FindAddressAsync);
 
         Tabs = Enum.GetValues<Tab>().ToObservableCollection();
-        Registers = Array.Empty<RegisterModel>().ToObservableCollection();
-        ProcessorStateWord = Array.Empty<ProcessorStateWordModel>().ToObservableCollection();
-        Memory = Array.Empty<IMemoryModel>().ToObservableCollection();
+        Memory = AsWords().ToObservableCollection();
         Devices = Array.Empty<Device>().ToObservableCollection();
         CodeLines = Array.Empty<CodeModel>().ToObservableCollection();
 
+        InitCode();
+
         InitContext();
+
+        View.CodeGrid.SelectedIndex = 0;
     }
 
     /// <inheritdoc />
@@ -74,11 +84,13 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
 
     // TODO
     /// <inheritdoc />
-    public ObservableCollection<RegisterModel> Registers { get; }
+    public ObservableCollection<RegisterModel> Registers =>
+        _executor.Registers.Select((m, i) => new RegisterModel($"R{i}", m)).ToObservableCollection();
 
     // TODO
     /// <inheritdoc />
-    public ObservableCollection<ProcessorStateWordModel> ProcessorStateWord { get; }
+    public ObservableCollection<ProcessorStateWordModel> ProcessorStateWord =>
+        new[] { new ProcessorStateWordModel(_executor.PSW) }.ToObservableCollection();
 
     // TODO
     /// <inheritdoc />
@@ -94,7 +106,11 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
 
     // TODO
     /// <inheritdoc />
-    public ObservableCollection<CodeModel> CodeLines { get; }
+    public ObservableCollection<CodeModel> CodeLines
+    {
+        get => _code;
+        set => this.RaiseAndSetIfChanged(ref _code, value);
+    }
 
     /// <inheritdoc />
     public ObservableCollection<Tab> Tabs { get; }
@@ -125,13 +141,50 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     public bool IsDevicesVisible => CurrentTab == Tab.Devices;
 
     // TODO
-    private Task MakeStepAsync() => Task.CompletedTask;
+    private async Task<bool> MakeStepAsync()
+    {
+        try
+        {
+            await Task.Run(() => _executor.ExecuteNextInstruction());
+            this.RaisePropertyChanged(nameof(Memory));
+            this.RaisePropertyChanged(nameof(CodeLines));
+            this.RaisePropertyChanged(nameof(Registers));
+            this.RaisePropertyChanged(nameof(ProcessorStateWord));
+
+            var line = CodeLines.First(m => m.Address == Convert.ToString(_executor.Registers.ElementAt(7), 8));
+            var index = CodeLines.IndexOf(line);
+
+            View.CodeGrid.SelectedIndex = index;
+        }
+        catch (Exception e)
+        {
+            await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
+            return false;
+        }
+
+        return true;
+    }
 
     // TODO
-    private Task RunAsync() => Task.CompletedTask;
+    private async Task RunAsync()
+    {
+        _cancelRunToken = new CancellationTokenSource();
+
+        while (!_cancelRunToken.IsCancellationRequested && await MakeStepAsync())
+        {
+        }
+
+        this.RaisePropertyChanged(nameof(Memory));
+        this.RaisePropertyChanged(nameof(CodeLines));
+        this.RaisePropertyChanged(nameof(Registers));
+        this.RaisePropertyChanged(nameof(ProcessorStateWord));
+
+        _cancelRunToken.Dispose();
+        _cancelRunToken = null;
+    }
 
     // TODO
-    private Task PauseAsync() => Task.CompletedTask;
+    private void PauseAsync() => _cancelRunToken?.Cancel();
 
     // TODO
     private Task ResetExecutorAsync() => Task.CompletedTask;
@@ -144,10 +197,18 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     }
 
     // TODO
-    private IEnumerable<IMemoryModel> AsWords() => Array.Empty<IMemoryModel>();
+    private IEnumerable<IMemoryModel> AsWords()
+    {
+        var count = _executor.Memory.GetMemory().Count;
+        for (ushort i = 0; i < count; i += 2)
+        {
+            yield return new WordModel(i, _executor.Memory.GetWord(i));
+        }
+    }
 
     // TODO
-    private IEnumerable<IMemoryModel> AsBytes() => Array.Empty<IMemoryModel>();
+    private IEnumerable<IMemoryModel> AsBytes()
+        => _executor.Memory.GetMemory().Select((m, i) => new ByteModel((ushort)i, m));
 
     private async Task FindAddressAsync(string text)
     {
@@ -167,5 +228,17 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
 
         View.MemoryGrid.SelectedIndex = address;
         View.MemoryGrid.ScrollIntoView(View.MemoryGrid.SelectedItem, View.MemoryGrid.Columns.FirstOrDefault());
+    }
+
+    private void InitCode()
+    {
+        CodeLines = new ObservableCollection<CodeModel>();
+        var start = _executor.StartProgramAddress;
+        var count = _executor.LengthOfProgram;
+
+        for (var i = start; i <= start + count; i += 2)
+        {
+            CodeLines.Add(new CodeModel(i, _executor.Memory.GetWord(i), string.Empty));
+        }
     }
 }
