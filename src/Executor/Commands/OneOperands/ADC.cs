@@ -14,7 +14,7 @@ public class ADC : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments);
         var delta = _state.GetFlag(Flag.C) ? 1 : 0;
         var oldValue = validatedArgument.GetWord();
         var value = (byte)(oldValue + delta);

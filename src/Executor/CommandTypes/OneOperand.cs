@@ -34,14 +34,19 @@ public abstract class OneOperand : BaseCommand
         };
     }
 
-    protected TType ValidateArgument<TType>(IArgument argument) where TType : class
+    protected TType ValidateArgument<TType>(IArgument[] arguments) where TType : class
     {
-        if (argument.GetType() != typeof(TType))
+        if (arguments.Length != 1)
         {
-            throw new InvalidArgumentTypeException(new[] { typeof(TType) }, new[] { argument.GetType() });
+            throw new ArgumentException("Count of arguments must be 1", nameof(arguments));
+        }
+        
+        if (arguments[0].GetType() != typeof(TType))
+        {
+            throw new InvalidArgumentTypeException(new[] { typeof(TType) }, new[] { arguments[0].GetType() });
         }
 
-        return (TType)argument;
+        return (TType)arguments[0];
     }
 
     protected OneOperand(IMemory memory, IState state) : base(memory, state)

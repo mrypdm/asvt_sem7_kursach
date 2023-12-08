@@ -13,7 +13,7 @@ public class DEC : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments);
         var value = (ushort)(validatedArgument.GetWord() - 1);
 
         validatedArgument.SetWord(value);

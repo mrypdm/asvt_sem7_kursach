@@ -14,11 +14,12 @@ public class INCB : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IByteRegisterArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<IByteRegisterArgument>(arguments);
         var value = (byte)(validatedArgument.GetByte() + 1);
 
         validatedArgument.SetByte(value);
         _state.SetFlag(Flag.Z, value == 0);
+        // TODO byte?
         _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);
         _state.SetFlag(Flag.V, value == Convert.ToUInt16("077777", 8));
     }

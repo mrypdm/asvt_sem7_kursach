@@ -31,12 +31,13 @@ public class JSR : BaseCommand
         {
             throw new InvalidOperationException("Can't address with mode 0!");
         }
+
         return new IArgument[]
         {
             new JSRnBITArg(_memory, _state, GetRegister1(word), GetMode(word), GetRegister2(word))
         };
     }
-    
+
     public override void Execute(IArgument[] arguments)
     {
     }

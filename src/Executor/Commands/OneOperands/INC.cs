@@ -13,9 +13,9 @@ public class INC : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments[0]);
-        var value = validatedArgument.GetWord() + 1;
-        validatedArgument.SetWord((byte)value);
+        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments);
+        var value = (byte)(validatedArgument.GetWord() + 1);
+        validatedArgument.SetWord(value);
         
         _state.SetFlag(Flag.Z, value == 0);
         _state.SetFlag(Flag.N, (value & 0b1000_0000_0000_0000) > 0);

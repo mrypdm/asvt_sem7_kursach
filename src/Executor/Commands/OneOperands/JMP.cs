@@ -1,5 +1,7 @@
+using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Exceptions;
 using Executor.Memories;
 using Executor.States;
 
@@ -13,10 +15,11 @@ public class JMP : OneOperand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        if (GetMode(word) ==0)
+        if (GetMode(word) == 0)
         {
-            throw new InvalidOperationException("Can't address with mode 0!");
+            throw new InvalidInstructionException("JMP cannot be addressed with mode 0");
         }
+
         return new IArgument[]
         {
             new RegisterWordArgument(_memory, _state, GetMode(word), GetRegister(word))
@@ -25,7 +28,7 @@ public class JMP : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments);
         _state.Registers[7] = validatedArgument.GetWord();
     }
 

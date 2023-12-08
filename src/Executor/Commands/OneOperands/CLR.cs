@@ -14,7 +14,7 @@ public class CLR : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<IWordRegisterArgument>(arguments);
         validatedArgument.SetWord(0);
         _state.SetFlag(Flag.Z, true);
         _state.SetFlag(Flag.V, false);
