@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assembler;
+using Domain.Models;
 
 namespace AssemblerApp;
 
@@ -12,10 +13,16 @@ internal static class Program
         //var linkedAsmFiles = new List<string> { @"D:\Университет\7 семестр\Курсовая работы\macro.asm" };
         var linkedAsmFiles = new List<string>();
 
-        var asm = new Compiler(mainAsmFile, linkedAsmFiles);
+        var project = new Project
+        {
+            Executable = mainAsmFile,
+            Files = linkedAsmFiles
+        };
+
+        var asm = new Compiler();
         try
         {
-            asm.Assemble().Wait();
+            asm.Compile(project).Wait();
         }
         catch (Exception ex)
         {

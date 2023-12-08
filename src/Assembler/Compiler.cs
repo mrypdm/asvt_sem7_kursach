@@ -3,114 +3,111 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Assembler.Tokens;
+using Domain.Models;
 
 namespace Assembler;
 
 public class Compiler
 {
-    private string _mainFilePath;
-    private List<string> _linkedFilesPaths;
     private readonly Parser _parser;
     private readonly TokenBuilder _tokenBuilder;
-    private readonly List<CommandLine> _mainFileCommands;
-    private readonly List<List<CommandLine>> _linkedFilesCommands;
-    private readonly Dictionary<string, int> _marksDict;
-    private readonly List<IToken> _tokens;
-    private readonly List<string> _machineCode;
 
-    private void _PrintCommands()
+    private void PrintCommands(IEnumerable<CommandLine> main, IEnumerable<IEnumerable<CommandLine>> linked)
     {
-        foreach (var i in _mainFileCommands)
+        foreach (var cmd in main)
         {
-            Console.WriteLine($"{string.Join(',', i.Marks)}: {i.InstructionMnemonics} {string.Join(',', i.Arguments)}");
+            Console.WriteLine(
+                $"{string.Join(',', cmd.Marks)}: {cmd.InstructionMnemonics} {string.Join(',', cmd.Arguments)}");
         }
 
-        foreach (var i in _linkedFilesCommands)
+        foreach (var linkedFile in linked)
         {
-            foreach (var j in i)
+            foreach (var cmd in linkedFile)
             {
-                Console.WriteLine($"{string.Join(',', j.Marks)}: {j.InstructionMnemonics} {string.Join(',', j.Arguments)}");
+                Console.WriteLine(
+                    $"{string.Join(',', cmd.Marks)}: {cmd.InstructionMnemonics} {string.Join(',', cmd.Arguments)}");
             }
         }
     }
 
-    private void _PrintMachineCode()
+    private void PrintMachineCode(IEnumerable<string> codes, IDictionary<string, int> marks)
     {
         Console.WriteLine("\nMACHINE CODE");
         var address = 0;
-        foreach (var mCode in _machineCode)
+        foreach (var mCode in codes)
         {
             Console.WriteLine($"{Convert.ToString(address, 8).PadLeft(6, '0')} {mCode}");
             address += 2;
         }
 
         Console.WriteLine("\nMARKS");
-        foreach (var markPair in _marksDict)
+        foreach (var markPair in marks)
         {
             Console.WriteLine($"{markPair.Key}: {Convert.ToString(markPair.Value, 8).PadLeft(6, '0')}");
         }
     }
 
-    public Compiler(string mainFilePath, IEnumerable<string> linkedFilesPaths)
+    public Compiler()
     {
-        _mainFilePath = mainFilePath;
-        _linkedFilesPaths = linkedFilesPaths.ToList();
         _parser = new Parser();
         _tokenBuilder = new TokenBuilder();
-
-        _mainFileCommands = new List<CommandLine>();
-        _linkedFilesCommands = new List<List<CommandLine>>();
-
-        _marksDict = new Dictionary<string, int>();
-        _tokens = new List<IToken>();
-        _machineCode = new List<string>();
     }
 
-    public async Task Assemble()
+    public async Task Compile(IProject project)
     {
+        var mainFile = project.Executable;
+        var linkedFiles = project.Files.Where(m => m != mainFile).ToArray();
+
         // Parsing (the first assembly cycle)
-        _mainFileCommands.AddRange(await _parser.Parse(_mainFilePath));
+        var mainCommandLines = await _parser.Parse(mainFile);
 
-        for (int i = 0; i < _linkedFilesPaths.Count; i++)
+        var linkedFilesCommands = new List<List<CommandLine>>();
+        foreach (var linkedFile in linkedFiles)
         {
-            _linkedFilesCommands.Add(new List<CommandLine>(await _parser.Parse(_linkedFilesPaths[i])));
+            var linkedFileCommands = await _parser.Parse(linkedFile);
+            linkedFilesCommands.Add(linkedFileCommands);
         }
-        _PrintCommands();
 
+        PrintCommands(mainCommandLines, linkedFilesCommands);
 
         // The second assembly cycle
-        int currentAddr = 0;
-        List<IToken> newTokens = new List<IToken>();
-        foreach (var cmdLine in _mainFileCommands)
+        var tokens = new List<IToken>();
+        var marks = new Dictionary<string, int>();
+        var currentAddr = 0;
+        foreach (var cmdLine in mainCommandLines)
         {
             foreach (var mark in cmdLine.Marks)
             {
-                if (string.IsNullOrWhiteSpace(mark)) { continue; }
-                if (!_marksDict.ContainsKey(mark))
+                if (string.IsNullOrWhiteSpace(mark))
                 {
-                    _marksDict.Add(mark, currentAddr);
+                    continue;
+                }
+
+                if (!marks.ContainsKey(mark))
+                {
+                    marks.Add(mark, currentAddr);
                 }
                 else
                 {
-                    throw new Exception($"The mark \"{mark}\" has been used several times.");
+                    throw new Exception($"The mark '{mark}' has been used several times");
                 }
             }
-            newTokens = _tokenBuilder.Build(cmdLine);
-            _tokens.AddRange(newTokens);
-            currentAddr += newTokens.Count * 2;
-        }
 
+            var cmdTokens = _tokenBuilder.Build(cmdLine);
+            tokens.AddRange(cmdTokens);
+            currentAddr += tokens.Count * 2;
+        }
 
         // The third assembly cycle
         currentAddr = 0;
-        foreach (var token in _tokens)
+        var codes = new List<string>();
+        foreach (var token in tokens)
         {
-            _machineCode.AddRange(token.Translate(_marksDict, currentAddr));
+            codes.AddRange(token.Translate(marks, currentAddr));
             currentAddr += 2;
         }
 
-
         // Printing of final machine code
-        _PrintMachineCode();
+        PrintMachineCode(codes, marks);
     }
 }
