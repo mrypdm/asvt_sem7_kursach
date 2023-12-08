@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class BCC : BranchOperation
+internal class BCC : BranchOperation
 {
     public BCC(IMemory memory, IState state) : base(memory, state)
     {
@@ -21,5 +21,5 @@ public class BCC : BranchOperation
         }
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("103000", 8);
+    public override ushort Opcode => Convert.ToUInt16("103000", 8);
 }

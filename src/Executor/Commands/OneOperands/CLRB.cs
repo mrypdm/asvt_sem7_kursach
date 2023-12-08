@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class CLRB : OneOperand
+internal class CLRB : OneOperand
 {
     public CLRB(IMemory memory, IState state) : base(memory, state)
     {
@@ -16,5 +16,5 @@ public class CLRB : OneOperand
         arguments[0].SetValue(0);
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("105000", 8);
+    public override ushort Opcode => Convert.ToUInt16("105000", 8);
 }

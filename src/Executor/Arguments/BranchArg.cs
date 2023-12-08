@@ -4,9 +4,9 @@ using System;
 
 namespace Executor.Arguments;
 
-class BranchArg : BaseArgument
+internal class BranchArg : BaseArgument
 {
-    private ushort _offset;
+    private readonly ushort _offset;
 
     public override ushort GetValue()
     {

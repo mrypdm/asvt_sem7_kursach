@@ -3,7 +3,7 @@ using Executor.States;
 
 namespace Executor.Arguments;
 
-public abstract class BaseArgument : IArgument
+internal abstract class BaseArgument : IArgument
 {
     protected IMemory Memory { get; }
 

@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class MOVB : TwoOperands
+internal class MOVB : TwoOperands
 {
     public MOVB(IMemory memory, IState state) : base(memory, state)
     {

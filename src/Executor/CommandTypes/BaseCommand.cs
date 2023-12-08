@@ -4,7 +4,7 @@ using Executor.States;
 
 namespace Executor.CommandTypes;
 
-public abstract class BaseCommand : ICommand
+internal abstract class BaseCommand : ICommand
 {
     protected IMemory _memory { get; }
     

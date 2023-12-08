@@ -2,7 +2,7 @@ using Executor.Arguments;
 
 namespace Executor.CommandTypes;
 
-public interface ICommand
+internal interface ICommand
 {
     void Execute(IArgument[] arguments);
 

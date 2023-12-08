@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class BVC : BranchOperation
+internal class BVC : BranchOperation
 {
     public BVC(IMemory memory, IState state) : base(memory, state)
     {

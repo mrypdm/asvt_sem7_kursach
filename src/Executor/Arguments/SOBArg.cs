@@ -3,7 +3,7 @@ using Executor.States;
 
 namespace Executor.Arguments;
 
-class SOBArg : BaseArgument
+internal class SOBArg : BaseArgument
 {
     private ushort _offset;
     private ushort _register;

@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class BISB : TwoOperands
+internal class BISB : TwoOperands
 {
 	public BISB(IMemory memory, IState state) : base(memory, state)
 	{

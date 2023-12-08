@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class ADD : TwoOperands
+internal class ADD : TwoOperands
 {
     public ADD(IMemory memory, IState state) : base(memory, state)
     {

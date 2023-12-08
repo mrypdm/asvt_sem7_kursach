@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class JMP : OneOperand
+internal class JMP : OneOperand
 {
     public JMP(IMemory memory, IState state) : base(memory, state)
     {
@@ -17,5 +17,5 @@ public class JMP : OneOperand
         _state.Registers[7] = value;
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("000100", 8);
+    public override ushort Opcode => Convert.ToUInt16("000100", 8);
 }

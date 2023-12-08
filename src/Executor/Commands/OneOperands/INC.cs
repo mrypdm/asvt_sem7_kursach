@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class INC : OneOperand
+internal class INC : OneOperand
 {
     public INC(IMemory memory, IState state) : base(memory, state)
     {
@@ -17,5 +17,5 @@ public class INC : OneOperand
         arguments[0].SetValue((ushort)(value+1));
     }
 
-    public override ushort Opcode => (ushort)Convert.ToUInt16("005200", 8);
+    public override ushort Opcode => Convert.ToUInt16("005200", 8);
 }

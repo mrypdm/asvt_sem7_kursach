@@ -3,7 +3,7 @@ using Executor.States;
 
 namespace Executor.Arguments;
 
-class RTSArg : BaseArgument
+internal class RTSArg : BaseArgument
 {
     private ushort _register;
 

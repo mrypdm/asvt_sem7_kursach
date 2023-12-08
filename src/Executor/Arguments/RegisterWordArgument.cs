@@ -3,7 +3,7 @@ using Executor.States;
 
 namespace Executor.Arguments;
 
-public class RegisterWordArgument : BaseArgument
+internal class RegisterWordArgument : BaseArgument
 {
     public RegisterWordArgument(IMemory memory, IState state, ushort mode, ushort register) : base(memory, state)
     {

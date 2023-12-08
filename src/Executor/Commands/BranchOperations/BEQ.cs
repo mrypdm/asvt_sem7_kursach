@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class BEQ : BranchOperation
+internal class BEQ : BranchOperation
 {
     public BEQ(IMemory memory, IState state) : base(memory, state)
     {

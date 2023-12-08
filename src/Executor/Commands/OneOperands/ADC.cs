@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class ADC : OneOperand
+internal class ADC : OneOperand
 {
     public ADC(IMemory memory, IState state) : base(memory, state)
     {

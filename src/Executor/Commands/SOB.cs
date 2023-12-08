@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class SOB : BaseCommand
+internal class SOB : BaseCommand
 {
     private const ushort OpcodeMask = 0b1111_1110_0000_0000;
     private const ushort RegisterMask = 0b0000_0001_1100_0000;

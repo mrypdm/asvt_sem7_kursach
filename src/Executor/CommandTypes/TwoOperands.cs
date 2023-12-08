@@ -4,7 +4,7 @@ using Executor.Arguments;
 
 namespace Executor.CommandTypes;
 
-public abstract class TwoOperands : BaseCommand
+internal abstract class TwoOperands : BaseCommand
 {
     private const ushort OpcodeMask = 0b1111_0000_0000_0000;
     private const ushort SourceMask1 = 0b0000_1110_0000_0000;
@@ -24,7 +24,7 @@ public abstract class TwoOperands : BaseCommand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        if ((this.Opcode & 0b1000_0000_0000_0000) > 0)
+        if ((Opcode & 0b1000_0000_0000_0000) > 0)
         {
             return new IArgument[]
             {

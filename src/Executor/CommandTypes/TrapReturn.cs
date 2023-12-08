@@ -3,7 +3,7 @@ using Executor.States;
 
 namespace Executor.CommandTypes;
 
-public abstract class TrapReturn : BaseCommand
+internal abstract class TrapReturn : BaseCommand
 {
     private const ushort OpcodeMask = 0b1111_1111_1111_1111;
 

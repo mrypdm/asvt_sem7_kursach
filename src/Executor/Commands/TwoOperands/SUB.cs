@@ -5,13 +5,13 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class SUB : TwoOperands
+internal class SUB : TwoOperands
 {
     public SUB(IMemory memory, IState state) : base(memory, state)
     {
     }
 
-    public override IArgument[] GetArguments(ushort word) // Исключение
+    public override IArgument[] GetArguments(ushort word) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     {
         return new IArgument[]
         {

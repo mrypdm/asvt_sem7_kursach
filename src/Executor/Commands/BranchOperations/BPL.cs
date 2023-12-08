@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class BPL : BranchOperation
+internal class BPL : BranchOperation
 {
     public BPL(IMemory memory, IState state) : base(memory, state)
     {

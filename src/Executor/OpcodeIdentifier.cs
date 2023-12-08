@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor;
 
-public class OpcodeIdentifier
+internal class OpcodeIdentifier
 {
     private readonly ushort[] _masks =
     {

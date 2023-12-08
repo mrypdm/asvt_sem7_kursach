@@ -5,7 +5,7 @@ using Executor.States;
 
 namespace Executor.Commands;
 
-public class SDCB : OneOperand
+internal class SDCB : OneOperand
 {
     public SDCB(IMemory memory, IState state) : base(memory, state)
     {

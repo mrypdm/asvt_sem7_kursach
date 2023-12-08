@@ -1,6 +1,6 @@
 namespace Executor.Arguments;
 
-public interface IArgument
+internal interface IArgument
 {
     ushort GetValue();
 
