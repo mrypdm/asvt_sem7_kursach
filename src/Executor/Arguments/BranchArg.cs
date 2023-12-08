@@ -4,7 +4,7 @@ using System;
 
 namespace Executor.Arguments;
 
-internal class BranchArg : BaseArgument
+public class BranchArg : BaseArgument
 {
     private readonly ushort _offset;
 

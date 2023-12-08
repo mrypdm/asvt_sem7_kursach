@@ -3,9 +3,9 @@ using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.TwoOperands;
 
-internal class BICB : TwoOperands
+public class BICB : TwoOperand
 {
     public BICB(IMemory memory, IState state) : base(memory, state)
     {

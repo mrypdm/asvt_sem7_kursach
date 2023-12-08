@@ -3,9 +3,9 @@ using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.OneOperands;
 
-internal class CLR : OneOperand
+public class CLR : OneOperand
 {
     public CLR(IMemory memory, IState state) : base(memory, state)
     {

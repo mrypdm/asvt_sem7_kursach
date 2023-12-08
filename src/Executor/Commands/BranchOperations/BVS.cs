@@ -3,9 +3,9 @@ using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.BranchOperations;
 
-internal class BVS : BranchOperation
+public class BVS : BranchOperation
 {
     public BVS(IMemory memory, IState state) : base(memory, state)
     {

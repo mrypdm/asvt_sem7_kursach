@@ -4,7 +4,7 @@ using Executor.Arguments;
 
 namespace Executor.CommandTypes;
 
-internal abstract class TwoOperands : BaseCommand
+public abstract class TwoOperand : BaseCommand
 {
     private const ushort OpcodeMask = 0b1111_0000_0000_0000;
     private const ushort SourceMask1 = 0b0000_1110_0000_0000;
@@ -39,7 +39,7 @@ internal abstract class TwoOperands : BaseCommand
         };
     }
 
-    protected TwoOperands(IMemory memory, IState state) : base(memory, state)
+    protected TwoOperand(IMemory memory, IState state) : base(memory, state)
     {
     }
 }

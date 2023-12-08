@@ -3,9 +3,9 @@ using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.BranchOperations;
 
-internal class BHI : BranchOperation
+public class BHI : BranchOperation
 {
     public BHI(IMemory memory, IState state) : base(memory, state)
     {

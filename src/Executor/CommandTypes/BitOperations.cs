@@ -3,7 +3,7 @@ using Executor.States;
 
 namespace Executor.CommandTypes;
 
-internal abstract class BitOperations : BaseCommand
+public abstract class BitOperations : BaseCommand
 {
     private const ushort OpcodeMask = 0b1111_1110_0000_0000;
     private const ushort Register1Mask = 0b0000_0001_1100_0000;

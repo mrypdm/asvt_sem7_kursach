@@ -3,9 +3,9 @@ using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.BranchOperations;
 
-internal class BEQ : BranchOperation
+public class BEQ : BranchOperation
 {
     public BEQ(IMemory memory, IState state) : base(memory, state)
     {

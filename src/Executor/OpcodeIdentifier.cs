@@ -1,11 +1,14 @@
 using Executor.Commands;
+using Executor.Commands.BranchOperations;
+using Executor.Commands.OneOperands;
+using Executor.Commands.TwoOperands;
 using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
 namespace Executor;
 
-internal class OpcodeIdentifier
+public class OpcodeIdentifier
 {
     private readonly ushort[] _masks =
     {

@@ -3,9 +3,9 @@ using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.BranchOperations;
 
-internal class BLOS : BranchOperation
+public class BLOS : BranchOperation
 {
     public BLOS(IMemory memory, IState state) : base(memory, state)
     {

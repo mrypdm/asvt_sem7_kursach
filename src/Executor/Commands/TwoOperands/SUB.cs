@@ -3,15 +3,15 @@ using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.TwoOperands;
 
-internal class SUB : TwoOperands
+public class SUB : TwoOperand
 {
     public SUB(IMemory memory, IState state) : base(memory, state)
     {
     }
 
-    public override IArgument[] GetArguments(ushort word) // ����������
+    public override IArgument[] GetArguments(ushort word)
     {
         return new IArgument[]
         {

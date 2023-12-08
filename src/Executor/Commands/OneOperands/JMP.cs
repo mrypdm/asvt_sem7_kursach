@@ -3,9 +3,9 @@ using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.OneOperands;
 
-internal class JMP : OneOperand
+public class JMP : OneOperand
 {
     public JMP(IMemory memory, IState state) : base(memory, state)
     {

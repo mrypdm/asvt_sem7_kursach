@@ -3,9 +3,9 @@ using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.OneOperands;
 
-internal class DEC : OneOperand
+public class DEC : OneOperand
 {
 	public DEC(IMemory memory, IState state) : base(memory, state)
 	{

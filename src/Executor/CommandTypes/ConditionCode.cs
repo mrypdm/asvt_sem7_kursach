@@ -3,7 +3,7 @@ using Executor.States;
 
 namespace Executor.CommandTypes;
 
-internal abstract class ConditionCode : BaseCommand
+public abstract class ConditionCode : BaseCommand
 {
     private const ushort OpcodeMask = 0b1111_1111_1111_0000;
     private const ushort FlagMask = 0b0000_0000_0000_1111;

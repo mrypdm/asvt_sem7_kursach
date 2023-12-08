@@ -4,7 +4,7 @@ using Executor.Arguments;
 
 namespace Executor.CommandTypes;
 
-internal abstract class OneOperand : BaseCommand
+public abstract class OneOperand : BaseCommand
 {
     private const ushort OpcodeMask = 0b1111_1111_1100_0000;
     private const ushort SourceMask = 0b0000_0000_0011_1000;

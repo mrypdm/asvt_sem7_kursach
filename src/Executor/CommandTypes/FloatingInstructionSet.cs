@@ -3,7 +3,7 @@ using Executor.States;
 
 namespace Executor.CommandTypes;
 
-internal abstract class FloatingInstructionSet : BaseCommand
+public abstract class FloatingInstructionSet : BaseCommand
 {
     private const ushort OpcodeMask = 0b1111_1111_1111_1000;
     private const ushort RegisterMask = 0b0000_0000_0000_0111;

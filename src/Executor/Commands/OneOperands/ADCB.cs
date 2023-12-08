@@ -3,9 +3,9 @@ using Executor.CommandTypes;
 using Executor.Memories;
 using Executor.States;
 
-namespace Executor.Commands;
+namespace Executor.Commands.OneOperands;
 
-internal class ADCB : OneOperand
+public class ADCB : OneOperand
 {
     public ADCB(IMemory memory, IState state) : base(memory, state)
     {
