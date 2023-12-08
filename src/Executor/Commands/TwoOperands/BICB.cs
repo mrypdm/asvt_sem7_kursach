@@ -1,14 +1,14 @@
 using System;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
 public class BICB : TwoOperand
 {
-    public BICB(IMemory memory, IState state) : base(memory, state)
+    public BICB(IStorage storage, IState state) : base(storage, state)
     {
     }
 

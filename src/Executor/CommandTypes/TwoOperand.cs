@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using Executor.Arguments;
-using Executor.Memories;
 using Executor.States;
 using Executor.Arguments.Abstraction;
 using Executor.Exceptions;
+using Executor.Storages;
 
 namespace Executor.CommandTypes;
 
@@ -32,15 +32,15 @@ public abstract class TwoOperand : BaseCommand
         {
             return new IArgument[]
             {
-                new RegisterByteArgument(_memory, _state, GetMode1(word), GetRegister1(word)),
-                new RegisterByteArgument(_memory, _state, GetMode2(word), GetRegister2(word))
+                new RegisterByteArgument(Storage, _state, GetMode1(word), GetRegister1(word)),
+                new RegisterByteArgument(Storage, _state, GetMode2(word), GetRegister2(word))
             };
         }
 
         return new IArgument[]
         {
-            new RegisterWordArgument(_memory, _state, GetMode1(word), GetRegister1(word)),
-            new RegisterWordArgument(_memory, _state, GetMode2(word), GetRegister2(word))
+            new RegisterWordArgument(Storage, _state, GetMode1(word), GetRegister1(word)),
+            new RegisterWordArgument(Storage, _state, GetMode2(word), GetRegister2(word))
         };
     }
 
@@ -60,7 +60,7 @@ public abstract class TwoOperand : BaseCommand
         return arguments.Select(m => (TType)m).ToArray();
     }
 
-    protected TwoOperand(IMemory memory, IState state) : base(memory, state)
+    protected TwoOperand(IStorage storage, IState state) : base(storage, state)
     {
     }
 }

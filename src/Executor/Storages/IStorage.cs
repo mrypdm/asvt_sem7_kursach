@@ -1,6 +1,6 @@
-﻿namespace Executor.Memories;
+﻿namespace Executor.Storages;
 
-public interface IMemory : IReadOnlyMemory
+public interface IStorage : IReadOnlyStorage
 {
     void SetWord(ushort address, ushort value);
 

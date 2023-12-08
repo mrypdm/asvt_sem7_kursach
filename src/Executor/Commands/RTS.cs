@@ -2,8 +2,8 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Commands;
 
@@ -12,7 +12,7 @@ public class RTS : BaseCommand
     private const ushort OpcodeMask = 0b1111_1111_1111_1000;
     private const ushort RegisterMask = 0b0000_0000_0000_0111;
 
-    public RTS(IMemory memory, IState state) : base(memory, state)
+    public RTS(IStorage storage, IState state) : base(storage, state)
     {
     }
 
@@ -22,7 +22,7 @@ public class RTS : BaseCommand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        return new IArgument[] { new RTSArg(_memory, _state, GetRegister(word)) };
+        return new IArgument[] { new RTSArg(Storage, _state, GetRegister(word)) };
     }
 
     public override void Execute(IArgument[] arguments)

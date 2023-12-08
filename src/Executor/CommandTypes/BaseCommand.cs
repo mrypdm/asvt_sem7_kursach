@@ -1,12 +1,12 @@
 ﻿using Executor.Arguments.Abstraction;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.CommandTypes;
 
 public abstract class BaseCommand : ICommand
 {
-    protected IMemory _memory { get; }
+    protected IStorage Storage { get; }
     
     protected IState _state { get; }
     
@@ -16,9 +16,9 @@ public abstract class BaseCommand : ICommand
 
     public abstract ushort Opcode { get; }
 
-    protected BaseCommand(IMemory memory, IState state)
+    protected BaseCommand(IStorage storage, IState state)
     {
-        _memory = memory;
+        Storage = storage;
         _state = state;
     }
 }

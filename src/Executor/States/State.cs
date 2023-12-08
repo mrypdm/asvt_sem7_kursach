@@ -36,5 +36,5 @@ public class State : IState
         set => ProcessorStateWord = (ushort)((ProcessorStateWord & 0b1111_1111_0001_1111) | (value << 5));
     }
 
-    public ushort[] Registers { get; set; } = new ushort[8];
+    public ushort[] Registers { get; } = new ushort[8];
 }

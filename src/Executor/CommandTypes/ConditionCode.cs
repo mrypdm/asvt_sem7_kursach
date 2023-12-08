@@ -1,5 +1,5 @@
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.CommandTypes;
 
@@ -12,7 +12,7 @@ public abstract class ConditionCode : BaseCommand
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
-    protected ConditionCode(IMemory memory, IState state) : base(memory, state)
+    protected ConditionCode(IStorage storage, IState state) : base(storage, state)
     {
     }
 }

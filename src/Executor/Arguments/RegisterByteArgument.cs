@@ -1,13 +1,13 @@
 using System;
 using Executor.Arguments.Abstraction;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Arguments;
 
 public class RegisterByteArgument : BaseArgument, IRegisterArgument<byte>
 {
-    public RegisterByteArgument(IMemory memory, IState state, ushort mode, ushort register) : base(memory, state)
+    public RegisterByteArgument(IStorage storage, IState state, ushort mode, ushort register) : base(storage, state)
     {
         Register = register;
         Mode = mode;
@@ -38,46 +38,46 @@ public class RegisterByteArgument : BaseArgument, IRegisterArgument<byte>
                 dst = value => State.Registers[Register] = (ushort)((State.Registers[Register] & 0xFF00) | value);
                 break;
             case 1:
-                src = () => Memory.GetByte(State.Registers[Register]);
-                dst = value => Memory.SetByte(State.Registers[Register], value);
+                src = () => Storage.GetByte(State.Registers[Register]);
+                dst = value => Storage.SetByte(State.Registers[Register], value);
                 break;
             case 2:
                 addr = State.Registers[Register];
-                src = () => Memory.GetByte(addr);
-                dst = value => Memory.SetByte(addr, value);
+                src = () => Storage.GetByte(addr);
+                dst = value => Storage.SetByte(addr, value);
                 State.Registers[Register] += Delta;
                 break;
             case 3:
-                addr = Memory.GetWord(State.Registers[Register]);
-                src = () => Memory.GetByte(addr);
-                dst = value => Memory.SetByte(addr, value);
+                addr = Storage.GetWord(State.Registers[Register]);
+                src = () => Storage.GetByte(addr);
+                dst = value => Storage.SetByte(addr, value);
                 State.Registers[Register] += Delta;
                 break;
             case 4:
                 State.Registers[Register] -= Delta;
                 addr = State.Registers[Register];
-                src = () => Memory.GetByte(addr);
-                dst = value => Memory.SetByte(addr, value);
+                src = () => Storage.GetByte(addr);
+                dst = value => Storage.SetByte(addr, value);
                 break;
             case 5:
                 State.Registers[Register] -= Delta;
-                addr = Memory.GetWord(State.Registers[Register]);
-                src = () => Memory.GetByte(addr);
-                dst = value => Memory.SetByte(addr, value);
+                addr = Storage.GetWord(State.Registers[Register]);
+                src = () => Storage.GetByte(addr);
+                dst = value => Storage.SetByte(addr, value);
                 break;
             case 6:
-                offset = Memory.GetWord(State.Registers[7]);
+                offset = Storage.GetWord(State.Registers[7]);
                 State.Registers[7] += 2;
                 addr = (ushort)(State.Registers[Register] + offset);
-                src = () => Memory.GetByte(addr);
-                dst = value => Memory.SetByte(addr, value);
+                src = () => Storage.GetByte(addr);
+                dst = value => Storage.SetByte(addr, value);
                 break;
             case 7:
-                offset = Memory.GetWord(State.Registers[7]);
+                offset = Storage.GetWord(State.Registers[7]);
                 State.Registers[7] += 2;
-                addr = Memory.GetWord((ushort)(State.Registers[Register] + offset));
-                src = () => Memory.GetByte(addr);
-                dst = value => Memory.SetByte(addr, value);
+                addr = Storage.GetWord((ushort)(State.Registers[Register] + offset));
+                src = () => Storage.GetByte(addr);
+                dst = value => Storage.SetByte(addr, value);
                 break;
             default:
                 throw new InvalidOperationException("Invalid addressing mode");

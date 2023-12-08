@@ -7,8 +7,8 @@ using Executor.Commands.MiscellaneousInstructions;
 using Executor.Commands.OneOperands;
 using Executor.Commands.TwoOperands;
 using Executor.CommandTypes;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor;
 
@@ -27,40 +27,40 @@ public class OpcodeIdentifier
 
     private readonly Dictionary<ushort, ICommand> _opcodesDictionary;
 
-    public OpcodeIdentifier(IState state, IMemory memory)
+    public OpcodeIdentifier(IState state, IStorage storage)
     {
         _opcodesDictionary = new ICommand[]
         {
-            new MOV(memory, state),
-            new MOVB(memory, state),
-            new ADD(memory, state),
-            new INC(memory, state),
-            new INCB(memory, state),
-            new BNE(memory, state),
-            new BEQ(memory, state),
-            new BR(memory, state),
-            new BITB(memory, state),
-            new BIT(memory, state),
-            new DEC(memory, state),
-            new DECB(memory, state),
-            new CLR(memory, state),
-            new CLRB(memory, state),
-            new BMI(memory, state),
-            new BLOS(memory, state),
-            new BHI(memory, state),
-            new BPL(memory, state),
-            new BVC(memory, state),
-            new BVS(memory, state),
-            new HALT(memory, state),
-            new BIS(memory, state),
-            new BISB(memory, state),
-            new BIC(memory, state),
-            new BICB(memory, state),
-            new SUB(memory, state),
-            new SOB(memory, state),
-            new JSR(memory, state),
-            new JMP(memory, state),
-            new RTS(memory, state)
+            new MOV(storage, state),
+            new MOVB(storage, state),
+            new ADD(storage, state),
+            new INC(storage, state),
+            new INCB(storage, state),
+            new BNE(storage, state),
+            new BEQ(storage, state),
+            new BR(storage, state),
+            new BITB(storage, state),
+            new BIT(storage, state),
+            new DEC(storage, state),
+            new DECB(storage, state),
+            new CLR(storage, state),
+            new CLRB(storage, state),
+            new BMI(storage, state),
+            new BLOS(storage, state),
+            new BHI(storage, state),
+            new BPL(storage, state),
+            new BVC(storage, state),
+            new BVS(storage, state),
+            new HALT(storage, state),
+            new BIS(storage, state),
+            new BISB(storage, state),
+            new BIC(storage, state),
+            new BICB(storage, state),
+            new SUB(storage, state),
+            new SOB(storage, state),
+            new JSR(storage, state),
+            new JMP(storage, state),
+            new RTS(storage, state)
         }.ToDictionary(command => command.Opcode, command => command);
     }
 

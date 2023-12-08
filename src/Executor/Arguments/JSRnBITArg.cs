@@ -1,9 +1,9 @@
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Arguments;
 
-public class JSRnBITArg : BaseArgument // Надо разделить
+public class JSRnBITArg : BaseArgument // Need to split
 {
     private ushort _mode;
     private ushort _register1;
@@ -18,7 +18,7 @@ public class JSRnBITArg : BaseArgument // Надо разделить
     {
     }
 
-    public JSRnBITArg(IMemory memory, IState state, ushort register1, ushort mode, ushort register2) : base(memory, state)
+    public JSRnBITArg(IStorage storage, IState state, ushort register1, ushort mode, ushort register2) : base(storage, state)
     {
         _register1 = register1;
         _register2 = register2;

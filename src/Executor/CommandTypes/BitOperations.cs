@@ -1,5 +1,5 @@
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.CommandTypes;
 
@@ -18,7 +18,7 @@ public abstract class BitOperations : BaseCommand
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
-    protected BitOperations(IMemory memory, IState state) : base(memory, state)
+    protected BitOperations(IStorage storage, IState state) : base(storage, state)
     {
     }
 }

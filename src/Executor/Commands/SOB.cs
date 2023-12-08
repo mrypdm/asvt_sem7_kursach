@@ -2,8 +2,8 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Commands;
 
@@ -13,7 +13,7 @@ public class SOB : BaseCommand
     private const ushort RegisterMask = 0b0000_0001_1100_0000;
     private const ushort OffsetMask = 0b0000_0000_0011_1111;
 
-    public SOB(IMemory memory, IState state) : base(memory, state)
+    public SOB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
@@ -25,7 +25,7 @@ public class SOB : BaseCommand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        return new IArgument[] { new SOBArg(_memory, _state, GetRegister(word), GetOffset(word)) };
+        return new IArgument[] { new SOBArg(Storage, _state, GetRegister(word), GetOffset(word)) };
     }
 
     public override void Execute(IArgument[] arguments)

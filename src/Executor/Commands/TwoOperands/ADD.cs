@@ -2,14 +2,14 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
 public class ADD : TwoOperand
 {
-    public ADD(IMemory memory, IState state) : base(memory, state)
+    public ADD(IStorage storage, IState state) : base(storage, state)
     {
     }
 
@@ -18,8 +18,8 @@ public class ADD : TwoOperand
     {
         return new IArgument[]
         {
-            new RegisterWordArgument(_memory, _state, GetMode1(word), GetRegister1(word)),
-            new RegisterWordArgument(_memory, _state, GetMode2(word), GetRegister2(word))
+            new RegisterWordArgument(Storage, _state, GetMode1(word), GetRegister1(word)),
+            new RegisterWordArgument(Storage, _state, GetMode2(word), GetRegister2(word))
         };
     }
 

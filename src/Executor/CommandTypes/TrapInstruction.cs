@@ -1,5 +1,5 @@
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.CommandTypes;
 
@@ -12,7 +12,7 @@ public abstract class TrapInstruction : BaseCommand
 
     protected ushort GetOperationCode(ushort word) => (ushort)(word & OperationCodeMask);
 
-    protected TrapInstruction(IMemory memory, IState state) : base(memory, state)
+    protected TrapInstruction(IStorage storage, IState state) : base(storage, state)
     {
     }
 }

@@ -1,14 +1,14 @@
 using System;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
 public class BR : BranchOperation
 {
-    public BR(IMemory memory, IState state) : base(memory, state)
+    public BR(IStorage storage, IState state) : base(storage, state)
     {
     }
 

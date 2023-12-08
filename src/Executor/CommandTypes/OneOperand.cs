@@ -1,9 +1,9 @@
 using System;
 using Executor.Arguments;
-using Executor.Memories;
 using Executor.States;
 using Executor.Arguments.Abstraction;
 using Executor.Exceptions;
+using Executor.Storages;
 
 namespace Executor.CommandTypes;
 
@@ -25,13 +25,13 @@ public abstract class OneOperand : BaseCommand
         {
             return new IArgument[]
             {
-                new RegisterByteArgument(_memory, _state, GetMode(word), GetRegister(word))
+                new RegisterByteArgument(Storage, _state, GetMode(word), GetRegister(word))
             };
         }
 
         return new IArgument[]
         {
-            new RegisterWordArgument(_memory, _state, GetMode(word), GetRegister(word))
+            new RegisterWordArgument(Storage, _state, GetMode(word), GetRegister(word))
         };
     }
 
@@ -50,7 +50,7 @@ public abstract class OneOperand : BaseCommand
         return (TType)arguments[0];
     }
 
-    protected OneOperand(IMemory memory, IState state) : base(memory, state)
+    protected OneOperand(IStorage storage, IState state) : base(storage, state)
     {
     }
 }

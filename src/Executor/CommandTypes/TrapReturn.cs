@@ -1,5 +1,5 @@
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.CommandTypes;
 
@@ -9,7 +9,7 @@ public abstract class TrapReturn : BaseCommand
 
     protected ushort GetOpcode(ushort word) => (ushort)(word & OpcodeMask);
 
-    protected TrapReturn(IMemory memory, IState state) : base(memory, state)
+    protected TrapReturn(IStorage storage, IState state) : base(storage, state)
     {
     }
 }

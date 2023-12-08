@@ -1,5 +1,5 @@
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.CommandTypes;
 
@@ -12,7 +12,7 @@ public abstract class FloatingInstructionSet : BaseCommand
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
-    protected FloatingInstructionSet(IMemory memory, IState state) : base(memory, state)
+    protected FloatingInstructionSet(IStorage storage, IState state) : base(storage, state)
     {
     }
 }

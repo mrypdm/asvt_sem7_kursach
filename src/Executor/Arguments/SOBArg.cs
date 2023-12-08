@@ -1,6 +1,6 @@
 using Executor.Exceptions;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Arguments;
 
@@ -16,7 +16,7 @@ public class SOBArg : BaseArgument
 
     public override void SetValue(object word) => throw new ReadOnlyArgumentException(typeof(SOBArg));
 
-    public SOBArg(IMemory memory, IState state, ushort register, ushort offset) : base(memory, state)
+    public SOBArg(IStorage storage, IState state, ushort register, ushort offset) : base(storage, state)
     {
         _register = register;
         _offset = offset;

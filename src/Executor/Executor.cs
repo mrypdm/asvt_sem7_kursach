@@ -6,20 +6,20 @@ using Devices.Managers;
 using Devices.Providers;
 using Domain.Models;
 using Executor.States;
-using Executor.Memories;
+using Executor.Storages;
 
 namespace Executor;
 
 public class Executor
 {
     private readonly IState _state;
-    private readonly IMemory _memory;
+    private readonly IStorage _memory;
     private readonly IDevicesManager _devicesManager;
-    private readonly IMemory _bus;
+    private readonly IStorage _bus;
     
     private readonly OpcodeIdentifier _opcodeIdentifier;
 
-    public IReadOnlyMemory Memory => _memory;
+    public IReadOnlyStorage Memory => _memory;
 
     public ushort ProcessorStateWord => _state.ProcessorStateWord;
 

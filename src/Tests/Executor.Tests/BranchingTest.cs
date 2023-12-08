@@ -1,6 +1,6 @@
 using System;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Tests;
 
@@ -64,7 +64,7 @@ public class BranchingTest
     [Test]
     public void TestBrNegative()
     {
-        ushort word = Convert.ToUInt16("000612", 8);
+        var word = Convert.ToUInt16("000612", 8);
         var memory = new Memory();
         var state = new State();
         state.Registers[7] = 70;

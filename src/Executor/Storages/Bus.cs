@@ -3,26 +3,26 @@ using System.Linq;
 using Devices.Managers;
 using Executor.Exceptions;
 
-namespace Executor.Memories;
+namespace Executor.Storages;
 
-public class Bus : IMemory
+public class Bus : IStorage
 {
-    private readonly IMemory _memory;
+    private readonly IStorage _storage;
     private readonly IDevicesManager _deviceManager;
 
-    public Bus(IMemory memory, IDevicesManager deviceManager)
+    public Bus(IStorage storage, IDevicesManager deviceManager)
     {
-        _memory = memory;
+        _storage = storage;
         _deviceManager = deviceManager;
     }
 
-    public IReadOnlyCollection<byte> Data => _memory.Data;
+    public IReadOnlyCollection<byte> Data => _storage.Data;
 
     public ushort GetWord(ushort address)
     {
-        if (address < _memory.Data.Count)
+        if (address < _storage.Data.Count)
         {
-            return _memory.GetWord(address);
+            return _storage.GetWord(address);
         }
 
         var device = _deviceManager.Devices.SingleOrDefault(d =>
@@ -38,9 +38,9 @@ public class Bus : IMemory
 
     public byte GetByte(ushort address)
     {
-        if (address < _memory.Data.Count)
+        if (address < _storage.Data.Count)
         {
-            return _memory.GetByte(address);
+            return _storage.GetByte(address);
         }
 
         var device = _deviceManager.Devices.SingleOrDefault(d =>
@@ -63,9 +63,9 @@ public class Bus : IMemory
 
     public void SetWord(ushort address, ushort value)
     {
-        if (address < _memory.Data.Count)
+        if (address < _storage.Data.Count)
         {
-            _memory.SetWord(address, value);
+            _storage.SetWord(address, value);
             return;
         }
 
@@ -89,9 +89,9 @@ public class Bus : IMemory
 
     public void SetByte(ushort address, byte value)
     {
-        if (address < _memory.Data.Count)
+        if (address < _storage.Data.Count)
         {
-            _memory.SetByte(address, value);
+            _storage.SetByte(address, value);
             return;
         }
 

@@ -1,12 +1,12 @@
 ﻿using Executor.Arguments.Abstraction;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Arguments;
 
 public abstract class BaseArgument : IArgument
 {
-    protected IMemory Memory { get; }
+    protected IStorage Storage { get; }
 
     protected IState State { get; }
 
@@ -14,9 +14,9 @@ public abstract class BaseArgument : IArgument
 
     public abstract void SetValue(object value);
 
-    protected BaseArgument(IMemory memory, IState state)
+    protected BaseArgument(IStorage storage, IState state)
     {
-        Memory = memory;
+        Storage = storage;
         State = state;
     }
 }

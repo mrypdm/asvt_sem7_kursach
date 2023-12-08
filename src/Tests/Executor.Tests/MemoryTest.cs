@@ -1,4 +1,4 @@
-using Executor.Memories;
+using Executor.Storages;
 
 namespace Executor.Tests;
 

@@ -1,14 +1,14 @@
 using System;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
 public class SDC : OneOperand
 {
-    public SDC(IMemory memory, IState state) : base(memory, state)
+    public SDC(IStorage storage, IState state) : base(storage, state)
     {
     }
 

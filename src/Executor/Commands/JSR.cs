@@ -2,9 +2,8 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
-using Executor.Exceptions;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Commands;
 
@@ -15,7 +14,7 @@ public class JSR : BaseCommand
     private const ushort ModeMask = 0b0000_0000_0011_1000;
     private const ushort Register2Mask = 0b0000_0000_0000_0111;
 
-    public JSR(IMemory memory, IState state) : base(memory, state)
+    public JSR(IStorage storage, IState state) : base(storage, state)
     {
     }
 
@@ -31,7 +30,7 @@ public class JSR : BaseCommand
     {
         return new IArgument[]
         {
-            new JSRnBITArg(_memory, _state, GetRegister1(word), GetMode(word), GetRegister2(word))
+            new JSRnBITArg(Storage, _state, GetRegister1(word), GetMode(word), GetRegister2(word))
         };
     }
 

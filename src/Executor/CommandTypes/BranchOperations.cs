@@ -1,9 +1,9 @@
 using System;
 using Executor.Arguments;
-using Executor.Memories;
 using Executor.States;
 using Executor.Arguments.Abstraction;
 using Executor.Exceptions;
+using Executor.Storages;
 
 namespace Executor.CommandTypes;
 
@@ -16,7 +16,7 @@ public abstract class BranchOperation : BaseCommand
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
-    protected BranchOperation(IMemory memory, IState state) : base(memory, state)
+    protected BranchOperation(IStorage storage, IState state) : base(storage, state)
     {
     }
 
@@ -24,7 +24,7 @@ public abstract class BranchOperation : BaseCommand
     {
         return new IArgument[]
         {
-            new OffsetArgument(_memory, _state, GetOffset(word))
+            new OffsetArgument(Storage, _state, GetOffset(word))
         };
     }
 

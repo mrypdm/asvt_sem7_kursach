@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Executor.Exceptions;
 
-namespace Executor.Memories;
+namespace Executor.Storages;
 
-public class Memory : IMemory
+public class Memory : IStorage
 {
     private readonly byte[] _memory = new byte[65026];
 

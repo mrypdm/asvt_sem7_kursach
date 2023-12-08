@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Executor.Memories;
+namespace Executor.Storages;
 
-public interface IReadOnlyMemory
+public interface IReadOnlyStorage
 {
     IReadOnlyCollection<byte> Data { get; }
 

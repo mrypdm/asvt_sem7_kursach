@@ -3,14 +3,14 @@ using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.Exceptions;
-using Executor.Memories;
 using Executor.States;
+using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
 public class JMP : OneOperand
 {
-    public JMP(IMemory memory, IState state) : base(memory, state)
+    public JMP(IStorage storage, IState state) : base(storage, state)
     {
     }
 
@@ -18,7 +18,7 @@ public class JMP : OneOperand
     {
         return new IArgument[]
         {
-            new RegisterWordArgument(_memory, _state, GetMode(word), GetRegister(word))
+            new RegisterWordArgument(Storage, _state, GetMode(word), GetRegister(word))
         };
     }
 

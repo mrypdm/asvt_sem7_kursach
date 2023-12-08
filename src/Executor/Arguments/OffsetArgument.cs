@@ -1,7 +1,7 @@
-using Executor.Memories;
 using Executor.States;
 using Executor.Arguments.Abstraction;
 using Executor.Exceptions;
+using Executor.Storages;
 
 namespace Executor.Arguments;
 
@@ -15,7 +15,7 @@ public class OffsetArgument : BaseArgument, IOffsetArgument
 
     public byte GetOffset() => _offset;
 
-    public OffsetArgument(IMemory memory, IState state, byte offset) : base(memory, state)
+    public OffsetArgument(IStorage storage, IState state, byte offset) : base(storage, state)
     {
         _offset = offset;
     }
