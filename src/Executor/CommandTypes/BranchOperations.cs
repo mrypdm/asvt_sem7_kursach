@@ -2,6 +2,7 @@ using Executor.Arguments;
 using Executor.Memories;
 using Executor.States;
 using Executor.Arguments.Abstraction;
+using Executor.Exceptions;
 
 namespace Executor.CommandTypes;
 
@@ -24,5 +25,20 @@ public abstract class BranchOperation : BaseCommand
         {
             new OffsetArgument(_memory, _state, GetOffset(word))
         };
+    }
+    
+    protected TType ValidateArgument<TType>(IArgument[] arguments) where TType : class
+    {
+        if (arguments.Length != 1)
+        {
+            throw new ArgumentException("Count of arguments must be 1", nameof(arguments));
+        }
+
+        if (arguments[0] is not TType)
+        {
+            throw new InvalidArgumentTypeException(new[] { typeof(TType) }, new[] { arguments[0].GetType() });
+        }
+
+        return (TType)arguments[0];
     }
 }

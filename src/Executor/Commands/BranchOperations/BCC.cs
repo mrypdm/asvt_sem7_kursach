@@ -13,9 +13,10 @@ public class BCC : BranchOperation
 
     public override void Execute(IArgument[] arguments)
     {
+        var validatedArgument = ValidateArgument<IOffsetArgument>(arguments);
         if (!_state.GetFlag(Flag.C))
         {
-            int value = (int)(arguments[0].GetValue());
+            int value = validatedArgument.GetOffset();
             value = (value & 128) > 0 ? -(127 & value) : value;
             _state.Registers[7] = (ushort)(_state.Registers[7] + 2 * value);
         }
