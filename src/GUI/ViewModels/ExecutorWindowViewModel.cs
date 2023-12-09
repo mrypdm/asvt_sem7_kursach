@@ -56,7 +56,6 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
 
         Tabs = Enum.GetValues<Tab>().ToObservableCollection();
         Memory = AsWords().ToObservableCollection();
-        Devices = Array.Empty<Device>().ToObservableCollection();
         CodeLines = InitCode().ToObservableCollection();
 
         InitContext();
@@ -102,7 +101,15 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
 
     // TODO
     /// <inheritdoc />
-    public ObservableCollection<Device> Devices { get; }
+    public ObservableCollection<Device> Devices => _executor.Devices
+        .Select(m => new Device(
+            m.Name,
+            m.ControlRegisterAddress,
+            m.ControlRegisterValue,
+            m.BufferRegisterAddress,
+            m.BufferRegisterValue,
+            m.InterruptVectorAddress))
+        .ToObservableCollection();
 
     // TODO
     /// <inheritdoc />
@@ -258,6 +265,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         Memory = _memoryAsWord ? AsWords().ToObservableCollection() : AsBytes().ToObservableCollection();
         this.RaisePropertyChanged(nameof(Registers));
         this.RaisePropertyChanged(nameof(ProcessorStateWord));
+        this.RaisePropertyChanged(nameof(Devices));
         var line = CodeLines.FirstOrDefault(m =>
             Convert.ToUInt16(m.Address, 8) == _executor.Registers.ElementAt(7));
         if (line != null)

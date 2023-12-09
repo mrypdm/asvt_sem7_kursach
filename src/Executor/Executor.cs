@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Devices.Managers;
 using Devices.Providers;
 using Devices.Validators;
+using DeviceSdk;
 using Domain.Models;
 using Executor.States;
 using Executor.Storages;
@@ -28,6 +29,8 @@ public class Executor
     public ushort ProcessorStateWord => _state.ProcessorStateWord;
 
     public IReadOnlyCollection<ushort> Registers => _state.Registers;
+
+    public IReadOnlyCollection<IDevice> Devices => _devicesManager.Devices;
 
     public IProject Project { get; private set; }
     

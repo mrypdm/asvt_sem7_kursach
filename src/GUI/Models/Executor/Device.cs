@@ -7,31 +7,44 @@ namespace GUI.Models.Executor;
 /// </summary>
 public class Device
 {
-    public Device(ushort controlRegisterAddress,ushort bufferRegisterAddress, ushort interruptVectorAddress, bool hasInterrupt)
+    public Device(string name, ushort controlAddress, ushort controlValue, ushort bufferAddress, ushort bufferValue,
+        ushort interruptAddress)
     {
-        Control = Convert.ToString(controlRegisterAddress, 8).PadLeft(6, '0');
-        Buffer = Convert.ToString(bufferRegisterAddress, 8).PadLeft(6, '0');
-        Interrupt = Convert.ToString(interruptVectorAddress, 8).PadLeft(6, '0');
-        HasInterrupt = hasInterrupt ? 1 : 0;
+        Name = name;
+
+        ControlAddress = Convert.ToString(controlAddress, 8).PadLeft(6, '0');
+        Control = Convert.ToString(controlValue, 8).PadLeft(6, '0');
+
+        BufferAddress = Convert.ToString(bufferAddress, 8).PadLeft(6, '0');
+        Buffer = Convert.ToString(bufferValue, 8).PadLeft(6, '0');
+
+        InterruptAddress = Convert.ToString(interruptAddress, 8).PadLeft(6, '0');
     }
-    
+
+    public string Name { get; }
+
     /// <summary>
     /// Address of control register
     /// </summary>
+    public string ControlAddress { get; }
+
+    /// <summary>
+    /// Value of control register
+    /// </summary>
     public string Control { get; }
-    
+
     /// <summary>
     /// Address of buffer register
     /// </summary>
+    public string BufferAddress { get; }
+
+    /// <summary>
+    /// Value of buffer register
+    /// </summary>
     public string Buffer { get; }
-    
+
     /// <summary>
     /// Address of interrupt vector
     /// </summary>
-    public string Interrupt { get; }
-    
-    /// <summary>
-    /// Is device send interrupt signal
-    /// </summary>
-    public int HasInterrupt { get; }
+    public string InterruptAddress { get; }
 }
