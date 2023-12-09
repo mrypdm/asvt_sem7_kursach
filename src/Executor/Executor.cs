@@ -99,6 +99,7 @@ public class Executor
     {
         _initialized = false;
         _devicesManager.Clear();
+        Array.Fill<ushort>(_state.Registers, 0);
 
         _state.Registers[6] = Project.StackAddress;
         _state.Registers[7] = Project.ProgramAddress;
