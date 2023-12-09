@@ -1,8 +1,21 @@
-﻿namespace Assembler.Tokens;
+﻿using System;
+using System.Collections.Generic;
 
-internal class OperationToken : RawToken
+namespace Assembler.Tokens;
+
+internal class OperationToken : IToken
 {
-    public OperationToken(int machineCode) : base(machineCode)
+    private readonly int _machineCode;
+    private readonly CommandLine _originCmdLine;
+
+    public OperationToken(int machineCode, CommandLine originCmdLine)
     {
+        _machineCode = machineCode;
+        _originCmdLine = originCmdLine;
+    }
+
+    public IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
+    {
+        return new[] { Convert.ToString(_machineCode, 8).PadLeft(6, '0') + $";{_originCmdLine.GetSymbol()}" };
     }
 }

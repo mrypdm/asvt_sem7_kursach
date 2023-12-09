@@ -184,7 +184,7 @@ internal class TokenBuilder
     {
         return new List<IToken>
         {
-            new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code)
+            new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code, cmdLine)
         };
     }
 
@@ -196,7 +196,7 @@ internal class TokenBuilder
 
         var instArgCode = ArgumentHandler(cmdLine.Arguments[0], extraTokens);
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
         resultTokens.AddRange(extraTokens);
 
         return resultTokens;
@@ -212,7 +212,7 @@ internal class TokenBuilder
         instArgCode = instArgCode << 6;
         instArgCode = instArgCode | ArgumentHandler(cmdLine.Arguments[1], extraTokens);
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
         resultTokens.AddRange(extraTokens);
 
         return resultTokens;
@@ -232,7 +232,7 @@ internal class TokenBuilder
             throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
         }
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
         return resultTokens;
     }
 
@@ -255,7 +255,7 @@ internal class TokenBuilder
 
         instArgCode = instArgCode | ArgumentHandler(cmdLine.Arguments[1], extraTokens);
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
         resultTokens.AddRange(extraTokens);
 
         return resultTokens;
@@ -275,7 +275,7 @@ internal class TokenBuilder
             throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
         }
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
         return resultTokens;
     }
 
@@ -305,7 +305,7 @@ internal class TokenBuilder
             throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[1]}.");
         }
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
         return resultTokens;
     }
 
@@ -318,7 +318,8 @@ internal class TokenBuilder
         {
             resultTokens.Add(new ShiftOperationToken(
                 Instruction.Instructions[cmdLine.InstructionMnemonics].Code,
-                cmdLine.Arguments[0])
+                cmdLine.Arguments[0],
+                cmdLine)
             );
         }
         else

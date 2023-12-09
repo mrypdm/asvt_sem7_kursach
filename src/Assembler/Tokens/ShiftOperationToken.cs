@@ -7,11 +7,13 @@ internal class ShiftOperationToken : IToken
 {
     private readonly int _machineCode;
     private readonly string _mark;
+    private readonly CommandLine _originCmdLine;
 
-    public ShiftOperationToken(int machineCode, string mark)
+    public ShiftOperationToken(int machineCode, string mark, CommandLine originCmdLine)
     {
         _machineCode = machineCode;
         _mark = mark;
+        _originCmdLine = originCmdLine;
     }
 
     public IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
@@ -33,6 +35,6 @@ internal class ShiftOperationToken : IToken
 
         var shiftValue = (delta / 2 - 1) & 0b1111_1111;
 
-        return new List<string> { Convert.ToString(_machineCode | shiftValue, 8).PadLeft(6, '0') };
+        return new List<string> { Convert.ToString(_machineCode | shiftValue, 8).PadLeft(6, '0') + $";{_originCmdLine.GetSymbol()}" };
     }
 }

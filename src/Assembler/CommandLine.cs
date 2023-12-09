@@ -45,6 +45,11 @@ internal record CommandLine
         }
     }
 
+    public string GetSymbol()
+    {
+        return $"{string.Join(',', Marks)}: {InstructionMnemonics} {string.Join(',', Arguments)}";
+    }
+
     /// <summary>
     /// Symbol mark for line
     /// </summary>
