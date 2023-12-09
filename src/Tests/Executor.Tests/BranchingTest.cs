@@ -64,15 +64,15 @@ public class BranchingTest
     [Test]
     public void TestBrNegative()
     {
-        var word = Convert.ToUInt16("000612", 8);
+        var word = Convert.ToUInt16("000765", 8); //1_11110101
         var memory = new Memory();
         var state = new State();
-        state.Registers[7] = 70;
+        state.Registers[7] = 72; // next to instruction
 
         var opcodeIdentifier = new OpcodeIdentifier(state, memory);
         var command = opcodeIdentifier.GetCommand(word);
         command.Execute(command.GetArguments(word));
 
-        Assert.That(state.Registers[7], Is.EqualTo(70 - 20));
+        Assert.That(state.Registers[7], Is.EqualTo(72 - 2 - 20));
     }
 }
