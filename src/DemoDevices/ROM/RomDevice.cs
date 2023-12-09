@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using DeviceSdk;
 
@@ -83,7 +84,11 @@ public sealed class RomDevice : IDevice
     {
         try
         {
-            _stream = File.Open("memory.bin", FileMode.OpenOrCreate);
+            var assemblyPath = Assembly.GetExecutingAssembly().Location;
+            var dir = Path.GetDirectoryName(assemblyPath);
+            var romFile = Path.Combine(dir!, "memory.bin");
+
+            _stream = File.Open(romFile, FileMode.OpenOrCreate);
             _stream.SetLength(ushort.MaxValue + 1);
             IsReady = true;
             return 0;
