@@ -13,6 +13,8 @@ namespace Executor;
 
 public class Executor
 {
+    private bool _initialized;
+
     private readonly IState _state;
     private readonly IStorage _memory;
     private readonly IDeviceValidator _deviceValidator;
@@ -40,6 +42,21 @@ public class Executor
         _opcodeIdentifier = new OpcodeIdentifier(_state, _bus);
     }
 
+    public void Init()
+    {
+        if (_initialized)
+        {
+            return;
+        }
+
+        _initialized = true;
+
+        foreach (var device in _devicesManager.Devices)
+        {
+            device.Init();
+        }
+    }
+
     public int ExecuteProgram()
     {
         return 0;
@@ -47,6 +64,7 @@ public class Executor
 
     public int ExecuteNextInstruction()
     {
+        Init();
         var word = _memory.GetWord(_state.Registers[7]);
         _state.Registers[7] += 2;
         var command = _opcodeIdentifier.GetCommand(word);
@@ -54,14 +72,29 @@ public class Executor
         return 0;
     }
 
-    private void AddDevice(string path)
+
+    public Task LoadProgram(IProject project)
     {
-        _deviceValidator.ThrowIfInvalid(path);
-        _devicesManager.Add(path);
+        if (project.ProgramAddress % 2 == 1)
+        {
+            throw new InvalidOperationException("Start program address cannot be odd");
+        }
+
+        if (project.StackAddress % 2 == 1)
+        {
+            throw new InvalidOperationException("Start stack address cannot be odd");
+        }
+
+        Project = project;
+
+        return Reload();
     }
 
     public async Task Reload()
     {
+        _initialized = false;
+        _devicesManager.Clear();
+
         _state.Registers[6] = Project.StackAddress;
         _state.Registers[7] = Project.ProgramAddress;
 
@@ -100,20 +133,9 @@ public class Executor
         }
     }
 
-    public Task LoadProgram(IProject project)
+    private void AddDevice(string path)
     {
-        if (project.ProgramAddress % 2 == 1)
-        {
-            throw new InvalidOperationException("Start program address cannot be odd");
-        }
-
-        if (project.StackAddress % 2 == 1)
-        {
-            throw new InvalidOperationException("Start stack address cannot be odd");
-        }
-
-        Project = project;
-
-        return Reload();
+        _deviceValidator.ThrowIfInvalid(path);
+        _devicesManager.Add(path);
     }
 }

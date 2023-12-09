@@ -5,7 +5,7 @@ namespace Executor.Storages;
 
 public class Memory : IStorage
 {
-    private readonly byte[] _memory = new byte[65026];
+    private readonly byte[] _memory = new byte[65024];
 
     public IReadOnlyCollection<byte> Data => _memory;
 
