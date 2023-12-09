@@ -12,7 +12,7 @@ public abstract class BranchOperation : BaseCommand
     private const ushort OpcodeMask = 0b1111_1111_0000_0000;
     private const ushort OffsetMask = 0b0000_0000_1111_1111;
 
-    private byte GetOffset(ushort word) => (byte)(word & OffsetMask);
+    private sbyte GetOffset(ushort word) => (sbyte)(word & OffsetMask);
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
@@ -46,8 +46,6 @@ public abstract class BranchOperation : BaseCommand
     protected void UpdateProgramCounter(IArgument[] arguments)
     {
         var validatedArgument = ValidateArgument<IOffsetArgument>(arguments);
-        int value = validatedArgument.GetOffset();
-        value = (value & 128) > 0 ? -(127 & value) : value;
-        _state.Registers[7] = (ushort)(_state.Registers[7] + 2 * value);
+        _state.Registers[7] = (ushort)(_state.Registers[7] + 2 * validatedArgument.GetOffset());
     }
 }
