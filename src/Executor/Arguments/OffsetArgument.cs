@@ -7,15 +7,15 @@ namespace Executor.Arguments;
 
 public class OffsetArgument : BaseArgument, IOffsetArgument
 {
-    private readonly byte _offset;
+    private readonly sbyte _offset;
 
     public override object GetValue() => GetOffset();
 
     public override void SetValue(object obj) => throw new ReadOnlyArgumentException(typeof(OffsetArgument));
 
-    public byte GetOffset() => _offset;
+    public sbyte GetOffset() => _offset;
 
-    public OffsetArgument(IStorage storage, IState state, byte offset) : base(storage, state)
+    public OffsetArgument(IStorage storage, IState state, sbyte offset) : base(storage, state)
     {
         _offset = offset;
     }
