@@ -594,8 +594,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     private async Task OpenExecutorWindowAsync()
     {
         var executor = new Executor.Executor();
-        await executor.LoadProgram(GetBinPath(), _projectManager.Project.StackAddress,
-            _projectManager.Project.ProgramAddress);
+        await executor.LoadProgram( _projectManager.Project);
 
         var viewModel = _windowProvider.CreateWindow<ExecutorWindow, ExecutorViewModel>(_messageBoxManager, executor);
         await viewModel.ShowDialog(View);
@@ -647,9 +646,6 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
     #endregion
 
-    private string GetBinPath() =>
-        PathHelper.Combine(_projectManager.Project.ProjectDirectory, $"{_projectManager.Project.ProjectName}.bin");
-
     private async Task BuildProjectAsync()
     {
         await SaveAllFilesAsync();
@@ -658,7 +654,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
         try
         {
-            await assembler.Compile(_projectManager.Project, GetBinPath());
+            await assembler.Compile(_projectManager.Project);
             await _messageBoxManager.ShowMessageBoxAsync("Build", "Completed", ButtonEnum.Ok, Icon.Info, View);
         }
         catch (Exception e)

@@ -30,6 +30,8 @@ public class Executor
     public IReadOnlyCollection<ushort> Registers => _state.Registers;
 
     public IProject Project { get; private set; }
+    
+    public ushort LengthOfProgram { get; private set; }
 
     public Executor()
     {
@@ -113,7 +115,7 @@ public class Executor
         {
             if (line.StartsWith("#"))
             {
-                AddDevice(line);
+                AddDevice(line[1..]);
                 continue;
             }
 
@@ -131,6 +133,8 @@ public class Executor
             _memory.SetWord(address, (ushort)word);
             address += 2;
         }
+
+        LengthOfProgram = (ushort)(address - Project.ProgramAddress);
     }
 
     private void AddDevice(string path)

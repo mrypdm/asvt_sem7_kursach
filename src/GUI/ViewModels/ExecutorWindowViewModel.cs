@@ -90,7 +90,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     // TODO
     /// <inheritdoc />
     public ObservableCollection<ProcessorStateWordModel> ProcessorStateWord =>
-        new[] { new ProcessorStateWordModel(_executor.PSW) }.ToObservableCollection();
+        new[] { new ProcessorStateWordModel(_executor.ProcessorStateWord) }.ToObservableCollection();
 
     // TODO
     /// <inheritdoc />
@@ -210,7 +210,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     // TODO
     private IEnumerable<IMemoryModel> AsWords()
     {
-        var count = _executor.Memory.GetMemory().Count;
+        var count = _executor.Memory.Data.Count;
         for (ushort i = 0; i < count; i += 2)
         {
             yield return new WordModel(i, _executor.Memory.GetWord(i));
@@ -219,7 +219,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
 
     // TODO
     private IEnumerable<IMemoryModel> AsBytes()
-        => _executor.Memory.GetMemory().Select((m, i) => new ByteModel((ushort)i, m));
+        => _executor.Memory.Data.Select((m, i) => new ByteModel((ushort)i, m));
 
     private async Task FindAddressAsync(string text)
     {
@@ -243,7 +243,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
 
     private IEnumerable<CodeModel> InitCode()
     {
-        var start = _executor.StartProgramAddress;
+        var start = _executor.Project.ProgramAddress;
         var count = _executor.LengthOfProgram;
 
         for (var i = start; i <= start + count; i += 2)

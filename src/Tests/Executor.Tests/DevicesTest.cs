@@ -31,7 +31,7 @@ public class DevicesTest
             address, // 2
             Convert.ToUInt16("177000", 8), // 4
 
-            Convert.ToUInt16("012737", 8), // 6 MOV #111, @#177002 ; set address
+            Convert.ToUInt16("012737", 8), // 6 MOV #107, @#177002 ; set address
             Convert.ToUInt16("000107", 8), // 8
             Convert.ToUInt16("177002", 8), // 10
 

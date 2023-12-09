@@ -15,14 +15,15 @@ internal static class Program
 
         var project = new Project
         {
+            ProjectFile = @"C:\test.pdp11proj",
             Executable = mainAsmFile,
-            Files = linkedAsmFiles
+            Files = linkedAsmFiles,
         };
 
         var asm = new Compiler();
         try
         {
-            asm.Compile(project, "test.bin").Wait();
+            asm.Compile(project).Wait();
         }
         catch (Exception ex)
         {
