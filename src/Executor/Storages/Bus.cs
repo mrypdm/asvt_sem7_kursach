@@ -43,14 +43,15 @@ public class Bus : IStorage
             return _storage.GetByte(address);
         }
 
+        var wordAddress = address - (address % 2 == 1 ? 1 : 0);
+
         var device = _deviceManager.Devices.SingleOrDefault(d =>
-            d.BufferRegisterAddress == address || d.ControlRegisterAddress == address);
+            d.BufferRegisterAddress == wordAddress || d.ControlRegisterAddress == wordAddress);
 
         if (device != null)
         {
             var shift = address % 2 == 1 ? 8 : 0;
-
-            if (address == device.BufferRegisterAddress)
+            if (wordAddress == device.BufferRegisterAddress)
             {
                 return (byte)((device.BufferRegisterAddress >> shift) & 0xFF);
             }
@@ -95,19 +96,17 @@ public class Bus : IStorage
             return;
         }
 
-        // theoretically, it will not be possible to use byte operations with odd addresses for devices,
-        // because all their addresses are even
-        // but just in case we will support it
+        var wordAddress = address - (address % 2 == 1 ? 1 : 0);
 
         var device = _deviceManager.Devices.SingleOrDefault(d =>
-            d.BufferRegisterAddress == address || d.ControlRegisterAddress == address);
+            d.BufferRegisterAddress == wordAddress || d.ControlRegisterAddress == wordAddress);
 
         if (device != null)
         {
             var shift = address % 2 == 1 ? 8 : 0;
             var bitsToKeep = 0xFF << (8 - shift); // if odd 0xFF; if even 0xFF00
 
-            if (address == device.BufferRegisterAddress)
+            if (wordAddress == device.BufferRegisterAddress)
             {
                 device.BufferRegisterValue = (ushort)((device.BufferRegisterAddress & bitsToKeep) | (value << shift));
                 return;
