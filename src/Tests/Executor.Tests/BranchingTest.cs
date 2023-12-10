@@ -1,4 +1,7 @@
 using System;
+using Executor.Arguments;
+using Executor.Arguments.Abstraction;
+using Executor.Commands;
 using Executor.States;
 using Executor.Storages;
 
@@ -33,13 +36,12 @@ public class BranchingTest
         state.Z = true;
         state.V = true;
 
-        for (var i = 0;i < 10; i+=2) 
+        for (var i = 0; i < 10; i += 2)
         {
             TestContext.WriteLine($"PC {state.Registers[7]}");
             var word = memory.GetWord((ushort)i);
             var command = opcodeIdentifier.GetCommand(word);
             command.Execute(command.GetArguments(word));
-
         }
 
 
@@ -55,7 +57,6 @@ public class BranchingTest
             var word = memory.GetWord((ushort)i);
             var command = opcodeIdentifier.GetCommand(word);
             command.Execute(command.GetArguments(word));
-
         }
 
         Assert.That(state.Registers[7], Is.EqualTo(24));
@@ -74,5 +75,38 @@ public class BranchingTest
         command.Execute(command.GetArguments(word));
 
         Assert.That(state.Registers[7], Is.EqualTo(72 - 2 - 20));
+    }
+
+    [Test]
+    [TestCase((ushort)2, (ushort)4)]
+    [TestCase((ushort)1, (ushort)16)]
+    public void TestSob(ushort initialRegisterValue, ushort expectedProgramCounterValue)
+    {
+        // Arrange
+
+        var memory = new Memory();
+        var state = new State
+        {
+            Registers =
+            {
+                [0] = initialRegisterValue,
+                [7] = 16 // next to instruction
+            }
+        };
+
+        var arg = new SOBArg(memory, state, 0, 6);
+        var command = new SOB(memory, state);
+
+        // Act
+
+        command.Execute(new IArgument[] { arg });
+
+        // Assert
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(state.Registers[0], Is.EqualTo(initialRegisterValue - 1));
+            Assert.That(state.Registers[7], Is.EqualTo(expectedProgramCounterValue));
+        });
     }
 }

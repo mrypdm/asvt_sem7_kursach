@@ -19,17 +19,24 @@ public class SOB : BaseCommand
 
     protected ushort GetRegister(ushort word) => (ushort)((word & RegisterMask) >> 6);
 
-    protected ushort GetOffset(ushort word) => (ushort)(word & OffsetMask);
+    protected byte GetOffset(ushort word) => (byte)(word & OffsetMask);
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
-    public override IArgument[] GetArguments(ushort word)
-    {
-        return new IArgument[] { new SOBArg(Storage, State, GetRegister(word), GetOffset(word)) };
-    }
+    public override IArgument[] GetArguments(ushort word) => new IArgument[]
+        { new SOBArg(Storage, State, GetRegister(word), GetOffset(word)) };
 
     public override void Execute(IArgument[] arguments)
     {
+        ValidateArgumentsCount(arguments, 1);
+        var validatedArgument = ValidateArgument<SOBArg>(arguments[0]);
+
+        var newValue = --State.Registers[validatedArgument.Register];
+
+        if (newValue != 0)
+        {
+            State.Registers[7] -= (ushort)(2 * validatedArgument.Offset);
+        }
     }
 
     public override ushort Opcode => Convert.ToUInt16("077000", 8);

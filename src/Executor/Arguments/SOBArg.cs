@@ -6,19 +6,17 @@ namespace Executor.Arguments;
 
 public class SOBArg : BaseArgument
 {
-    private ushort _offset;
-    private ushort _register;
-
-    public override object GetValue()
+    public SOBArg(IStorage storage, IState state, ushort register, byte offset) : base(storage, state)
     {
-        return 0;
+        Register = register;
+        Offset = offset;
     }
+
+    public override object GetValue() => (Register, Offset);
 
     public override void SetValue(object word) => throw new ReadOnlyArgumentException(typeof(SOBArg));
 
-    public SOBArg(IStorage storage, IState state, ushort register, ushort offset) : base(storage, state)
-    {
-        _register = register;
-        _offset = offset;
-    }
+    public ushort Register { get; }
+
+    public byte Offset { get; }
 }
