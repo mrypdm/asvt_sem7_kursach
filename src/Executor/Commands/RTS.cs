@@ -2,6 +2,7 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
 
@@ -20,13 +21,16 @@ public class RTS : BaseCommand
 
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
-    public override IArgument[] GetArguments(ushort word)
-    {
-        return new IArgument[] { new RTSArg(Storage, State, GetRegister(word)) };
-    }
+    public override IArgument[] GetArguments(ushort word) =>
+        new IArgument[] { new RegisterArgument(Storage, State, GetRegister(word)) };
 
     public override void Execute(IArgument[] arguments)
     {
+        ValidateArgumentsCount(arguments, 1);
+        var argument = ValidateArgument<RegisterArgument>(arguments[0]);
+
+        State.Registers[7] = State.Registers[argument.Register];
+        State.Registers[argument.Register] = Storage.PopFromStack(State);
     }
 
     public override ushort Opcode => Convert.ToUInt16("000200", 8);

@@ -1,4 +1,5 @@
 using System;
+using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.States;
@@ -15,7 +16,7 @@ public class CLRB : OneOperand
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<IRegisterArgument<byte>>(arguments[0]);
+        var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
         var (source, destination) = validatedArgument.GetSourceAndDestination();
         
         destination(0);

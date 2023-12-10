@@ -1,8 +1,7 @@
-﻿using Executor.Arguments.Abstraction;
-using Executor.States;
+﻿using Executor.States;
 using Executor.Storages;
 
-namespace Executor.Arguments;
+namespace Executor.Arguments.Abstraction;
 
 public abstract class BaseArgument : IArgument
 {

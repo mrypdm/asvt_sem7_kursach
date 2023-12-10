@@ -1,3 +1,4 @@
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
 
@@ -13,15 +14,10 @@ public abstract class TrapInstruction : BaseCommand
 
     public static void HandleInterrupt(IStorage storage, IState state, ushort vectorAddress)
     {
-        var newPc = storage.GetWord(vectorAddress);
-        var newPsw = storage.GetWord((ushort)(vectorAddress + 2));
+        storage.PushToStack(state, state.ProcessorStateWord);
+        storage.PushToStack(state, state.Registers[7]);
 
-        state.Registers[6] -= 2;
-        state.Registers[6] = state.ProcessorStateWord;
-        state.Registers[6] -= 2;
-        state.Registers[6] = state.Registers[7];
-
-        state.Registers[7] = newPc;
-        state.ProcessorStateWord = newPsw;
+        state.Registers[7] = storage.GetWord(vectorAddress);
+        state.ProcessorStateWord = storage.GetWord((ushort)(vectorAddress + 2));
     }
 }

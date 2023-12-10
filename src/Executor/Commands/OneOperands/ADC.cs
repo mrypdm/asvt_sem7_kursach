@@ -1,4 +1,5 @@
 using System;
+using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.States;
@@ -16,7 +17,7 @@ public class ADC : OneOperand
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<IRegisterArgument<ushort>>(arguments[0]);
+        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments[0]);
         var (source, destination) = validatedArgument.GetSourceAndDestination();
 
         var delta = State.C ? 1 : 0;

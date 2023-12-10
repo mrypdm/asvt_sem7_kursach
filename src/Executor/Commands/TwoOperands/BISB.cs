@@ -1,4 +1,5 @@
 using System;
+using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
 using Executor.States;
@@ -14,7 +15,7 @@ public class BISB : TwoOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArguments = ValidateArguments<IRegisterArgument<byte>>(arguments);
+        var validatedArguments = ValidateArguments<RegisterByteArgument>(arguments);
         var (source0, destination0) = validatedArguments[0].GetSourceAndDestination();
         var (source1, destination1) = validatedArguments[1].GetSourceAndDestination();
 

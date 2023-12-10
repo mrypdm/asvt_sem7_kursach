@@ -3,6 +3,9 @@ using Executor.Exceptions;
 
 namespace Executor.Arguments;
 
+/// <summary>
+/// Flag Control Operations Argument
+/// </summary>
 public class FlagArgument : IArgument
 {
     public FlagArgument(ushort word)

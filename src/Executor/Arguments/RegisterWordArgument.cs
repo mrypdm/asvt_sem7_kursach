@@ -5,6 +5,9 @@ using Executor.Storages;
 
 namespace Executor.Arguments;
 
+/// <summary>
+/// Argument referencing a word
+/// </summary>
 public class RegisterWordArgument : BaseArgument, IRegisterArgument<ushort>
 {
     public RegisterWordArgument(IStorage storage, IState state, ushort mode, ushort register) : base(storage, state)
@@ -13,14 +16,20 @@ public class RegisterWordArgument : BaseArgument, IRegisterArgument<ushort>
         Mode = mode;
     }
 
+    /// <inheritdoc />
     public ushort Mode { get; }
 
+    /// <inheritdoc />
     public ushort Register { get; }
 
-    public override object GetValue() => throw new InvalidOperationException();
+    /// <inheritdoc />
+    public override object GetValue() => GetSourceAndDestination();
 
-    public override void SetValue(object obj) => throw new InvalidOperationException();
+    /// <inheritdoc />
+    public override void SetValue(object obj) =>
+        throw new InvalidOperationException($"{GetType().Name} does not support SetValue");
 
+    /// <inheritdoc />
     public (Func<ushort>, Action<ushort>) GetSourceAndDestination()
     {
         ushort addr;

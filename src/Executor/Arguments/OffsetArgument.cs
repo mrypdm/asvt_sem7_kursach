@@ -5,6 +5,9 @@ using Executor.Storages;
 
 namespace Executor.Arguments;
 
+/// <summary>
+/// Offset argument
+/// </summary>
 public class OffsetArgument : BaseArgument, IOffsetArgument
 {
     public override object GetValue() => Offset;

@@ -1,3 +1,4 @@
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
 
@@ -11,9 +12,7 @@ public abstract class TrapReturn : BaseCommand
 
     protected void HandleReturn()
     {
-        State.Registers[7] = Storage.GetWord(State.Registers[6]);
-        State.Registers[6] += 2;
-        State.ProcessorStateWord = Storage.GetWord(State.Registers[6]);
-        State.Registers[6] += 2;
+        State.Registers[7] = Storage.PopFromStack(State);
+        State.ProcessorStateWord = Storage.PopFromStack(State);
     }
 }

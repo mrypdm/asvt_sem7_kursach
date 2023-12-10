@@ -14,25 +14,14 @@ public class JMP : OneOperand
     {
     }
 
-    public override IArgument[] GetArguments(ushort word)
-    {
-        return new IArgument[]
-        {
-            new RegisterWordArgument(Storage, State, GetMode(word), GetRegister(word))
-        };
-    }
+    public override IArgument[] GetArguments(ushort word) => new IArgument[]
+        { new RegisterAddressArgument(Storage, State, GetMode(word), GetRegister(word)) };
 
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<IRegisterArgument<ushort>>(arguments[0]);
-        var (source, destination) = validatedArgument.GetSourceAndDestination();
-
-        if (validatedArgument.Mode == 0)
-        {
-            throw new InvalidInstructionException("JMP cannot be addressed with mode 0");
-        }
-        
+        var validatedArgument = ValidateArgument<RegisterAddressArgument>(arguments[0]);
+        var source = validatedArgument.GetSource();
         State.Registers[7] = source();
     }
 

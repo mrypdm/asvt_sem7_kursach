@@ -2,6 +2,8 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.Commands;
+using Executor.Commands.OneOperands;
+using Executor.Commands.TwoOperands;
 using Executor.States;
 using Executor.Storages;
 
@@ -94,7 +96,7 @@ public class BranchingTest
             }
         };
 
-        var arg = new SOBArg(memory, state, 0, 6);
+        var arg = new SobArgument(memory, state, 0, 6);
         var command = new SOB(memory, state);
 
         // Act
@@ -108,5 +110,69 @@ public class BranchingTest
             Assert.That(state.Registers[0], Is.EqualTo(initialRegisterValue - 1));
             Assert.That(state.Registers[7], Is.EqualTo(expectedProgramCounterValue));
         });
+    }
+
+    [Test]
+    public void TestJsr_ShouldSwapStackTopValueAndProgramCounter()
+    {
+        // Arrange
+
+        var memory = new Memory();
+        memory.SetWord(500, 1500);
+        var state = new State
+        {
+            Registers =
+            {
+                [6] = 500,
+                [7] = 1002 // next to jsr
+            }
+        };
+
+        var arg0 = new RegisterArgument(memory, state, 7);
+        var arg1 = new RegisterAddressArgument(memory, state, 3, 6);
+        var command = new JSR(memory, state);
+
+        // Act
+
+        command.Execute(new IArgument[] { arg0, arg1 });
+
+        // Assert
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(state.Registers[6], Is.EqualTo(500));
+            Assert.That(state.Registers[7], Is.EqualTo(1500));
+            Assert.That(memory.GetWord(500), Is.EqualTo(1002));
+        });
+    }
+
+    [Test]
+    [TestCase((ushort)3, (ushort)1500)]
+    [TestCase((ushort)6, (ushort)2504)]
+    public void TestJmp(ushort mode, ushort expectedAddress)
+    {
+        // Arrange
+
+        var memory = new Memory();
+        memory.SetWord(1002, 1500);
+
+        var state = new State
+        {
+            Registers =
+            {
+                [7] = 1002 // next to jmp
+            }
+        };
+
+        var arg = new RegisterAddressArgument(memory, state, mode, 7);
+        var command = new JMP(memory, state);
+
+        // Act
+
+        command.Execute(new IArgument[] { arg });
+
+        // Assert
+
+        Assert.That(state.Registers[7], Is.EqualTo(expectedAddress));
     }
 }
