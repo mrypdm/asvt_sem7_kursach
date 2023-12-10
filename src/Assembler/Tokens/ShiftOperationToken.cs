@@ -33,7 +33,7 @@ internal class ShiftOperationToken : IToken
             throw new Exception($"The distance to the mark ({_mark}) is too large. {delta}");
         }
 
-        var shiftValue = (delta / 2 - 1) & 0b1111_1111;
+        var shiftValue = delta / 2 - 1;
 
         return new List<string> { Convert.ToString(_machineCode | shiftValue, 8).PadLeft(6, '0') + $";{_originCmdLine.GetSymbol()}" };
     }
