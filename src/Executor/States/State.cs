@@ -2,6 +2,8 @@ namespace Executor.States;
 
 public class State : IState
 {
+    public static int GetPriority(ushort psw) => (psw & 0xE0) >> 5;
+    
     public ushort ProcessorStateWord { get; set; }
 
     public bool C
@@ -32,7 +34,7 @@ public class State : IState
 
     public int Priority
     {
-        get => (ProcessorStateWord & 0xE0) >> 5;
+        get => GetPriority(ProcessorStateWord);
         set => ProcessorStateWord = (ushort)((ProcessorStateWord & 0b1111_1111_0001_1111) | (value << 5));
     }
 

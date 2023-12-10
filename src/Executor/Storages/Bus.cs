@@ -1,28 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Devices.Managers;
+using DeviceSdk;
 using Executor.Exceptions;
+using Executor.States;
 
 namespace Executor.Storages;
 
-public class Bus : IStorage
+public class Bus : IStorage, IBus
 {
-    private readonly IStorage _storage;
+    private readonly IStorage _memory;
     private readonly IDevicesManager _deviceManager;
 
-    public Bus(IStorage storage, IDevicesManager deviceManager)
+    public Bus(IStorage memory, IDevicesManager deviceManager)
     {
-        _storage = storage;
+        _memory = memory;
         _deviceManager = deviceManager;
     }
 
-    public IReadOnlyCollection<byte> Data => _storage.Data;
+    public IReadOnlyCollection<byte> Data => _memory.Data;
 
     public ushort GetWord(ushort address)
     {
-        if (address < _storage.Data.Count)
+        if (address < _memory.Data.Count)
         {
-            return _storage.GetWord(address);
+            return _memory.GetWord(address);
         }
 
         var device = _deviceManager.Devices.SingleOrDefault(d =>
@@ -38,9 +40,9 @@ public class Bus : IStorage
 
     public byte GetByte(ushort address)
     {
-        if (address < _storage.Data.Count)
+        if (address < _memory.Data.Count)
         {
-            return _storage.GetByte(address);
+            return _memory.GetByte(address);
         }
 
         var wordAddress = address - (address % 2 == 1 ? 1 : 0);
@@ -64,9 +66,9 @@ public class Bus : IStorage
 
     public void SetWord(ushort address, ushort value)
     {
-        if (address < _storage.Data.Count)
+        if (address < _memory.Data.Count)
         {
-            _storage.SetWord(address, value);
+            _memory.SetWord(address, value);
             return;
         }
 
@@ -90,9 +92,9 @@ public class Bus : IStorage
 
     public void SetByte(ushort address, byte value)
     {
-        if (address < _storage.Data.Count)
+        if (address < _memory.Data.Count)
         {
-            _storage.SetByte(address, value);
+            _memory.SetByte(address, value);
             return;
         }
 
@@ -117,5 +119,31 @@ public class Bus : IStorage
         }
 
         throw new BusException($"Cannot find address '{address}'");
+    }
+
+    public IDevice GetInterrupt(int currentPriority)
+    {
+        var devices = _deviceManager.Devices.Where(m => m.HasInterrupt).ToArray();
+        if (!devices.Any())
+        {
+            return null;
+        }
+
+        IDevice mostPriorityDevice = null;
+        var priority = 0;
+        foreach (var device in devices)
+        {
+            var pswAddress = (ushort)(device.InterruptVectorAddress + 2);
+            var pswValue = _memory.GetWord(pswAddress);
+            var newPriority = State.GetPriority(pswValue);
+
+            if (newPriority > priority)
+            {
+                mostPriorityDevice = device;
+                priority = newPriority;
+            }
+        }
+
+        return priority > currentPriority ? mostPriorityDevice : null;
     }
 }
