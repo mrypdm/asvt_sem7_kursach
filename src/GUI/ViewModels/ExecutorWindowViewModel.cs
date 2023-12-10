@@ -49,7 +49,18 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         ProcessorStateWord = Array.Empty<ProcessorStateWordModel>().ToObservableCollection();
         Memory = Array.Empty<IMemoryModel>().ToObservableCollection();
         Devices = Array.Empty<Device>().ToObservableCollection();
-        CodeLines = Array.Empty<CodeModel>().ToObservableCollection();
+        CodeLines = Array.Empty<CodeLine>().ToObservableCollection();
+
+        foreach (var line in CodeLines)
+        {
+            line.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(CodeLine.Breakpoint))
+                {
+                    // update breakpoint in executor
+                }
+            };
+        }
 
         InitContext();
     }
@@ -94,7 +105,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
 
     // TODO
     /// <inheritdoc />
-    public ObservableCollection<CodeModel> CodeLines { get; }
+    public ObservableCollection<CodeLine> CodeLines { get; }
 
     /// <inheritdoc />
     public ObservableCollection<Tab> Tabs { get; }

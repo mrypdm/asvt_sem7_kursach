@@ -31,6 +31,15 @@
             <Setter Property="FontFamily" Value="Courier New" />
             <Setter Property="FontSize" Value="14" />
         </Style>
+        <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="Fill" Value="LightBlue" />
+        </Style>
+        <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="Fill" Value="LightBlue" />
+        </Style>
+        <Style Selector="DataGridRow:selected">
+            <Setter Property="Foreground" Value="Black" />
+        </Style>
     </Window.Styles>
 
     <DockPanel LastChildFill="True">
@@ -77,11 +86,41 @@
 
             <!-- Devices -->
             <DataGrid Margin="0,0,0,5" DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto"
-                      IsVisible="{Binding IsDevicesVisible}" ItemsSource="{Binding Devices}" />
+                      IsVisible="{Binding IsDevicesVisible}" ItemsSource="{Binding Devices}"
+                      AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Header="Name" Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Control address" Binding="{Binding ControlAddress}" />
+                    <DataGridTextColumn Header="Control value" Binding="{Binding ControlValue}" />
+                    <DataGridTextColumn Header="Buffer address" Binding="{Binding BufferAddress}" />
+                    <DataGridTextColumn Header="Buffer value" Binding="{Binding BufferValue}" />
+                    <DataGridTextColumn Header="Interrupt vector" Binding="{Binding InterruptVectorAddress}" />
+                </DataGrid.Columns>
+            </DataGrid>
         </DockPanel>
 
         <!-- Code -->
         <DataGrid Margin="5" DockPanel.Dock="Top" CanUserResizeColumns="True" VerticalScrollBarVisibility="Auto"
-                  SelectionMode="Single" ItemsSource="{Binding CodeLines}" />
+                  SelectionMode="Single" ItemsSource="{Binding CodeLines}"
+                  IsReadOnly="False" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox BorderThickness="0" IsChecked="{Binding Breakpoint}">
+                                <CheckBox.Styles>
+                                    <Style Selector="CheckBox:checked /template/ Path#checkMark">
+                                        <Setter Property="Fill" Value="Red"></Setter>
+                                    </Style>
+                                </CheckBox.Styles>
+                            </CheckBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Address" Binding="{Binding Address}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Code" Binding="{Binding Code}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Text" Binding="{Binding Text}" IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
     </DockPanel>
 </Window>

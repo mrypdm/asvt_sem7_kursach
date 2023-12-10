@@ -64,7 +64,7 @@ public interface IExecutorWindowViewModel : IWindowViewModel<ExecutorWindow>
     /// <summary>
     /// Collection of code lines
     /// </summary>
-    ObservableCollection<CodeModel> CodeLines { get; }
+    ObservableCollection<CodeLine> CodeLines { get; }
     
     /// <summary>
     /// Collection of tabs
