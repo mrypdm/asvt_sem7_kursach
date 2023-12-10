@@ -9,7 +9,9 @@ using Devices.Providers;
 using Devices.Validators;
 using DeviceSdk;
 using Domain.Models;
+using Executor.Commands.Traps;
 using Executor.CommandTypes;
+using Executor.Exceptions;
 using Executor.States;
 using Executor.Storages;
 
@@ -18,6 +20,19 @@ namespace Executor;
 public class Executor
 {
     private bool _initialized;
+
+    private readonly Stack<string> _trapStack = new();
+
+    private readonly HashSet<string> _trapsToHalt = new()
+    {
+        nameof(BusException),
+        nameof(OddAddressException),
+        nameof(EMT),
+        nameof(TRAP),
+        nameof(IOT),
+        nameof(BPT),
+        "Trace"
+    };
 
     private readonly IState _state;
     private readonly IStorage _memory;
@@ -69,22 +84,26 @@ public class Executor
         }
     }
 
-    public async Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task<bool> ExecuteAsync(CancellationToken cancellationToken)
     {
         Init();
 
-        while (!cancellationToken.IsCancellationRequested)
+        var res = true;
+
+        while (!cancellationToken.IsCancellationRequested && res)
         {
             if (_breakpoints.Contains(_state.Registers[7]))
             {
                 break;
             }
 
-            await ExecuteNextInstructionAsync();
+            res = await ExecuteNextInstructionAsync();
         }
+
+        return res;
     }
 
-    public void ExecuteNextInstruction()
+    public bool ExecuteNextInstruction()
     {
         Init();
 
@@ -92,16 +111,48 @@ public class Executor
         if (interruptedDevice != null)
         {
             interruptedDevice.AcceptInterrupt();
-            TrapInstruction.HandleInterrupt(_bus, _state, interruptedDevice.InterruptVectorAddress);
+            HandleInterrupt(interruptedDevice.GetType().Name, interruptedDevice.InterruptVectorAddress);
         }
 
-        var word = _memory.GetWord(_state.Registers[7]);
-        _state.Registers[7] += 2;
-        var command = _opcodeIdentifier.GetCommand(word);
-        command.Execute(command.GetArguments(word));
+        try
+        {
+            var word = _memory.GetWord(_state.Registers[7]);
+            _state.Registers[7] += 2;
+
+            var command = _opcodeIdentifier.GetCommand(word);
+
+            var needTrace = _state.T;
+            command.Execute(command.GetArguments(word));
+
+            if (command is TrapInstruction)
+            {
+                _trapStack.Push(command.GetType().Name);
+                needTrace = false;
+            }
+            else if (command is TrapReturn)
+            {
+                _trapStack.Pop();
+                needTrace = needTrace && command is RTI;
+            }
+
+            if (needTrace)
+            {
+                HandleInterrupt("Trace", 12); // 0o14
+            }
+        }
+        catch (HaltException e) when (e.IsExpected)
+        {
+            return false;
+        }
+        catch (Exception e)
+        {
+            HandleHardwareTrap(e);
+        }
+
+        return true;
     }
 
-    public Task ExecuteNextInstructionAsync() => Task.Run(ExecuteNextInstruction);
+    public Task<bool> ExecuteNextInstructionAsync() => Task.Run(ExecuteNextInstruction);
 
     public Task LoadProgram(IProject project)
     {
@@ -179,5 +230,41 @@ public class Executor
     {
         _deviceValidator.ThrowIfInvalid(path);
         _devicesManager.Add(path);
+    }
+
+    private void HandleHardwareTrap(Exception e)
+    {
+        ushort address;
+
+        if (e is BusException or OddAddressException)
+        {
+            if (_trapStack.Any(t => _trapsToHalt.Any(m => m == t)))
+            {
+                throw new HaltException(false,
+                    $"Get bus error while already in trap. Trap stack: {string.Join("->", _trapStack)}");
+            }
+
+            address = 4;
+        }
+        else if (e is InvalidInstructionException)
+        {
+            address = 4;
+        }
+        else if (e is ReservedInstructionException)
+        {
+            address = 8; // 0o10
+        }
+        else
+        {
+            throw new Exception($"Unknown error '{e.GetType()}', '{e.Message}'");
+        }
+
+        HandleInterrupt(e.GetType().Name, address);
+    }
+
+    private void HandleInterrupt(string name, ushort address)
+    {
+        TrapInstruction.HandleInterrupt(_bus, _state, address);
+        _trapStack.Push(name);
     }
 }

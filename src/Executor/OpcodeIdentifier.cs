@@ -7,6 +7,7 @@ using Executor.Commands.MiscellaneousInstructions;
 using Executor.Commands.OneOperands;
 using Executor.Commands.TwoOperands;
 using Executor.CommandTypes;
+using Executor.Exceptions;
 using Executor.States;
 using Executor.Storages;
 
@@ -76,6 +77,6 @@ public class OpcodeIdentifier
             }
         }
 
-        throw new InvalidOperationException("Invalid Operation Opcode!");
+        throw new ReservedInstructionException(word);
     }
 }
