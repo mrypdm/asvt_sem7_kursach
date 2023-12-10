@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Executor.Exceptions;
 
@@ -5,7 +6,7 @@ namespace Executor.Storages;
 
 public class Memory : IStorage
 {
-    private byte[] _memory;
+    private readonly byte[] _memory = new byte[65024];
 
     public IReadOnlyCollection<byte> Data => _memory;
 
@@ -26,10 +27,7 @@ public class Memory : IStorage
         _memory[address] = value;
     }
 
-    public void Init()
-    {
-        _memory = new byte[65024];
-    }
+    public void Init() => Array.Fill<byte>(_memory, 0);
 
     public void SetWord(ushort address, ushort value)
     {
