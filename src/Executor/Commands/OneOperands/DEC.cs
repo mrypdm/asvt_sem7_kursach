@@ -14,7 +14,8 @@ public class DEC : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IRegisterArgument<ushort>>(arguments);
+        ValidateArgumentsCount(arguments, 1);
+        var validatedArgument = ValidateArgument<IRegisterArgument<ushort>>(arguments[0]);
         var (source, destination) = validatedArgument.GetSourceAndDestination();
         
         var value = (ushort)(source() - 1);

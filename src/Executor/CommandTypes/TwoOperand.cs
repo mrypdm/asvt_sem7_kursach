@@ -46,18 +46,10 @@ public abstract class TwoOperand : BaseCommand
 
     protected TType[] ValidateArguments<TType>(IArgument[] arguments) where TType : class
     {
-        if (arguments.Length != 2)
-        {
-            throw new ArgumentException("Count of arguments must be 2", nameof(arguments));
-        }
-        
-        if (arguments[0] is not TType || arguments[1] is not TType)
-        {
-            throw new InvalidArgumentTypeException(new[] { typeof(TType) },
-                arguments.Select(m => m.GetType()));
-        }
-
-        return arguments.Select(m => (TType)m).ToArray();
+        ValidateArgumentsCount(arguments, 2);
+        var arg0 = ValidateArgument<TType>(arguments[0]);
+        var arg1 = ValidateArgument<TType>(arguments[1]);
+        return new[] { arg0, arg1 };
     }
 
     protected TwoOperand(IStorage storage, IState state) : base(storage, state)

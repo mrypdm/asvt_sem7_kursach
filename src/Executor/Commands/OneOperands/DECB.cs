@@ -14,7 +14,8 @@ public class DECB : OneOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IRegisterArgument<byte>>(arguments);
+        ValidateArgumentsCount(arguments, 1);
+        var validatedArgument = ValidateArgument<IRegisterArgument<byte>>(arguments[0]);
         var (source, destination) = validatedArgument.GetSourceAndDestination();
         
         var value = (byte)(source() - 1);

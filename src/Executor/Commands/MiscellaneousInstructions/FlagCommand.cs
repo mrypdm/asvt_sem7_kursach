@@ -16,17 +16,8 @@ public class FlagCommand : BaseCommand
 
     public override void Execute(IArgument[] arguments)
     {
-        if (arguments.Length != 1)
-        {
-            throw new ArgumentException("Count of arguments must be 1", nameof(arguments));
-        }
-        
-        if (arguments[0] is not FlagArgument)
-        {
-            throw new InvalidArgumentTypeException(new[] { typeof(FlagArgument) }, new[] { arguments[0].GetType() });
-        }
-
-        var validatedArgument = (FlagArgument)arguments[0];
+        ValidateArgumentsCount(arguments, 1);
+        var validatedArgument = ValidateArgument<FlagArgument>(arguments[0]);
 
         if (validatedArgument.ToSet)
         {

@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 
 namespace Executor.Exceptions;
 
 public class InvalidArgumentTypeException : Exception
 {
-    public InvalidArgumentTypeException(IEnumerable<Type> expectedTypes, IEnumerable<Type> actualTypes)
-        : base(
-            "Invalid arguments types." +
-            $"Expected: {string.Join(", ", expectedTypes.Select(t => t.Name))}." +
-            $"But was: {string.Join(", ", actualTypes.Select(t => t.Name))}")
+    public InvalidArgumentTypeException(MemberInfo expectedType, MemberInfo actualType)
+        : base($"Invalid argument type. Expected: {expectedType.Name}. But was: {actualType.Name}")
     {
     }
 }

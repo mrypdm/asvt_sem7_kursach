@@ -28,24 +28,10 @@ public abstract class BranchOperation : BaseCommand
         };
     }
 
-    protected TType ValidateArgument<TType>(IArgument[] arguments) where TType : class
-    {
-        if (arguments.Length != 1)
-        {
-            throw new ArgumentException("Count of arguments must be 1", nameof(arguments));
-        }
-
-        if (arguments[0] is not TType)
-        {
-            throw new InvalidArgumentTypeException(new[] { typeof(TType) }, new[] { arguments[0].GetType() });
-        }
-
-        return (TType)arguments[0];
-    }
-
     protected void UpdateProgramCounter(IArgument[] arguments)
     {
-        var validatedArgument = ValidateArgument<IOffsetArgument>(arguments);
-        State.Registers[7] = (ushort)(State.Registers[7] + 2 * validatedArgument.GetOffset());
+        ValidateArgumentsCount(arguments, 1);
+        var validatedArgument = ValidateArgument<IOffsetArgument>(arguments[0]);
+        State.Registers[7] = (ushort)(State.Registers[7] + 2 * validatedArgument.Offset);
     }
 }

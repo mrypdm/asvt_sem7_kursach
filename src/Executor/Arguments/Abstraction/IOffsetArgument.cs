@@ -2,5 +2,5 @@
 
 public interface IOffsetArgument : IArgument
 {
-    sbyte GetOffset();
+    sbyte Offset { get; }
 }
