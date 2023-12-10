@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Devices.Managers;
 using Devices.Providers;
 using Devices.Validators;
+using DeviceSdk;
 using Domain.Models;
 using Executor.States;
 using Executor.Storages;
@@ -23,11 +24,13 @@ public class Executor
 
     private readonly OpcodeIdentifier _opcodeIdentifier;
 
-    public IReadOnlyStorage Memory => _memory;
-
     public ushort ProcessorStateWord => _state.ProcessorStateWord;
 
     public IReadOnlyCollection<ushort> Registers => _state.Registers;
+
+    public IReadOnlyStorage Memory => _memory;
+
+    public IReadOnlyCollection<IDevice> Devices => _devicesManager.Devices;
 
     public IProject Project { get; private set; }
 
@@ -94,6 +97,7 @@ public class Executor
     {
         _initialized = false;
         _devicesManager.Clear();
+        Array.Fill<ushort>(_state.Registers, 0);
 
         _state.Registers[6] = Project.StackAddress;
         _state.Registers[7] = Project.ProgramAddress;
