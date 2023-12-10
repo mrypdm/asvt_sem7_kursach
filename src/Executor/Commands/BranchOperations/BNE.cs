@@ -14,7 +14,7 @@ public class BNE : BranchOperation
 
     public override void Execute(IArgument[] arguments)
     {
-        if (!_state.Z)
+        if (!State.Z)
         {
             UpdateProgramCounter(arguments);
         }

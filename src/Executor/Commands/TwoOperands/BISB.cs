@@ -21,9 +21,9 @@ public class BISB : TwoOperand
         var value = (byte)(source0() | source1());
 
         validatedArguments[1].SetValue(value);
-        _state.Z = value == 0;
-        _state.N = (value & 0b1000_0000) > 0;
-        _state.V = false;
+        State.Z = value == 0;
+        State.N = (value & 0b1000_0000) > 0;
+        State.V = false;
     }
 
     public override ushort Opcode => Convert.ToUInt16("150000", 8);

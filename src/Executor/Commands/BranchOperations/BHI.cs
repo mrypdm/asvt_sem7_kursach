@@ -14,7 +14,7 @@ public class BHI : BranchOperation
 
     public override void Execute(IArgument[] arguments)
     {
-        if (!_state.C && !_state.Z)
+        if (!State.C && !State.Z)
         {
             UpdateProgramCounter(arguments);
         }

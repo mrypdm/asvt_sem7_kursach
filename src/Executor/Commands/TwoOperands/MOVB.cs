@@ -21,9 +21,9 @@ public class MOVB : TwoOperand
         var value = source0();
 
         destination1(value);
-        _state.Z = value == 0;
-        _state.N = (value & 0b1000_0000) != 0;
-        _state.V = false;
+        State.Z = value == 0;
+        State.N = (value & 0b1000_0000) != 0;
+        State.V = false;
     }
 
     public override ushort Opcode => Convert.ToUInt16("110000", 8);

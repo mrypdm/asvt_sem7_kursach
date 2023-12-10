@@ -24,7 +24,7 @@ public abstract class BranchOperation : BaseCommand
     {
         return new IArgument[]
         {
-            new OffsetArgument(Storage, _state, GetOffset(word))
+            new OffsetArgument(Storage, State, GetOffset(word))
         };
     }
 
@@ -46,6 +46,6 @@ public abstract class BranchOperation : BaseCommand
     protected void UpdateProgramCounter(IArgument[] arguments)
     {
         var validatedArgument = ValidateArgument<IOffsetArgument>(arguments);
-        _state.Registers[7] = (ushort)(_state.Registers[7] + 2 * validatedArgument.GetOffset());
+        State.Registers[7] = (ushort)(State.Registers[7] + 2 * validatedArgument.GetOffset());
     }
 }

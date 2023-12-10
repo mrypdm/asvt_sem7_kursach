@@ -25,7 +25,7 @@ public class SOB : BaseCommand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        return new IArgument[] { new SOBArg(Storage, _state, GetRegister(word), GetOffset(word)) };
+        return new IArgument[] { new SOBArg(Storage, State, GetRegister(word), GetOffset(word)) };
     }
 
     public override void Execute(IArgument[] arguments)

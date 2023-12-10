@@ -32,15 +32,15 @@ public abstract class TwoOperand : BaseCommand
         {
             return new IArgument[]
             {
-                new RegisterByteArgument(Storage, _state, GetMode1(word), GetRegister1(word)),
-                new RegisterByteArgument(Storage, _state, GetMode2(word), GetRegister2(word))
+                new RegisterByteArgument(Storage, State, GetMode1(word), GetRegister1(word)),
+                new RegisterByteArgument(Storage, State, GetMode2(word), GetRegister2(word))
             };
         }
 
         return new IArgument[]
         {
-            new RegisterWordArgument(Storage, _state, GetMode1(word), GetRegister1(word)),
-            new RegisterWordArgument(Storage, _state, GetMode2(word), GetRegister2(word))
+            new RegisterWordArgument(Storage, State, GetMode1(word), GetRegister1(word)),
+            new RegisterWordArgument(Storage, State, GetMode2(word), GetRegister2(word))
         };
     }
 

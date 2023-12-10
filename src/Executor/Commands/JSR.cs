@@ -30,7 +30,7 @@ public class JSR : BaseCommand
     {
         return new IArgument[]
         {
-            new JSRnBITArg(Storage, _state, GetRegister1(word), GetMode(word), GetRegister2(word))
+            new JSRnBITArg(Storage, State, GetRegister1(word), GetMode(word), GetRegister2(word))
         };
     }
 

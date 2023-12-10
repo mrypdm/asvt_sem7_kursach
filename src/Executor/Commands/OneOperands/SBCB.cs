@@ -18,15 +18,15 @@ public class SDCB : OneOperand
         var validatedArgument = ValidateArgument<IRegisterArgument<byte>>(arguments);
         var (source, destination) = validatedArgument.GetSourceAndDestination();
 
-        var delta = _state.C ? 1 : 0;
+        var delta = State.C ? 1 : 0;
         var value = (byte)(source() - delta);
 
         destination(value);
-        _state.Z = value == 0;
+        State.Z = value == 0;
         // TODO byte?
-        _state.N = (value & 0b1000_0000) > 0;
-        _state.V = value == 0b1000_0000;
-        _state.C = value == 0 && delta == 1;
+        State.N = (value & 0b1000_0000) > 0;
+        State.V = value == 0b1000_0000;
+        State.C = value == 0 && delta == 1;
     }
 
     public override ushort Opcode => Convert.ToUInt16("105600", 8);

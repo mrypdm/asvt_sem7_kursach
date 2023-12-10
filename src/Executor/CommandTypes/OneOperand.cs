@@ -25,13 +25,13 @@ public abstract class OneOperand : BaseCommand
         {
             return new IArgument[]
             {
-                new RegisterByteArgument(Storage, _state, GetMode(word), GetRegister(word))
+                new RegisterByteArgument(Storage, State, GetMode(word), GetRegister(word))
             };
         }
 
         return new IArgument[]
         {
-            new RegisterWordArgument(Storage, _state, GetMode(word), GetRegister(word))
+            new RegisterWordArgument(Storage, State, GetMode(word), GetRegister(word))
         };
     }
 

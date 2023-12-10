@@ -14,7 +14,7 @@ public class BCC : BranchOperation
 
     public override void Execute(IArgument[] arguments)
     {
-        if (!_state.C)
+        if (!State.C)
         {
             UpdateProgramCounter(arguments);
         }

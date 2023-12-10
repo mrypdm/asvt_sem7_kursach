@@ -20,9 +20,9 @@ public class DEC : OneOperand
         var value = (ushort)(source() - 1);
 
         destination(value);
-        _state.Z = value == 0;
-        _state.N = (value & 0b1000_0000_0000_0000) > 0;
-        _state.V = value == Convert.ToUInt16("100000", 8);
+        State.Z = value == 0;
+        State.N = (value & 0b1000_0000_0000_0000) > 0;
+        State.V = value == Convert.ToUInt16("100000", 8);
     }
 
     public override ushort Opcode => Convert.ToUInt16("005300", 8);

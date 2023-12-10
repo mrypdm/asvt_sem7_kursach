@@ -18,7 +18,7 @@ public class JMP : OneOperand
     {
         return new IArgument[]
         {
-            new RegisterWordArgument(Storage, _state, GetMode(word), GetRegister(word))
+            new RegisterWordArgument(Storage, State, GetMode(word), GetRegister(word))
         };
     }
 
@@ -32,7 +32,7 @@ public class JMP : OneOperand
             throw new InvalidInstructionException("JMP cannot be addressed with mode 0");
         }
         
-        _state.Registers[7] = source();
+        State.Registers[7] = source();
     }
 
     public override ushort Opcode => Convert.ToUInt16("000100", 8);

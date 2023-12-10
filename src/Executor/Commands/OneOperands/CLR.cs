@@ -19,10 +19,10 @@ public class CLR : OneOperand
         var (source, destination) = validatedArgument.GetSourceAndDestination();
         
         destination(0);
-        _state.Z = true;
-        _state.V = false;
-        _state.C = false;
-        _state.N = false;
+        State.Z = true;
+        State.V = false;
+        State.C = false;
+        State.N = false;
     }
 
     public override ushort Opcode => Convert.ToUInt16("005000", 8);

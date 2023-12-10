@@ -5,14 +5,21 @@ namespace Executor.CommandTypes;
 
 public abstract class TrapInstruction : BaseCommand
 {
-    private const ushort OpcodeMask = 0b1111_1111_0000_0000;
-    private const ushort OperationCodeMask = 0b0000_0000_1111_1111;
-
-    protected ushort GetOpcode(ushort word) => (ushort)(word & OpcodeMask);
-
-    protected ushort GetOperationCode(ushort word) => (ushort)(word & OperationCodeMask);
-
     protected TrapInstruction(IStorage storage, IState state) : base(storage, state)
     {
+    }
+
+    protected void HandleTrap(ushort trapVectorAddress)
+    {
+        var newPc = Storage.GetWord(trapVectorAddress);
+        var newPsw = Storage.GetWord((ushort)(trapVectorAddress + 2));
+
+        State.Registers[6] -= 2;
+        State.Registers[6] = State.ProcessorStateWord;
+        State.Registers[6] -= 2;
+        State.Registers[6] = State.Registers[7];
+
+        State.Registers[7] = newPc;
+        State.ProcessorStateWord = newPsw;
     }
 }

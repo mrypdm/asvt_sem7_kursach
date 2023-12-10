@@ -5,11 +5,15 @@ namespace Executor.CommandTypes;
 
 public abstract class TrapReturn : BaseCommand
 {
-    private const ushort OpcodeMask = 0b1111_1111_1111_1111;
-
-    protected ushort GetOpcode(ushort word) => (ushort)(word & OpcodeMask);
-
     protected TrapReturn(IStorage storage, IState state) : base(storage, state)
     {
+    }
+
+    protected void HandleReturn()
+    {
+        State.Registers[7] = Storage.GetWord(State.Registers[6]);
+        State.Registers[6] += 2;
+        State.ProcessorStateWord = Storage.GetWord(State.Registers[6]);
+        State.Registers[6] += 2;
     }
 }

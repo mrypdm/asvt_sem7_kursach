@@ -18,10 +18,10 @@ public class CLRB : OneOperand
         var (source, destination) = validatedArgument.GetSourceAndDestination();
         
         destination(0);
-        _state.Z = true;
-        _state.V = false;
-        _state.C = false;
-        _state.N = false;
+        State.Z = true;
+        State.V = false;
+        State.C = false;
+        State.N = false;
     }
 
     public override ushort Opcode => Convert.ToUInt16("105000", 8);

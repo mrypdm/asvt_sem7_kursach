@@ -18,16 +18,16 @@ public class ADCB : OneOperand
         var validatedArgument = ValidateArgument<IRegisterArgument<byte>>(arguments);
         var (source, destination) = validatedArgument.GetSourceAndDestination();
         
-        var delta = _state.C ? 1 : 0;
+        var delta = State.C ? 1 : 0;
         var oldValue = source();
         var value = (byte)(oldValue + delta);
 
         destination(value);
-        _state.Z = value == 0;
+        State.Z = value == 0;
         // TODO byte?
-        _state.N = (value & 0b1000_0000) != 0;
-        _state.V = oldValue == 0b111_1111 && delta == 1;
-        _state.C = oldValue == 0b1111_1111 && delta == 1;
+        State.N = (value & 0b1000_0000) != 0;
+        State.V = oldValue == 0b111_1111 && delta == 1;
+        State.C = oldValue == 0b1111_1111 && delta == 1;
     }
 
     public override ushort Opcode => Convert.ToUInt16("105500", 8);

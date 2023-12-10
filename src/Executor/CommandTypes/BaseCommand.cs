@@ -8,7 +8,7 @@ public abstract class BaseCommand : ICommand
 {
     protected IStorage Storage { get; }
     
-    protected IState _state { get; }
+    protected IState State { get; }
     
     public abstract void Execute(IArgument[] arguments);
 
@@ -19,6 +19,6 @@ public abstract class BaseCommand : ICommand
     protected BaseCommand(IStorage storage, IState state)
     {
         Storage = storage;
-        _state = state;
+        State = state;
     }
 }

@@ -14,7 +14,7 @@ public class BVS : BranchOperation
 
     public override void Execute(IArgument[] arguments)
     {
-        if (_state.V)
+        if (State.V)
         {
             UpdateProgramCounter(arguments);
         }
