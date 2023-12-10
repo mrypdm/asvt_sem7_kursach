@@ -9,6 +9,7 @@ using Devices.Providers;
 using Devices.Validators;
 using DeviceSdk;
 using Domain.Models;
+using Executor.CommandTypes;
 using Executor.States;
 using Executor.Storages;
 
@@ -22,7 +23,7 @@ public class Executor
     private readonly IStorage _memory;
     private readonly IDeviceValidator _deviceValidator;
     private readonly IDevicesManager _devicesManager;
-    private readonly IStorage _bus;
+    private readonly Bus _bus;
 
     private readonly OpcodeIdentifier _opcodeIdentifier;
     private readonly Dictionary<ushort, string> _symbols = new();
@@ -86,6 +87,14 @@ public class Executor
     public void ExecuteNextInstruction()
     {
         Init();
+
+        var interruptedDevice = _bus.GetInterrupt(_state.Priority);
+        if (interruptedDevice != null)
+        {
+            interruptedDevice.AcceptInterrupt();
+            TrapInstruction.HandleInterrupt(_bus, _state, interruptedDevice.InterruptVectorAddress);
+        }
+
         var word = _memory.GetWord(_state.Registers[7]);
         _state.Registers[7] += 2;
         var command = _opcodeIdentifier.GetCommand(word);

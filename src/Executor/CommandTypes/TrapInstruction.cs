@@ -9,17 +9,19 @@ public abstract class TrapInstruction : BaseCommand
     {
     }
 
-    protected void HandleTrap(ushort trapVectorAddress)
+    protected void HandleTrap(ushort trapVectorAddress) => HandleInterrupt(Storage, State, trapVectorAddress);
+
+    public static void HandleInterrupt(IStorage storage, IState state, ushort vectorAddress)
     {
-        var newPc = Storage.GetWord(trapVectorAddress);
-        var newPsw = Storage.GetWord((ushort)(trapVectorAddress + 2));
+        var newPc = storage.GetWord(vectorAddress);
+        var newPsw = storage.GetWord((ushort)(vectorAddress + 2));
 
-        State.Registers[6] -= 2;
-        State.Registers[6] = State.ProcessorStateWord;
-        State.Registers[6] -= 2;
-        State.Registers[6] = State.Registers[7];
+        state.Registers[6] -= 2;
+        state.Registers[6] = state.ProcessorStateWord;
+        state.Registers[6] -= 2;
+        state.Registers[6] = state.Registers[7];
 
-        State.Registers[7] = newPc;
-        State.ProcessorStateWord = newPsw;
+        state.Registers[7] = newPc;
+        state.ProcessorStateWord = newPsw;
     }
 }
