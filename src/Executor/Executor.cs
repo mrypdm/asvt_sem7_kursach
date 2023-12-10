@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Devices.Managers;
 using Devices.Providers;
@@ -23,6 +24,7 @@ public class Executor
     private readonly IStorage _bus;
 
     private readonly OpcodeIdentifier _opcodeIdentifier;
+    private readonly Dictionary<ushort, string> _symbols = new();
 
     public ushort ProcessorStateWord => _state.ProcessorStateWord;
 
@@ -31,6 +33,8 @@ public class Executor
     public IReadOnlyStorage Memory => _memory;
 
     public IReadOnlyCollection<IDevice> Devices => _devicesManager.Devices;
+
+    public IReadOnlyDictionary<ushort, string> Symbols => _symbols;
 
     public IProject Project { get; private set; }
 
@@ -109,7 +113,7 @@ public class Executor
         // ...
         // 000001' - relocatable address
         // ...
-        // 000000
+        // 000000;HALT - symbol for line
         // #/path/to/device.dll - devices section
 
         var address = Project.ProgramAddress;
@@ -121,11 +125,14 @@ public class Executor
                 continue;
             }
 
-            var isRelocatable = line.EndsWith('\'');
+            var tokens = line.Split(';', StringSplitOptions.TrimEntries);
+
+            var code = tokens[0];
+            var isRelocatable = code.EndsWith('\'');
 
             var word = isRelocatable
-                ? Convert.ToUInt16(line[..6], 8) + Project.ProgramAddress
-                : Convert.ToUInt16(line, 8);
+                ? Convert.ToUInt16(code[..6], 8) + Project.ProgramAddress
+                : Convert.ToUInt16(code, 8);
 
             if (word > ushort.MaxValue)
             {
@@ -133,6 +140,10 @@ public class Executor
             }
 
             _memory.SetWord(address, (ushort)word);
+
+            var symbol = tokens.ElementAtOrDefault(1);
+            _symbols.Add(address, symbol);
+
             address += 2;
         }
     }
