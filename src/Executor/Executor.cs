@@ -9,6 +9,7 @@ using Devices.Providers;
 using Devices.Validators;
 using DeviceSdk;
 using Domain.Models;
+using Executor.Commands.MiscellaneousInstructions;
 using Executor.Commands.Traps;
 using Executor.CommandTypes;
 using Executor.Exceptions;
@@ -20,6 +21,7 @@ namespace Executor;
 public class Executor
 {
     private bool _initialized;
+    private ICommand _lastCommand;
 
     private readonly Stack<string> _trapStack = new();
 
@@ -78,10 +80,7 @@ public class Executor
 
         _initialized = true;
 
-        foreach (var device in _devicesManager.Devices)
-        {
-            device.Init();
-        }
+        _bus.Init();
     }
 
     public async Task<bool> ExecuteAsync(CancellationToken cancellationToken)
@@ -107,11 +106,20 @@ public class Executor
     {
         Init();
 
+        if (_state.T && _lastCommand is not RTT and not TrapInstruction and not WAIT)
+        {
+            HandleInterrupt("Trace", 12); // 0o14
+        }
+
         var interruptedDevice = _bus.GetInterrupt(_state.Priority);
         if (interruptedDevice != null)
         {
             interruptedDevice.AcceptInterrupt();
             HandleInterrupt(interruptedDevice.GetType().Name, interruptedDevice.InterruptVectorAddress);
+        }
+        else if (_lastCommand is WAIT)
+        {
+            return true;
         }
 
         try
@@ -119,25 +127,16 @@ public class Executor
             var word = _memory.GetWord(_state.Registers[7]);
             _state.Registers[7] += 2;
 
-            var command = _opcodeIdentifier.GetCommand(word);
+            _lastCommand = _opcodeIdentifier.GetCommand(word);
+            _lastCommand.Execute(_lastCommand.GetArguments(word));
 
-            var needTrace = _state.T;
-            command.Execute(command.GetArguments(word));
-
-            if (command is TrapInstruction)
+            if (_lastCommand is TrapInstruction)
             {
-                _trapStack.Push(command.GetType().Name);
-                needTrace = false;
+                _trapStack.Push(_lastCommand.GetType().Name);
             }
-            else if (command is TrapReturn)
+            else if (_lastCommand is TrapReturn)
             {
                 _trapStack.Pop();
-                needTrace = needTrace && command is RTI;
-            }
-
-            if (needTrace)
-            {
-                HandleInterrupt("Trace", 12); // 0o14
             }
         }
         catch (HaltException e) when (e.IsExpected)

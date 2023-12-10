@@ -5,7 +5,7 @@ namespace Executor.Storages;
 
 public class Memory : IStorage
 {
-    private readonly byte[] _memory = new byte[65024];
+    private byte[] _memory;
 
     public IReadOnlyCollection<byte> Data => _memory;
 
@@ -24,6 +24,11 @@ public class Memory : IStorage
     public void SetByte(ushort address, byte value)
     {
         _memory[address] = value;
+    }
+
+    public void Init()
+    {
+        _memory = new byte[65024];
     }
 
     public void SetWord(ushort address, ushort value)

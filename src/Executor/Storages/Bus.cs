@@ -146,4 +146,13 @@ public class Bus : IStorage, IBus
 
         return priority > currentPriority ? mostPriorityDevice : null;
     }
+
+    public void Init()
+    {
+        _memory.Init();
+        foreach (var device in _deviceManager.Devices)
+        {
+            device.Init();
+        }
+    }
 }
