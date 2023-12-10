@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Devices.Managers;
 using Devices.Providers;
@@ -25,6 +26,7 @@ public class Executor
 
     private readonly OpcodeIdentifier _opcodeIdentifier;
     private readonly Dictionary<ushort, string> _symbols = new();
+    private readonly HashSet<ushort> _breakpoints = new();
 
     public ushort ProcessorStateWord => _state.ProcessorStateWord;
 
@@ -35,6 +37,8 @@ public class Executor
     public IReadOnlyCollection<IDevice> Devices => _devicesManager.Devices;
 
     public IReadOnlyDictionary<ushort, string> Symbols => _symbols;
+
+    public IReadOnlySet<ushort> Breakpoints => _breakpoints;
 
     public IProject Project { get; private set; }
 
@@ -64,21 +68,31 @@ public class Executor
         }
     }
 
-    public int ExecuteProgram()
+    public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        return 0;
+        Init();
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            if (_breakpoints.Contains(_state.Registers[7]))
+            {
+                break;
+            }
+
+            await ExecuteNextInstructionAsync();
+        }
     }
 
-    public int ExecuteNextInstruction()
+    public void ExecuteNextInstruction()
     {
         Init();
         var word = _memory.GetWord(_state.Registers[7]);
         _state.Registers[7] += 2;
         var command = _opcodeIdentifier.GetCommand(word);
         command.Execute(command.GetArguments(word));
-        return 0;
     }
 
+    public Task ExecuteNextInstructionAsync() => Task.Run(ExecuteNextInstruction);
 
     public Task LoadProgram(IProject project)
     {
@@ -147,6 +161,10 @@ public class Executor
             address += 2;
         }
     }
+
+    public void AddBreakpoint(ushort address) => _breakpoints.Add(address);
+
+    public void RemoveBreakpoint(ushort address) => _breakpoints.Remove(address);
 
     private void AddDevice(string path)
     {
