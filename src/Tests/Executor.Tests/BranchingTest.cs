@@ -128,7 +128,7 @@ public class BranchingTest
             }
         };
 
-        var arg0 = new RegisterArgument(memory, state, 7);
+        var arg0 = new RegisterWordArgument(memory, state, 0, 7);
         var arg1 = new RegisterWordArgument(memory, state, 3, 6);
         var command = new JSR(memory, state);
 
