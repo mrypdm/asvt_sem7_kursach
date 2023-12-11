@@ -18,12 +18,11 @@ public class SDCB : OneOperand
     {
         ValidateArgumentsCount(arguments, 1);
         var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
-        var (source, destination) = validatedArgument.GetSourceAndDestination();
 
         var delta = State.C ? 1 : 0;
-        var value = (byte)(source() - delta);
+        var value = (byte)(validatedArgument.Value - delta);
 
-        destination(value);
+        validatedArgument.Value = value;
         State.Z = value == 0;
         // TODO byte?
         State.N = (value & 0b1000_0000) > 0;

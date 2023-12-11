@@ -16,10 +16,8 @@ public class BISB : TwoOperand
     public override void Execute(IArgument[] arguments)
     {
         var validatedArguments = ValidateArguments<RegisterByteArgument>(arguments);
-        var (source0, destination0) = validatedArguments[0].GetSourceAndDestination();
-        var (source1, destination1) = validatedArguments[1].GetSourceAndDestination();
 
-        var value = (byte)(source0() | source1());
+        var value = (byte)(validatedArguments[0].Value | validatedArguments[1].Value);
 
         validatedArguments[1].SetValue(value);
         State.Z = value == 0;

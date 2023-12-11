@@ -19,7 +19,12 @@ public interface IRegisterArgument<TValue> : IArgument
     ushort Mode { get; }
 
     /// <summary>
-    /// Returns getter and setter for argument
+    /// Value of argument
     /// </summary>
-    (Func<TValue> source, Action<TValue> destination) GetSourceAndDestination();
+    TValue Value { get; set; }
+    
+    /// <summary>
+    /// Address of argument (null if register is argument)
+    /// </summary>
+    ushort? Address { get; }
 }

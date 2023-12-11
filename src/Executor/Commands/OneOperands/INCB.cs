@@ -18,11 +18,10 @@ public class INCB : OneOperand
     {
         ValidateArgumentsCount(arguments, 1);
         var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
-        var (source, destination) = validatedArgument.GetSourceAndDestination();
-        
-        var value = (byte)(source() + 1);
 
-        destination(value);
+        var value = (byte)(validatedArgument.Value + 1);
+
+        validatedArgument.Value = value;
         State.Z = value == 0;
         // TODO byte?
         State.N = (value & 0b1000_0000) > 0;

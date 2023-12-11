@@ -17,11 +17,10 @@ public class DEC : OneOperand
     {
         ValidateArgumentsCount(arguments, 1);
         var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments[0]);
-        var (source, destination) = validatedArgument.GetSourceAndDestination();
         
-        var value = (ushort)(source() - 1);
+        var value = (ushort)(validatedArgument.Value - 1);
 
-        destination(value);
+        validatedArgument.Value = value;
         State.Z = value == 0;
         State.N = (value & 0b1000_0000_0000_0000) > 0;
         State.V = value == Convert.ToUInt16("100000", 8);

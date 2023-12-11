@@ -16,12 +16,10 @@ public class MOV : TwoOperand
     public override void Execute(IArgument[] arguments)
     {
         var validatedArguments = ValidateArguments<RegisterWordArgument>(arguments);
-        var (source0, destination0) = validatedArguments[0].GetSourceAndDestination();
-        var (source1, destination1) = validatedArguments[1].GetSourceAndDestination();
 
-        var value = source0();
+        var value = validatedArguments[0].Value;
 
-        destination1(value);
+        validatedArguments[1].Value = value;
         State.Z = value == 0;
         State.N = (value & 0b1000_0000_0000_0000) != 0;
         State.V = false;

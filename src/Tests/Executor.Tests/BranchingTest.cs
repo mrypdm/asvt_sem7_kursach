@@ -129,7 +129,7 @@ public class BranchingTest
         };
 
         var arg0 = new RegisterArgument(memory, state, 7);
-        var arg1 = new RegisterAddressArgument(memory, state, 3, 6);
+        var arg1 = new RegisterWordArgument(memory, state, 3, 6);
         var command = new JSR(memory, state);
 
         // Act
@@ -164,7 +164,7 @@ public class BranchingTest
             }
         };
 
-        var arg = new RegisterAddressArgument(memory, state, mode, 7);
+        var arg = new RegisterWordArgument(memory, state, mode, 7);
         var command = new JMP(memory, state);
 
         // Act

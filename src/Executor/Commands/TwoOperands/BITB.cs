@@ -16,10 +16,8 @@ public class BITB : TwoOperand
     public override void Execute(IArgument[] arguments)
     {
         var validatedArguments = ValidateArguments<RegisterWordArgument>(arguments);
-        var (source0, destination0) = validatedArguments[0].GetSourceAndDestination();
-        var (source1, destination1) = validatedArguments[1].GetSourceAndDestination();
 
-        var value = (ushort)(source0() & source1());
+        var value = (ushort)(validatedArguments[0].Value & validatedArguments[1].Value);
 
         State.Z = value == 0;
         State.N = (value & 0b1000_0000) != 0;

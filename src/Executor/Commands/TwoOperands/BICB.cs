@@ -16,12 +16,10 @@ public class BICB : TwoOperand
     public override void Execute(IArgument[] arguments)
     {
         var validatedArguments = ValidateArguments<RegisterByteArgument>(arguments);
-        var (source0, destination0) = validatedArguments[0].GetSourceAndDestination();
-        var (source1, destination1) = validatedArguments[1].GetSourceAndDestination();
         
-        var value = (byte)(source0() & ~source1());
+        var value = (byte)(validatedArguments[1].Value & ~validatedArguments[0].Value);
         
-        destination1(value);
+        validatedArguments[1].Value = value;
         State.Z = value == 0;
         State.N = (value & 0b1000_0000) != 0;
         State.V = false;

@@ -18,13 +18,12 @@ public class ADC : OneOperand
     {
         ValidateArgumentsCount(arguments, 1);
         var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments[0]);
-        var (source, destination) = validatedArgument.GetSourceAndDestination();
 
         var delta = State.C ? 1 : 0;
-        var oldValue = source();
+        var oldValue = validatedArgument.Value;
         var value = (byte)(oldValue + delta);
 
-        destination(value);
+        validatedArgument.Value = value;
         State.Z = value == 0;
         State.N = (value & 0b1000_0000_0000_0000) != 0;
         State.V = oldValue == Convert.ToUInt16("077777", 8) && delta == 1;

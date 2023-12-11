@@ -17,9 +17,8 @@ public class CLRB : OneOperand
     {
         ValidateArgumentsCount(arguments, 1);
         var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
-        var (source, destination) = validatedArgument.GetSourceAndDestination();
         
-        destination(0);
+        validatedArgument.Value = 0;
         State.Z = true;
         State.V = false;
         State.C = false;
