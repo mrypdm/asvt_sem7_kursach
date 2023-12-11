@@ -97,6 +97,7 @@ public class Executor
             }
 
             res = await ExecuteNextInstructionAsync();
+            await Task.Yield();
         }
 
         return res;

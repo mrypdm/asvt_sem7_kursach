@@ -25,14 +25,14 @@ public class JSR : TwoOperand
     {
         ValidateArgumentsCount(arguments, 2);
         var reg = ValidateArgument<RegisterWordArgument>(arguments[0]);
-        var dstArgument = ValidateArgument<RegisterWordArgument>(arguments[1]);
+        var dst = ValidateArgument<RegisterWordArgument>(arguments[1]);
 
         if (reg.Mode != 0)
         {
             throw new ArgumentException("REG argument of JSR must be addressing with mode 0");
         }
 
-        var temp = dstArgument.Address ?? // because dst can refer to stack, which we change
+        var temp = dst.Address ?? // because dst can refer to stack, which we change
                    throw new InvalidInstructionException("JSR destination cannot be addressing by register");
         Storage.PushToStack(State, reg.Value);
         reg.Value = State.Registers[7];

@@ -19,19 +19,19 @@ public class FlagCommand : BaseCommand
         ValidateArgumentsCount(arguments, 1);
         var validatedArgument = ValidateArgument<FlagArgument>(arguments[0]);
 
-        if (validatedArgument.ToSet)
+        if (validatedArgument.ToSet) // SCC
         {
-            State.C = validatedArgument.C || State.C;
-            State.V = validatedArgument.V || State.V;
-            State.Z = validatedArgument.Z || State.Z;
-            State.N = validatedArgument.N || State.N;
+            State.C = validatedArgument.C || State.C; // SEC
+            State.V = validatedArgument.V || State.V; // SEV
+            State.Z = validatedArgument.Z || State.Z; // SEZ
+            State.N = validatedArgument.N || State.N; // SEN
         }
-        else
+        else // CCC, NOP if all is false
         {
-            State.C = !validatedArgument.C && State.C;
-            State.V = !validatedArgument.V && State.V;
-            State.Z = !validatedArgument.Z && State.Z;
-            State.N = !validatedArgument.N && State.N;
+            State.C = !validatedArgument.C && State.C; // CLC
+            State.V = !validatedArgument.V && State.V; // CLV
+            State.Z = !validatedArgument.Z && State.Z; // CLZ
+            State.N = !validatedArgument.N && State.N; // CLN
         }
     }
 
