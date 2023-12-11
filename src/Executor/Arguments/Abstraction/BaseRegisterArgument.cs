@@ -4,6 +4,7 @@ using Executor.Storages;
 
 namespace Executor.Arguments.Abstraction;
 
+/// <inheritdoc cref="IRegisterArgument{TValue}"/>
 public abstract class BaseRegisterArgument<TValue> : BaseArgument, IRegisterArgument<TValue>
 {
     private readonly Lazy<ushort?> _address;
@@ -15,18 +16,24 @@ public abstract class BaseRegisterArgument<TValue> : BaseArgument, IRegisterArgu
         _address = new Lazy<ushort?>(InitAddress);
     }
 
+    /// <inheritdoc />
     public override object GetValue() => Value;
 
+    /// <inheritdoc />
     public override void SetValue(object obj) => Value = (TValue)obj;
 
+    /// <inheritdoc />
     public ushort Register { get; }
 
+    /// <inheritdoc />
     public ushort Mode { get; }
 
+    /// <inheritdoc />
     public abstract TValue Value { get; set; }
 
+    /// <inheritdoc />
     public ushort? Address => _address.Value;
-    
+
     protected abstract ushort Delta { get; }
 
     private ushort? InitAddress()
