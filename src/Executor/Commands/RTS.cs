@@ -22,12 +22,12 @@ public class RTS : BaseCommand
     protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
 
     public override IArgument[] GetArguments(ushort word) =>
-        new IArgument[] { new RegisterArgument(Storage, State, GetRegister(word)) };
+        new IArgument[] { new RegisterWordArgument(Storage, State, 0,GetRegister(word)) };
 
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
-        var argument = ValidateArgument<RegisterArgument>(arguments[0]);
+        var argument = ValidateArgument<RegisterWordArgument>(arguments[0]);
 
         State.Registers[7] = State.Registers[argument.Register];
         State.Registers[argument.Register] = Storage.PopFromStack(State);
