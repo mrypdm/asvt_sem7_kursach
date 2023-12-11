@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
+/// <summary>
+/// BCC or BHIS
+/// </summary>
 public class BCC : BranchOperation
 {
     public BCC(IStorage storage, IState state) : base(storage, state)

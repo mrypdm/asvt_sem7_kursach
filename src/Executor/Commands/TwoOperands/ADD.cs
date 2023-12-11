@@ -30,15 +30,15 @@ public class ADD : TwoOperand
         var value0 = validatedArguments[0].Value;
         var value1 = validatedArguments[1].Value;
 
-        var carry = value1 + value0 > 0b1111111111111111;
-        var sign = ((value1 ^ value0) & 0b1000_0000_0000_0000) == 0;
+        var carry = value1 + value0 > 0xFFFF;
+        var sameSign = ((value1 ^ value0) & 0x8000) == 0;
 
         var value = (ushort)(value1 + value0);
 
         validatedArguments[1].Value = value;
         State.Z = value == 0;
-        State.N = (value & 0b1000_0000_0000_0000) > 0;
-        State.V = sign && State.N != (value & 0b1000_0000_0000_0000) < 0;
+        State.N = (value & 0x8000) != 0;
+        State.V = sameSign && State.N != ((value0 & 0x8000) != 0);
         State.C = carry;
     }
 

@@ -6,22 +6,19 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
-/// <summary>
-/// BCS or BLO
-/// </summary>
-public class BCS : BranchOperation
+public class BGE : BranchOperation
 {
-    public BCS(IStorage storage, IState state) : base(storage, state)
+    public BGE(IStorage storage, IState state) : base(storage, state)
     {
     }
 
     public override void Execute(IArgument[] arguments)
     {
-        if (State.C)
+        if (State.N == State.V)
         {
             UpdateProgramCounter(arguments);
         }
     }
 
-    public override ushort Opcode => Convert.ToUInt16("103400", 8);
+    public override ushort Opcode => Convert.ToUInt16("002000", 8);
 }
