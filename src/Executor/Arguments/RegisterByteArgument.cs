@@ -15,6 +15,7 @@ public class RegisterByteArgument : BaseRegisterArgument<byte>
     {
     }
 
+    /// <inheritdoc />
     public override byte Value
     {
         get => !Address.HasValue ? (byte)(State.Registers[Register] & 0xFF) : Storage.GetByte(Address.Value);
@@ -25,9 +26,11 @@ public class RegisterByteArgument : BaseRegisterArgument<byte>
                 State.Registers[Register] = (ushort)((State.Registers[Register] & 0xFF00) | value);
                 return;
             }
-            
+
             Storage.SetByte(Address!.Value, value);
         }
     }
+
+    /// <inheritdoc />
     protected override ushort Delta => (ushort)(Register < 6 ? 1 : 2);
 }

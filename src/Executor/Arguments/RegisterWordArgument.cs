@@ -15,6 +15,7 @@ public class RegisterWordArgument : BaseRegisterArgument<ushort>
     {
     }
 
+    /// <inheritdoc />
     public override ushort Value
     {
         get => !Address.HasValue ? State.Registers[Register] : Storage.GetWord(Address.Value);
@@ -30,5 +31,6 @@ public class RegisterWordArgument : BaseRegisterArgument<ushort>
         }
     }
 
+    /// <inheritdoc />
     protected override ushort Delta => 2;
 }
