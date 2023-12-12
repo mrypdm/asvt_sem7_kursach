@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Executor.Arguments.Abstraction;
+﻿namespace Executor.Arguments.Abstraction;
 
 /// <summary>
 /// Argument referencing a register

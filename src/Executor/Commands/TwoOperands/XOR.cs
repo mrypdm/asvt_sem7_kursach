@@ -2,7 +2,6 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
-using Executor.Exceptions;
 using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
