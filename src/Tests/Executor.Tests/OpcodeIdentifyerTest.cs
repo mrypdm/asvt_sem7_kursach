@@ -21,6 +21,6 @@ public class OpcodeIdentifierTest
 
         // Assert
 
-        Assert.That(command.Opcode, Is.EqualTo(0b1_0000_0000_0000));
+        Assert.That(command.OperationCode, Is.EqualTo(0b1_0000_0000_0000));
     }
 }

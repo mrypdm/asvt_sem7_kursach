@@ -6,7 +6,7 @@ using Executor.Storages;
 
 namespace Executor.Commands.Traps;
 
-public class TRAP : TrapInstruction
+public sealed class TRAP : TrapInstruction
 {
     private const ushort InterruptVectorAddress = 28; // 0o34
 
@@ -18,5 +18,5 @@ public class TRAP : TrapInstruction
 
     public override IArgument[] GetArguments(ushort word) => Array.Empty<IArgument>();
 
-    public override ushort Opcode => Convert.ToUInt16("104400", 8);
+    public override ushort OperationCode => Convert.ToUInt16("104400", 8);
 }

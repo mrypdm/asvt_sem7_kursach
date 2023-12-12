@@ -8,13 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class INCB : OneOperand
+public sealed class INCB : OneOperand
 {
     public INCB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
-
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -29,5 +29,6 @@ public class INCB : OneOperand
         State.V = oldValue == 0x7F;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("105200", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("105200", 8);
 }

@@ -7,17 +7,18 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class CLRB : OneOperand
+public sealed class CLRB : OneOperand
 {
     public CLRB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
         var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
-        
+
         validatedArgument.Value = 0;
         State.Z = true;
         State.V = false;
@@ -25,5 +26,6 @@ public class CLRB : OneOperand
         State.N = false;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("105000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("105000", 8);
 }

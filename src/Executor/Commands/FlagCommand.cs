@@ -7,12 +7,13 @@ using Executor.Storages;
 
 namespace Executor.Commands;
 
-public class FlagCommand : BaseCommand
+public sealed class FlagCommand : BaseCommand
 {
     public FlagCommand(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -34,7 +35,9 @@ public class FlagCommand : BaseCommand
         }
     }
 
+    /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word) => new IArgument[] { new FlagArgument(word) };
 
-    public override ushort Opcode => Convert.ToUInt16("000240", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("000240", 8);
 }

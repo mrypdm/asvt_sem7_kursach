@@ -1,7 +1,7 @@
 namespace Executor.Arguments.Abstraction;
 
 /// <summary>
-/// Argument
+/// Interface of argument
 /// </summary>
 public interface IArgument
 {

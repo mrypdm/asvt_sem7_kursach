@@ -6,18 +6,21 @@ using Executor.Storages;
 
 namespace Executor.Commands.MiscellaneousInstructions;
 
-public class RESET : BaseCommand
+public sealed class RESET : BaseCommand
 {
     public RESET(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         Storage.Init();
     }
 
+    /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word) => Array.Empty<IArgument>();
 
-    public override ushort Opcode => Convert.ToUInt16("000006", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("000006", 8);
 }

@@ -7,25 +7,24 @@ using Executor.Storages;
 
 namespace Executor.Commands;
 
-public class SOB : BaseCommand
+public sealed class SOB : BaseCommand
 {
-    private const ushort OpcodeMask = 0b1111_1110_0000_0000;
     private const ushort RegisterMask = 0b0000_0001_1100_0000;
     private const ushort OffsetMask = 0b0000_0000_0011_1111;
+
+    private static ushort GetRegister(ushort word) => (ushort)((word & RegisterMask) >> 6);
+
+    private static byte GetOffset(ushort word) => (byte)(word & OffsetMask);
 
     public SOB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
-    protected ushort GetRegister(ushort word) => (ushort)((word & RegisterMask) >> 6);
-
-    protected byte GetOffset(ushort word) => (byte)(word & OffsetMask);
-
-    protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
-
+    /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word) => new IArgument[]
         { new SobArgument(Storage, State, GetRegister(word), GetOffset(word)) };
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -39,5 +38,6 @@ public class SOB : BaseCommand
         }
     }
 
-    public override ushort Opcode => Convert.ToUInt16("077000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("077000", 8);
 }

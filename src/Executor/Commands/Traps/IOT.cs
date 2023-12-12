@@ -6,7 +6,7 @@ using Executor.Storages;
 
 namespace Executor.Commands.Traps;
 
-public class IOT : TrapInstruction
+public sealed class IOT : TrapInstruction
 {
     private const ushort InterruptVectorAddress = 16; // 0o20
 
@@ -18,5 +18,5 @@ public class IOT : TrapInstruction
 
     public override IArgument[] GetArguments(ushort word) => Array.Empty<IArgument>();
 
-    public override ushort Opcode => Convert.ToUInt16("000004", 8);
+    public override ushort OperationCode => Convert.ToUInt16("000004", 8);
 }

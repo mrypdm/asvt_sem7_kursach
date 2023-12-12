@@ -8,22 +8,22 @@ using Executor.Storages;
 
 namespace Executor.Commands;
 
-public class RTS : BaseCommand
+public sealed class RTS : BaseCommand
 {
     private const ushort OpcodeMask = 0b1111_1111_1111_1000;
     private const ushort RegisterMask = 0b0000_0000_0000_0111;
+
+    private static ushort GetRegister(ushort word) => (ushort)(word & RegisterMask);
 
     public RTS(IStorage storage, IState state) : base(storage, state)
     {
     }
 
-    protected ushort GetRegister(ushort word) => (ushort)(word & RegisterMask);
-
-    protected ushort GetOpcodeByMask(ushort word) => (ushort)(word & OpcodeMask);
-
+    /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word) =>
-        new IArgument[] { new RegisterWordArgument(Storage, State, 0,GetRegister(word)) };
+        new IArgument[] { new RegisterWordArgument(Storage, State, 0, GetRegister(word)) };
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -33,5 +33,6 @@ public class RTS : BaseCommand
         State.Registers[argument.Register] = Storage.PopFromStack(State);
     }
 
-    public override ushort Opcode => Convert.ToUInt16("000200", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("000200", 8);
 }

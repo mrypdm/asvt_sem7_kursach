@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
-public class MOVB : TwoOperand
+public sealed class MOVB : TwoOperand
 {
     public MOVB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         var (src, dst) = ValidateArguments<RegisterByteArgument>(arguments);
@@ -36,5 +37,6 @@ public class MOVB : TwoOperand
         State.V = false;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("110000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("110000", 8);
 }

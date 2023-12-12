@@ -8,18 +8,18 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class ADCB : OneOperand
+public sealed class ADCB : OneOperand
 {
     public ADCB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
-
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
         var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
-        
+
         var delta = State.C ? 1 : 0;
         var oldValue = validatedArgument.Value;
         var value = (byte)(oldValue + delta);
@@ -31,5 +31,6 @@ public class ADCB : OneOperand
         State.C = oldValue == 0xFF && delta == 1;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("105500", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("105500", 8);
 }

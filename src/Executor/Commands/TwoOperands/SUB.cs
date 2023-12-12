@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
-public class SUB : TwoOperand
+public sealed class SUB : TwoOperand
 {
     public SUB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word)
     {
         return new IArgument[]
@@ -23,6 +24,7 @@ public class SUB : TwoOperand
         };
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         var (src, dst) = ValidateArguments<RegisterWordArgument>(arguments);
@@ -39,5 +41,6 @@ public class SUB : TwoOperand
         State.C = (uint)(value1 - value0) > 0xFFFF;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("160000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("160000", 8);
 }

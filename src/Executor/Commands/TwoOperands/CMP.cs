@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
-public class CMP : TwoOperand
+public sealed class CMP : TwoOperand
 {
     public CMP(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         var (src, dst) = ValidateArguments<RegisterWordArgument>(arguments);
@@ -29,5 +30,6 @@ public class CMP : TwoOperand
         State.C = (uint)(value0 - value1) > 0xFFFF;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("020000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("020000", 8);
 }

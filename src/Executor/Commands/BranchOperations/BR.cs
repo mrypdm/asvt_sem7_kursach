@@ -6,13 +6,15 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
-public class BR : BranchOperation
+public sealed class BR : BranchOperation
 {
     public BR(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments) => UpdateProgramCounter(arguments);
 
-    public override ushort Opcode => Convert.ToUInt16("000400", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("000400", 8);
 }

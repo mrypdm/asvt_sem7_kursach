@@ -6,7 +6,7 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
-public class BPL : BranchOperation
+public sealed class BPL : BranchOperation
 {
     public BPL(IStorage storage, IState state) : base(storage, state)
     {
@@ -20,5 +20,6 @@ public class BPL : BranchOperation
         }
     }
 
-    public override ushort Opcode => Convert.ToUInt16("100000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("100000", 8);
 }

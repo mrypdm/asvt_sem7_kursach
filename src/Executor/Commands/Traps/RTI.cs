@@ -6,7 +6,7 @@ using Executor.Storages;
 
 namespace Executor.Commands.Traps;
 
-public class RTI : TrapReturn
+public sealed class RTI : TrapReturn
 {
     public RTI(IStorage storage, IState state) : base(storage, state)
     {
@@ -16,5 +16,5 @@ public class RTI : TrapReturn
 
     public override IArgument[] GetArguments(ushort word) => Array.Empty<IArgument>();
 
-    public override ushort Opcode => Convert.ToUInt16("000002", 8);
+    public override ushort OperationCode => Convert.ToUInt16("000002", 8);
 }

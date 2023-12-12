@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class COMB : OneOperand
+public sealed class COMB : OneOperand
 {
     public COMB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -28,5 +29,6 @@ public class COMB : OneOperand
         State.C = true;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("105100", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("105100", 8);
 }

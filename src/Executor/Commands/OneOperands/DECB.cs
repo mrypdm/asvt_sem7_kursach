@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class DECB : OneOperand
+public sealed class DECB : OneOperand
 {
     public DECB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -28,5 +29,6 @@ public class DECB : OneOperand
         State.V = oldValue == 0x80;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("105300", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("105300", 8);
 }

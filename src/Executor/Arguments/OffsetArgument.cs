@@ -5,15 +5,16 @@ using Executor.Storages;
 
 namespace Executor.Arguments;
 
-/// <summary>
-/// Offset argument
-/// </summary>
+/// <inheritdoc cref="IOffsetArgument"/>
 public class OffsetArgument : BaseArgument, IOffsetArgument
 {
+    /// <inheritdoc />
     public override object GetValue() => Offset;
 
+    /// <inheritdoc />
     public override void SetValue(object obj) => throw new ReadOnlyArgumentException(typeof(OffsetArgument));
 
+    /// <inheritdoc />
     public sbyte Offset { get; }
 
     public OffsetArgument(IStorage storage, IState state, sbyte offset) : base(storage, state)

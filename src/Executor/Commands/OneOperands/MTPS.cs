@@ -7,12 +7,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class MTPS : OneOperand
+public sealed class MTPS : OneOperand
 {
     public MTPS(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -28,5 +29,6 @@ public class MTPS : OneOperand
         State.ProcessorStateWord = value;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("106400", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("106400", 8);
 }

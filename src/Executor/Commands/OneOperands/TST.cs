@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class TST : OneOperand
+public sealed class TST : OneOperand
 {
     public TST(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -28,5 +29,6 @@ public class TST : OneOperand
         State.C = false;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("005700", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("005700", 8);
 }

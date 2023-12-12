@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
-public class BIC : TwoOperand
+public sealed class BIC : TwoOperand
 {
     public BIC(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         var (src, dst) = ValidateArguments<RegisterWordArgument>(arguments);
@@ -26,5 +27,6 @@ public class BIC : TwoOperand
         State.V = false;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("040000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("040000", 8);
 }

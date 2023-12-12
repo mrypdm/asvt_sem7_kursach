@@ -7,18 +7,18 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class CLR : OneOperand
+public sealed class CLR : OneOperand
 {
     public CLR(IStorage storage, IState state) : base(storage, state)
     {
     }
 
-
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
         var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments[0]);
-        
+
         validatedArgument.Value = 0;
         State.Z = true;
         State.V = false;
@@ -26,5 +26,6 @@ public class CLR : OneOperand
         State.N = false;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("005000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("005000", 8);
 }

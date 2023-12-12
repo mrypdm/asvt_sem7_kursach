@@ -9,12 +9,13 @@ namespace Executor.Commands.BranchOperations;
 /// <summary>
 /// BCC or BHIS
 /// </summary>
-public class BCC : BranchOperation
+public sealed class BCC : BranchOperation
 {
     public BCC(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         if (!State.C)
@@ -23,5 +24,6 @@ public class BCC : BranchOperation
         }
     }
 
-    public override ushort Opcode => Convert.ToUInt16("103000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("103000", 8);
 }

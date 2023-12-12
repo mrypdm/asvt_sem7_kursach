@@ -61,7 +61,7 @@ public class OpcodeIdentifier
             new JSR(storage, state),
             new JMP(storage, state),
             new RTS(storage, state)
-        }.ToDictionary(command => command.Opcode, command => command);
+        }.ToDictionary(command => command.OperationCode, command => command);
     }
 
     public ICommand GetCommand(ushort word)

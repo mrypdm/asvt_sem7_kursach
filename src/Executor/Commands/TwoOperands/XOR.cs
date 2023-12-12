@@ -8,18 +8,20 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
-public class XOR : TwoOperand
+public sealed class XOR : TwoOperand
 {
     public XOR(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word) => new IArgument[]
     {
         new RegisterWordArgument(Storage, State, 0, GetRegister1(word)),
         new RegisterWordArgument(Storage, State, GetMode2(word), GetRegister2(word))
     };
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 2);
@@ -40,5 +42,6 @@ public class XOR : TwoOperand
         State.V = false;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("074000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("074000", 8);
 }

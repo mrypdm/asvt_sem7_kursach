@@ -8,13 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class SDC : OneOperand
+public sealed class SBC : OneOperand
 {
-    public SDC(IStorage storage, IState state) : base(storage, state)
+    public SBC(IStorage storage, IState state) : base(storage, state)
     {
     }
 
-
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -31,5 +31,6 @@ public class SDC : OneOperand
         State.C = !(oldValue == 0 && delta == 1); // cleared if (dst) was 0 and C was 1; set otherwise
     }
 
-    public override ushort Opcode => Convert.ToUInt16("005600", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("005600", 8);
 }

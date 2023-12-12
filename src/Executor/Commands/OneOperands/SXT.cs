@@ -7,12 +7,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class SXT : OneOperand
+public sealed class SXT : OneOperand
 {
     public SXT(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -24,5 +25,6 @@ public class SXT : OneOperand
         State.Z = value == 0;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("006700", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("006700", 8);
 }

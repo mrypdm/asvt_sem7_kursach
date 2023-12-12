@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class NEGB : OneOperand
+public sealed class NEGB : OneOperand
 {
     public NEGB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -28,5 +29,6 @@ public class NEGB : OneOperand
         State.C = value != 0;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("105400", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("105400", 8);
 }

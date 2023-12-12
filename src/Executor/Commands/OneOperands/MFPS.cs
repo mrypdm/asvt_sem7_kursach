@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class MFPS : OneOperand
+public sealed class MFPS : OneOperand
 {
     public MFPS(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -37,5 +38,6 @@ public class MFPS : OneOperand
         State.V = false;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("106700", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("106700", 8);
 }

@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
-public class CMPB : TwoOperand
+public sealed class CMPB : TwoOperand
 {
     public CMPB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         var (src, dst) = ValidateArguments<RegisterByteArgument>(arguments);
@@ -29,5 +30,6 @@ public class CMPB : TwoOperand
         State.C = (uint)(value0 - value1) > 0xFF;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("120000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("120000", 8);
 }

@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
-public class BISB : TwoOperand
+public sealed class BISB : TwoOperand
 {
     public BISB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         var (src, dst) = ValidateArguments<RegisterByteArgument>(arguments);
@@ -26,5 +27,6 @@ public class BISB : TwoOperand
         State.V = false;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("150000", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("150000", 8);
 }

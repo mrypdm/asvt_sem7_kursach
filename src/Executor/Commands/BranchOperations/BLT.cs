@@ -6,12 +6,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
-public class BLT : BranchOperation
+public sealed class BLT : BranchOperation
 {
     public BLT(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         if (State.N != State.V)
@@ -20,5 +21,6 @@ public class BLT : BranchOperation
         }
     }
 
-    public override ushort Opcode => Convert.ToUInt16("002400", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("002400", 8);
 }

@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class COM : OneOperand
+public sealed class COM : OneOperand
 {
     public COM(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -28,5 +29,6 @@ public class COM : OneOperand
         State.C = true;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("005100", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("005100", 8);
 }

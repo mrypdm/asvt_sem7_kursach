@@ -8,13 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class ADC : OneOperand
+public sealed class ADC : OneOperand
 {
     public ADC(IStorage storage, IState state) : base(storage, state)
     {
     }
 
-
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -31,5 +31,6 @@ public class ADC : OneOperand
         State.C = oldValue == Convert.ToUInt16("177777", 8) && delta == 1;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("005500", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("005500", 8);
 }

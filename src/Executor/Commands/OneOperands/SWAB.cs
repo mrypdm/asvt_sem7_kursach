@@ -8,12 +8,13 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public class SWAB : OneOperand
+public sealed class SWAB : OneOperand
 {
     public SWAB(IStorage storage, IState state) : base(storage, state)
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
         ValidateArgumentsCount(arguments, 1);
@@ -34,5 +35,6 @@ public class SWAB : OneOperand
         State.C = false;
     }
 
-    public override ushort Opcode => Convert.ToUInt16("000300", 8);
+    /// <inheritdoc />
+    public override ushort OperationCode => Convert.ToUInt16("000300", 8);
 }
