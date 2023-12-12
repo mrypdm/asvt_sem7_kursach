@@ -26,17 +26,17 @@ public class ADD : TwoOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArguments = ValidateArguments<RegisterWordArgument>(arguments);
+        var (src, dst) = ValidateArguments<RegisterWordArgument>(arguments);
 
-        var value0 = validatedArguments[0].Value;
-        var value1 = validatedArguments[1].Value;
+        var value0 = src.Value;
+        var value1 = dst.Value;
 
         var carry = value1 + value0 > 0xFFFF;
         var sameSign = ((value1 ^ value0) & 0x8000) == 0;
 
         var value = (ushort)(value1 + value0);
 
-        validatedArguments[1].Value = value;
+        dst.Value = value;
         State.Z = value == 0;
         State.N = value.IsNegative();
         State.V = sameSign && State.N != ((value0 & 0x8000) != 0);

@@ -16,9 +16,9 @@ public class BIT : TwoOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArguments = ValidateArguments<RegisterWordArgument>(arguments);
+        var (src, dst) = ValidateArguments<RegisterWordArgument>(arguments);
 
-        var value = (ushort)(validatedArguments[0].Value & validatedArguments[1].Value);
+        var value = (ushort)(src.Value & dst.Value);
 
         State.Z = value == 0;
         State.N = value.IsNegative();

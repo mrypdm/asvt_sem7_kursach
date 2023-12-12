@@ -16,11 +16,11 @@ public class MOVB : TwoOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArguments = ValidateArguments<RegisterByteArgument>(arguments);
+        var (src, dst) = ValidateArguments<RegisterByteArgument>(arguments);
 
-        var value = validatedArguments[0].Value;
+        var value = src.Value;
 
-        validatedArguments[1].Value = value;
+        dst.Value = value;
         State.Z = value == 0;
         State.N = value.IsNegative();
         State.V = false;

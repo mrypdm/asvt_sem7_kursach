@@ -16,11 +16,11 @@ public class BISB : TwoOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArguments = ValidateArguments<RegisterByteArgument>(arguments);
+        var (src, dst) = ValidateArguments<RegisterByteArgument>(arguments);
 
-        var value = (byte)(validatedArguments[0].Value | validatedArguments[1].Value);
+        var value = (byte)(src.Value | dst.Value);
 
-        validatedArguments[1].Value = value;
+        dst.Value = value;
         State.Z = value == 0;
         State.N = value.IsNegative();
         State.V = false;

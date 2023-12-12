@@ -25,17 +25,17 @@ public class SUB : TwoOperand
 
     public override void Execute(IArgument[] arguments)
     {
-        var validatedArguments = ValidateArguments<RegisterWordArgument>(arguments);
+        var (src, dst) = ValidateArguments<RegisterWordArgument>(arguments);
 
-        var value0 = validatedArguments[0].Value;
-        var value1 = validatedArguments[1].Value;
+        var value0 = src.Value;
+        var value1 = dst.Value;
 
         var value = (ushort)(value1 - value0);
 
         var carry = (uint)(value1 - value0) > 0b1111_1111_1111_1111;
         var sign = ((value1 ^ value0) & 0b1000_0000_0000_0000) != 0;
 
-        validatedArguments[1].Value = value;
+        dst.Value = value;
         State.Z = value == 0;
         State.N = value.IsNegative();
         State.V = sign && State.N != (value & 0b1000_0000_0000_0000) < 0;

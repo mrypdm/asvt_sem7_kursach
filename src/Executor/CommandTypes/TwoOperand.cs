@@ -41,12 +41,12 @@ public abstract class TwoOperand : BaseCommand
         };
     }
 
-    protected TType[] ValidateArguments<TType>(IArgument[] arguments) where TType : class
+    protected (TType src, TType dst) ValidateArguments<TType>(IArgument[] arguments) where TType : class
     {
         ValidateArgumentsCount(arguments, 2);
         var arg0 = ValidateArgument<TType>(arguments[0]);
         var arg1 = ValidateArgument<TType>(arguments[1]);
-        return new[] { arg0, arg1 };
+        return (arg0, arg1);
     }
 
     protected TwoOperand(IStorage storage, IState state) : base(storage, state)
