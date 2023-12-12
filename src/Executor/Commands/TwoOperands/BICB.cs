@@ -18,7 +18,7 @@ public class BICB : TwoOperand
     {
         var validatedArguments = ValidateArguments<RegisterByteArgument>(arguments);
         
-        var value = (byte)(validatedArguments[1].Value & ~validatedArguments[0].Value);
+        var value = (byte)(~validatedArguments[0].Value & validatedArguments[1].Value);
         
         validatedArguments[1].Value = value;
         State.Z = value == 0;

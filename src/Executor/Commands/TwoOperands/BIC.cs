@@ -18,7 +18,7 @@ public class BIC : TwoOperand
     {
         var validatedArguments = ValidateArguments<RegisterWordArgument>(arguments);
 
-        var value = (ushort)(validatedArguments[1].Value & ~validatedArguments[0].Value);
+        var value = (ushort)(~validatedArguments[0].Value & validatedArguments[1].Value);
 
         validatedArguments[1].Value = value;
         State.Z = value == 0;
