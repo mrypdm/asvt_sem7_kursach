@@ -105,6 +105,8 @@ public class CommandParserTests
         new object[] { new HALT(Memory, State), Convert.ToUInt16("000000", 8) },
         new object[] { new WAIT(Memory, State), Convert.ToUInt16("000001", 8) },
         new object[] { new RESET(Memory, State), Convert.ToUInt16("000005", 8) },
-        new object[] { new FlagCommand(Memory, State), Convert.ToUInt16("000277", 8) }
+        new object[] { new FlagCommand(Memory, State), Convert.ToUInt16("000277", 8) },
+        new object[] { new MUL(Memory, State), Convert.ToUInt16("070777", 8) },
+        new object[] { new DIV(Memory, State), Convert.ToUInt16("071777", 8) },
     };
 }

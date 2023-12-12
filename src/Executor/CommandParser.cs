@@ -19,7 +19,7 @@ public class CommandParser
         0b1111_1111_1110_0000, // flag instruction
         0b1111_1111_1100_0000, // one operand, mark
         0b1111_1111_0000_0000, // branch, trap, emt
-        0b1111_1110_0000_0000, // jsr, sob
+        0b1111_1110_0000_0000, // jsr, sob, mul, div
         0b1111_0000_0000_0000, // two operand
     };
 
