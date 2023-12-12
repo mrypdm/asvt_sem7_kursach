@@ -53,7 +53,7 @@ public class DevicesTest
         var state = new State();
         var manager = new DevicesManager(new DeviceProvider());
         var bus = new Bus(new Memory(), manager);
-        var opcodeIdentifier = new OpcodeIdentifier(state, bus);
+        var opcodeIdentifier = new OpcodeIdentifier(bus, state);
 
         for (var i = 0; i < rawMem.Length; i++)
         {

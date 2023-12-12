@@ -13,7 +13,7 @@ public class OpcodeIdentifierTest
         const ushort word1 = 0b1010111000000; // MOV
         var state = new State();
         var memory = new Memory();
-        var opcodeIdentifier = new OpcodeIdentifier(state, memory);
+        var opcodeIdentifier = new OpcodeIdentifier(memory, state);
 
         // Act
 

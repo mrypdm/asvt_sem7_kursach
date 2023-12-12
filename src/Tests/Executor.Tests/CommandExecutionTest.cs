@@ -28,7 +28,7 @@ public class CommandExecutionTest
 
         var memory = new Memory();
         var state = new State();
-        var opcodeIdentifier = new OpcodeIdentifier(state, memory);
+        var opcodeIdentifier = new OpcodeIdentifier(memory, state);
 
         for (var i = 0; i < rawMem.Length; i++)
         {
@@ -70,7 +70,7 @@ public class CommandExecutionTest
 
         var memory = new Memory();
         var state = new State();
-        var opcodeIdentifier = new OpcodeIdentifier(state, memory);
+        var opcodeIdentifier = new OpcodeIdentifier(memory, state);
 
         for (var i = 0; i < rawMem.Length; i++)
         {

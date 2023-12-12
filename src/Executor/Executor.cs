@@ -68,7 +68,7 @@ public class Executor
         _devicesManager = new DevicesManager(provider);
         _deviceValidator = new DeviceValidator(provider);
         _bus = new Bus(_memory, _devicesManager);
-        _opcodeIdentifier = new OpcodeIdentifier(_state, _bus);
+        _opcodeIdentifier = new OpcodeIdentifier(_bus, _state);
     }
 
     public void Init()
