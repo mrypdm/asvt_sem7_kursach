@@ -8,9 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
-public sealed class ROR : OneOperand
+public sealed class ROL : OneOperand
 {
-    public ROR(IStorage storage, IState state) : base(storage, state)
+    public ROL(IStorage storage, IState state) : base(storage, state)
     {
     }
 
@@ -21,11 +21,11 @@ public sealed class ROR : OneOperand
         var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments[0]);
 
         var value = validatedArgument.Value;
-        var newC = value % 2 == 1;
-        var oldC = State.C ? 1 : 0;
+        var newC = value.IsNegative();
+        var oldC = (ushort)(State.C ? 1 : 0);
 
-        value >>= 1;
-        value |= (ushort)(oldC << 15);
+        value <<= 1;
+        value |= oldC;
 
         validatedArgument.Value = value;
         State.Z = value == 0;
@@ -35,5 +35,5 @@ public sealed class ROR : OneOperand
     }
 
     /// <inheritdoc />
-    public override ushort OperationCode => Convert.ToUInt16("006000", 8);
+    public override ushort OperationCode => Convert.ToUInt16("006100", 8);
 }

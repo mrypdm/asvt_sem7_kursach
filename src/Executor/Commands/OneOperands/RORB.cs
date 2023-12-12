@@ -21,7 +21,7 @@ public sealed class RORB : OneOperand
         var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
 
         var value = validatedArgument.Value;
-        var newC = value & 1;
+        var newC = value % 2 == 1;
         var oldC = State.C ? 1 : 0;
 
         value >>= 1;
@@ -30,7 +30,7 @@ public sealed class RORB : OneOperand
         validatedArgument.Value = value;
         State.Z = value == 0;
         State.N = value.IsNegative();
-        State.C = newC == 1;
+        State.C = newC;
         State.V = State.N ^ State.C;
     }
 
