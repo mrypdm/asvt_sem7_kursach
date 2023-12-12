@@ -17,9 +17,8 @@ public sealed class BITB : TwoOperand
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
-        var (src, dst) = ValidateArguments<RegisterWordArgument>(arguments);
-
-        var value = (ushort)(src.Value & dst.Value);
+        var (src, dst) = ValidateArguments<RegisterByteArgument>(arguments);
+        var value = (byte)(src.Value & dst.Value);
 
         State.Z = value == 0;
         State.N = value.IsNegative();
