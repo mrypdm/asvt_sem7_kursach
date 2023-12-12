@@ -3,7 +3,7 @@ using Executor.Storages;
 
 namespace Executor.Tests;
 
-public class OpcodeIdentifierTest
+public class CommandParserTests
 {
     [Test]
     public void TestGetCommand()
@@ -13,7 +13,7 @@ public class OpcodeIdentifierTest
         const ushort word1 = 0b1010111000000; // MOV
         var state = new State();
         var memory = new Memory();
-        var opcodeIdentifier = new OpcodeIdentifier(memory, state);
+        var opcodeIdentifier = new CommandParser(memory, state);
 
         // Act
 

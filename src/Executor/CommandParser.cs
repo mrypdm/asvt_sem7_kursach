@@ -13,7 +13,7 @@ using Executor.Storages;
 
 namespace Executor;
 
-public class OpcodeIdentifier
+public class CommandParser
 {
     private readonly ushort[] _masks =
     {
@@ -28,7 +28,7 @@ public class OpcodeIdentifier
 
     private readonly Dictionary<ushort, ICommand> _opcodesDictionary;
 
-    public OpcodeIdentifier(IStorage storage, IState state)
+    public CommandParser(IStorage storage, IState state)
     {
         _opcodesDictionary = new ICommand[]
         {

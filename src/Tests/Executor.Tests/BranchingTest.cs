@@ -27,7 +27,7 @@ public class BranchingTest
 
         var memory = new Memory();
         var state = new State();
-        var opcodeIdentifier = new OpcodeIdentifier(memory, state);
+        var opcodeIdentifier = new CommandParser(memory, state);
 
         for (var i = 0; i < rawMem.Length; i++)
         {
@@ -72,7 +72,7 @@ public class BranchingTest
         var state = new State();
         state.Registers[7] = 72; // next to instruction
 
-        var opcodeIdentifier = new OpcodeIdentifier(memory, state);
+        var opcodeIdentifier = new CommandParser(memory, state);
         var command = opcodeIdentifier.GetCommand(word);
         command.Execute(command.GetArguments(word));
 

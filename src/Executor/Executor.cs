@@ -42,7 +42,7 @@ public class Executor
     private readonly IDevicesManager _devicesManager;
     private readonly Bus _bus;
 
-    private readonly OpcodeIdentifier _opcodeIdentifier;
+    private readonly CommandParser _commandParser;
     private readonly Dictionary<ushort, string> _symbols = new();
     private readonly HashSet<ushort> _breakpoints = new();
 
@@ -68,7 +68,7 @@ public class Executor
         _devicesManager = new DevicesManager(provider);
         _deviceValidator = new DeviceValidator(provider);
         _bus = new Bus(_memory, _devicesManager);
-        _opcodeIdentifier = new OpcodeIdentifier(_bus, _state);
+        _commandParser = new CommandParser(_bus, _state);
     }
 
     public void Init()
@@ -128,7 +128,7 @@ public class Executor
             var word = _memory.GetWord(_state.Registers[7]);
             _state.Registers[7] += 2;
 
-            _lastCommand = _opcodeIdentifier.GetCommand(word);
+            _lastCommand = _commandParser.GetCommand(word);
             _lastCommand.Execute(_lastCommand.GetArguments(word));
 
             if (_lastCommand is TrapInstruction)
