@@ -20,13 +20,13 @@ public class INCB : OneOperand
         ValidateArgumentsCount(arguments, 1);
         var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
 
-        var value = (byte)(validatedArgument.Value + 1);
+        var oldValue = validatedArgument.Value;
+        var value = (byte)(oldValue + 1);
 
         validatedArgument.Value = value;
         State.Z = value == 0;
-        // TODO byte?
         State.N = value.IsNegative();
-        State.V = value == 0b111_1111;
+        State.V = oldValue == 0x7F;
     }
 
     public override ushort Opcode => Convert.ToUInt16("105200", 8);
