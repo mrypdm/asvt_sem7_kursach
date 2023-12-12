@@ -22,5 +22,5 @@ public sealed class RESET : BaseCommand
     public override IArgument[] GetArguments(ushort word) => Array.Empty<IArgument>();
 
     /// <inheritdoc />
-    public override ushort OperationCode => Convert.ToUInt16("000006", 8);
+    public override ushort OperationCode => Convert.ToUInt16("000005", 8);
 }
