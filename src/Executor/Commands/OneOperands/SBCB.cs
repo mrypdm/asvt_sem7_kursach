@@ -21,14 +21,14 @@ public class SDCB : OneOperand
         var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
 
         var delta = State.C ? 1 : 0;
-        var value = (byte)(validatedArgument.Value - delta);
+        var oldValue = validatedArgument.Value;
+        var value = (byte)(oldValue - delta);
 
         validatedArgument.Value = value;
         State.Z = value == 0;
-        // TODO byte?
         State.N = value.IsNegative();
-        State.V = value == 0b1000_0000;
-        State.C = value == 0 && delta == 1;
+        State.V = oldValue == 0x80; // && delta == 1 ?
+        State.C = !(oldValue == 0 && delta == 1); // cleared if (dst) was 0 and C was 1; set otherwise
     }
 
     public override ushort Opcode => Convert.ToUInt16("105600", 8);
