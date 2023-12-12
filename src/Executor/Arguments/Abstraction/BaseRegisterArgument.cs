@@ -53,13 +53,13 @@ public abstract class BaseRegisterArgument<TValue> : BaseArgument, IRegisterArgu
                 return address;
             case 3:
                 address = Storage.GetWord(State.Registers[Register]);
-                State.Registers[Register] += Delta;
+                State.Registers[Register] += 2;
                 return address;
             case 4:
                 State.Registers[Register] -= Delta;
                 return State.Registers[Register];
             case 5:
-                State.Registers[Register] -= Delta;
+                State.Registers[Register] -= 2;
                 return Storage.GetWord(State.Registers[Register]);
             case 6:
                 offset = Storage.GetWord(State.Registers[7]);
