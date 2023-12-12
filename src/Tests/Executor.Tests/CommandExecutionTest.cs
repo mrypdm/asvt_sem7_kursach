@@ -1,4 +1,8 @@
 using System;
+using Executor.Arguments;
+using Executor.Arguments.Abstraction;
+using Executor.Commands;
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
 
@@ -61,7 +65,7 @@ public class CommandExecutionTest
             Convert.ToUInt16("005202", 8), // 8  INC R2
             Convert.ToUInt16("160102", 8), // 10 Sub R1, R2
             Convert.ToUInt16("000055", 8), // 12 55
-            Convert.ToUInt16("000054", 8)  // 14 54
+            Convert.ToUInt16("000054", 8), // 14 54
         };
 
         var memory = new Memory();
@@ -87,5 +91,44 @@ public class CommandExecutionTest
         // Assert
 
         Assert.That(state.Registers[2], Is.EqualTo(0));
+    }
+
+    [Test]
+    public void MarkTest()
+    {
+        // Arrange
+
+        var memory = new Memory();
+        var state = new State
+        {
+            Registers =
+            {
+                [5] = 1200,
+                [6] = 1024,
+                [7] = 1500 // after JSR
+            }
+        };
+
+        memory.PushToStack(state, 1200);
+        memory.PushToStack(state, 5);
+        memory.PushToStack(state, 3);
+        memory.PushToStack(state, 1203);
+        memory.PushToStack(state, Convert.ToUInt16("006403", 8)); // MARK 3
+        state.Registers[5] = 1502;
+
+        // Act
+
+        var markArgs = new IArgument[] { new MarkArgument(memory, state, 3) };
+        var mark = new MARK(memory, state);
+        mark.Execute(markArgs);
+
+        // Assert
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(state.Registers[5], Is.EqualTo(1200));
+            Assert.That(state.Registers[6], Is.EqualTo(1024));
+            Assert.That(state.Registers[7], Is.EqualTo(1502));
+        });
     }
 }
