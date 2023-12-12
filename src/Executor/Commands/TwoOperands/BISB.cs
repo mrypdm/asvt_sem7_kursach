@@ -20,7 +20,7 @@ public class BISB : TwoOperand
 
         var value = (byte)(validatedArguments[0].Value | validatedArguments[1].Value);
 
-        validatedArguments[1].SetValue(value);
+        validatedArguments[1].Value = value;
         State.Z = value == 0;
         State.N = value.IsNegative();
         State.V = false;
