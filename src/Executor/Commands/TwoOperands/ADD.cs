@@ -31,16 +31,13 @@ public class ADD : TwoOperand
         var value0 = src.Value;
         var value1 = dst.Value;
 
-        var carry = value1 + value0 > 0xFFFF;
-        var sameSign = ((value1 ^ value0) & 0x8000) == 0;
-
         var value = (ushort)(value1 + value0);
 
         dst.Value = value;
         State.Z = value == 0;
         State.N = value.IsNegative();
-        State.V = sameSign && State.N != ((value0 & 0x8000) != 0);
-        State.C = carry;
+        State.V = value0.IsSameSignWith(value1) && !value0.IsSameSignWith(value);
+        State.C = value1 + value0 > 0xFFFF;
     }
 
     public override ushort Opcode => Convert.ToUInt16("060000", 8);

@@ -32,14 +32,11 @@ public class SUB : TwoOperand
 
         var value = (ushort)(value1 - value0);
 
-        var carry = (uint)(value1 - value0) > 0b1111_1111_1111_1111;
-        var sign = ((value1 ^ value0) & 0b1000_0000_0000_0000) != 0;
-
         dst.Value = value;
         State.Z = value == 0;
         State.N = value.IsNegative();
-        State.V = sign && State.N != (value & 0b1000_0000_0000_0000) < 0;
-        // TODO carry
+        State.V = !value0.IsSameSignWith(value1) && value0.IsSameSignWith(value);
+        State.C = (uint)(value1 - value0) > 0xFFFF;
     }
 
     public override ushort Opcode => Convert.ToUInt16("160000", 8);
