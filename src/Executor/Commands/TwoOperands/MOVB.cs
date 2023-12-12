@@ -20,7 +20,17 @@ public class MOVB : TwoOperand
 
         var value = src.Value;
 
-        dst.Value = value;
+        if (dst.Mode == 0)
+        {
+            // propagate the sign bit
+            var high = value.IsNegative() ? 0xFF : 0;
+            State.Registers[dst.Register] = (ushort)((high << 8) | value);
+        }
+        else
+        {
+            dst.Value = value;
+        }
+
         State.Z = value == 0;
         State.N = value.IsNegative();
         State.V = false;
