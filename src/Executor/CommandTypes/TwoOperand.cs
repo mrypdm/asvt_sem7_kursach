@@ -22,7 +22,7 @@ public abstract class TwoOperand : BaseCommand
 
     public override IArgument[] GetArguments(ushort word)
     {
-        if ((Opcode & 0b1000_0000_0000_0000) > 0)
+        if ((Opcode & 0x8000) != 0)
         {
             return new IArgument[]
             {
