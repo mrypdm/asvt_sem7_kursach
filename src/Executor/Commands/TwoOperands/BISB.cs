@@ -2,6 +2,7 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
 
@@ -21,7 +22,7 @@ public class BISB : TwoOperand
 
         validatedArguments[1].SetValue(value);
         State.Z = value == 0;
-        State.N = (value & 0b1000_0000) > 0;
+        State.N = value.IsNegative();
         State.V = false;
     }
 

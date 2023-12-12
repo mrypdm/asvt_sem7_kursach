@@ -2,6 +2,7 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
 
@@ -22,7 +23,7 @@ public class INC : OneOperand
 
         validatedArgument.Value = value;
         State.Z = value == 0;
-        State.N = (value & 0b1000_0000_0000_0000) > 0;
+        State.N = value.IsNegative();
         State.V = value == Convert.ToUInt16("077777", 8);
     }
 

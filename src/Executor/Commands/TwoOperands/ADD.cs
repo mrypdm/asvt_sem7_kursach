@@ -2,6 +2,7 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
 
@@ -37,7 +38,7 @@ public class ADD : TwoOperand
 
         validatedArguments[1].Value = value;
         State.Z = value == 0;
-        State.N = (value & 0x8000) != 0;
+        State.N = value.IsNegative();
         State.V = sameSign && State.N != ((value0 & 0x8000) != 0);
         State.C = carry;
     }

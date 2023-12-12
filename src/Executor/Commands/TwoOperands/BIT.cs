@@ -2,6 +2,7 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
 
@@ -20,7 +21,7 @@ public class BIT : TwoOperand
         var value = (ushort)(validatedArguments[0].Value & validatedArguments[1].Value);
 
         State.Z = value == 0;
-        State.N = (value & 0b1000_0000_0000_0000) != 0;
+        State.N = value.IsNegative();
         State.V = false;
     }
 

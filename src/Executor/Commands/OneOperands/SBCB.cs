@@ -2,6 +2,7 @@ using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
 
@@ -25,7 +26,7 @@ public class SDCB : OneOperand
         validatedArgument.Value = value;
         State.Z = value == 0;
         // TODO byte?
-        State.N = (value & 0b1000_0000) > 0;
+        State.N = value.IsNegative();
         State.V = value == 0b1000_0000;
         State.C = value == 0 && delta == 1;
     }
