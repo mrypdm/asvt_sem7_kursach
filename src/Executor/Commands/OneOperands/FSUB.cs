@@ -25,7 +25,7 @@ public class FSUB : OneOperand
 
         if (reg.Mode != 0)
         {
-            throw new ArgumentException("Argument of FADD must be addressing with mode 0");
+            throw new ArgumentException("Argument of FSUB must be addressing with mode 0");
         }
 
         var rightHigh = Storage.GetWord(State.Registers[reg.Register]);
