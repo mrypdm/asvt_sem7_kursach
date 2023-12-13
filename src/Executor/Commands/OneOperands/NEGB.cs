@@ -17,8 +17,7 @@ public sealed class NEGB : OneOperand
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
-        ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments); 
 
         var value = (byte)-validatedArgument.Value;
 

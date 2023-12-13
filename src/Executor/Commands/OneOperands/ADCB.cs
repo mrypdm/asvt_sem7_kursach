@@ -17,8 +17,7 @@ public sealed class ADCB : OneOperand
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
-        ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments); 
 
         var delta = State.C ? 1 : 0;
         var oldValue = validatedArgument.Value;

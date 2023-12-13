@@ -17,8 +17,7 @@ public sealed class DECB : OneOperand
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
-        ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<RegisterByteArgument>(arguments); 
         
         var oldValue = validatedArgument.Value;
         var value = (byte)(oldValue - 1);

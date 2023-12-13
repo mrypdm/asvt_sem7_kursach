@@ -24,6 +24,12 @@ public abstract class OneOperand : BaseCommand
         ? new IArgument[] { new RegisterByteArgument(Storage, State, GetMode(word), GetRegister(word)) }
         : new IArgument[] { new RegisterWordArgument(Storage, State, GetMode(word), GetRegister(word)) };
 
+    protected static TType ValidateArgument<TType>(IArgument[] arguments) where TType : class
+    {
+        ValidateArgumentsCount(arguments, 1);
+        return ValidateArgument<TType>(arguments[0]);
+    }
+
     protected OneOperand(IStorage storage, IState state) : base(storage, state)
     {
     }

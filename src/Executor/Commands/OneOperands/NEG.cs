@@ -17,8 +17,7 @@ public sealed class NEG : OneOperand
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
-        ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments); 
 
         var value = (ushort)-validatedArgument.Value;
 

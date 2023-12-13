@@ -16,8 +16,7 @@ public sealed class CLR : OneOperand
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
-        ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments); 
 
         validatedArgument.Value = 0;
         State.Z = true;

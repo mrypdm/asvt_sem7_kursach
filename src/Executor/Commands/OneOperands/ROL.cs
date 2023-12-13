@@ -17,8 +17,7 @@ public sealed class ROL : OneOperand
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
-        ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments); 
 
         var value = validatedArgument.Value;
         var newC = value.IsNegative();

@@ -16,8 +16,7 @@ public sealed class SXT : OneOperand
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
-        ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments); 
 
         var value = State.N ? 0xFFFF : 0;
 

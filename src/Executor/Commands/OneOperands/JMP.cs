@@ -20,8 +20,7 @@ public sealed class JMP : OneOperand
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
     {
-        ValidateArgumentsCount(arguments, 1);
-        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments[0]);
+        var validatedArgument = ValidateArgument<RegisterWordArgument>(arguments); 
         State.Registers[7] = validatedArgument.Address ??
                              throw new InvalidOperationException("JMP cannot be addressing by register");
     }
