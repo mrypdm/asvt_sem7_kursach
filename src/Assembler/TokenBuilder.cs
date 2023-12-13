@@ -23,6 +23,7 @@ internal class TokenBuilder
     private const string RegexPatternAddrType31Mark = @"^@#([a-z]+[_a-z0-9]*)$";
     private const string RegexPatternAddrType61 = @"^([a-z]+[_a-z0-9]*)$";
     private const string RegexPatternAddrType71 = @"^@([a-z]+[_a-z0-9]*)$";
+    private const string RegexPatternArgNN = @"^([0-7]{1,2})$";
     private const string RegexPatternArgWORD = @"^([-]?[0-9]+)([.]?)$";
     private const string RegexPatternArgBLKW = @"^([0-9]+)$";
 
@@ -42,11 +43,9 @@ internal class TokenBuilder
     private readonly Regex _regexMaskAddrType31Mark;
     private readonly Regex _regexMaskAddrType61;
     private readonly Regex _regexMaskAddrType71;
+    private readonly Regex _regexMaskArgNN;
     private readonly Regex _regexMaskArgWORD;
     private readonly Regex _regexMaskArgBLKW;
-
-    private const string RegexPatternArgNN = @"^([0-7]{1,2})$";
-    private readonly Regex _regexMaskArgNN;
 
     private readonly Dictionary<string, Func<CommandLine, List<IToken>>> _instructions;
 
@@ -296,16 +295,19 @@ internal class TokenBuilder
         }
 
         // The handling of the second argument
-        if (_regexMaskArgNN.IsMatch(cmdLine.Arguments[1]))
+        if (_regexMaskAddrType61.IsMatch(cmdLine.Arguments[1]))
         {
-            instArgCode = instArgCode | Convert.ToInt32(_regexMaskArgNN.Match(cmdLine.Arguments[1]).Groups[1].Value, 8);
+            resultTokens.Add(new ShiftBackOperationToken(
+                Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode,
+                cmdLine.Arguments[1],
+                0b111_111,
+                cmdLine));
         }
         else
         {
             throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[1]}.");
         }
-
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
+        
         return resultTokens;
     }
 
@@ -319,6 +321,7 @@ internal class TokenBuilder
             resultTokens.Add(new ShiftOperationToken(
                 Instruction.Instructions[cmdLine.InstructionMnemonics].Code,
                 cmdLine.Arguments[0],
+                0b1111_1111,
                 cmdLine)
             );
         }
@@ -475,8 +478,8 @@ internal class TokenBuilder
             { "jsr", InstructionArgsRDD },
             { "rts", InstructionArgsR },
 
-            //{"mark", InstructionArgsNN},
-            //{"sob", InstructionArgsRNN},
+            { "mark", InstructionArgsNN },
+            { "sob", InstructionArgsRNN },
 
             { "bpt", InstructionArgsNull },
             { "iot", InstructionArgsNull },

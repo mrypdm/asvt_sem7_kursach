@@ -5,35 +5,40 @@ namespace Assembler.Tokens;
 
 internal class ShiftOperationToken : IToken
 {
-    private readonly int _machineCode;
-    private readonly string _mark;
-    private readonly CommandLine _originCmdLine;
+    protected readonly int _machineCode;
+    protected readonly string _mark;
+    protected readonly CommandLine _originCmdLine;
+    protected readonly int _shiftMask;
 
-    public ShiftOperationToken(int machineCode, string mark, CommandLine originCmdLine)
+    public ShiftOperationToken(int machineCode, string mark, int shiftMask, CommandLine originCmdLine)
     {
         _machineCode = machineCode;
         _mark = mark;
         _originCmdLine = originCmdLine;
+        // Example: br - 0b1111_1111
+        // sob - 0b111_111
+        _shiftMask = shiftMask;
     }
 
-    public IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
+    public virtual IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
     {
-        if (marksDict.TryGetValue(_mark, out var delta))
+        int delta = 0;
+        if (marksDict.TryGetValue(_mark, out var markAddress))
         {
-            delta -= currentAddr;
+            delta = markAddress - currentAddr;
         }
         else
         {
             throw new Exception($"The mark ({_mark}) is not determined.");
         }
 
-        // 3 77 oct = 255 dec
-        if (delta > 255)
+        // Distance restrictions for the mark
+        if (delta > _shiftMask)
         {
             throw new Exception($"The distance to the mark ({_mark}) is too large. {delta}");
         }
 
-        var shiftValue = (delta / 2 - 1) & 0b1111_1111;
+        var shiftValue = (delta / 2 - 1) & _shiftMask;
 
         return new List<string> { Convert.ToString(_machineCode | shiftValue, 8).PadLeft(6, '0') + $";{_originCmdLine.GetSymbol()}" };
     }
