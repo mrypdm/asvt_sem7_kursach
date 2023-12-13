@@ -110,5 +110,9 @@ public class CommandParserTests
         new object[] { new DIV(Memory, State), Convert.ToUInt16("071777", 8) },
         new object[] { new ASH(Memory, State), Convert.ToUInt16("072777", 8) },
         new object[] { new ASHC(Memory, State), Convert.ToUInt16("073777", 8) },
+        new object[] { new FADD(Memory, State), Convert.ToUInt16("075007", 8) },
+        new object[] { new FSUB(Memory, State), Convert.ToUInt16("075017", 8) },
+        new object[] { new FMUL(Memory, State), Convert.ToUInt16("075027", 8) },
+        new object[] { new FDIV(Memory, State), Convert.ToUInt16("075037", 8) },
     };
 }
