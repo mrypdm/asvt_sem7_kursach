@@ -2,6 +2,7 @@
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
 using Executor.CommandTypes;
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
 
@@ -33,11 +34,11 @@ public class FSUB : OneOperand
         var leftHigh = Storage.GetWord((ushort)(State.Registers[reg.Register] + 4));
         var leftLow = Storage.GetWord((ushort)(State.Registers[reg.Register] + 6));
 
-        var rightOp = BitConverter.Int32BitsToSingle((rightHigh << 16) | rightLow);
-        var leftOp = BitConverter.Int32BitsToSingle((leftHigh << 16) | leftLow);
+        var rightOp = ((rightHigh << 16) | rightLow).AsFloat();
+        var leftOp = ((leftHigh << 16) | leftLow).AsFloat();
 
         var result = leftOp - rightOp;
-        var value = BitConverter.SingleToUInt32Bits(result);
+        var value = result.AsUInt();
 
         Storage.SetWord((ushort)(State.Registers[reg.Register] + 4), (ushort)((value & 0xFFFF0000) >> 8));
         Storage.SetWord((ushort)(State.Registers[reg.Register] + 6), (ushort)(value & 0xFFFF));

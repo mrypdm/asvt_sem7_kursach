@@ -1,4 +1,6 @@
-﻿namespace Executor.Extensions;
+﻿using System;
+
+namespace Executor.Extensions;
 
 public static class NumbersExtensions
 {
@@ -11,4 +13,8 @@ public static class NumbersExtensions
     public static bool IsNegative(this byte value) => (value & 0x80) != 0;
 
     public static bool IsSameSignWith(this byte a, byte b) => !((byte)(a ^ b)).IsNegative();
+
+    public static float AsFloat(this int n) => BitConverter.Int32BitsToSingle(n);
+
+    public static uint AsUInt(this float n) => BitConverter.SingleToUInt32Bits(n);
 }
