@@ -18,6 +18,7 @@ public sealed class BITB : TwoOperand
     public override void Execute(IArgument[] arguments)
     {
         var (src, dst) = ValidateArguments<RegisterByteArgument>(arguments);
+
         var value = (byte)(src.Value & dst.Value);
 
         State.Z = value == 0;

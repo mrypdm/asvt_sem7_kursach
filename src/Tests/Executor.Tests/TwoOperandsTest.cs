@@ -1,8 +1,5 @@
-using System;
 using Executor.Arguments;
 using Executor.Arguments.Abstraction;
-using Executor.Commands;
-using Executor.Commands.OneOperands;
 using Executor.Commands.TwoOperands;
 using Executor.States;
 using Executor.Storages;
@@ -11,13 +8,11 @@ namespace Executor.Tests;
 
 public class TwoOperandTest
 {
-
-    
     [Test]
-    [TestCase((ushort)1500, (ushort)1500, new bool[] {false, false})]
-    [TestCase((ushort)0, (ushort)2504, new bool[] {true, false})]
-    [TestCase((ushort)33088, (ushort)32768, new bool[] {false, true})]
-    public void TestBIT(ushort value1, ushort value2, bool[] ExpectedResult)
+    [TestCase((ushort)1500, (ushort)1500, false, false)]
+    [TestCase((ushort)0, (ushort)2504, true, false)]
+    [TestCase((ushort)33088, (ushort)32768, false, true)]
+    public void TestBIT(ushort value1, ushort value2, bool expectedZ, bool expectedN)
     {
         // Arrange
 
@@ -27,7 +22,7 @@ public class TwoOperandTest
             Registers =
             {
                 [1] = value1,
-                [2] = value2 
+                [2] = value2
             }
         };
 
@@ -44,17 +39,20 @@ public class TwoOperandTest
 
         // Assert
 
-        Assert.That(state.Z, Is.EqualTo(ExpectedResult[0]));
-        Assert.That(state.N, Is.EqualTo(ExpectedResult[1]));
-        Assert.That(state.V, Is.EqualTo(false));
-        Assert.That(state.C, Is.EqualTo(false));
+        Assert.Multiple(() =>
+        {
+            Assert.That(state.Z, Is.EqualTo(expectedZ));
+            Assert.That(state.N, Is.EqualTo(expectedN));
+            Assert.That(state.V, Is.EqualTo(false));
+            Assert.That(state.C, Is.EqualTo(false));
+        });
     }
 
     [Test]
-    [TestCase((ushort)32255, new bool[] {false, false})]
-    [TestCase((ushort)128, new bool[] {true, false})]
-    [TestCase((ushort)65535, new bool[] {false, true})]
-    public void TestBIT(ushort value1, bool[] ExpectedResult)
+    [TestCase((ushort)32255, false, false)]
+    [TestCase((ushort)128, true, false)]
+    [TestCase((ushort)65535, false, true)]
+    public void TestBITB(ushort value1, bool expectedZ, bool expectedN)
     {
         // Arrange
 
@@ -81,9 +79,12 @@ public class TwoOperandTest
 
         // Assert
 
-        Assert.That(state.Z, Is.EqualTo(ExpectedResult[0]));
-        Assert.That(state.N, Is.EqualTo(ExpectedResult[1]));
-        Assert.That(state.V, Is.EqualTo(false));
-        Assert.That(state.C, Is.EqualTo(false));
+        Assert.Multiple(() =>
+        {
+            Assert.That(state.Z, Is.EqualTo(expectedZ));
+            Assert.That(state.N, Is.EqualTo(expectedN));
+            Assert.That(state.V, Is.EqualTo(false));
+            Assert.That(state.C, Is.EqualTo(false));
+        });
     }
 }
