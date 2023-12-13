@@ -109,5 +109,6 @@ public class CommandParserTests
         new object[] { new MUL(Memory, State), Convert.ToUInt16("070777", 8) },
         new object[] { new DIV(Memory, State), Convert.ToUInt16("071777", 8) },
         new object[] { new ASH(Memory, State), Convert.ToUInt16("072777", 8) },
+        new object[] { new ASHC(Memory, State), Convert.ToUInt16("073777", 8) },
     };
 }

@@ -68,5 +68,5 @@ public class ASHC : TwoOperand
     }
 
     /// <inheritdoc />
-    public override ushort OperationCode => Convert.ToUInt16("072000", 8);
+    public override ushort OperationCode => Convert.ToUInt16("073000", 8);
 }
