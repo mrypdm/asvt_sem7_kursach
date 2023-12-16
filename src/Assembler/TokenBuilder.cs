@@ -337,35 +337,38 @@ internal class TokenBuilder
     {
         var resultTokens = new List<IToken>();
 
-        if (_regexMaskArgWORD.IsMatch(cmdLine.Arguments[0]))
+        foreach (var arg in cmdLine.Arguments)
         {
-            var value = _regexMaskArgWORD.Match(cmdLine.Arguments[0]).Groups[1].Value;
-
-            int valueDec;
-            if (string.IsNullOrEmpty(_regexMaskArgWORD.Match(cmdLine.Arguments[0]).Groups[2].Value))
+            if (_regexMaskArgWORD.IsMatch(arg))
             {
-                // .WORD N - oct-num
-                var isNegative = value.StartsWith('-');
-                valueDec = (isNegative ? -1 : 1) * Convert.ToInt32(isNegative ? value[1..] : value, 8);
+                var value = _regexMaskArgWORD.Match(arg).Groups[1].Value;
+
+                int valueDec;
+                if (string.IsNullOrEmpty(_regexMaskArgWORD.Match(arg).Groups[2].Value))
+                {
+                    // .WORD N - oct-num
+                    var isNegative = value.StartsWith('-');
+                    valueDec = (isNegative ? -1 : 1) * Convert.ToInt32(isNegative ? value[1..] : value, 8);
+                }
+                else
+                {
+                    // .WORD N. - dec-num
+                    valueDec = Convert.ToInt32(value);
+                }
+
+                if (valueDec is > short.MaxValue or < short.MinValue)
+                {
+                    throw new ArgumentException($"Incorrect argument: {arg}.");
+                }
+
+                valueDec &= 0xFFFF;
+
+                resultTokens.Add(new RawToken(valueDec));
             }
             else
             {
-                // .WORD N. - dec-num
-                valueDec = Convert.ToInt32(value);
+                throw new ArgumentException($"Incorrect argument: {arg}.");
             }
-
-            if (valueDec is > short.MaxValue or < short.MinValue)
-            {
-                throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
-            }
-
-            valueDec &= 0xFFFF;
-
-            resultTokens.Add(new RawToken(valueDec));
-        }
-        else
-        {
-            throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
         }
 
         return resultTokens;

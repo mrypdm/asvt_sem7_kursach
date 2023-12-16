@@ -36,7 +36,8 @@ internal record CommandLine
             throw new System.Exception($"Unexisting instruction: {InstructionMnemonics}.");
         }
 
-        if (Arguments.Count != Instruction.Instructions[InstructionMnemonics].ArgumentsCount)
+        if ((Arguments.Count != Instruction.Instructions[InstructionMnemonics].ArgumentsCount) &
+            (Instruction.Instructions[InstructionMnemonics].ArgumentsCount != -1))
         {
             throw new System.Exception(
                 $"Incorrect number of arguments: {InstructionMnemonics}. " +

@@ -78,12 +78,12 @@ internal record Instruction
         new("wait", 0b0_000_000_000_000_001, 0),
         new("reset", 0b0_000_000_000_000_101, 0),
         // Pseudo instructions
-        new(".word", 0, 1),
+        new(".word", 0, -1),
         new(".blkw", 0, 1),
         new(".end", 0, 1)
     }.ToDictionary(m => m.Mnemonics, m => m);
 
-    private Instruction(string mnemonics, int code, byte argumentsCount)
+    private Instruction(string mnemonics, int code, int argumentsCount)
     {
         Mnemonics = mnemonics;
         Code = code;
@@ -94,5 +94,5 @@ internal record Instruction
 
     public int Code { get; }
 
-    public byte ArgumentsCount { get; }
+    public int ArgumentsCount { get; }
 }
