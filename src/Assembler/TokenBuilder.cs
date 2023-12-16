@@ -457,6 +457,10 @@ internal class TokenBuilder
             { "bis", InstructionArgsSSDD },
             { "bisb", InstructionArgsSSDD },
 
+            { "mul", InstructionArgsRDD },
+            { "div", InstructionArgsRDD },
+            { "ash", InstructionArgsRDD },
+            { "ashc", InstructionArgsRDD },
             { "xor", InstructionArgsRDD },
 
             { "br", InstructionArgsShift },
@@ -480,6 +484,10 @@ internal class TokenBuilder
             { "jmp", InstructionArgsDD },
             { "jsr", InstructionArgsRDD },
             { "rts", InstructionArgsR },
+            { "fmul", InstructionArgsR },
+            { "fdiv", InstructionArgsR },
+            { "fadd", InstructionArgsR },
+            { "fsub", InstructionArgsR },
 
             { "mark", InstructionArgsNN },
             { "sob", InstructionArgsRNN },
@@ -491,6 +499,18 @@ internal class TokenBuilder
             { "halt", InstructionArgsNull },
             { "wait", InstructionArgsNull },
             { "reset", InstructionArgsNull },
+
+            { "clc", InstructionArgsNull },
+            { "clv", InstructionArgsNull },
+            { "clz", InstructionArgsNull },
+            { "cln", InstructionArgsNull },
+            { "sec", InstructionArgsNull },
+            { "sev", InstructionArgsNull },
+            { "sez", InstructionArgsNull },
+            { "sen", InstructionArgsNull },
+            { "scc", InstructionArgsNull },
+            { "ccc", InstructionArgsNull },
+            { "nop", InstructionArgsNull },
 
             // Pseudo instructions
             { ".word", PseudoInstructionWORD },
