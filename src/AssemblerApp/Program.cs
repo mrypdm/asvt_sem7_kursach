@@ -7,7 +7,7 @@ namespace AssemblerApp;
 
 internal static class Program
 {
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
         var mainAsmFile = args[0];
         //var linkedAsmFiles = new List<string> { @"D:\Университет\7 семестр\Курсовая работы\macro.asm" };
@@ -16,13 +16,13 @@ internal static class Program
         var project = new Project
         {
             Executable = mainAsmFile,
-            Files = linkedAsmFiles
+            Files = linkedAsmFiles,
         };
 
         var asm = new Compiler();
         try
         {
-            asm.Compile(project, "test.bin").Wait();
+            asm.Compile(project).Wait();
         }
         catch (Exception ex)
         {

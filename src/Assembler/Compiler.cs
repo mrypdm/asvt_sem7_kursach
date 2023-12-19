@@ -54,7 +54,7 @@ public class Compiler
         _tokenBuilder = new TokenBuilder();
     }
 
-    public async Task Compile(IProject project, string outputFile)
+    public async Task Compile(IProject project)
     {
         var mainFile = project.Executable;
         var linkedFiles = project.Files.Where(m => m != mainFile).ToArray();
@@ -112,6 +112,6 @@ public class Compiler
         PrintMachineCode(codes, marks);
         
         // Writing result machine code in file
-        await File.WriteAllLinesAsync(outputFile, codes);
+        await File.WriteAllLinesAsync(project.ProjectBinary, codes);
     }
 }
