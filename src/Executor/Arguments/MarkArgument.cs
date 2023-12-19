@@ -9,18 +9,18 @@ namespace Executor.Arguments;
 /// <summary>
 /// Argument for <see cref="MARK"/>
 /// </summary>
-public class MarkArgument : BaseArgument
+public class MarkArgument : IArgument
 {
-    public MarkArgument(IStorage storage, IState state, ushort number) : base(storage, state)
+    public MarkArgument(ushort number)
     {
         Number = number;
     }
 
     /// <inheritdoc />
-    public override object GetValue() => Number;
+    public object GetValue() => Number;
 
     /// <inheritdoc />
-    public override void SetValue(object value) => throw new ReadOnlyArgumentException(GetType());
+    public void SetValue(object value) => throw new ReadOnlyArgumentException(GetType());
     
     /// <summary>
     /// Count of arguments in stack

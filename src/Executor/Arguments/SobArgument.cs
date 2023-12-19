@@ -9,19 +9,19 @@ namespace Executor.Arguments;
 /// <summary>
 /// Argument for <see cref="SOB"/>
 /// </summary>
-public class SobArgument : BaseArgument
+public class SobArgument : IArgument
 {
-    public SobArgument(IStorage storage, IState state, ushort register, byte offset) : base(storage, state)
+    public SobArgument(ushort register, byte offset)
     {
         Register = register;
         Offset = offset;
     }
 
     /// <inheritdoc />
-    public override object GetValue() => (Register, Offset);
+    public object GetValue() => (Register, Offset);
 
     /// <inheritdoc />
-    public override void SetValue(object word) => throw new ReadOnlyArgumentException(typeof(SobArgument));
+    public void SetValue(object word) => throw new ReadOnlyArgumentException(typeof(SobArgument));
 
     /// <summary>
     /// Register number

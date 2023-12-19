@@ -15,8 +15,7 @@ public abstract class BranchOperation : BaseCommand
     {
     }
 
-    public override IArgument[] GetArguments(ushort word) =>
-        new IArgument[] { new OffsetArgument(Storage, State, GetOffset(word)) };
+    public override IArgument[] GetArguments(ushort word) => new IArgument[] { new OffsetArgument(GetOffset(word)) };
 
     protected void UpdateProgramCounter(IArgument[] arguments)
     {

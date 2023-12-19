@@ -30,8 +30,7 @@ public sealed class MARK : BaseCommand
     }
 
     /// <inheritdoc />
-    public override IArgument[] GetArguments(ushort word) =>
-        new IArgument[] { new MarkArgument(Storage, State, GetArgument(word)) };
+    public override IArgument[] GetArguments(ushort word) => new IArgument[] { new MarkArgument(GetArgument(word)) };
 
     /// <inheritdoc />
     public override ushort OperationCode => Convert.ToUInt16("006400", 8);

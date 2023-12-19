@@ -96,7 +96,7 @@ public class BranchingTest
             }
         };
 
-        var arg = new SobArgument(memory, state, 0, 6);
+        var arg = new SobArgument(0, 6);
         var command = new SOB(memory, state);
 
         // Act

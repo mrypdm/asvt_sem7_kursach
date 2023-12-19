@@ -118,7 +118,7 @@ public class CommandExecutionTest
 
         // Act
 
-        var markArgs = new IArgument[] { new MarkArgument(memory, state, 3) };
+        var markArgs = new IArgument[] { new MarkArgument(3) };
         var mark = new MARK(memory, state);
         mark.Execute(markArgs);
 

@@ -21,8 +21,8 @@ public sealed class SOB : BaseCommand
     }
 
     /// <inheritdoc />
-    public override IArgument[] GetArguments(ushort word) => new IArgument[]
-        { new SobArgument(Storage, State, GetRegister(word), GetOffset(word)) };
+    public override IArgument[] GetArguments(ushort word) =>
+        new IArgument[] { new SobArgument(GetRegister(word), GetOffset(word)) };
 
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)
