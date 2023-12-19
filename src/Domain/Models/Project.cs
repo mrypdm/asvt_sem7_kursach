@@ -28,7 +28,7 @@ public class Project : IProject
     public string ProjectDirectory => PathHelper.GetDirectoryName(ProjectFile);
 
     /// <inheritdoc />
-    public string ProjectName => PathHelper.GetFileName(ProjectFile);
+    public string ProjectName => PathHelper.GetFileNameWithoutExtension(ProjectFile);
 
     public string ProjectBinary => PathHelper.Combine(ProjectDirectory, $"{ProjectName}.pdp11bin");
 }
