@@ -2,6 +2,12 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        <Title>SDK for PDP-11 devices</Title>
+        <Authors>mrypdm, Masterluch, reichsstolz</Authors>
+        <Description>SDK for developing libraries that allow you to connect external devices to the PDP-11 simulator</Description>
+        <PackageProjectUrl>https://github.com/mrypdm/asvt_sem7_kursach</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/mrypdm/asvt_sem7_kursach</RepositoryUrl>
+        <PackageTags>SDK, PDP-11, Simulator, Library, DLL, Driver</PackageTags>
     </PropertyGroup>
 
 </Project>
