@@ -20,6 +20,9 @@ using Executor.Storages;
 
 namespace Executor;
 
+/// <summary>
+/// Executor
+/// </summary>
 public class Executor
 {
     private bool _initialized;
@@ -50,14 +53,29 @@ public class Executor
     private readonly Dictionary<ushort, string> _symbols = new();
     private readonly HashSet<ushort> _breakpoints = new();
 
+    /// <summary>
+    /// Value of PSW
+    /// </summary>
     public ushort ProcessorStateWord => _state.ProcessorStateWord;
 
+    /// <summary>
+    /// Values of registers
+    /// </summary>
     public IReadOnlyCollection<ushort> Registers => _state.Registers;
 
+    /// <summary>
+    /// Memory
+    /// </summary>
     public IReadOnlyStorage Memory => _memory;
 
+    /// <summary>
+    /// Connected devices
+    /// </summary>
     public IEnumerable<Device> Devices => _devicesManager.Devices.Select(DeviceExtensions.ToDto);
 
+    /// <summary>
+    /// Current program commands
+    /// </summary>
     public IEnumerable<Command> Commands
     {
         get
@@ -72,6 +90,9 @@ public class Executor
         }
     }
 
+    /// <summary>
+    /// Opened project
+    /// </summary>
     public IProject Project { get; private set; }
 
     public Executor()
@@ -85,6 +106,11 @@ public class Executor
         _commandParser = new CommandParser(_bus, _state);
     }
 
+    /// <summary>
+    /// Start execution
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Result of execution. true - program is not finished, false - program is finished</returns>
     public async Task<bool> ExecuteAsync(CancellationToken cancellationToken)
     {
         Init();
@@ -106,6 +132,10 @@ public class Executor
         return res;
     }
 
+    /// <summary>
+    /// Execute next instruction
+    /// </summary>
+    /// <returns>Result of execution. true - program is not finished, false - program is finished</returns>
     public bool ExecuteNextInstruction()
     {
         if (_halted)
@@ -151,7 +181,7 @@ public class Executor
         catch (HaltException e)
         {
             _halted = true;
-            
+
             if (e.IsExpected)
             {
                 return false;
@@ -167,8 +197,19 @@ public class Executor
         return true;
     }
 
+    /// <summary>
+    /// Execute next instruction asynchronously
+    /// </summary>
+    /// <returns>Result of execution. true - program is not finished, false - program is finished</returns>
     public Task<bool> ExecuteNextInstructionAsync() => Task.Run(ExecuteNextInstruction);
 
+    /// <summary>
+    /// Load project to executor
+    /// </summary>
+    /// <param name="project">Project to open</param>
+    /// <exception cref="InvalidOperationException">
+    ///     If <see cref="IProject.ProgramAddress"/> or <see cref="IProject.StackAddress"/> is odd
+    /// </exception>
     public Task LoadProgram(IProject project)
     {
         if (project.ProgramAddress % 2 == 1)
@@ -186,6 +227,10 @@ public class Executor
         return Reload();
     }
 
+    /// <summary>
+    /// Reloads projects
+    /// </summary>
+    /// <exception cref="OutOfMemoryException">If program is larger than memory</exception>
     public async Task Reload()
     {
         _initialized = false;
@@ -209,7 +254,7 @@ public class Executor
                 continue;
             }
 
-            if (address > ushort.MaxValue)
+            if (address > _memory.Data.Count)
             {
                 throw new OutOfMemoryException("Program is too large");
             }
@@ -237,8 +282,14 @@ public class Executor
         }
     }
 
+    /// <summary>
+    /// Add break point to address
+    /// </summary>
     public void AddBreakpoint(ushort address) => _breakpoints.Add(address);
 
+    /// <summary>
+    /// Remove break point from address
+    /// </summary>
     public void RemoveBreakpoint(ushort address) => _breakpoints.Remove(address);
 
     private void HandleHardwareTrap(Exception e)
@@ -250,7 +301,7 @@ public class Executor
             if (_trapStack.Any(t => _trapsToHalt.Any(m => m == t)))
             {
                 _halted = true;
-                
+
                 throw new HaltException(false,
                     $"Get bus error while already in trap. Trap stack: {string.Join("->", _trapStack)}");
             }
