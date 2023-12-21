@@ -1,4 +1,5 @@
 ﻿using System;
+using Executor.Models;
 using GUI.Notifiers;
 
 namespace GUI.Models.Executor;
@@ -9,11 +10,15 @@ namespace GUI.Models.Executor;
 public class CodeLine : PropertyChangedNotifier
 {
     private bool _breakpoint;
+    private ushort _code;
+
+    public static CodeLine FromDto(Command command) =>
+        new(command.Address, command.Value, command.BreakPoint, command.Symbol);
 
     public CodeLine(ushort address, ushort machineCode, bool breakpoint, string sourceCode = null)
     {
-        Address = Convert.ToString(address, 8).PadLeft(6, '0');
-        Code = Convert.ToString(machineCode, 8).PadLeft(6, '0');
+        Address = address;
+        Code = machineCode;
         Text = sourceCode ?? string.Empty;
         _breakpoint = breakpoint;
     }
@@ -30,15 +35,29 @@ public class CodeLine : PropertyChangedNotifier
     /// <summary>
     /// Address of code line
     /// </summary>
-    public string Address { get; }
+    public ushort Address { get; }
 
     /// <summary>
     /// Machine code
     /// </summary>
-    public string Code { get; }
+    public ushort Code
+    {
+        get => _code;
+        set => SetField(ref _code, value, nameof(CodeText));
+    }
 
     /// <summary>
     /// Source code
     /// </summary>
     public string Text { get; }
+
+    /// <summary>
+    /// Address of code line
+    /// </summary>
+    public string AddressText => Convert.ToString(Address, 8).PadLeft(6, '0');
+
+    /// <summary>
+    /// Machine code
+    /// </summary>
+    public string CodeText => Convert.ToString(Code, 8).PadLeft(6, '0');
 }

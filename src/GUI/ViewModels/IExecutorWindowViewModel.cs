@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Reactive;
+using Executor.Models;
 using GUI.Models.Executor;
 using GUI.Views;
 using ReactiveUI;
@@ -65,6 +66,11 @@ public interface IExecutorWindowViewModel : IWindowViewModel<ExecutorWindow>
     /// Collection of code lines
     /// </summary>
     ObservableCollection<CodeLine> CodeLines { get; }
+    
+    /// <summary>
+    /// Current line of code
+    /// </summary>
+    CodeLine SelectedLine { get; }
     
     /// <summary>
     /// Collection of tabs

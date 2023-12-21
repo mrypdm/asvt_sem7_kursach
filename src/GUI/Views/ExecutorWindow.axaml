@@ -45,10 +45,10 @@
     <DockPanel LastChildFill="True">
         <!-- Buttons -->
         <StackPanel Orientation="Horizontal" Margin="5" DockPanel.Dock="Top">
-            <Button Content="Run" MinWidth="100" />
-            <Button Content="Step" MinWidth="100" Margin="5,0,0,0" />
-            <Button Content="Pause" MinWidth="100" Margin="5,0,0,0" />
-            <Button Content="Reset" MinWidth="100" Margin="5,0,0,0" />
+            <Button Content="Run" MinWidth="100" Command="{Binding StartExecutionCommand}" />
+            <Button Content="Step" MinWidth="100" Margin="5,0,0,0" Command="{Binding MakeStepCommand}" />
+            <Button Content="Pause" MinWidth="100" Margin="5,0,0,0" Command="{Binding PauseExecutionCommand}" />
+            <Button Content="Reset" MinWidth="100" Margin="5,0,0,0" Command="{Binding ResetExecutorCommand}" />
         </StackPanel>
 
         <!-- State -->
@@ -101,7 +101,7 @@
 
         <!-- Code -->
         <DataGrid Margin="5" DockPanel.Dock="Top" CanUserResizeColumns="True" VerticalScrollBarVisibility="Auto"
-                  SelectionMode="Single" ItemsSource="{Binding CodeLines}"
+                  SelectionMode="Single" ItemsSource="{Binding CodeLines}" SelectedItem="{Binding SelectedLine}"
                   IsReadOnly="False" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="">
@@ -117,8 +117,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Address" Binding="{Binding Address}" IsReadOnly="True" />
-                <DataGridTextColumn Header="Code" Binding="{Binding Code}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Address" Binding="{Binding AddressText}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Code" Binding="{Binding CodeText}" IsReadOnly="True" />
                 <DataGridTextColumn Header="Text" Binding="{Binding Text}" IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>

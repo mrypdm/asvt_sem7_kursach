@@ -19,6 +19,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     private bool _memoryAsWord = true;
     private Tab _currentTab = Tab.State;
 
+    private CodeLine _selectedLine;
     private ObservableCollection<IMemoryModel> _memory;
 
     /// <summary>
@@ -106,6 +107,13 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     // TODO
     /// <inheritdoc />
     public ObservableCollection<CodeLine> CodeLines { get; }
+
+    /// <inheritdoc />
+    public CodeLine SelectedLine
+    {
+        get => _selectedLine;
+        set => this.RaiseAndSetIfChanged(ref _selectedLine, value);
+    }
 
     /// <inheritdoc />
     public ObservableCollection<Tab> Tabs { get; }
