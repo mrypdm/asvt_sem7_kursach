@@ -189,6 +189,8 @@ public class Executor
         _halted = false;
         _symbols.Clear();
         _devicesManager.Clear();
+        _state.ProcessorStateWord = 0;
+        _memory.Init();
         Array.Fill<ushort>(_state.Registers, 0);
 
         _state.Registers[6] = Project.StackAddress;
