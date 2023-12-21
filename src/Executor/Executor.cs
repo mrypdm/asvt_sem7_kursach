@@ -115,6 +115,7 @@ public class Executor
         if (_state.T && _lastCommand is not RTT and not TrapInstruction and not WAIT)
         {
             HandleInterrupt("Trace", 12); // 0o14
+            return true;
         }
 
         var interruptedDevice = _bus.GetInterrupt(_state.Priority);
@@ -122,8 +123,10 @@ public class Executor
         {
             interruptedDevice.AcceptInterrupt();
             HandleInterrupt(interruptedDevice.GetType().Name, interruptedDevice.InterruptVectorAddress);
+            return true;
         }
-        else if (_lastCommand is WAIT)
+
+        if (_lastCommand is WAIT)
         {
             return true;
         }
