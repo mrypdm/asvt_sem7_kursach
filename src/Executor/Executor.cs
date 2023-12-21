@@ -190,7 +190,10 @@ public class Executor
         _initialized = false;
         _halted = false;
         _devicesManager.Clear();
+        _memory.Init();
+        _symbols.Clear();
         Array.Fill<ushort>(_state.Registers, 0);
+        _state.ProcessorStateWord = 0;
 
         _state.Registers[6] = Project.StackAddress;
         _state.Registers[7] = Project.ProgramAddress;
