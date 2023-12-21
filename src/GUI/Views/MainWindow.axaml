@@ -24,6 +24,8 @@
         <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAllFilesCommand}" />
         <KeyBinding Gesture="Ctrl+Alt+S" Command="{Binding OpenSettingsWindowCommand}" />
 
+        <KeyBinding Gesture="F5" Command="{Binding OpenExecutorWindowCommand}" />
+
         <KeyBinding Gesture="Ctrl+Shift+N" Command="{Binding CreateProjectCommand}" />
         <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding OpenProjectCommand}" />
     </Window.KeyBindings>
@@ -51,7 +53,7 @@
                 <MenuItem Header="Open" InputGesture="Ctrl+Shift+O" Command="{Binding OpenProjectCommand}" />
             </MenuItem>
             <MenuItem Header="Build" Margin="5,0,5,0" />
-            <MenuItem Header="Run" Margin="5,0,5,0" />
+            <MenuItem Header="Run" Margin="5,0,5,0" ToolTip.Tip="F5" Command="{Binding OpenExecutorWindowCommand}" />
             <MenuItem Header="Settings" Margin="5,0,5,0" ToolTip.Tip="Ctrl+Alt+S"
                       Command="{Binding OpenSettingsWindowCommand}" />
             <MenuItem Header="Help" Margin="5,0,5,0">
@@ -79,11 +81,11 @@
             <DockPanel LastChildFill="True">
                 <TextBox Name="SourceCodeNumbersBox" DockPanel.Dock="Left" IsEnabled="False" IsReadOnly="True" 
                          Background="LightGray" MinWidth="50" BorderThickness="0"
-                         TextAlignment="Right"/>
+                         TextAlignment="Right" />
                 <TextBox Name="SourceCodeTextBox"
                          AcceptsReturn="True" AcceptsTab="True"
                          Text="{Binding FileContent}" DockPanel.Dock="Left"
-                         TextChanged="SourceCodeTextBox_OnTextChanged"/>
+                         TextChanged="SourceCodeTextBox_OnTextChanged" />
             </DockPanel>
         </ScrollViewer>
     </DockPanel>

@@ -29,7 +29,7 @@ public class App : Application
                 new ProjectManager(new ProjectProvider(), new DeviceValidator(new DeviceProvider())),
                 new FileManager(),
                 new MessageBoxManager(),
-                new SettingsWindowProvider());
+                new WindowProvider());
             desktop.MainWindow = viewModel.View;
         }
 
