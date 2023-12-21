@@ -63,7 +63,7 @@ public sealed class RomDevice : IDevice
     ///     00001 - read from address
     ///     00010 - write to address
     ///     00011 - set address
-    ///     01000 - set data
+    ///     00100 - set data
     /// </remarks>
     /// <remarks>
     ///     <b>Errors</b>:<br/>
