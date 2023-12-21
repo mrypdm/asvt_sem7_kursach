@@ -91,12 +91,13 @@ public class Executor
 
         while (!cancellationToken.IsCancellationRequested && res)
         {
+            res = await ExecuteNextInstructionAsync();
+
             if (_breakpoints.Contains(_state.Registers[7]))
             {
                 break;
             }
 
-            res = await ExecuteNextInstructionAsync();
             await Task.Yield();
         }
 
