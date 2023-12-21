@@ -11,11 +11,11 @@ public class Device
         ushort interruptAddress)
     {
         Name = name;
-        ControlAddress = Convert.ToString(controlAddress, 8).PadLeft(6, '0');
-        ControlValue = Convert.ToString(controlValue, 8).PadLeft(6, '0');
-        BufferAddress = Convert.ToString(bufferAddress, 8).PadLeft(6, '0');
-        BufferValue = Convert.ToString(bufferValue, 8).PadLeft(6, '0');
-        InterruptVectorAddress = Convert.ToString(interruptAddress, 8).PadLeft(6, '0');
+        ControlAddress = controlAddress;
+        ControlValue = controlValue;
+        BufferAddress = bufferAddress;
+        BufferValue = bufferValue;
+        InterruptVectorAddress = interruptAddress;
     }
     
     /// <summary>
@@ -26,25 +26,25 @@ public class Device
     /// <summary>
     /// Address of control register
     /// </summary>
-    public string ControlAddress { get; }
+    public ushort ControlAddress { get; }
 
     /// <summary>
     /// Value of control register
     /// </summary>
-    public string ControlValue { get; }
+    public ushort ControlValue { get; }
 
     /// <summary>
     /// Address of buffer register
     /// </summary>
-    public string BufferAddress { get; }
+    public ushort BufferAddress { get; }
 
     /// <summary>
     /// Value of buffer register
     /// </summary>
-    public string BufferValue { get; }
+    public ushort BufferValue { get; }
 
     /// <summary>
     /// Address of interrupt vector
     /// </summary>
-    public string InterruptVectorAddress { get; }
+    public ushort InterruptVectorAddress { get; }
 }

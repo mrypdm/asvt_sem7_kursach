@@ -66,6 +66,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         OpenProjectCommand = ReactiveCommand.CreateFromTask(async () => { await OpenProjectAsync(); });
         OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindowAsync);
         OpenExecutorWindowCommand = ReactiveCommand.CreateFromTask(OpenExecutorWindowAsync);
+        BuildProjectCommand = ReactiveCommand.CreateFromTask(BuildProjectAsync);
 
         _fileManager = fileManager;
         _messageBoxManager = messageBoxManager;
@@ -131,6 +132,9 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
     /// <inheritdoc />
     public ReactiveCommand<Unit, Unit> OpenExecutorWindowCommand { get; }
+
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> BuildProjectCommand { get; }
 
     public string WindowTitle => _projectManager?.IsOpened == true
         ? $"{DefaultWindowTitle} - {_projectManager.Project.ProjectName}"
@@ -587,6 +591,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// </summary>
     private async Task OpenExecutorWindowAsync()
     {
+        await BuildProjectAsync();
         var viewModel = _windowProvider.CreateWindow<ExecutorWindow, ExecutorViewModel>(_messageBoxManager);
         await viewModel.ShowDialog(View);
     }
@@ -634,4 +639,19 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     }
 
     #endregion
+
+    private async Task BuildProjectAsync()
+    {
+        await SaveAllFilesAsync();
+
+        try
+        {
+            // build code here
+            await _messageBoxManager.ShowMessageBoxAsync("Build", "Completed", ButtonEnum.Ok, Icon.Info, View);
+        }
+        catch (Exception e)
+        {
+            await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
+        }
+    }
 }

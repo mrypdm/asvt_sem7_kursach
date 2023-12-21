@@ -1,5 +1,6 @@
 ﻿using System;
 using GUI.Notifiers;
+using HarfBuzzSharp;
 
 namespace GUI.Models.Executor;
 
@@ -9,11 +10,12 @@ namespace GUI.Models.Executor;
 public class CodeLine : PropertyChangedNotifier
 {
     private bool _breakpoint;
+    private ushort _code;
 
     public CodeLine(ushort address, ushort machineCode, bool breakpoint, string sourceCode = null)
     {
-        Address = Convert.ToString(address, 8).PadLeft(6, '0');
-        Code = Convert.ToString(machineCode, 8).PadLeft(6, '0');
+        Address = address;
+        Code = machineCode;
         Text = sourceCode ?? string.Empty;
         _breakpoint = breakpoint;
     }
@@ -30,12 +32,16 @@ public class CodeLine : PropertyChangedNotifier
     /// <summary>
     /// Address of code line
     /// </summary>
-    public string Address { get; }
+    public ushort Address { get; }
 
     /// <summary>
     /// Machine code
     /// </summary>
-    public string Code { get; }
+    public ushort Code
+    {
+        get => _code;
+        set => SetField(ref _code, value);
+    }
 
     /// <summary>
     /// Source code

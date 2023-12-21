@@ -55,6 +55,11 @@ public interface IExecutorWindowViewModel : IWindowViewModel<ExecutorWindow>
     /// Collection of memory cells
     /// </summary>
     ObservableCollection<IMemoryModel> Memory { get; }
+    
+    /// <summary>
+    /// Index of selected cell of memory
+    /// </summary>
+    int SelectedMemoryCell { get; }
 
     /// <summary>
     /// Collection of devices
@@ -65,6 +70,11 @@ public interface IExecutorWindowViewModel : IWindowViewModel<ExecutorWindow>
     /// Collection of code lines
     /// </summary>
     ObservableCollection<CodeLine> CodeLines { get; }
+    
+    /// <summary>
+    /// Current line of code
+    /// </summary>
+    CodeLine SelectedLine { get; }
     
     /// <summary>
     /// Collection of tabs

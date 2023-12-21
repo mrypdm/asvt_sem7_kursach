@@ -19,6 +19,8 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     private bool _memoryAsWord = true;
     private Tab _currentTab = Tab.State;
 
+    private CodeLine _selectedLine;
+    private int _selectedMemoryCell;
     private ObservableCollection<IMemoryModel> _memory;
 
     /// <summary>
@@ -99,6 +101,13 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         set => this.RaiseAndSetIfChanged(ref _memory, value);
     }
 
+    /// <inheritdoc />
+    public int SelectedMemoryCell
+    {
+        get => _selectedMemoryCell;
+        set => this.RaiseAndSetIfChanged(ref _selectedMemoryCell, value);
+    }
+
     // TODO
     /// <inheritdoc />
     public ObservableCollection<Device> Devices { get; }
@@ -106,6 +115,13 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     // TODO
     /// <inheritdoc />
     public ObservableCollection<CodeLine> CodeLines { get; }
+
+    /// <inheritdoc />
+    public CodeLine SelectedLine
+    {
+        get => _selectedLine;
+        set => this.RaiseAndSetIfChanged(ref _selectedLine, value);
+    }
 
     /// <inheritdoc />
     public ObservableCollection<Tab> Tabs { get; }
@@ -176,7 +192,6 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
             address /= 2;
         }
 
-        View.MemoryGrid.SelectedIndex = address;
-        View.MemoryGrid.ScrollIntoView(View.MemoryGrid.SelectedItem, View.MemoryGrid.Columns.FirstOrDefault());
+        SelectedMemoryCell = address;
     }
 }
