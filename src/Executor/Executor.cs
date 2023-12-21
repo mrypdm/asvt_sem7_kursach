@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Devices.Managers;
 using Devices.Providers;
 using Devices.Validators;
-using DeviceSdk;
 using Domain.Models;
 using Executor.Commands.MiscellaneousInstructions;
 using Executor.Commands.Traps;
@@ -30,17 +29,13 @@ public class Executor
     private ushort _lengthOfProgram;
     private ICommand _lastCommand;
 
-    private readonly Stack<string> _trapStack = new();
+    private readonly Stack<Type> _trapStack = new();
 
-    private readonly HashSet<string> _trapsToHalt = new()
+    private readonly HashSet<Type> _typesToHalt = new()
     {
-        nameof(BusException),
-        nameof(OddAddressException),
-        nameof(EMT),
-        nameof(TRAP),
-        nameof(IOT),
-        nameof(BPT),
-        "Trace"
+        typeof(BusException),
+        typeof(TrapInstruction),
+        typeof(TrapReturn)
     };
 
     private readonly IState _state;
@@ -147,7 +142,7 @@ public class Executor
 
         if (_state.T && _lastCommand is not RTT and not TrapInstruction and not WAIT)
         {
-            HandleInterrupt("Trace", 12); // 0o14
+            HandleInterrupt(typeof(Trace), 12); // 0o14
             return true;
         }
 
@@ -155,7 +150,7 @@ public class Executor
         if (interruptedDevice != null)
         {
             interruptedDevice.AcceptInterrupt();
-            HandleInterrupt(interruptedDevice.GetType().Name, interruptedDevice.InterruptVectorAddress);
+            HandleInterrupt(interruptedDevice.GetType(), interruptedDevice.InterruptVectorAddress);
             return true;
         }
 
@@ -169,17 +164,17 @@ public class Executor
             var word = _memory.GetWord(_state.Registers[7]);
             _state.Registers[7] += 2;
 
-            _lastCommand = _commandParser.GetCommand(word);
-            _lastCommand.Execute(_lastCommand.GetArguments(word));
-
             if (_lastCommand is TrapInstruction)
             {
-                _trapStack.Push(_lastCommand.GetType().Name);
+                _trapStack.Push(_lastCommand.GetType());
             }
             else if (_lastCommand is TrapReturn)
             {
                 _trapStack.Pop();
             }
+
+            _lastCommand = _commandParser.GetCommand(word);
+            _lastCommand.Execute(_lastCommand.GetArguments(word));
         }
         catch (HaltException e)
         {
@@ -238,9 +233,9 @@ public class Executor
     {
         _initialized = false;
         _halted = false;
+        _symbols.Clear();
         _devicesManager.Clear();
         _memory.Init();
-        _symbols.Clear();
         Array.Fill<ushort>(_state.Registers, 0);
         _state.ProcessorStateWord = 0;
 
@@ -299,14 +294,13 @@ public class Executor
     {
         ushort address;
 
-        if (e is BusException or OddAddressException)
+        if (e is BusException)
         {
-            if (_trapStack.Any(t => _trapsToHalt.Any(m => m == t)))
+            if (_trapStack.Any(t => _typesToHalt.Contains(t)) || _lastCommand is TrapInstruction or TrapReturn)
             {
                 _halted = true;
-
                 throw new HaltException(false,
-                    $"Get bus error while already in trap. Trap stack: {string.Join("->", _trapStack)}");
+                    $"Get bus error while already in trap. Trap stack: {string.Join("->", _trapStack.Select(m => m.Name))}");
             }
 
             address = 4;
@@ -324,13 +318,13 @@ public class Executor
             throw new Exception($"Unknown error '{e.GetType()}', '{e.Message}'");
         }
 
-        HandleInterrupt(e.GetType().Name, address);
+        HandleInterrupt(e.GetType(), address);
     }
 
-    private void HandleInterrupt(string name, ushort address)
+    private void HandleInterrupt(Type type, ushort address)
     {
         TrapInstruction.HandleInterrupt(_bus, _state, address);
-        _trapStack.Push(name);
+        _trapStack.Push(type);
     }
 
     private void Init()

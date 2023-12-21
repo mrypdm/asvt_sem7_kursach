@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Executor.Attributes;
 using Executor.CommandTypes;
 using Executor.Exceptions;
 using Executor.States;
@@ -28,7 +29,9 @@ public class CommandParser
     public CommandParser(IStorage storage, IState state)
     {
         _opcodesDictionary = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(type => typeof(ICommand).IsAssignableFrom(type) && !type.IsAbstract)
+            .Where(type => typeof(ICommand).IsAssignableFrom(type)
+                           && !type.IsAbstract
+                           && !type.GetCustomAttributes(typeof(NotCommandAttribute), true).Any())
             .Select(commandType => Activator.CreateInstance(commandType, storage, state) as ICommand)
             .ToDictionary(command => command!.OperationCode);
     }
