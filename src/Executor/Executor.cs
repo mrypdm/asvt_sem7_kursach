@@ -23,7 +23,6 @@ public class Executor
 {
     private bool _initialized;
     private ushort _lengthOfProgram;
-    private bool _halted;
     private ICommand _lastCommand;
 
     private readonly Stack<Type> _trapStack = new();
@@ -100,11 +99,6 @@ public class Executor
 
     public bool ExecuteNextInstruction()
     {
-        if (_halted)
-        {
-            return false;
-        }
-
         Init();
 
         if (_state.T && _lastCommand is not RTT and not TrapInstruction and not WAIT)
@@ -145,8 +139,6 @@ public class Executor
         }
         catch (HaltException e)
         {
-            _halted = true;
-
             if (e.IsExpected)
             {
                 return false;
@@ -184,7 +176,7 @@ public class Executor
     public async Task Reload()
     {
         _initialized = false;
-        _halted = false;
+        _trapStack.Clear();
         _symbols.Clear();
         _devicesManager.Clear();
         _state.ProcessorStateWord = 0;
@@ -247,7 +239,6 @@ public class Executor
         {
             if (_trapStack.Any(t => _typesToHalt.Contains(t)) || _lastCommand is TrapInstruction or TrapReturn)
             {
-                _halted = true;
                 throw new HaltException(false,
                     $"Get bus error while already in trap. Trap stack: {string.Join("->", _trapStack.Select(m => m.Name))}");
             }
