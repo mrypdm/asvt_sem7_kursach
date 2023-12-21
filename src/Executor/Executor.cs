@@ -24,6 +24,7 @@ public class Executor
 {
     private bool _initialized;
     private bool _halted;
+    private ushort _lengthOfProgram;
     private ICommand _lastCommand;
 
     private readonly Stack<string> _trapStack = new();
@@ -200,55 +201,45 @@ public class Executor
 
         using var reader = new StreamReader(Project.ProjectBinary);
 
-        // file format:
-        // 000000 - code section
-        // ...
-        // 000001' - relocatable address
-        // ...
-        // 000000;HALT - symbol for line
-        // #/path/to/device.dll - devices section
-
-        var address = Project.ProgramAddress;
+        var address = (int)Project.ProgramAddress;
         while (await reader.ReadLineAsync() is { } line)
         {
-            if (line.StartsWith("#"))
+            if (string.IsNullOrWhiteSpace(line))
             {
-                AddDevice(line);
                 continue;
             }
 
-            var tokens = line.Split(';', StringSplitOptions.TrimEntries);
-
-            var code = tokens[0];
-            var isRelocatable = code.EndsWith('\'');
-
-            var word = isRelocatable
-                ? Convert.ToUInt16(code[..6], 8) + Project.ProgramAddress
-                : Convert.ToUInt16(code, 8);
-
-            if (word > ushort.MaxValue)
+            if (address > ushort.MaxValue)
             {
                 throw new OutOfMemoryException("Program is too large");
             }
 
-            _memory.SetWord(address, (ushort)word);
+            // 000000;symbol
+            var tokens = line.Split(';', StringSplitOptions.TrimEntries);
 
-            var symbol = tokens.ElementAtOrDefault(1);
-            _symbols.Add(address, symbol);
+            // 000000'
+            var word = tokens[0].EndsWith('\'')
+                ? Convert.ToUInt16(tokens[0][..6], 8) + Project.ProgramAddress
+                : Convert.ToUInt16(tokens[0], 8);
+
+            _memory.SetWord((ushort)address, (ushort)word);
+            _symbols.Add((ushort)address, tokens.ElementAtOrDefault(1));
 
             address += 2;
+        }
+
+        _lengthOfProgram = (ushort)(address - Project.ProgramAddress);
+
+        foreach (var device in Project.Devices)
+        {
+            _deviceValidator.ThrowIfInvalid(device);
+            _devicesManager.Add(device);
         }
     }
 
     public void AddBreakpoint(ushort address) => _breakpoints.Add(address);
 
     public void RemoveBreakpoint(ushort address) => _breakpoints.Remove(address);
-
-    private void AddDevice(string path)
-    {
-        _deviceValidator.ThrowIfInvalid(path);
-        _devicesManager.Add(path);
-    }
 
     private void HandleHardwareTrap(Exception e)
     {
