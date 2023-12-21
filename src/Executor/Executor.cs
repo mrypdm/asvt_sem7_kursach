@@ -24,6 +24,7 @@ public class Executor
 {
     private bool _initialized;
     private ushort _lengthOfProgram;
+    private bool _halted;
     private ICommand _lastCommand;
 
     private readonly Stack<string> _trapStack = new();
@@ -56,10 +57,6 @@ public class Executor
     public IReadOnlyStorage Memory => _memory;
 
     public IEnumerable<Device> Devices => _devicesManager.Devices.Select(DeviceExtensions.ToDto);
-
-    public IReadOnlyDictionary<ushort, string> Symbols => _symbols;
-
-    public IReadOnlySet<ushort> Breakpoints => _breakpoints;
 
     public IEnumerable<Command> Commands
     {
@@ -108,6 +105,11 @@ public class Executor
 
     public bool ExecuteNextInstruction()
     {
+        if (_halted)
+        {
+            return false;
+        }
+        
         Init();
 
         if (_state.T && _lastCommand is not RTT and not TrapInstruction and not WAIT)
@@ -145,6 +147,8 @@ public class Executor
         }
         catch (HaltException e)
         {
+            _halted = true;
+            
             if (e.IsExpected)
             {
                 return false;
@@ -182,6 +186,7 @@ public class Executor
     public async Task Reload()
     {
         _initialized = false;
+        _halted = false;
         _symbols.Clear();
         _devicesManager.Clear();
         Array.Fill<ushort>(_state.Registers, 0);
@@ -242,6 +247,7 @@ public class Executor
         {
             if (_trapStack.Any(t => _trapsToHalt.Any(m => m == t)))
             {
+                _halted = true;
                 throw new HaltException(false,
                     $"Get bus error while already in trap. Trap stack: {string.Join("->", _trapStack)}");
             }
