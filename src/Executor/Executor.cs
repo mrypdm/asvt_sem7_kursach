@@ -13,14 +13,17 @@ using Executor.Commands.MiscellaneousInstructions;
 using Executor.Commands.Traps;
 using Executor.CommandTypes;
 using Executor.Exceptions;
+using Executor.Extensions;
 using Executor.States;
 using Executor.Storages;
+using Executor.Models;
 
 namespace Executor;
 
 public class Executor
 {
     private bool _initialized;
+    private ushort _lengthOfProgram;
     private ICommand _lastCommand;
 
     private readonly Stack<string> _trapStack = new();
@@ -52,11 +55,22 @@ public class Executor
 
     public IReadOnlyStorage Memory => _memory;
 
-    public IReadOnlyCollection<IDevice> Devices => _devicesManager.Devices;
+    public IEnumerable<Device> Devices => _devicesManager.Devices.Select(DeviceExtensions.ToDto);
 
     public IReadOnlyDictionary<ushort, string> Symbols => _symbols;
 
     public IReadOnlySet<ushort> Breakpoints => _breakpoints;
+
+    public IEnumerable<Command> Commands
+    {
+        get
+        {
+            for (var i = Project.ProgramAddress; i < Project.ProgramAddress + _lengthOfProgram; i += 2)
+            {
+                yield return new Command(i, _memory.GetWord(i), _breakpoints.Contains(i), _symbols[i]);
+            }
+        }
+    }
 
     public IProject Project { get; private set; }
 
@@ -71,18 +85,6 @@ public class Executor
         _commandParser = new CommandParser(_bus, _state);
     }
 
-    public void Init()
-    {
-        if (_initialized)
-        {
-            return;
-        }
-
-        _initialized = true;
-
-        _bus.Init();
-    }
-
     public async Task<bool> ExecuteAsync(CancellationToken cancellationToken)
     {
         Init();
@@ -91,12 +93,13 @@ public class Executor
 
         while (!cancellationToken.IsCancellationRequested && res)
         {
+            res = await ExecuteNextInstructionAsync();
+
             if (_breakpoints.Contains(_state.Registers[7]))
             {
                 break;
             }
 
-            res = await ExecuteNextInstructionAsync();
             await Task.Yield();
         }
 
@@ -140,9 +143,14 @@ public class Executor
                 _trapStack.Pop();
             }
         }
-        catch (HaltException e) when (e.IsExpected)
+        catch (HaltException e)
         {
-            return false;
+            if (e.IsExpected)
+            {
+                return false;
+            }
+
+            throw;
         }
         catch (Exception e)
         {
@@ -174,6 +182,7 @@ public class Executor
     public async Task Reload()
     {
         _initialized = false;
+        _symbols.Clear();
         _devicesManager.Clear();
         Array.Fill<ushort>(_state.Registers, 0);
 
@@ -182,20 +191,11 @@ public class Executor
 
         using var reader = new StreamReader(Project.ProjectBinary);
 
-        // file format:
-        // 000000 - code section
-        // ...
-        // 000001' - relocatable address
-        // ...
-        // 000000;HALT - symbol for line
-        // #/path/to/device.dll - devices section
-
         var address = Project.ProgramAddress;
         while (await reader.ReadLineAsync() is { } line)
         {
-            if (line.StartsWith("#"))
+            if (string.IsNullOrWhiteSpace(line))
             {
-                AddDevice(line);
                 continue;
             }
 
@@ -220,17 +220,19 @@ public class Executor
 
             address += 2;
         }
+
+        _lengthOfProgram = (ushort)(address - Project.ProgramAddress);
+
+        foreach (var device in Project.Devices)
+        {
+            _deviceValidator.ThrowIfInvalid(device);
+            _devicesManager.Add(device);
+        }
     }
 
     public void AddBreakpoint(ushort address) => _breakpoints.Add(address);
 
     public void RemoveBreakpoint(ushort address) => _breakpoints.Remove(address);
-
-    private void AddDevice(string path)
-    {
-        _deviceValidator.ThrowIfInvalid(path);
-        _devicesManager.Add(path);
-    }
 
     private void HandleHardwareTrap(Exception e)
     {
@@ -266,5 +268,16 @@ public class Executor
     {
         TrapInstruction.HandleInterrupt(_bus, _state, address);
         _trapStack.Push(name);
+    }
+
+    private void Init()
+    {
+        if (_initialized)
+        {
+            return;
+        }
+
+        _initialized = true;
+        _bus.Init();
     }
 }
