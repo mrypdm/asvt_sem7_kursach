@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GUI.Models.Executor;
+﻿namespace GUI.Models.Executor;
 
 /// <summary>
 /// Model of device

@@ -1,6 +1,4 @@
-﻿using System;
-using GUI.Notifiers;
-using HarfBuzzSharp;
+﻿using GUI.Notifiers;
 
 namespace GUI.Models.Executor;
 
