@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:GUI.ViewModels"
+        xmlns:converter="clr-namespace:GUI.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="GUI.Views.ExecutorWindow" x:DataType="vm:ExecutorViewModel"
         Title="Executor" Icon="/Assets/icon.ico"
@@ -11,9 +12,16 @@
         <vm:ExecutorViewModel />
     </Design.DataContext>
 
+    <Window.Resources>
+        <converter:NumberOctalConverter x:Key="NumberOctalConverter" />
+    </Window.Resources>
+
     <Window.Styles>
         <Style Selector="DataGridCell">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="DataGridCell.symbol">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
         </Style>
         <Style Selector="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -89,19 +97,25 @@
                       IsVisible="{Binding IsDevicesVisible}" ItemsSource="{Binding Devices}"
                       AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <DataGridCheckBoxColumn Header="Name" Binding="{Binding Name}" />
-                    <DataGridTextColumn Header="Control address" Binding="{Binding ControlAddress}" />
-                    <DataGridTextColumn Header="Control value" Binding="{Binding ControlValue}" />
-                    <DataGridTextColumn Header="Buffer address" Binding="{Binding BufferAddress}" />
-                    <DataGridTextColumn Header="Buffer value" Binding="{Binding BufferValue}" />
-                    <DataGridTextColumn Header="Interrupt vector" Binding="{Binding InterruptVectorAddress}" />
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Control address"
+                                        Binding="{Binding ControlAddress, Converter={StaticResource NumberOctalConverter}}" />
+                    <DataGridTextColumn Header="Control value"
+                                        Binding="{Binding ControlValue, Converter={StaticResource NumberOctalConverter}}" />
+                    <DataGridTextColumn Header="Buffer address"
+                                        Binding="{Binding BufferAddress, Converter={StaticResource NumberOctalConverter}}" />
+                    <DataGridTextColumn Header="Buffer value"
+                                        Binding="{Binding BufferValue, Converter={StaticResource NumberOctalConverter}}" />
+                    <DataGridTextColumn Header="Interrupt vector"
+                                        Binding="{Binding InterruptVectorAddress, Converter={StaticResource NumberOctalConverter}}" />
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
 
         <!-- Code -->
         <DataGrid Margin="5" DockPanel.Dock="Top" CanUserResizeColumns="True" VerticalScrollBarVisibility="Auto"
-                  SelectionMode="Single" ItemsSource="{Binding CodeLines}" SelectedItem="{Binding SelectedLine}"
+                  SelectionMode="Single" ItemsSource="{Binding CodeLines}"
+                  SelectedItem="{Binding SelectedLine, Mode=OneWay}" SelectionChanged="DataGrid_OnSelectionChanged"
                   IsReadOnly="False" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="">
@@ -117,9 +131,13 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Address" Binding="{Binding AddressText}" IsReadOnly="True" />
-                <DataGridTextColumn Header="Code" Binding="{Binding CodeText}" IsReadOnly="True" />
-                <DataGridTextColumn Header="Text" Binding="{Binding Text}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Address"
+                                    Binding="{Binding Address, Converter={StaticResource NumberOctalConverter}}"
+                                    IsReadOnly="True" />
+                <DataGridTextColumn Header="Code"
+                                    Binding="{Binding Code, Converter={StaticResource NumberOctalConverter}}"
+                                    IsReadOnly="True" />
+                <DataGridTextColumn Header="Text" Binding="{Binding Text}" IsReadOnly="True" CellStyleClasses="symbol" />
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

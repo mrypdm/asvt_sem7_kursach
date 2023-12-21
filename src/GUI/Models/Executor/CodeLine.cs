@@ -1,5 +1,4 @@
-﻿using System;
-using Executor.Models;
+﻿using Executor.Models;
 using GUI.Notifiers;
 
 namespace GUI.Models.Executor;
@@ -43,21 +42,11 @@ public class CodeLine : PropertyChangedNotifier
     public ushort Code
     {
         get => _code;
-        set => SetField(ref _code, value, nameof(CodeText));
+        set => SetField(ref _code, value);
     }
 
     /// <summary>
     /// Source code
     /// </summary>
     public string Text { get; }
-
-    /// <summary>
-    /// Address of code line
-    /// </summary>
-    public string AddressText => Convert.ToString(Address, 8).PadLeft(6, '0');
-
-    /// <summary>
-    /// Machine code
-    /// </summary>
-    public string CodeText => Convert.ToString(Code, 8).PadLeft(6, '0');
 }
