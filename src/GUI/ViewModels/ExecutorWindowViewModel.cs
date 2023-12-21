@@ -25,6 +25,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     private Tab _currentTab = Tab.State;
 
     private CodeLine _selectedLine;
+    private int _selectedMemoryCell;
     private ObservableCollection<IMemoryModel> _memory;
     private CancellationTokenSource _cancelRunToken;
 
@@ -115,6 +116,12 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     {
         get => _memory;
         set => this.RaiseAndSetIfChanged(ref _memory, value);
+    }
+
+    public int SelectedMemoryCell
+    {
+        get => _selectedMemoryCell;
+        set => this.RaiseAndSetIfChanged(ref _selectedMemoryCell, value);
     }
 
     /// <inheritdoc />
@@ -241,8 +248,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
             address /= 2;
         }
 
-        View.MemoryGrid.SelectedIndex = address;
-        View.MemoryGrid.ScrollIntoView(View.MemoryGrid.SelectedItem, View.MemoryGrid.Columns.FirstOrDefault());
+        SelectedMemoryCell = address;
     }
 
     private void UpdateLines()

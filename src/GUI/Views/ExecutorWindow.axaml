@@ -82,8 +82,10 @@
                                 CommandParameter="{Binding Text, ElementName=AddressInput}" />
                 </TextBox.KeyBindings>
             </TextBox>
-            <DataGrid x:Name="MemoryGrid" Margin="0,0,0,5" DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto"
-                      ItemsSource="{Binding Memory}" IsVisible="{Binding IsMemoryVisible}">
+            <DataGrid Margin="0,0,0,5" DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto"
+                      ItemsSource="{Binding Memory}" SelectedIndex="{Binding SelectedMemoryCell}"
+                      SelectionChanged="DataGrid_OnSelectionChanged"
+                      IsVisible="{Binding IsMemoryVisible}">
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="{Binding ChangeMemoryModeCommandHeader}"
