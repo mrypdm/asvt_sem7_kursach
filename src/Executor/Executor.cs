@@ -101,12 +101,6 @@ public class Executor
     {
         Init();
 
-        if (_state.T && _lastCommand is not RTT and not TrapInstruction and not WAIT)
-        {
-            HandleInterrupt(typeof(Trace), 12); // 0o14
-            return true;
-        }
-
         var interruptedDevice = _bus.GetInterrupt(_state.Priority);
         if (interruptedDevice != null)
         {
@@ -122,6 +116,7 @@ public class Executor
 
         try
         {
+            var needTrace = _state.T;
             var word = _memory.GetWord(_state.Registers[7]);
             _state.Registers[7] += 2;
 
@@ -136,6 +131,11 @@ public class Executor
 
             _lastCommand = _commandParser.GetCommand(word);
             _lastCommand.Execute(_lastCommand.GetArguments(word));
+
+            if (needTrace && _lastCommand is not RTT and not TrapInstruction and not WAIT)
+            {
+                HandleInterrupt(typeof(Trace), Trace.InterruptVectorAddress);
+            }
         }
         catch (HaltException e)
         {
