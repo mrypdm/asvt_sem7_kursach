@@ -18,7 +18,7 @@ internal record CommandLine
     /// <param name="args">Arguments of instruction</param>
     public CommandLine(IEnumerable<string> marks, string instructionMnemonics, IEnumerable<string> args)
     {
-        Marks = marks.ToHashSet();
+        Marks = marks.Where(m => !string.IsNullOrWhiteSpace(m)).ToHashSet();
         InstructionMnemonics = instructionMnemonics;
         Arguments = args.ToList();
     }
@@ -48,7 +48,8 @@ internal record CommandLine
 
     public string GetSymbol()
     {
-        return $"{string.Join(',', Marks)}: {InstructionMnemonics} {string.Join(',', Arguments)}";
+        var mark = Marks.Any() ? $"{string.Join(',', Marks)}: " : string.Empty;
+        return $"{mark}{InstructionMnemonics} {string.Join(',', Arguments)}";
     }
 
     /// <summary>
