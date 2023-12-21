@@ -83,18 +83,6 @@ public class Executor
         _commandParser = new CommandParser(_bus, _state);
     }
 
-    public void Init()
-    {
-        if (_initialized)
-        {
-            return;
-        }
-
-        _initialized = true;
-
-        _bus.Init();
-    }
-
     public async Task<bool> ExecuteAsync(CancellationToken cancellationToken)
     {
         Init();
@@ -278,5 +266,16 @@ public class Executor
     {
         TrapInstruction.HandleInterrupt(_bus, _state, address);
         _trapStack.Push(name);
+    }
+
+    private void Init()
+    {
+        if (_initialized)
+        {
+            return;
+        }
+
+        _initialized = true;
+        _bus.Init();
     }
 }
