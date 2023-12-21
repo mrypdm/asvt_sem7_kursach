@@ -19,7 +19,6 @@ public static class DeviceExtensions
             device.ControlRegisterValue,
             device.BufferRegisterAddress,
             device.BufferRegisterValue,
-            device.InterruptVectorAddress,
-            device.HasInterrupt);
+            device.InterruptVectorAddress);
     }
 }
