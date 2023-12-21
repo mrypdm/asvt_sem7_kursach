@@ -13,6 +13,8 @@ using Executor.Commands.MiscellaneousInstructions;
 using Executor.Commands.Traps;
 using Executor.CommandTypes;
 using Executor.Exceptions;
+using Executor.Extensions;
+using Executor.Models;
 using Executor.States;
 using Executor.Storages;
 
@@ -52,11 +54,21 @@ public class Executor
 
     public IReadOnlyStorage Memory => _memory;
 
-    public IReadOnlyCollection<IDevice> Devices => _devicesManager.Devices;
+    public IEnumerable<Device> Devices => _devicesManager.Devices.Select(DeviceExtensions.ToDto);
 
-    public IReadOnlyDictionary<ushort, string> Symbols => _symbols;
-
-    public IReadOnlySet<ushort> Breakpoints => _breakpoints;
+    public IEnumerable<Command> Commands
+    {
+        get
+        {
+            for (var address = Project.ProgramAddress;
+                 address < Project.ProgramAddress + _lengthOfProgram;
+                 address += 2)
+            {
+                yield return new Command(address, _memory.GetWord(address), _breakpoints.Contains(address),
+                    _symbols[address]);
+            }
+        }
+    }
 
     public IProject Project { get; private set; }
 
