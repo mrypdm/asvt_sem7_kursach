@@ -9,15 +9,7 @@ public class RegisterModel
 {
     public RegisterModel(int number, ushort value)
     {
-        Name = number switch
-        {
-            >= 0 and < 6 => $"R{number}",
-            6 => "SP",
-            7 => "PC",
-            _ => throw new ArgumentOutOfRangeException(nameof(number), number,
-                "Register number must be in range from 0 to 7")
-        };
-
+        Name = $"R{number}";
         Value = Convert.ToString(value, 8).PadLeft(6, '0');
     }
 
