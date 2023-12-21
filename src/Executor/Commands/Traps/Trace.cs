@@ -13,6 +13,8 @@ namespace Executor.Commands.Traps;
 [NotCommand]
 public sealed class Trace : TrapInstruction
 {
+    public const ushort InterruptVectorAddress = 12; // 0o14
+    
     public Trace(IStorage storage, IState state) : base(storage, state)
     {
     }
