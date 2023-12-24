@@ -64,6 +64,12 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         CreateProjectCommand = ReactiveCommand.CreateFromTask(async () => { await CreateProjectAsync(); });
         OpenProjectCommand = ReactiveCommand.CreateFromTask(async () => { await OpenProjectAsync(); });
         OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindow);
+        OpenArchitectureWindowCommand = ReactiveCommand.Create(() => { new ArchitectureWindow().ShowDialog(View); });
+        OpenTutorialWindowCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var vm = new TutorialWindowViewModel(new TutorialWindow());
+            await vm.ShowDialog(View);
+        });
 
         _fileManager = fileManager;
         _messageBoxManager = messageBoxManager;
@@ -126,6 +132,12 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
     /// <inheritdoc />
     public ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
+
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> OpenArchitectureWindowCommand { get; }
+
+    /// <inheritdoc />
+    public ReactiveCommand<Unit, Unit> OpenTutorialWindowCommand { get; }
 
     public string WindowTitle => _projectManager?.IsOpened == true
         ? $"{DefaultWindowTitle} - {_projectManager.Project.ProjectName}"

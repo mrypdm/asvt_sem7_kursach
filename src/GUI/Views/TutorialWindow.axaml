@@ -1,0 +1,26 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
+        xmlns:vm="clr-namespace:GUI.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="GUI.Views.TutorialWindow" x:DataType="vm:TutorialWindowViewModel"
+        Title="Tutorial" Icon="avares://pdp11simulator/Assets/icon.ico"
+        FontFamily="Century Gothic" FontSize="14">
+
+    <Design.DataContext>
+        <vm:TutorialWindowViewModel />
+    </Design.DataContext>
+
+    <DockPanel Margin="5">
+        <TreeView ItemsSource="{Binding Sections}" SelectedItem="{Binding SelectedSection}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Sections}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+        <md:MarkdownScrollViewer Margin="10,0,0,0" Markdown="{Binding MarkDownText}" />
+    </DockPanel>
+</Window>
