@@ -2,7 +2,7 @@
 using GUI.Models.Tutorial;
 using GUI.Views;
 
-namespace GUI.ViewModels;
+namespace GUI.ViewModels.Abstraction;
 
 /// <summary>
 /// View model for <see cref="TutorialWindow"/>

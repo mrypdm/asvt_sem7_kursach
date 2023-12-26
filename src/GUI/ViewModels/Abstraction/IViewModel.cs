@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 
-namespace GUI.ViewModels;
+namespace GUI.ViewModels.Abstraction;
 
 /// <summary>
 /// View model for heirs of <see cref="Control"/>

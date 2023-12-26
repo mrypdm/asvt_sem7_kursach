@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Reactive;
-using Avalonia.Media;
-using GUI.Managers;
 using GUI.Views;
 using ReactiveUI;
 
-namespace GUI.ViewModels;
+namespace GUI.ViewModels.Abstraction;
 
 /// <summary>
 /// View model for <see cref="SettingsWindow"/>

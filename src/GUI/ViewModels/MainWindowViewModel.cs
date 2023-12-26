@@ -20,6 +20,7 @@ using Domain.Models;
 using GUI.Extensions;
 using GUI.MessageBoxes;
 using GUI.Providers;
+using GUI.ViewModels.Abstraction;
 
 namespace GUI.ViewModels;
 
@@ -63,14 +64,10 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         DeleteFileCommand = ReactiveCommand.CreateFromTask(DeleteFileAsync);
         CreateProjectCommand = ReactiveCommand.CreateFromTask(async () => { await CreateProjectAsync(); });
         OpenProjectCommand = ReactiveCommand.CreateFromTask(async () => { await OpenProjectAsync(); });
-        OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(OpenSettingsWindowAsync);
+        OpenSettingsWindowCommand = ReactiveCommand.Create(OpenSettingsWindowAsync);
         OpenExecutorWindowCommand = ReactiveCommand.CreateFromTask(OpenExecutorWindowAsync);
-        OpenArchitectureWindowCommand = ReactiveCommand.Create(() => { new ArchitectureWindow().ShowDialog(View); });
-        OpenTutorialWindowCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            var vm = new TutorialWindowViewModel(new TutorialWindow());
-            await vm.ShowDialog(View);
-        });
+        OpenArchitectureWindowCommand = ReactiveCommand.Create(OpenArchitectureWindow);
+        OpenTutorialWindowCommand = ReactiveCommand.Create(OpenTutorialWindow);
         BuildProjectCommand = ReactiveCommand.CreateFromTask(BuildProjectAsync);
 
         _fileManager = fileManager;
@@ -587,15 +584,13 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
     #endregion
 
+    #region Windows
+
     /// <summary>
     /// Opens <see cref="SettingsWindow"/>
     /// </summary>
-    private async Task OpenSettingsWindowAsync()
-    {
-        var viewModel = _windowProvider.CreateWindow<SettingsWindow, SettingsViewModel>(_projectManager, _fileManager,
-            new DeviceValidator(new DeviceProvider()), _messageBoxManager);
-        await viewModel.ShowDialog(View);
-    }
+    private void OpenSettingsWindowAsync() => _windowProvider.Show<SettingsWindow, SettingsViewModel>(
+        _projectManager, _fileManager, new DeviceValidator(new DeviceProvider()), _messageBoxManager);
 
     /// <summary>
     /// Opens <see cref="ExecutorWindow"/>
@@ -606,10 +601,21 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
         var executor = new Executor.Executor(_projectManager.Project);
         await executor.LoadProgram();
-        
-        var viewModel = _windowProvider.CreateWindow<ExecutorWindow, ExecutorViewModel>(executor, _messageBoxManager);
-        await viewModel.ShowDialog(View);
+
+        await _windowProvider.ShowDialog<ExecutorWindow, ExecutorViewModel>(View, executor, _messageBoxManager);
     }
+
+    /// <summary>
+    /// Opens <see cref="TutorialWindow"/>
+    /// </summary>
+    private void OpenTutorialWindow() => _windowProvider.Show<TutorialWindow, TutorialWindowViewModel>();
+
+    /// <summary>
+    /// Opens <see cref="ArchitectureWindow"/>
+    /// </summary>
+    private void OpenArchitectureWindow() => _windowProvider.Show<ArchitectureWindow, ArchitectureWindowViewModel>();
+
+    #endregion
 
     #region Handlers
 

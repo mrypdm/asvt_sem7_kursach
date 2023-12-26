@@ -6,6 +6,7 @@ using GUI.Exceptions;
 using GUI.Models;
 using GUI.Notifiers;
 using GUI.ViewModels;
+using GUI.ViewModels.Abstraction;
 using GUI.Views;
 
 namespace GUI.Managers;

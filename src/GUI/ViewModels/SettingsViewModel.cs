@@ -11,6 +11,7 @@ using Domain.Models;
 using GUI.Extensions;
 using GUI.Managers;
 using GUI.MessageBoxes;
+using GUI.ViewModels.Abstraction;
 using GUI.Views;
 using ReactiveUI;
 using Shared.Exceptions;

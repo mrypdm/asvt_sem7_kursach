@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Avalonia.Controls;
 
-namespace GUI.ViewModels;
+namespace GUI.ViewModels.Abstraction;
 
 /// <summary>
 /// Base view model for <see cref="Window"/> heirs

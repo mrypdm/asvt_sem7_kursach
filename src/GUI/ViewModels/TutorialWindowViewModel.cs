@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using GUI.Models.Tutorial;
+using GUI.ViewModels.Abstraction;
 using GUI.Views;
 using ReactiveUI;
 
