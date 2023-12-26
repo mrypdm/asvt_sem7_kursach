@@ -1,0 +1,11 @@
+{
+  "Executable": "main.asm",
+  "Files": [
+    "main.asm"
+  ],
+  "Devices": [
+    "ROM.dll"
+  ],
+  "StackAddress": "0o1000",
+  "ProgramAddress": "0o1000"
+}

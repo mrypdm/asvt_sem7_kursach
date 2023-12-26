@@ -1,0 +1,9 @@
+{
+  "Executable": "main.asm",
+  "Files": [
+    "main.asm"
+  ],
+  "Devices": [],
+  "StackAddress": "0",
+  "ProgramAddress": "0"
+}
