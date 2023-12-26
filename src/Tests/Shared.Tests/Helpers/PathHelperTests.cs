@@ -33,6 +33,13 @@ public class PathHelperTests
     {
         Assert.That(PathHelper.GetFileName(path), Is.EqualTo(expected));
     }
+    
+    [Test]
+    [TestCaseSource(nameof(GetFileNameWithoutExtensionTestSource))]
+    public void GetFileNameWithoutExtensionTest(string path, string expected)
+    {
+        Assert.That(PathHelper.GetFileNameWithoutExtension(path), Is.EqualTo(expected));
+    }
 
     [Test]
     [TestCaseSource(nameof(GetRelativePathTestSource))]
@@ -97,6 +104,22 @@ public class PathHelperTests
         new[] { "c.txt", "c.txt" },
         new[] { $".{Separator}c.txt", "c.txt" },
         new[] { $"..{Separator}c.txt", "c.txt" },
+        new string[] { null, null }
+    };
+    
+    private static readonly object[] GetFileNameWithoutExtensionTestSource =
+    {
+        new[] { $"{Root}{Separator}a{Separator}b{Separator}c.txt", "c" },
+        new[] { $"{Root}{Separator}a{Separator}..{Separator}b{Separator}c.txt", "c" },
+        new[] { $"{Root}{Separator}a{Separator}.{Separator}b{Separator}c.txt", "c" },
+        new[]
+        {
+            $"{Root}{Separator}a{Separator}.{Separator}..{Separator}a{Separator}.{Separator}b{Separator}c.txt", "c"
+        },
+        new[] { $"{Root}{Separator}", "" },
+        new[] { "c.txt", "c" },
+        new[] { $".{Separator}c", "c" },
+        new[] { $"..{Separator}c", "c" },
         new string[] { null, null }
     };
 

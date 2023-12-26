@@ -7,8 +7,11 @@ namespace DemoDevice;
 /// Demo device - TTY input. Example taken from the book
 /// "Organization and Assembly Language Programming for the PDP-1 and VAX-11" by Wen C. Lin Computer
 /// </summary>
-public sealed class Device : IDevice
+public sealed class DemoDevice : IDevice
 {
+    /// <inheritdoc />
+    public string Name => GetType().Name;
+
     /// <inheritdoc />
     public ushort BufferRegisterAddress => Convert.ToUInt16("177562", 8);
 
@@ -33,6 +36,10 @@ public sealed class Device : IDevice
         BufferRegisterValue = 0;
         ControlRegisterValue = 0;
         return 0;
+    }
+
+    public void AcceptInterrupt()
+    {
     }
 
     /// <inheritdoc />
