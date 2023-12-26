@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Bit clear of word
+/// </summary>
 public sealed class BIC : TwoOperand
 {
     public BIC(IStorage storage, IState state) : base(storage, state)

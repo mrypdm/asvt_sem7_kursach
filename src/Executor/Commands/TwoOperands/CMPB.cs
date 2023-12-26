@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Compare bytes
+/// </summary>
 public sealed class CMPB : TwoOperand
 {
     public CMPB(IStorage storage, IState state) : base(storage, state)

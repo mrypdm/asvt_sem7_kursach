@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Sum of two words
+/// </summary>
 public sealed class ADD : TwoOperand
 {
     public ADD(IStorage storage, IState state) : base(storage, state)

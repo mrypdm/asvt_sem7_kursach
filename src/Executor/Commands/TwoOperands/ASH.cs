@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Arithmetic shift of word
+/// </summary>
 public class ASH : TwoOperand
 {
     public ASH(IStorage storage, IState state) : base(storage, state)

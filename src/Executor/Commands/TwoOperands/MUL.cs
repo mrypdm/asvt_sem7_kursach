@@ -7,6 +7,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Multiplication of words
+/// </summary>
 public class MUL : TwoOperand
 {
     public MUL(IStorage storage, IState state) : base(storage, state)

@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Move byte
+/// </summary>
 public sealed class MOVB : TwoOperand
 {
     public MOVB(IStorage storage, IState state) : base(storage, state)

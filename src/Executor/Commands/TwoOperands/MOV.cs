@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Move word
+/// </summary>
 public sealed class MOV : TwoOperand
 {
     public MOV(IStorage storage, IState state) : base(storage, state)

@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Subtraction of words
+/// </summary>
 public sealed class SUB : TwoOperand
 {
     public SUB(IStorage storage, IState state) : base(storage, state)

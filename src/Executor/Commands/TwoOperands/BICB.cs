@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Bit clear of byte
+/// </summary>
 public sealed class BICB : TwoOperand
 {
     public BICB(IStorage storage, IState state) : base(storage, state)

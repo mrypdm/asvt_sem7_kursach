@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Bit check of word
+/// </summary>
 public sealed class BIT : TwoOperand
 {
     public BIT(IStorage storage, IState state) : base(storage, state)

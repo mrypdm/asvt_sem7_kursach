@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Division of words
+/// </summary>
 public class DIV : TwoOperand
 {
     public DIV(IStorage storage, IState state) : base(storage, state)

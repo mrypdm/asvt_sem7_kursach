@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Arithmetic shift of int
+/// </summary>
 public class ASHC : TwoOperand
 {
     public ASHC(IStorage storage, IState state) : base(storage, state)

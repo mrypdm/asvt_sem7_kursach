@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Exclusive OR of words
+/// </summary>
 public sealed class XOR : TwoOperand
 {
     public XOR(IStorage storage, IState state) : base(storage, state)

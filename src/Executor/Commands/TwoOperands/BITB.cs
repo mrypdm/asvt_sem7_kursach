@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Bit check of byte
+/// </summary>
 public sealed class BITB : TwoOperand
 {
     public BITB(IStorage storage, IState state) : base(storage, state)

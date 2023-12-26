@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Compare words
+/// </summary>
 public sealed class CMP : TwoOperand
 {
     public CMP(IStorage storage, IState state) : base(storage, state)

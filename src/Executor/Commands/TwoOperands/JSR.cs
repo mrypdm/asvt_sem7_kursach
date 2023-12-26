@@ -9,6 +9,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.TwoOperands;
 
+/// <summary>
+/// Go ot subroutine
+/// </summary>
 public sealed class JSR : TwoOperand
 {
     public JSR(IStorage storage, IState state) : base(storage, state)
