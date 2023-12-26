@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.MiscellaneousInstructions;
 
+/// <summary>
+/// Wait for interrupt
+/// </summary>
 public sealed class WAIT : BaseCommand
 {
     public WAIT(IStorage storage, IState state) : base(storage, state)

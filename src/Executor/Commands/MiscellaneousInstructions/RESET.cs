@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.MiscellaneousInstructions;
 
+/// <summary>
+/// Reset devices
+/// </summary>
 public sealed class RESET : BaseCommand
 {
     public RESET(IStorage storage, IState state) : base(storage, state)

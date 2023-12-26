@@ -8,7 +8,7 @@ using Executor.Storages;
 namespace Executor.Commands.Traps;
 
 /// <summary>
-/// Class of Trace Trap
+/// Trace trap
 /// </summary>
 [NotCommand]
 public sealed class Trace : TrapInstruction
@@ -19,9 +19,12 @@ public sealed class Trace : TrapInstruction
     {
     }
 
+    /// <inheritdoc />
     public override void Execute(IArgument[] arguments) => throw new NotSupportedException();
 
+    /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word) => throw new NotSupportedException();
 
+    /// <inheritdoc />
     public override ushort OperationCode => 0;
 }

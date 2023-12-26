@@ -7,6 +7,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.MiscellaneousInstructions;
 
+/// <summary>
+/// Stop execution
+/// </summary>
 public sealed class HALT : BaseCommand
 {
     public HALT(IStorage storage, IState state) : base(storage, state)
