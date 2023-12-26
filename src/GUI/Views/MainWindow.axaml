@@ -57,8 +57,8 @@
             <MenuItem Header="Settings" Margin="5,0,5,0" ToolTip.Tip="Ctrl+Alt+S"
                       Command="{Binding OpenSettingsWindowCommand}" />
             <MenuItem Header="Help" Margin="5,0,5,0">
-                <MenuItem Header="Tutorials" />
-                <MenuItem Header="About" />
+                <MenuItem Header="Tutorial" Command="{Binding OpenTutorialWindowCommand}" />
+                <MenuItem Header="Architecture" Command="{Binding OpenArchitectureWindowCommand}" />
             </MenuItem>
         </Menu>
 

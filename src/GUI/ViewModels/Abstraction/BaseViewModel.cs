@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
 
-namespace GUI.ViewModels;
+namespace GUI.ViewModels.Abstraction;
 
 /// <inheritdoc cref="IViewModel{TView}"/>
 public abstract class BaseViewModel<TView> : ReactiveObject, IViewModel<TView> where TView : Control

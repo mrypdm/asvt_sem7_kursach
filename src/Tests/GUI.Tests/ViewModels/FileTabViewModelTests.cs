@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using GUI.Models;
 using GUI.ViewModels;
+using GUI.ViewModels.Abstraction;
 using GUI.Views;
 using Moq;
 

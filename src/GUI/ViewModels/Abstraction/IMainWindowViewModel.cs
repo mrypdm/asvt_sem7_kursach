@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Reactive;
-using Avalonia.Media;
-using GUI.Managers;
 using GUI.Views;
 using ReactiveUI;
 
-namespace GUI.ViewModels;
+namespace GUI.ViewModels.Abstraction;
 
 /// <summary>
 /// View model for <see cref="MainWindowViewModel"/>
@@ -56,6 +54,16 @@ public interface IMainWindowViewModel : IWindowViewModel<MainWindow>
     /// Command for opening <see cref="ExecutorWindow"/>
     /// </summary>
     ReactiveCommand<Unit, Unit> OpenExecutorWindowCommand { get; }
+
+    /// <summary>
+    /// Command for opening <see cref="ArchitectureWindow"/>
+    /// </summary>
+    ReactiveCommand<Unit, Unit> OpenArchitectureWindowCommand { get; }
+
+    /// <summary>
+    /// Command for opening <see cref="TutorialWindow"/>
+    /// </summary>
+    ReactiveCommand<Unit, Unit> OpenTutorialWindowCommand { get; }
 
     /// <summary>
     /// Command for building project

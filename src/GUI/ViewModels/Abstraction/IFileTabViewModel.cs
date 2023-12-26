@@ -4,7 +4,7 @@ using GUI.Models;
 using GUI.Views;
 using ReactiveUI;
 
-namespace GUI.ViewModels;
+namespace GUI.ViewModels.Abstraction;
 
 /// <summary>
 /// View model for <see cref="FileTab"/>

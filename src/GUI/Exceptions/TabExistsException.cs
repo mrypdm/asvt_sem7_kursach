@@ -1,5 +1,5 @@
 ﻿using System;
-using GUI.ViewModels;
+using GUI.ViewModels.Abstraction;
 
 namespace GUI.Exceptions;
 

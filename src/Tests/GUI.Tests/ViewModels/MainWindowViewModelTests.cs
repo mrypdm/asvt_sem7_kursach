@@ -18,6 +18,7 @@ using GUI.MessageBoxes;
 using GUI.Models;
 using GUI.Providers;
 using GUI.ViewModels;
+using GUI.ViewModels.Abstraction;
 using GUI.Views;
 using Moq;
 using MsBox.Avalonia.Enums;

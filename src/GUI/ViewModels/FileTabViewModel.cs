@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using GUI.Models;
+using GUI.ViewModels.Abstraction;
 using GUI.Views;
 using ReactiveUI;
 

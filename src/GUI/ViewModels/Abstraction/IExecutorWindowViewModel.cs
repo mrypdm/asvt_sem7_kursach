@@ -5,7 +5,7 @@ using GUI.Models.Executor;
 using GUI.Views;
 using ReactiveUI;
 
-namespace GUI.ViewModels;
+namespace GUI.ViewModels.Abstraction;
 
 /// <summary>
 /// View model for <see cref="ExecutorWindow"/>
