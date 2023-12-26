@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\DemoDevices\ROM\ROM.csproj" />
+      <ProjectReference Include="..\..\..\sdk\ROM\ROM.csproj" />
       <ProjectReference Include="..\..\Devices\Devices.csproj" />
       <ProjectReference Include="..\..\Shared\Shared.csproj" />
     </ItemGroup>

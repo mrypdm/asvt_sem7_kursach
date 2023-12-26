@@ -31,6 +31,9 @@ public static class PathHelper
     /// <inheritdoc cref="Path.GetFileName(string?)"/>
     public static string GetFileName(string path) => Path.GetFileName(path);
 
+    /// <inheritdoc cref="Path.GetFileNameWithoutExtension(string?)"/>
+    public static string GetFileNameWithoutExtension(string path) => Path.GetFileNameWithoutExtension(path);
+
     /// <summary>
     /// Return relative path from <paramref name="path"/> to <paramref name="relativeTo"/>
     /// If <paramref name="relativeTo"/> is empty, then returns full path to <paramref name="path"/>

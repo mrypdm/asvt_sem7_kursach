@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GUI.Exceptions;
 using GUI.Models;
 using GUI.ViewModels;
+using GUI.ViewModels.Abstraction;
 
 namespace GUI.Managers;
 
