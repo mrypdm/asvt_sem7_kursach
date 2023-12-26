@@ -36,6 +36,7 @@ public class WindowProvider : IWindowProvider
         {
             if (((TViewModel)savedViewModel).View.IsLoaded)
             {
+                ((TViewModel)savedViewModel).View.WindowState = WindowState.Normal;
                 ((TViewModel)savedViewModel).View.Activate();
                 return;
             }
