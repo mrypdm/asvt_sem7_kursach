@@ -593,6 +593,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         await BuildProjectAsync();
 
         var executor = new Executor.Executor(_projectManager.Project);
+        await executor.LoadProgram();
         
         var viewModel = _windowProvider.CreateWindow<ExecutorWindow, ExecutorViewModel>(executor, _messageBoxManager);
         await viewModel.ShowDialog(View);

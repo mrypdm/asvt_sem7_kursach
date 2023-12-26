@@ -46,7 +46,6 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         base(view)
     {
         _executor = executor;
-        _executor.LoadProgram().Wait();
         
         _messageBoxManager = messageBoxManager;
 
