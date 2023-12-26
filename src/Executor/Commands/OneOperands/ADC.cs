@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Add C to word
+/// </summary>
 public sealed class ADC : OneOperand
 {
     public ADC(IStorage storage, IState state) : base(storage, state)

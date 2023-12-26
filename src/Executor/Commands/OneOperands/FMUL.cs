@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Multiplication of two float
+/// </summary>
 public class FMUL : OneOperand
 {
     public FMUL(IStorage storage, IState state) : base(storage, state)

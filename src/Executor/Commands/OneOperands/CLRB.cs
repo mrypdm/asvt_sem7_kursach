@@ -7,6 +7,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Clear byte
+/// </summary>
 public sealed class CLRB : OneOperand
 {
     public CLRB(IStorage storage, IState state) : base(storage, state)

@@ -7,6 +7,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Go to address
+/// </summary>
 public sealed class JMP : OneOperand
 {
     public JMP(IStorage storage, IState state) : base(storage, state)

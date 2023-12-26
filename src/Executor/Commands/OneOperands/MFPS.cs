@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Move PSW to byte
+/// </summary>
 public sealed class MFPS : OneOperand
 {
     public MFPS(IStorage storage, IState state) : base(storage, state)

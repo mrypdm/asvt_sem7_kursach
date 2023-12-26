@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Subtract C from word
+/// </summary>
 public sealed class SBC : OneOperand
 {
     public SBC(IStorage storage, IState state) : base(storage, state)

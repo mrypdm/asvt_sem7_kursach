@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Division of two float
+/// </summary>
 public class FDIV : OneOperand
 {
     public FDIV(IStorage storage, IState state) : base(storage, state)

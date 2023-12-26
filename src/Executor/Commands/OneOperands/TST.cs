@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Test word
+/// </summary>
 public sealed class TST : OneOperand
 {
     public TST(IStorage storage, IState state) : base(storage, state)

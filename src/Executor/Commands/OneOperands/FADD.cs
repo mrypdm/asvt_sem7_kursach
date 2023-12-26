@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Sum of two float
+/// </summary>
 public class FADD : OneOperand
 {
     public FADD(IStorage storage, IState state) : base(storage, state)

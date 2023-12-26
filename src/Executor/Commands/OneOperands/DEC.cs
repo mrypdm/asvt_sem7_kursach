@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Decrement word
+/// </summary>
 public sealed class DEC : OneOperand
 {
     public DEC(IStorage storage, IState state) : base(storage, state)

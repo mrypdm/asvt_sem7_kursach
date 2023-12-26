@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Arithmetic shift left of word
+/// </summary>
 public sealed class ASL : OneOperand
 {
     public ASL(IStorage storage, IState state) : base(storage, state)

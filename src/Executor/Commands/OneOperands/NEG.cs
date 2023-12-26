@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Negate word
+/// </summary>
 public sealed class NEG : OneOperand
 {
     public NEG(IStorage storage, IState state) : base(storage, state)

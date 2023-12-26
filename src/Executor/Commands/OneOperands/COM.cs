@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Complement word
+/// </summary>
 public sealed class COM : OneOperand
 {
     public COM(IStorage storage, IState state) : base(storage, state)

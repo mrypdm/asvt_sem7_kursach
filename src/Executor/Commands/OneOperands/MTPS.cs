@@ -7,6 +7,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Move byte to PSW
+/// </summary>
 public sealed class MTPS : OneOperand
 {
     public MTPS(IStorage storage, IState state) : base(storage, state)

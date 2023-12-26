@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Increment word
+/// </summary>
 public sealed class INC : OneOperand
 {
     public INC(IStorage storage, IState state) : base(storage, state)

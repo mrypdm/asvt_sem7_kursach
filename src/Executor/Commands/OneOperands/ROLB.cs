@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Circular rotate byte left 
+/// </summary>
 public sealed class ROLB : OneOperand
 {
     public ROLB(IStorage storage, IState state) : base(storage, state)

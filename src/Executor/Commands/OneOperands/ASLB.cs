@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Arithmetic shift left of byte
+/// </summary>
 public sealed class ASLB : OneOperand
 {
     public ASLB(IStorage storage, IState state) : base(storage, state)

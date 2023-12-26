@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Arithmetic shift right of word
+/// </summary>
 public sealed class ASR : OneOperand
 {
     public ASR(IStorage storage, IState state) : base(storage, state)

@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Increment byte
+/// </summary>
 public sealed class INCB : OneOperand
 {
     public INCB(IStorage storage, IState state) : base(storage, state)

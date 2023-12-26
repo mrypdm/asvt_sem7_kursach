@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Circular rotate word left
+/// </summary>
 public sealed class ROL : OneOperand
 {
     public ROL(IStorage storage, IState state) : base(storage, state)

@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Complement byte
+/// </summary>
 public sealed class COMB : OneOperand
 {
     public COMB(IStorage storage, IState state) : base(storage, state)

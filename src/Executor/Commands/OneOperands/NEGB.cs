@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Negate byte
+/// </summary>
 public sealed class NEGB : OneOperand
 {
     public NEGB(IStorage storage, IState state) : base(storage, state)

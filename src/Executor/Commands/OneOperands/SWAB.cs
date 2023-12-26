@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Swap bytes in word
+/// </summary>
 public sealed class SWAB : OneOperand
 {
     public SWAB(IStorage storage, IState state) : base(storage, state)

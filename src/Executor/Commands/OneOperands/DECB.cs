@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Decrement byte
+/// </summary>
 public sealed class DECB : OneOperand
 {
     public DECB(IStorage storage, IState state) : base(storage, state)

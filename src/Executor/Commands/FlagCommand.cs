@@ -7,6 +7,9 @@ using Executor.Storages;
 
 namespace Executor.Commands;
 
+/// <summary>
+/// Command for change flags
+/// </summary>
 public sealed class FlagCommand : BaseCommand
 {
     public FlagCommand(IStorage storage, IState state) : base(storage, state)

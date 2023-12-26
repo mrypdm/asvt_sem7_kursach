@@ -7,6 +7,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Extend sign of word
+/// </summary>
 public sealed class SXT : OneOperand
 {
     public SXT(IStorage storage, IState state) : base(storage, state)

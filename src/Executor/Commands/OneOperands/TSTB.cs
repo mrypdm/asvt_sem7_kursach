@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Test byte
+/// </summary>
 public sealed class TSTB : OneOperand
 {
     public TSTB(IStorage storage, IState state) : base(storage, state)

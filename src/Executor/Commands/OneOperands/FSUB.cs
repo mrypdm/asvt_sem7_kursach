@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Subtraction of twp float
+/// </summary>
 public class FSUB : OneOperand
 {
     public FSUB(IStorage storage, IState state) : base(storage, state)

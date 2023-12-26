@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands;
 
+/// <summary>
+/// Mark stack command
+/// </summary>
 public sealed class MARK : BaseCommand
 {
     private const ushort ArgumentMask = 0b0000_0000_0011_1111;

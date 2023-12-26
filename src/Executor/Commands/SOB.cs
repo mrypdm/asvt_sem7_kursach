@@ -7,6 +7,9 @@ using Executor.Storages;
 
 namespace Executor.Commands;
 
+/// <summary>
+/// Decrement register and branch if not zero
+/// </summary>
 public sealed class SOB : BaseCommand
 {
     private const ushort RegisterMask = 0b0000_0001_1100_0000;

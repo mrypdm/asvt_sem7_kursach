@@ -7,6 +7,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Clear word
+/// </summary>
 public sealed class CLR : OneOperand
 {
     public CLR(IStorage storage, IState state) : base(storage, state)

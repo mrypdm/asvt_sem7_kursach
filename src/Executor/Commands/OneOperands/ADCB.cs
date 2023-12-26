@@ -8,6 +8,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.OneOperands;
 
+/// <summary>
+/// Add C to byte
+/// </summary>
 public sealed class ADCB : OneOperand
 {
     public ADCB(IStorage storage, IState state) : base(storage, state)
