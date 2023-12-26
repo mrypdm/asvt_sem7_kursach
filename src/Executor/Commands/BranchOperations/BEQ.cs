@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
+/// <summary>
+/// Branch if Z
+/// </summary>
 public sealed class BEQ : BranchOperation
 {
     public BEQ(IStorage storage, IState state) : base(storage, state)

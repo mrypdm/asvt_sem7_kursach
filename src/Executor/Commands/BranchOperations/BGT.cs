@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
+/// <summary>
+/// Branch if !(Z || (N ^ V))
+/// </summary>
 public sealed class BGT : BranchOperation
 {
     public BGT(IStorage storage, IState state) : base(storage, state)

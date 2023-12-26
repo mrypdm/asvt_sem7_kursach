@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
+/// <summary>
+/// Branch without condition
+/// </summary>
 public sealed class BR : BranchOperation
 {
     public BR(IStorage storage, IState state) : base(storage, state)

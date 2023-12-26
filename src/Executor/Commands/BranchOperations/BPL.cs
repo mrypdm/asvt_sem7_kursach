@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
+/// <summary>
+/// Branch if !N
+/// </summary>
 public sealed class BPL : BranchOperation
 {
     public BPL(IStorage storage, IState state) : base(storage, state)

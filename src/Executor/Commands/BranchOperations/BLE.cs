@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
+/// <summary>
+/// Branch if Z || (N ^ V)
+/// </summary>
 public sealed class BLE : BranchOperation
 {
     public BLE(IStorage storage, IState state) : base(storage, state)

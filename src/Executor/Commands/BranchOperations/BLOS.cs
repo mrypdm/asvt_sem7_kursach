@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
+/// <summary>
+/// Branch if C || Z
+/// </summary>
 public sealed class BLOS : BranchOperation
 {
     public BLOS(IStorage storage, IState state) : base(storage, state)

@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
+/// <summary>
+/// Branch if !Z
+/// </summary>
 public sealed class BNE : BranchOperation
 {
     public BNE(IStorage storage, IState state) : base(storage, state)

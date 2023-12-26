@@ -7,8 +7,11 @@ using Executor.Storages;
 namespace Executor.Commands.BranchOperations;
 
 /// <summary>
-/// BCS or BLO
+/// Branch if C
 /// </summary>
+/// <remarks>
+/// Also known as BLO
+/// </remarks>
 public sealed class BCS : BranchOperation
 {
     public BCS(IStorage storage, IState state) : base(storage, state)

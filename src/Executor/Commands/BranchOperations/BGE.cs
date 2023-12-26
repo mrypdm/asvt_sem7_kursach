@@ -6,6 +6,9 @@ using Executor.Storages;
 
 namespace Executor.Commands.BranchOperations;
 
+/// <summary>
+/// Branch if N == V
+/// </summary>
 public sealed class BGE : BranchOperation
 {
     public BGE(IStorage storage, IState state) : base(storage, state)
