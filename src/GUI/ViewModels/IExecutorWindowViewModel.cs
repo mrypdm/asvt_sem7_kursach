@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Reactive;
+using Executor.Models;
 using GUI.Models.Executor;
 using GUI.Views;
 using ReactiveUI;

@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
+using System.Threading;
 using System.Threading.Tasks;
+using Executor.Exceptions;
+using Executor.Models;
 using GUI.Extensions;
 using GUI.MessageBoxes;
 using GUI.Models.Executor;
 using GUI.Views;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using Shared.Converters;
 
@@ -14,6 +19,7 @@ namespace GUI.ViewModels;
 
 public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindowViewModel
 {
+    private readonly Executor.Executor _executor;
     private readonly IMessageBoxManager _messageBoxManager;
     private bool _memoryAsWord = true;
     private Tab _currentTab = Tab.State;
@@ -21,6 +27,7 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     private CodeLine _selectedLine;
     private int _selectedMemoryCell;
     private ObservableCollection<IMemoryModel> _memory;
+    private CancellationTokenSource _cancelRunToken;
 
     /// <summary>
     /// Constructor for designer
@@ -33,35 +40,49 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     /// Creates new instance of <see cref="ExecutorViewModel"/>
     /// </summary>
     /// <param name="view">Executor window</param>
+    /// <param name="executor">Executor</param>
     /// <param name="messageBoxManager">Message box manager</param>
-    public ExecutorViewModel(ExecutorWindow view, IMessageBoxManager messageBoxManager) : base(view)
+    public ExecutorViewModel(ExecutorWindow view, Executor.Executor executor, IMessageBoxManager messageBoxManager) :
+        base(view)
     {
+        _executor = executor;
+        _executor.LoadProgram().Wait();
+        
         _messageBoxManager = messageBoxManager;
 
         StartExecutionCommand = ReactiveCommand.CreateFromTask(RunAsync);
-        PauseExecutionCommand = ReactiveCommand.CreateFromTask(PauseAsync);
+        PauseExecutionCommand = ReactiveCommand.Create(PauseAsync);
         MakeStepCommand = ReactiveCommand.CreateFromTask(MakeStepAsync);
         ResetExecutorCommand = ReactiveCommand.CreateFromTask(ResetExecutorAsync);
         ChangeMemoryModeCommand = ReactiveCommand.Create(ChangeMemoryMode);
         FindAddressCommand = ReactiveCommand.CreateFromTask<string>(FindAddressAsync);
 
         Tabs = Enum.GetValues<Tab>().ToObservableCollection();
-        Registers = Array.Empty<RegisterModel>().ToObservableCollection();
-        ProcessorStateWord = Array.Empty<ProcessorStateWordModel>().ToObservableCollection();
-        Memory = Array.Empty<IMemoryModel>().ToObservableCollection();
-        Devices = Array.Empty<Device>().ToObservableCollection();
-        CodeLines = Array.Empty<CodeLine>().ToObservableCollection();
+        Memory = AsWords().ToObservableCollection();
 
-        foreach (var line in CodeLines)
+        CodeLines = _executor.Commands.Select(m =>
         {
-            line.PropertyChanged += (s, e) =>
+            var codeLine = CodeLine.FromDto(m);
+            codeLine.PropertyChanged += (s, e) =>
             {
-                if (e.PropertyName == nameof(CodeLine.Breakpoint))
+                if (e.PropertyName != nameof(CodeLine.Breakpoint))
                 {
-                    // update breakpoint in executor
+                    return;
+                }
+
+                var line = s as CodeLine;
+                if (line!.Breakpoint)
+                {
+                    _executor.AddBreakpoint(line.Address);
+                }
+                else
+                {
+                    _executor.RemoveBreakpoint(line.Address);
                 }
             };
-        }
+            return codeLine;
+        }).ToObservableCollection();
+        SelectedLine = CodeLines.FirstOrDefault();
 
         InitContext();
     }
@@ -84,15 +105,14 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     /// <inheritdoc />
     public ReactiveCommand<string, Unit> FindAddressCommand { get; }
 
-    // TODO
     /// <inheritdoc />
-    public ObservableCollection<RegisterModel> Registers { get; }
+    public ObservableCollection<RegisterModel> Registers =>
+        _executor.Registers.Select((m, i) => new RegisterModel(i, m)).ToObservableCollection();
 
-    // TODO
     /// <inheritdoc />
-    public ObservableCollection<ProcessorStateWordModel> ProcessorStateWord { get; }
+    public ObservableCollection<ProcessorStateWordModel> ProcessorStateWord =>
+        new[] { new ProcessorStateWordModel(_executor.ProcessorStateWord) }.ToObservableCollection();
 
-    // TODO
     /// <inheritdoc />
     public ObservableCollection<IMemoryModel> Memory
     {
@@ -107,11 +127,9 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         set => this.RaiseAndSetIfChanged(ref _selectedMemoryCell, value);
     }
 
-    // TODO
     /// <inheritdoc />
-    public ObservableCollection<Device> Devices { get; }
+    public ObservableCollection<Device> Devices => _executor.Devices.ToObservableCollection();
 
-    // TODO
     /// <inheritdoc />
     public ObservableCollection<CodeLine> CodeLines { get; }
 
@@ -150,17 +168,54 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
     /// <inheritdoc />
     public bool IsDevicesVisible => CurrentTab == Tab.Devices;
 
-    // TODO
-    private Task MakeStepAsync() => Task.CompletedTask;
+    private async Task Runner(Func<Task<bool>> runFunction)
+    {
+        try
+        {
+            var res = await runFunction();
 
-    // TODO
-    private Task RunAsync() => Task.CompletedTask;
+            if (!res)
+            {
+                await _messageBoxManager.ShowMessageBoxAsync("Executor", "End of program is reached", ButtonEnum.Ok,
+                    Icon.Info, View);
+            }
+        }
+        catch (HaltException e)
+        {
+            await _messageBoxManager.ShowMessageBoxAsync("Executor", $"Program halted with error:\n{e.Message}",
+                ButtonEnum.Ok, Icon.Info, View);
+        }
+        catch (Exception e)
+        {
+            await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
+        }
+    }
 
-    // TODO
-    private Task PauseAsync() => Task.CompletedTask;
+    private async Task MakeStepAsync()
+    {
+        await Runner(() => _executor.ExecuteNextInstructionAsync());
+        UpdateState();
+    }
 
-    // TODO
-    private Task ResetExecutorAsync() => Task.CompletedTask;
+    private async Task RunAsync()
+    {
+        _cancelRunToken = new CancellationTokenSource();
+
+        await Runner(() => _executor.ExecuteAsync(_cancelRunToken.Token));
+
+        _cancelRunToken.Dispose();
+        _cancelRunToken = null;
+
+        UpdateState();
+    }
+
+    private void PauseAsync() => _cancelRunToken?.Cancel();
+
+    private async Task ResetExecutorAsync()
+    {
+        await _executor.LoadProgram();
+        UpdateState();
+    }
 
     private void ChangeMemoryMode()
     {
@@ -169,11 +224,16 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         Memory = _memoryAsWord ? AsWords().ToObservableCollection() : AsBytes().ToObservableCollection();
     }
 
-    // TODO
-    private IEnumerable<IMemoryModel> AsWords() => Array.Empty<IMemoryModel>();
+    private IEnumerable<IMemoryModel> AsWords()
+    {
+        var count = _executor.Memory.Data.Count;
+        for (ushort i = 0; i < count; i += 2)
+        {
+            yield return new WordModel(i, _executor.Memory.GetWord(i));
+        }
+    }
 
-    // TODO
-    private IEnumerable<IMemoryModel> AsBytes() => Array.Empty<IMemoryModel>();
+    private IEnumerable<IMemoryModel> AsBytes() => _executor.Memory.Data.Select((m, i) => new ByteModel((ushort)i, m));
 
     private async Task FindAddressAsync(string text)
     {
@@ -192,5 +252,23 @@ public class ExecutorViewModel : WindowViewModel<ExecutorWindow>, IExecutorWindo
         }
 
         SelectedMemoryCell = address;
+    }
+
+    private void UpdateLines()
+    {
+        foreach (var codeLine in CodeLines)
+        {
+            codeLine.Code = _executor.Memory.GetWord(codeLine.Address);
+        }
+    }
+
+    private void UpdateState()
+    {
+        Memory = (_memoryAsWord ? AsWords() : AsBytes()).ToObservableCollection();
+        UpdateLines();
+        this.RaisePropertyChanged(nameof(Registers));
+        this.RaisePropertyChanged(nameof(ProcessorStateWord));
+        this.RaisePropertyChanged(nameof(Devices));
+        SelectedLine = CodeLines.SingleOrDefault(m => m.Address == _executor.Registers.ElementAt(7));
     }
 }

@@ -1,4 +1,5 @@
-﻿using GUI.Notifiers;
+﻿using Executor.Models;
+using GUI.Notifiers;
 
 namespace GUI.Models.Executor;
 
@@ -9,6 +10,9 @@ public class CodeLine : PropertyChangedNotifier
 {
     private bool _breakpoint;
     private ushort _code;
+
+    public static CodeLine FromDto(Command command) =>
+        new(command.Address, command.Code, command.BreakPoint, command.Symbol);
 
     public CodeLine(ushort address, ushort machineCode, bool breakpoint, string sourceCode = null)
     {

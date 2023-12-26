@@ -87,10 +87,11 @@ public class Executor
     /// <summary>
     /// Opened project
     /// </summary>
-    public IProject Project { get; private set; }
+    public IProject Project { get; }
 
-    public Executor()
+    public Executor(IProject project)
     {
+        Project = project;
         _state = new State();
         _memory = new Memory();
         var provider = new DeviceProvider();
@@ -194,35 +195,24 @@ public class Executor
     public Task<bool> ExecuteNextInstructionAsync() => Task.Run(ExecuteNextInstruction);
 
     /// <summary>
-    /// Load project to executor
+    /// Load program
     /// </summary>
-    /// <param name="project">Project to open</param>
     /// <exception cref="InvalidOperationException">
     ///     If <see cref="IProject.ProgramAddress"/> or <see cref="IProject.StackAddress"/> is odd
     /// </exception>
-    public Task LoadProgram(IProject project)
+    /// <exception cref="OutOfMemoryException">If program is larger than memory</exception>
+    public async Task LoadProgram()
     {
-        if (project.ProgramAddress % 2 == 1)
+        if (Project.ProgramAddress % 2 == 1)
         {
             throw new InvalidOperationException("Start program address cannot be odd");
         }
 
-        if (project.StackAddress % 2 == 1)
+        if (Project.StackAddress % 2 == 1)
         {
             throw new InvalidOperationException("Start stack address cannot be odd");
         }
 
-        Project = project;
-
-        return Reload();
-    }
-
-    /// <summary>
-    /// Reloads projects
-    /// </summary>
-    /// <exception cref="OutOfMemoryException">If program is larger than memory</exception>
-    public async Task Reload()
-    {
         _initialized = false;
         _trapStack.Clear();
         _symbols.Clear();
