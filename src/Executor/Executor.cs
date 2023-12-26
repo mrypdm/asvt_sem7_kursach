@@ -34,7 +34,7 @@ public class Executor
     {
         typeof(BusException),
         typeof(TrapInstruction),
-        typeof(TrapReturn)
+        typeof(InterruptReturn)
     };
 
     private readonly IState _state;
@@ -157,7 +157,7 @@ public class Executor
             {
                 _trapStack.Push(_lastCommand.GetType());
             }
-            else if (_lastCommand is TrapReturn)
+            else if (_lastCommand is InterruptReturn)
             {
                 _trapStack.Pop();
             }
@@ -288,7 +288,7 @@ public class Executor
 
         if (e is BusException)
         {
-            if (_trapStack.Any(t => _typesToHalt.Contains(t)) || _lastCommand is TrapInstruction or TrapReturn)
+            if (_trapStack.Any(t => _typesToHalt.Contains(t)) || _lastCommand is TrapInstruction or InterruptReturn)
             {
                 throw new HaltException(false,
                     $"Get bus error while already in trap. Trap stack: {string.Join("->", _trapStack.Select(m => m.Name))}");

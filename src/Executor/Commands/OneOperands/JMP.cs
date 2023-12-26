@@ -15,7 +15,7 @@ public sealed class JMP : OneOperand
 
     /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word) => new IArgument[]
-        { new RegisterWordArgument(Storage, State, GetMode(word), GetRegister(word)) };
+        { new RegisterWordArgument(Storage, State, GetArgumentAddressingMode(word), GetArgumentRegister(word)) };
 
     /// <inheritdoc />
     public override void Execute(IArgument[] arguments)

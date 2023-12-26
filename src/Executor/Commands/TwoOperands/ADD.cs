@@ -19,8 +19,8 @@ public sealed class ADD : TwoOperand
     {
         return new IArgument[]
         {
-            new RegisterWordArgument(Storage, State, GetMode1(word), GetRegister1(word)),
-            new RegisterWordArgument(Storage, State, GetMode2(word), GetRegister2(word))
+            new RegisterWordArgument(Storage, State, GetLeftArgumentAddressingMode(word), GetLeftArgumentRegister(word)),
+            new RegisterWordArgument(Storage, State, GetRightArgumentAddressingMode(word), GetRightArgumentRegister(word))
         };
     }
 

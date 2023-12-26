@@ -6,7 +6,7 @@ using Executor.Storages;
 
 namespace Executor.Commands.Traps;
 
-public sealed class RTI : TrapReturn
+public sealed class RTI : InterruptReturn
 {
     public RTI(IStorage storage, IState state) : base(storage, state)
     {

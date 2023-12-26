@@ -16,7 +16,7 @@ public class FSUB : OneOperand
 
     /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word) => new IArgument[]
-        { new RegisterWordArgument(Storage, State, 0, GetRegister(word)) };
+        { new RegisterWordArgument(Storage, State, 0, GetArgumentRegister(word)) };
 
     /// <inhertidoc />
     public override void Execute(IArgument[] arguments)

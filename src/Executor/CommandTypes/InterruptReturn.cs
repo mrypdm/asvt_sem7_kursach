@@ -5,11 +5,11 @@ using Executor.Storages;
 namespace Executor.CommandTypes;
 
 /// <summary>
-/// Trap return
+/// Base class for return from interrupt commands
 /// </summary>
-public abstract class TrapReturn : BaseCommand
+public abstract class InterruptReturn : BaseCommand
 {
-    protected TrapReturn(IStorage storage, IState state) : base(storage, state)
+    protected InterruptReturn(IStorage storage, IState state) : base(storage, state)
     {
     }
 

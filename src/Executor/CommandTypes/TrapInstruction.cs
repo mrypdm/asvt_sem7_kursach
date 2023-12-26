@@ -5,7 +5,7 @@ using Executor.Storages;
 namespace Executor.CommandTypes;
 
 /// <summary>
-/// Trap instruction
+/// Base class for trap commands
 /// </summary>
 public abstract class TrapInstruction : BaseCommand
 {

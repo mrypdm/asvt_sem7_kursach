@@ -18,8 +18,8 @@ public sealed class JSR : TwoOperand
     /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word) => new IArgument[]
     {
-        new RegisterWordArgument(Storage, State, 0, GetRegister1(word)),
-        new RegisterWordArgument(Storage, State, GetMode2(word), GetRegister2(word))
+        new RegisterWordArgument(Storage, State, 0, GetLeftArgumentRegister(word)),
+        new RegisterWordArgument(Storage, State, GetRightArgumentAddressingMode(word), GetRightArgumentRegister(word))
     };
 
     /// <inheritdoc />

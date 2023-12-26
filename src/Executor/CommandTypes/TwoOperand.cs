@@ -18,22 +18,22 @@ public abstract class TwoOperand : BaseCommand
     /// <summary>
     /// Get first argument addressing mode
     /// </summary>
-    protected static ushort GetMode1(ushort word) => (ushort)((word & SourceMask1) >> 9);
+    protected static ushort GetLeftArgumentAddressingMode(ushort word) => (ushort)((word & SourceMask1) >> 9);
 
     /// <summary>
     /// Get first argument register
     /// </summary>
-    protected static ushort GetRegister1(ushort word) => (ushort)((word & RegisterMask1) >> 6);
+    protected static ushort GetLeftArgumentRegister(ushort word) => (ushort)((word & RegisterMask1) >> 6);
 
     /// <summary>
     /// Get second argument addressing mode
     /// </summary>
-    protected static ushort GetMode2(ushort word) => (ushort)((word & SourceMask2) >> 3);
+    protected static ushort GetRightArgumentAddressingMode(ushort word) => (ushort)((word & SourceMask2) >> 3);
 
     /// <summary>
     /// Get second argument register
     /// </summary>
-    protected static ushort GetRegister2(ushort word) => (ushort)(word & RegisterMask2);
+    protected static ushort GetRightArgumentRegister(ushort word) => (ushort)(word & RegisterMask2);
 
     /// <inheritdoc />
     public override IArgument[] GetArguments(ushort word)
@@ -42,15 +42,23 @@ public abstract class TwoOperand : BaseCommand
         {
             return new IArgument[]
             {
-                new RegisterByteArgument(Storage, State, GetMode1(word), GetRegister1(word)),
-                new RegisterByteArgument(Storage, State, GetMode2(word), GetRegister2(word))
+                new RegisterByteArgument(Storage, State,
+                    GetLeftArgumentAddressingMode(word),
+                    GetLeftArgumentRegister(word)),
+                new RegisterByteArgument(Storage, State,
+                    GetRightArgumentAddressingMode(word),
+                    GetRightArgumentRegister(word))
             };
         }
 
         return new IArgument[]
         {
-            new RegisterWordArgument(Storage, State, GetMode1(word), GetRegister1(word)),
-            new RegisterWordArgument(Storage, State, GetMode2(word), GetRegister2(word))
+            new RegisterWordArgument(Storage, State,
+                GetLeftArgumentAddressingMode(word),
+                GetLeftArgumentRegister(word)),
+            new RegisterWordArgument(Storage, State,
+                GetRightArgumentAddressingMode(word),
+                GetRightArgumentRegister(word))
         };
     }
 
