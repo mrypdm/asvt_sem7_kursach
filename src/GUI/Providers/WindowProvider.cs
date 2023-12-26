@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Linq;
+using Avalonia.Controls;
 using GUI.ViewModels;
-using GUI.Views;
 
 namespace GUI.Providers;
 
 /// <inheritdoc />
-public class SettingsWindowProvider : IWindowProvider<SettingsWindow>
+public class WindowProvider : IWindowProvider
 {
     /// <inheritdoc />
-    public IWindowViewModel<SettingsWindow> CreateWindow<TViewModel>(params object[] args)
-        where TViewModel : IWindowViewModel<SettingsWindow>
+    public IWindowViewModel<TWindow> CreateWindow<TWindow, TViewModel>(params object[] args)
+        where TWindow : Window, new()
+        where TViewModel : IWindowViewModel<TWindow>
     {
-        args = new[] { new SettingsWindow() }.Union(args).ToArray();
-        return Activator.CreateInstance(typeof(TViewModel), args) as IWindowViewModel<SettingsWindow>;
+        args = new[] { new TWindow() }.Union(args).ToArray();
+        return Activator.CreateInstance(typeof(TViewModel), args) as IWindowViewModel<TWindow>;
     }
 }

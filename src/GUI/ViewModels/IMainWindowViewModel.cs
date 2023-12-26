@@ -53,6 +53,16 @@ public interface IMainWindowViewModel : IWindowViewModel<MainWindow>
     ReactiveCommand<Unit, Unit> OpenSettingsWindowCommand { get; }
 
     /// <summary>
+    /// Command for opening <see cref="ExecutorWindow"/>
+    /// </summary>
+    ReactiveCommand<Unit, Unit> OpenExecutorWindowCommand { get; }
+
+    /// <summary>
+    /// Command for building project
+    /// </summary>
+    ReactiveCommand<Unit, Unit> BuildProjectCommand { get; }
+
+    /// <summary>
     /// Main window header
     /// </summary>
     string WindowTitle { get; }
