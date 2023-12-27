@@ -24,6 +24,7 @@ internal class TokenBuilder
     private const string RegexPatternAddrType61 = @"^([a-z]+[_a-z0-9]*)$";
     private const string RegexPatternAddrType71 = @"^@([a-z]+[_a-z0-9]*)$";
     private const string RegexPatternArgNN = @"^([0-7]{1,2})$";
+    private const string RegexPatternArgNNN = @"^([0-7]{1,3})$";
     private const string RegexPatternArgWORD = @"^([-]?[0-9]+)([.]?)$";
     private const string RegexPatternArgBLKW = @"^([0-9]+)$";
 
@@ -44,6 +45,7 @@ internal class TokenBuilder
     private readonly Regex _regexMaskAddrType61;
     private readonly Regex _regexMaskAddrType71;
     private readonly Regex _regexMaskArgNN;
+    private readonly Regex _regexMaskArgNNN;
     private readonly Regex _regexMaskArgWORD;
     private readonly Regex _regexMaskArgBLKW;
 
@@ -195,7 +197,8 @@ internal class TokenBuilder
 
         var instArgCode = ArgumentHandler(cmdLine.Arguments[0], extraTokens);
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode,
+            cmdLine));
         resultTokens.AddRange(extraTokens);
 
         return resultTokens;
@@ -211,7 +214,8 @@ internal class TokenBuilder
         instArgCode = instArgCode << 6;
         instArgCode = instArgCode | ArgumentHandler(cmdLine.Arguments[1], extraTokens);
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode,
+            cmdLine));
         resultTokens.AddRange(extraTokens);
 
         return resultTokens;
@@ -231,7 +235,8 @@ internal class TokenBuilder
             throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
         }
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode,
+            cmdLine));
         return resultTokens;
     }
 
@@ -254,7 +259,8 @@ internal class TokenBuilder
 
         instArgCode = instArgCode | ArgumentHandler(cmdLine.Arguments[1], extraTokens);
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode,
+            cmdLine));
         resultTokens.AddRange(extraTokens);
 
         return resultTokens;
@@ -274,7 +280,32 @@ internal class TokenBuilder
             throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}.");
         }
 
-        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode, cmdLine));
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode,
+            cmdLine));
+        return resultTokens;
+    }
+
+    private List<IToken> InstructionArgsNNN(CommandLine cmdLine)
+    {
+        var resultTokens = new List<IToken>();
+        int instArgCode = 0;
+
+        if (_regexMaskArgNNN.IsMatch(cmdLine.Arguments[0]))
+        {
+            instArgCode = Convert.ToInt32(_regexMaskArgNNN.Match(cmdLine.Arguments[0]).Groups[1].Value, 8);
+
+            if (instArgCode > byte.MaxValue)
+            {
+                throw new ArgumentException($"Argument is too large: {cmdLine.Arguments[0]}");
+            }
+        }
+        else
+        {
+            throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[0]}");
+        }
+
+        resultTokens.Add(new OperationToken(Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode,
+            cmdLine));
         return resultTokens;
     }
 
@@ -307,7 +338,7 @@ internal class TokenBuilder
         {
             throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[1]}.");
         }
-        
+
         return resultTokens;
     }
 
@@ -492,6 +523,9 @@ internal class TokenBuilder
             { "mark", InstructionArgsNN },
             { "sob", InstructionArgsRNN },
 
+            { "trap", InstructionArgsNNN },
+            { "emt", InstructionArgsNNN },
+
             { "bpt", InstructionArgsNull },
             { "iot", InstructionArgsNull },
             { "rti", InstructionArgsNull },
@@ -539,6 +573,7 @@ internal class TokenBuilder
         _regexMaskAddrType61 = new Regex(RegexPatternAddrType61, RegexOptions.IgnoreCase | RegexOptions.Singleline);
         _regexMaskAddrType71 = new Regex(RegexPatternAddrType71, RegexOptions.IgnoreCase | RegexOptions.Singleline);
         _regexMaskArgNN = new Regex(RegexPatternArgNN, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        _regexMaskArgNNN = new Regex(RegexPatternArgNNN, RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
         _regexMaskArgWORD = new Regex(RegexPatternArgWORD, RegexOptions.IgnoreCase | RegexOptions.Singleline);
         _regexMaskArgBLKW = new Regex(RegexPatternArgBLKW, RegexOptions.IgnoreCase | RegexOptions.Singleline);
