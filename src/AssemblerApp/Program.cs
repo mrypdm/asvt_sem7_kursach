@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Assembler;
+using Assembler.Exceptions;
 using Domain.Models;
 using Domain.Providers;
 
@@ -26,6 +28,11 @@ internal static class Program
         try
         {
             new Compiler().Compile(project).Wait();
+        }
+        catch (AggregateException e) when (e.InnerExceptions.First() is AssembleException)
+        {
+            var ex = e.InnerExceptions.First() as AssembleException;
+            Console.WriteLine($"Error at line [{ex.LineNumber}] [{ex.LineText}]. {ex.Message}");
         }
         catch (Exception e)
         {

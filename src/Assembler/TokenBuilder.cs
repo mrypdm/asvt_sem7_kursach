@@ -13,18 +13,18 @@ internal class TokenBuilder
     private const string RegexPatternAddrType3 = @"^@\(r([0-7])\)\+$";
     private const string RegexPatternAddrType4 = @"^-\(r([0-7])\)$";
     private const string RegexPatternAddrType5 = @"^@-\(r([0-7])\)$";
-    private const string RegexPatternAddrType6 = @"^([0-1]*[0-7]{1,5})\(r([0-7])\)$";
-    private const string RegexPatternAddrType6Mark = @"^([a-z]+[_a-z0-9]*)(([\+-])([0-1]*[0-7]{1,5}))?\(r([0-7])\)$";
-    private const string RegexPatternAddrType7 = @"^@([0-1]*[0-7]{1,5})\(r([0-7])\)$";
-    private const string RegexPatternAddrType7Mark = @"^@([a-z]+[_a-z0-9]*)(([\+-])([0-1]*[0-7]{1,5}))?\(r([0-7])\)$";
-    private const string RegexPatternAddrType21 = @"^#([0-1]*[0-7]{1,5})$";
+    private const string RegexPatternAddrType6 = @"^([0-1]{0,1}[0-7]{1,5})\(r([0-7])\)$";
+    private const string RegexPatternAddrType6Mark = @"^([a-z]+[_a-z0-9]*)(([\+-])([0-1]{0,1}[0-7]{1,5}))?\(r([0-7])\)$";
+    private const string RegexPatternAddrType7 = @"^@([0-1]{0,1}[0-7]{1,5})\(r([0-7])\)$";
+    private const string RegexPatternAddrType7Mark = @"^@([a-z]+[_a-z0-9]*)(([\+-])([0-1]{0,1}[0-7]{1,5}))?\(r([0-7])\)$";
+    private const string RegexPatternAddrType21 = @"^#([0-1]{0,1}[0-7]{1,5})$";
     private const string RegexPatternAddrType21Mark = @"^#([a-z]+[_a-z0-9]*)$";
-    private const string RegexPatternAddrType31 = @"^@#([0-1]*[0-7]{1,5})$";
+    private const string RegexPatternAddrType31 = @"^@#([0-1]{0,1}[0-7]{1,5})$";
     private const string RegexPatternAddrType31Mark = @"^@#([a-z]+[_a-z0-9]*)$";
     private const string RegexPatternAddrType61 = @"^([a-z]+[_a-z0-9]*)$";
     private const string RegexPatternAddrType71 = @"^@([a-z]+[_a-z0-9]*)$";
     private const string RegexPatternArgNn = @"^([0-7]{1,2})$";
-    private const string RegexPatternArgNnn = @"^([0-7]{1,3})$";
+    private const string RegexPatternArgNnn = @"^([0-3]{0,1}[0-7]{1,2})$";
     private const string RegexPatternArgWord = @"^([-]?[0-9]+)([.]?)$";
     private const string RegexPatternArgBlkw = @"^([0-9]+)$";
 
@@ -295,12 +295,6 @@ internal class TokenBuilder
         if (_regexMaskArgNnn.IsMatch(cmdLine.Arguments[0]))
         {
             instArgCode = Convert.ToInt32(_regexMaskArgNnn.Match(cmdLine.Arguments[0]).Groups[1].Value, 8);
-
-            if (instArgCode > byte.MaxValue)
-            {
-                throw new ArgumentException(
-                    $"Argument is too large: {cmdLine.Arguments[0]}. Must be less or equal to 377");
-            }
         }
         else
         {
