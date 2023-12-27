@@ -3,5 +3,6 @@
 
 *.dll binary
 *.odt binary
+*.odg binary
 *.pdf binary
 *.png binary
