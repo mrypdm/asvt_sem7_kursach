@@ -296,7 +296,8 @@ internal class TokenBuilder
 
             if (instArgCode > byte.MaxValue)
             {
-                throw new ArgumentException($"Argument is too large: {cmdLine.Arguments[0]}");
+                throw new ArgumentException(
+                    $"Argument is too large: {cmdLine.Arguments[0]}. Must be less or equal to 377");
             }
         }
         else
