@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Assembler.Exceptions;
 using Assembler.Tokens;
 using Domain.Models;
 
@@ -80,13 +81,21 @@ public class Compiler
                 }
                 else
                 {
-                    throw new Exception($"The mark '{mark}' has been used several times");
+                    throw new AssembleException(cmdLine, $"The mark '{mark}' has been used several times");
                 }
             }
 
-            var cmdTokens = _tokenBuilder.Build(cmdLine).ToArray();
-            tokens.AddRange(cmdTokens);
-            currentAddr += cmdTokens.Length * 2;
+            try
+            {
+                var cmdTokens = _tokenBuilder.Build(cmdLine).ToArray();
+                tokens.AddRange(cmdTokens);
+
+                currentAddr += cmdTokens.Length * 2;
+            }
+            catch (Exception e)
+            {
+                throw new AssembleException(cmdLine, e.Message);
+            }
         }
 
         // The third assembly cycle
@@ -94,8 +103,16 @@ public class Compiler
         var codes = new List<string>();
         foreach (var token in tokens)
         {
-            codes.AddRange(token.Translate(marks, currentAddr));
-            currentAddr += 2;
+            try
+            {
+                var machineCodes = token.Translate(marks, currentAddr);
+                codes.AddRange(machineCodes);
+                currentAddr += 2;
+            }
+            catch (Exception e)
+            {
+                throw new AssembleException(token.CommandLine, e.Message);
+            }
         }
 
         // Printing of final machine code

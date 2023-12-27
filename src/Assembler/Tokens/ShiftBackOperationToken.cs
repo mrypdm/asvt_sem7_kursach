@@ -8,10 +8,10 @@ namespace Assembler.Tokens
 {
     internal class ShiftBackOperationToken : ShiftOperationToken
     {
-        public ShiftBackOperationToken(int machineCode, string mark, int shiftMask, CommandLine originCmdLine) :
-            base(machineCode, mark, shiftMask, originCmdLine)
+        public ShiftBackOperationToken(CommandLine commandLine, int machineCode, string mark, int shiftMask,
+            CommandLine originCmdLine) :
+            base(commandLine, machineCode, mark, shiftMask, originCmdLine)
         {
-
         }
 
         public override IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
@@ -21,8 +21,10 @@ namespace Assembler.Tokens
             {
                 if (markAddress >= currentAddr)
                 {
-                    throw new Exception($"The instruction ({_originCmdLine.InstructionMnemonics}) can't uses forward marks ({_mark}).");
+                    throw new Exception(
+                        $"The instruction ({_originCmdLine.InstructionMnemonics}) can't uses forward marks ({_mark}).");
                 }
+
                 delta = currentAddr - markAddress;
             }
             else
@@ -38,7 +40,8 @@ namespace Assembler.Tokens
 
             var shiftValue = (delta / 2 + 1) & _shiftMask;
 
-            return new List<string> { Convert.ToString(_machineCode | shiftValue, 8).PadLeft(6, '0') + $";{_originCmdLine.GetSymbol()}" };
+            return new List<string>
+                { Convert.ToString(_machineCode | shiftValue, 8).PadLeft(6, '0') + $";{_originCmdLine.LineText}" };
         }
     }
 }

@@ -26,13 +26,14 @@ internal class Parser
     public async Task<List<CommandLine>> Parse(string filePath)
     {
         var res = new List<CommandLine>();
-        string line;
 
         using var reader = new StreamReader(filePath);
         var marksSet = new HashSet<string>();
 
-        while ((line = await reader.ReadLineAsync()) != null)
+        var lineNumber = 0;
+        while (await reader.ReadLineAsync() is { } line)
         {
+            ++lineNumber;
             // Removing comment
             line = line.Split(';', StringSplitOptions.TrimEntries)[0];
             if (string.IsNullOrWhiteSpace(line))
@@ -64,7 +65,7 @@ internal class Parser
 
             var arguments = match.Groups[3].Captures.Select(c => c.Value.Trim(BadSymbols).ToLower());
 
-            var command = new CommandLine(marksSet, instruction, arguments);
+            var command = new CommandLine(lineNumber, marksSet, instruction, arguments);
             command.ThrowIfInvalid();
             res.Add(command);
             marksSet.Clear();

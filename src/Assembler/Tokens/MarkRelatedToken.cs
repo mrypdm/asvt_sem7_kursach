@@ -7,10 +7,13 @@ internal class MarkRelatedToken : IToken
 {
     private readonly string _mark;
 
-    public MarkRelatedToken(string mark)
+    public MarkRelatedToken(CommandLine commandLine, string mark)
     {
+        CommandLine = commandLine;
         _mark = mark;
     }
+
+    public CommandLine CommandLine { get; }
 
     public IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
     {

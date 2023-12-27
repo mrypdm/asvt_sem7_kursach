@@ -7,10 +7,13 @@ internal class RawToken : IToken
 {
     private readonly int _machineCode;
 
-    public RawToken(int machineCode)
+    public RawToken(CommandLine commandLine, int machineCode)
     {
+        CommandLine = commandLine;
         _machineCode = machineCode;
     }
+
+    public CommandLine CommandLine { get; }
 
     public IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
     {

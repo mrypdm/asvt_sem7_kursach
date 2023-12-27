@@ -6,16 +6,17 @@ namespace Assembler.Tokens;
 internal class OperationToken : IToken
 {
     private readonly int _machineCode;
-    private readonly CommandLine _originCmdLine;
 
-    public OperationToken(int machineCode, CommandLine originCmdLine)
+    public OperationToken(CommandLine commandLine, int machineCode)
     {
+        CommandLine = commandLine;
         _machineCode = machineCode;
-        _originCmdLine = originCmdLine;
     }
+
+    public CommandLine CommandLine { get; }
 
     public IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
     {
-        return new[] { Convert.ToString(_machineCode, 8).PadLeft(6, '0') + $";{_originCmdLine.GetSymbol()}" };
+        return new[] { Convert.ToString(_machineCode, 8).PadLeft(6, '0') + $";{CommandLine.LineText}" };
     }
 }

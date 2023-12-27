@@ -12,12 +12,15 @@ internal class MarkRelocationToken : IToken
     // true -> +; false -> -
     private readonly bool _opSign;
 
-    public MarkRelocationToken(string mark, int addValue, bool opSign)
+    public MarkRelocationToken(CommandLine commandLine, string mark, int addValue, bool opSign)
     {
+        CommandLine = commandLine;
         _mark = mark;
         _addValue = addValue;
         _opSign = opSign;
     }
+
+    public CommandLine CommandLine { get; }
 
     public IEnumerable<string> Translate(Dictionary<string, int> marksDict, int currentAddr)
     {

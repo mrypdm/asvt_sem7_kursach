@@ -13,11 +13,13 @@ internal record CommandLine
     /// <summary>
     /// Creates new instance of command line
     /// </summary>
+    /// <param name="line">Number of line</param>
     /// <param name="marks">Symbol marks of line</param>
     /// <param name="instructionMnemonics">Instruction to execute</param>
     /// <param name="args">Arguments of instruction</param>
-    public CommandLine(IEnumerable<string> marks, string instructionMnemonics, IEnumerable<string> args)
+    public CommandLine(int line, IEnumerable<string> marks, string instructionMnemonics, IEnumerable<string> args)
     {
+        LineNumber = line;
         Marks = marks.Where(m => !string.IsNullOrWhiteSpace(m)).ToHashSet();
         InstructionMnemonics = instructionMnemonics;
         Arguments = args.ToList();
@@ -46,12 +48,6 @@ internal record CommandLine
         }
     }
 
-    public string GetSymbol()
-    {
-        var mark = Marks.Any() ? $"{string.Join(',', Marks)}: " : string.Empty;
-        return $"{mark}{InstructionMnemonics} {string.Join(',', Arguments)}";
-    }
-
     /// <summary>
     /// Symbol mark for line
     /// </summary>
@@ -66,4 +62,22 @@ internal record CommandLine
     /// Arguments for instruction
     /// </summary>
     public List<string> Arguments { get; }
+
+    /// <summary>
+    /// Line number
+    /// </summary>
+    public int LineNumber { get; }
+
+    /// <summary>
+    /// Line text
+    /// </summary>
+    public string LineText
+    {
+        get
+        {
+            var mark = Marks.Any() ? $"{string.Join(',', Marks)}: " : string.Empty;
+            var arguments = Arguments.Any() ? $" {string.Join(", ", Arguments)}" : string.Empty;
+            return $"{mark}{InstructionMnemonics}{arguments}";
+        }
+    }
 }
