@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using Assembler;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Devices.Providers;
@@ -665,9 +666,11 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     {
         await SaveAllFilesAsync();
 
+        var assembler = new Compiler();
+
         try
         {
-            // build code here
+            await assembler.Compile(_projectManager.Project);
             await _messageBoxManager.ShowMessageBoxAsync("Build", "Completed", ButtonEnum.Ok, Icon.Info, View);
         }
         catch (Exception e)
