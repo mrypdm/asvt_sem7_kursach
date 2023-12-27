@@ -46,7 +46,7 @@ public interface IProject
     /// Project name
     /// </summary>
     string ProjectName { get; }
-    
+
     /// <summary>
     /// Project binary file
     /// </summary>
