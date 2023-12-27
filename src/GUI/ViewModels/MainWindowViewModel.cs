@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Assembler;
+using Assembler.Exceptions;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Devices.Providers;
@@ -69,7 +70,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         OpenExecutorWindowCommand = ReactiveCommand.CreateFromTask(OpenExecutorWindowAsync);
         OpenArchitectureWindowCommand = ReactiveCommand.Create(OpenArchitectureWindow);
         OpenTutorialWindowCommand = ReactiveCommand.Create(OpenTutorialWindow);
-        BuildProjectCommand = ReactiveCommand.CreateFromTask(BuildProjectAsync);
+        BuildProjectCommand = ReactiveCommand.CreateFromTask(async () => { await BuildProjectAsync(); });
 
         _fileManager = fileManager;
         _messageBoxManager = messageBoxManager;
@@ -598,7 +599,10 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// </summary>
     private async Task OpenExecutorWindowAsync()
     {
-        await BuildProjectAsync();
+        if (!await BuildProjectAsync())
+        {
+            return;
+        }
 
         var executor = new Executor.Executor(_projectManager.Project);
         await executor.LoadProgram();
@@ -662,7 +666,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
     #endregion
 
-    private async Task BuildProjectAsync()
+    private async Task<bool> BuildProjectAsync()
     {
         await SaveAllFilesAsync();
 
@@ -672,10 +676,17 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         {
             await assembler.Compile(_projectManager.Project);
             await _messageBoxManager.ShowMessageBoxAsync("Build", "Completed", ButtonEnum.Ok, Icon.Info, View);
+            return true;
+        }
+        catch (AssembleException e)
+        {
+            await _messageBoxManager.ShowErrorMessageBox($"Error at line [{e.LineNumber}]: {e.Message}", View);
         }
         catch (Exception e)
         {
             await _messageBoxManager.ShowErrorMessageBox(e.Message, View);
         }
+
+        return false;
     }
 }
