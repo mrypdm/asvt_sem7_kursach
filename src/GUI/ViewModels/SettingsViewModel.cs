@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Devices.Validators;
 using Domain.Models;
+using GUI.Extensions;
 using GUI.Managers;
 using GUI.MessageBoxes;
+using GUI.ViewModels.Abstraction;
 using GUI.Views;
 using ReactiveUI;
 using Shared.Exceptions;
@@ -74,9 +76,9 @@ public class SettingsViewModel : WindowViewModel<SettingsWindow>, ISettingsViewM
     public ReactiveCommand<Unit, Unit> ValidateDevicesCommand { get; }
 
     /// <inheritdoc cref="Project.Devices"/>
-    public ObservableCollection<string> Devices => new(_projectManager.IsOpened
+    public ObservableCollection<string> Devices => (_projectManager.IsOpened
         ? _projectManager.Project.Devices
-        : Array.Empty<string>());
+        : Array.Empty<string>()).ToObservableCollection();
 
     /// <inheritdoc />
     public ObservableCollection<string> SelectedDevices { get; set; } = new();
