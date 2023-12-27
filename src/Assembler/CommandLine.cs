@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Shared.Exceptions;
 
 namespace Assembler;
 
@@ -8,8 +9,6 @@ namespace Assembler;
 /// </summary>
 internal record CommandLine
 {
-    private const string RegexPatternMarkValidation = @"^\s*[a-zA-Z]+([^:;]\w)*(?=:)";
-
     /// <summary>
     /// Creates new instance of command line
     /// </summary>
@@ -35,16 +34,16 @@ internal record CommandLine
 
         if (!Instruction.Instructions.ContainsKey(InstructionMnemonics))
         {
-            throw new System.Exception($"Unexisting instruction: {InstructionMnemonics}.");
+            throw new ValidationException($"Unknown instruction: {InstructionMnemonics}");
         }
 
         if ((Arguments.Count != Instruction.Instructions[InstructionMnemonics].ArgumentsCount) &
             (Instruction.Instructions[InstructionMnemonics].ArgumentsCount != -1))
         {
-            throw new System.Exception(
+            throw new ValidationException(
                 $"Incorrect number of arguments: {InstructionMnemonics}. " +
                 $"Must be {Instruction.Instructions[InstructionMnemonics].ArgumentsCount}, " +
-                $"but was: {Arguments.Count}.");
+                $"but was: {Arguments.Count}");
         }
     }
 

@@ -14,9 +14,6 @@ internal class Parser
     private readonly Regex _regexMaskCommandLine =
         new(@"^\s*([^\s,:]+:\s*)?(\S+)?\s*([^\s,]+\s*,?\s*){0,}$", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-    private readonly Regex _regexMaskRemovingComment =
-        new(@"^[^;.]+(?=;?)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
     private readonly Regex _regexMaskMarkExistence =
         new(@"^\s*[^;]*:", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
