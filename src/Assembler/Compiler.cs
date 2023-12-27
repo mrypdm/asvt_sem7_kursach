@@ -57,19 +57,9 @@ public class Compiler
     public async Task Compile(IProject project)
     {
         var mainFile = project.Executable;
-        var linkedFiles = project.Files.Where(m => m != mainFile).ToArray();
 
         // Parsing (the first assembly cycle)
         var mainCommandLines = await _parser.Parse(mainFile);
-
-        var linkedFilesCommands = new List<List<CommandLine>>();
-        foreach (var linkedFile in linkedFiles)
-        {
-            var linkedFileCommands = await _parser.Parse(linkedFile);
-            linkedFilesCommands.Add(linkedFileCommands);
-        }
-
-        PrintCommands(mainCommandLines, linkedFilesCommands);
 
         // The second assembly cycle
         var tokens = new List<IToken>();
@@ -94,9 +84,9 @@ public class Compiler
                 }
             }
 
-            var cmdTokens = _tokenBuilder.Build(cmdLine);
+            var cmdTokens = _tokenBuilder.Build(cmdLine).ToArray();
             tokens.AddRange(cmdTokens);
-            currentAddr += cmdTokens.Count() * 2;
+            currentAddr += cmdTokens.Length * 2;
         }
 
         // The third assembly cycle
