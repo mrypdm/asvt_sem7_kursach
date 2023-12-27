@@ -14,9 +14,15 @@ internal class TokenBuilder
     private const string RegexPatternAddrType4 = @"^-\(r([0-7])\)$";
     private const string RegexPatternAddrType5 = @"^@-\(r([0-7])\)$";
     private const string RegexPatternAddrType6 = @"^([0-1]{0,1}[0-7]{1,5})\(r([0-7])\)$";
-    private const string RegexPatternAddrType6Mark = @"^([a-z]+[_a-z0-9]*)(([\+-])([0-1]{0,1}[0-7]{1,5}))?\(r([0-7])\)$";
+
+    private const string RegexPatternAddrType6Mark =
+        @"^([a-z]+[_a-z0-9]*)(([\+-])([0-1]{0,1}[0-7]{1,5}))?\(r([0-7])\)$";
+
     private const string RegexPatternAddrType7 = @"^@([0-1]{0,1}[0-7]{1,5})\(r([0-7])\)$";
-    private const string RegexPatternAddrType7Mark = @"^@([a-z]+[_a-z0-9]*)(([\+-])([0-1]{0,1}[0-7]{1,5}))?\(r([0-7])\)$";
+
+    private const string RegexPatternAddrType7Mark =
+        @"^@([a-z]+[_a-z0-9]*)(([\+-])([0-1]{0,1}[0-7]{1,5}))?\(r([0-7])\)$";
+
     private const string RegexPatternAddrType21 = @"^#([0-1]{0,1}[0-7]{1,5})$";
     private const string RegexPatternAddrType21Mark = @"^#([a-z]+[_a-z0-9]*)$";
     private const string RegexPatternAddrType31 = @"^@#([0-1]{0,1}[0-7]{1,5})$";
@@ -268,6 +274,33 @@ internal class TokenBuilder
         return resultTokens;
     }
 
+    private List<IToken> InstructionArgsRSs(CommandLine cmdLine)
+    {
+        var resultTokens = new List<IToken>();
+        // Tokens for extra words
+        var extraTokens = new List<IToken>();
+        int instArgCode;
+
+        if (_regexMaskAddrType0.IsMatch(cmdLine.Arguments[1]))
+        {
+            instArgCode = Convert.ToInt32(_regexMaskAddrType0.Match(cmdLine.Arguments[1]).Groups[1].Value, 8);
+            instArgCode <<= 6;
+        }
+        else
+        {
+            throw new ArgumentException($"Incorrect argument: {cmdLine.Arguments[1]}.");
+        }
+
+        instArgCode |= ArgumentHandler(cmdLine, 0, extraTokens);
+
+        resultTokens.Add(new OperationToken(cmdLine,
+            Instruction.Instructions[cmdLine.InstructionMnemonics].Code | instArgCode));
+        resultTokens.AddRange(extraTokens);
+
+        return resultTokens;
+    }
+
+
     private List<IToken> InstructionArgsNn(CommandLine cmdLine)
     {
         var resultTokens = new List<IToken>();
@@ -487,10 +520,11 @@ internal class TokenBuilder
             { "bis", InstructionArgsSsDd },
             { "bisb", InstructionArgsSsDd },
 
-            { "mul", InstructionArgsRDd },
-            { "div", InstructionArgsRDd },
-            { "ash", InstructionArgsRDd },
-            { "ashc", InstructionArgsRDd },
+            { "mul", InstructionArgsRSs },
+            { "div", InstructionArgsRSs },
+            { "ash", InstructionArgsRSs },
+            { "ashc", InstructionArgsRSs },
+
             { "xor", InstructionArgsRDd },
 
             { "br", InstructionArgsShift },
