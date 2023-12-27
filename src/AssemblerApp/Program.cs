@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Assembler;
 using Domain.Models;
+using Domain.Providers;
 
 namespace AssemblerApp;
 
@@ -9,24 +9,27 @@ internal static class Program
 {
     public static void Main(string[] args)
     {
-        var mainAsmFile = args[0];
-        //var linkedAsmFiles = new List<string> { @"D:\Университет\7 семестр\Курсовая работы\macro.asm" };
-        var linkedAsmFiles = new List<string>();
+        var provider = new ProjectProvider();
 
-        var project = new Project
-        {
-            Executable = mainAsmFile,
-            Files = linkedAsmFiles,
-        };
+        IProject project;
 
-        var asm = new Compiler();
         try
         {
-            asm.Compile(project).Wait();
+            project = provider.OpenProjectAsync(args[0]).Result;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Console.WriteLine(ex.Message);
+            Console.WriteLine($"Cannot open project file. Exception:\n{e.Message}");
+            return;
+        }
+
+        try
+        {
+            new Compiler().Compile(project).Wait();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Assembling ended with error:\n{e.Message}");
         }
     }
 }
