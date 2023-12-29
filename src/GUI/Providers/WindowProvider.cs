@@ -12,8 +12,7 @@ public class WindowProvider : IWindowProvider
 {
     private static readonly HashSet<object> Windows = new();
 
-    /// <inheritdoc />
-    public IWindowViewModel<TWindow> CreateWindow<TWindow, TViewModel>(params object[] args)
+    private static IWindowViewModel<TWindow> CreateWindow<TWindow, TViewModel>(params object[] args)
         where TWindow : Window, new()
         where TViewModel : IWindowViewModel<TWindow>
     {
@@ -30,14 +29,14 @@ public class WindowProvider : IWindowProvider
     public void Show<TWindow, TViewModel>(params object[] args) where TWindow : Window, new()
         where TViewModel : IWindowViewModel<TWindow>
     {
-        var savedViewModel = Windows.FirstOrDefault(m => m is TViewModel);
+        var savedViewModel = (TViewModel)Windows.FirstOrDefault(m => m is TViewModel);
 
         if (savedViewModel != null)
         {
-            if (((TViewModel)savedViewModel).View.IsLoaded)
+            if (savedViewModel.View.IsLoaded)
             {
-                ((TViewModel)savedViewModel).View.WindowState = WindowState.Normal;
-                ((TViewModel)savedViewModel).View.Activate();
+                savedViewModel.View.WindowState = WindowState.Normal;
+                savedViewModel.View.Activate();
                 return;
             }
 
@@ -49,5 +48,32 @@ public class WindowProvider : IWindowProvider
         Windows.Add(viewModel);
 
         viewModel.Show();
+    }
+
+
+    /// <inheritdoc />
+    public void Close<TWindow, TViewModel>(object dialogResult = null) where TWindow : Window, new()
+        where TViewModel : IWindowViewModel<TWindow>
+    {
+        var savedViewModel = (TViewModel)Windows.FirstOrDefault(m => m is TViewModel);
+
+        if (savedViewModel == null)
+        {
+            return;
+        }
+
+        if (savedViewModel.View.IsLoaded)
+        {
+            if (dialogResult != null)
+            {
+                savedViewModel.View.Close(dialogResult);
+            }
+            else
+            {
+                savedViewModel.View.Close();
+            }
+        }
+
+        Windows.Remove(savedViewModel);
     }
 }
