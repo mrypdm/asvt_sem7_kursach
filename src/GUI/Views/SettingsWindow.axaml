@@ -6,7 +6,7 @@
         xmlns:converter="clr-namespace:GUI.Converters"
         xmlns:managers="clr-namespace:GUI.Managers"
         mc:Ignorable="d" SizeToContent="WidthAndHeight" MinWidth="500" CanResize="False"
-        FontFamily="Century Gothic" FontSize="14"
+        FontFamily="Century Gothic" FontSize="20"
         x:Class="GUI.Views.SettingsWindow" x:DataType="vm:SettingsViewModel"
         Title="Settings" Icon="/Assets/icon.ico">
     <Design.DataContext>

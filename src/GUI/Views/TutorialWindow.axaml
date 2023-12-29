@@ -4,10 +4,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
         xmlns:vm="clr-namespace:GUI.ViewModels"
+        xmlns:managers="clr-namespace:GUI.Managers"
+        xmlns:ctxt="clr-namespace:ColorTextBlock.Avalonia;assembly=ColorTextBlock.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="GUI.Views.TutorialWindow" x:DataType="vm:TutorialWindowViewModel"
+        x:Class="GUI.Views.TutorialWindow" x:DataType="vm:TutorialWindowViewModel" x:Name="Window"
         Title="Tutorial" Icon="avares://pdp11simulator/Assets/icon.ico"
-        FontFamily="Century Gothic" FontSize="14">
+        FontFamily="Century Gothic"
+        FontSize="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontSize}">
 
     <Design.DataContext>
         <vm:TutorialWindowViewModel />
@@ -21,6 +24,12 @@
                 </TreeDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
-        <md:MarkdownScrollViewer Margin="10,0,0,0" Markdown="{Binding MarkDownText}" />
+        <md:MarkdownScrollViewer Margin="10,0,0,0" Markdown="{Binding MarkDownText}">
+            <md:MarkdownScrollViewer.Styles>
+                <Style Selector="ctxt|CTextBlock">
+                    <Setter Property="FontSize" Value="{Binding ElementName=Window, Path=FontSize}" />
+                </Style>
+            </md:MarkdownScrollViewer.Styles>
+        </md:MarkdownScrollViewer>
     </DockPanel>
 </Window>
