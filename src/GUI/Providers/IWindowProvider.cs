@@ -10,17 +10,6 @@ namespace GUI.Providers;
 public interface IWindowProvider
 {
     /// <summary>
-    /// Creates new window view model
-    /// </summary>
-    /// <param name="args">Args for view model constructor</param>
-    /// <typeparam name="TWindow">Window to create</typeparam>
-    /// <typeparam name="TViewModel">ViewModel of window</typeparam>
-    /// <returns>View model of window</returns>
-    IWindowViewModel<TWindow> CreateWindow<TWindow, TViewModel>(params object[] args)
-        where TWindow : Window, new()
-        where TViewModel : IWindowViewModel<TWindow>;
-
-    /// <summary>
     /// Shows windows as dialog
     /// </summary>
     /// <param name="owner">Owner of dialog</param>
@@ -39,5 +28,14 @@ public interface IWindowProvider
     /// <typeparam name="TViewModel">ViewModel of window</typeparam>
     void Show<TWindow, TViewModel>(params object[] args)
         where TWindow : Window, new()
+        where TViewModel : IWindowViewModel<TWindow>;
+
+    /// <summary>
+    /// Closed early created window
+    /// </summary>
+    /// <param name="dialogResult">Result of closing</param>
+    /// <typeparam name="TWindow">Window to close</typeparam>
+    /// <typeparam name="TViewModel">ViewModel of window</typeparam>
+    void Close<TWindow, TViewModel>(object dialogResult = null) where TWindow : Window, new()
         where TViewModel : IWindowViewModel<TWindow>;
 }

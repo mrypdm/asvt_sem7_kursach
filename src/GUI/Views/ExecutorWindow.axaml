@@ -4,10 +4,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:GUI.ViewModels"
         xmlns:converter="clr-namespace:GUI.Converters"
+        xmlns:managers="clr-namespace:GUI.Managers"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="GUI.Views.ExecutorWindow" x:DataType="vm:ExecutorViewModel"
+        x:Class="GUI.Views.ExecutorWindow" x:DataType="vm:ExecutorViewModel" x:Name="Window"
         Title="Executor" Icon="/Assets/icon.ico"
-        FontFamily="Century Gothic" FontSize="14">
+        FontFamily="Century Gothic"
+        FontSize="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontSize}">
     <Design.DataContext>
         <vm:ExecutorViewModel />
     </Design.DataContext>
@@ -37,7 +39,6 @@
             <Setter Property="AutoGenerateColumns" Value="True" />
             <Setter Property="RowBackground" Value="White" />
             <Setter Property="FontFamily" Value="Courier New" />
-            <Setter Property="FontSize" Value="14" />
         </Style>
         <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
             <Setter Property="Fill" Value="LightBlue" />
@@ -65,15 +66,17 @@
 
             <Separator Height="2" DockPanel.Dock="Top" />
 
-            <StackPanel DockPanel.Dock="Top" IsVisible="{Binding IsStateVisible}">
-                <!-- Registers -->
-                <TextBlock Text="Registers" Margin="0,0,0,5" />
-                <DataGrid Margin="0,0,0,5" ItemsSource="{Binding Registers}" />
+            <ScrollViewer DockPanel.Dock="Top" IsVisible="{Binding IsStateVisible}">
+                <StackPanel>
+                    <!-- Registers -->
+                    <TextBlock Text="Registers" Margin="0,0,0,5" />
+                    <DataGrid Margin="0,0,0,5" ItemsSource="{Binding Registers}" />
 
-                <!-- PSW -->
-                <TextBlock Text="PSW" Margin="0,0,0,5" />
-                <DataGrid HorizontalScrollBarVisibility="Hidden" ItemsSource="{Binding ProcessorStateWord}" />
-            </StackPanel>
+                    <!-- PSW -->
+                    <TextBlock Text="PSW" Margin="0,0,0,5" />
+                    <DataGrid HorizontalScrollBarVisibility="Hidden" ItemsSource="{Binding ProcessorStateWord}" />
+                </StackPanel>
+            </ScrollViewer>
 
             <!-- Memory -->
             <TextBox Name="AddressInput" Margin="0,0,0,5" DockPanel.Dock="Top" IsVisible="{Binding IsMemoryVisible}">

@@ -70,7 +70,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         OpenExecutorWindowCommand = ReactiveCommand.CreateFromTask(OpenExecutorWindowAsync);
         OpenArchitectureWindowCommand = ReactiveCommand.Create(OpenArchitectureWindow);
         OpenTutorialWindowCommand = ReactiveCommand.Create(OpenTutorialWindow);
-        BuildProjectCommand = ReactiveCommand.CreateFromTask(async () => { await BuildProjectAsync(); });
+        BuildProjectCommand = ReactiveCommand.CreateFromTask(BuildProjectAsync);
 
         _fileManager = fileManager;
         _messageBoxManager = messageBoxManager;
@@ -599,7 +599,9 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
     /// </summary>
     private async Task OpenExecutorWindowAsync()
     {
-        if (!await BuildProjectAsync())
+        _windowProvider.Close<ExecutorWindow, ExecutorViewModel>();
+
+        if (!await BuildProjectInternalAsync())
         {
             return;
         }
@@ -607,7 +609,7 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         var executor = new Executor.Executor(_projectManager.Project);
         await executor.LoadProgram();
 
-        await _windowProvider.ShowDialog<ExecutorWindow, ExecutorViewModel>(View, executor, _messageBoxManager);
+        _windowProvider.Show<ExecutorWindow, ExecutorViewModel>(executor, _messageBoxManager);
     }
 
     /// <summary>
@@ -666,7 +668,15 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
 
     #endregion
 
-    private async Task<bool> BuildProjectAsync()
+    private async Task BuildProjectAsync()
+    {
+        if (await BuildProjectInternalAsync())
+        {
+            await _messageBoxManager.ShowMessageBoxAsync("Build", "Completed", ButtonEnum.Ok, Icon.Info, View);
+        }
+    }
+
+    private async Task<bool> BuildProjectInternalAsync()
     {
         await SaveAllFilesAsync();
 
@@ -675,7 +685,6 @@ public class MainWindowViewModel : WindowViewModel<MainWindow>, IMainWindowViewM
         try
         {
             await assembler.Compile(_projectManager.Project);
-            await _messageBoxManager.ShowMessageBoxAsync("Build", "Completed", ButtonEnum.Ok, Icon.Info, View);
             return true;
         }
         catch (AssembleException e)
