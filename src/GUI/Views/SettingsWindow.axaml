@@ -14,7 +14,7 @@
     </Design.DataContext>
 
     <Window.Resources>
-        <converter:StringDoubleConverter x:Key="StringDoubleConverter" />
+        <converter:FontSizeStringConverter x:Key="FontSizeConverter" />
     </Window.Resources>
 
     <Window.KeyBindings>
@@ -30,7 +30,7 @@
 
         <Label Margin="5,0,5,0" FontSize="24" HorizontalAlignment="Center">Font Size</Label>
         <TextBox Margin="5,0,5,0"
-                 Text="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontSize, Converter={StaticResource StringDoubleConverter}}" />
+                 Text="{Binding Source={x:Static managers:SettingsManager.Instance}, Path=FontSize, Converter={StaticResource FontSizeConverter}}" />
 
         <Separator Margin="5,5,5,5" Height="2" />
 

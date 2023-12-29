@@ -5,14 +5,14 @@ using Avalonia.Data.Converters;
 
 namespace GUI.Converters;
 
-public class StringDoubleConverter : IValueConverter
+public class FontSizeStringConverter : IValueConverter
 {
     /// <summary>
-    /// Converts double to string
+    /// Converts font size to string
     /// </summary>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is double number)
+        if (value is double number and > 0.0)
         {
             return number.ToString(CultureInfo.InvariantCulture);
         }
@@ -21,7 +21,7 @@ public class StringDoubleConverter : IValueConverter
     }
 
     /// <summary>
-    /// Converts string to double
+    /// Converts string to font size
     /// </summary>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
